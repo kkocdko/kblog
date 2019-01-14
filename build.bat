@@ -1,2 +1,2 @@
 cd /d %~dp0
-node builder/index
+node build/index
