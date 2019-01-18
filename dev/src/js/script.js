@@ -17,7 +17,7 @@ mask.addEventListener('click', () => {
     mask.classList.remove('in');
 });
 
-document.querySelector('#open-side-bar').addEventListener('click', () => {
+document.querySelector('#open__side-bar').addEventListener('click', () => {
     sideBar.classList.add('in');
     mask.classList.add('in');
 });
@@ -25,6 +25,11 @@ document.querySelector('#open-side-bar').addEventListener('click', () => {
 document.querySelector('#side-bar>.nav').addEventListener('click', () => {
     sideBar.classList.remove('in');
     mask.classList.remove('in');
+});
+
+document.querySelector('#open__palette').addEventListener('click', () => {
+    let color = prompt('Please input color (use css formal)', 'rgb(0, 150, 136)');
+    document.body.attributeStyleMap.set('--theme-color', color);
 });
 
 // ==============================
@@ -65,17 +70,19 @@ function loadContent() {
     }
 }
 
-function ajaxGet(url, callback, enableAnimation = false) {
+function xhrGet(url, callback, enableAnimation = false) {
     if (enableAnimation == true) {
         loadingIndicator.classList.add('in');
     }
     let xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
-        if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.readyState == 4) {
             if (enableAnimation == true) {
                 loadingIndicator.classList.remove('in');
             }
-            callback(xhr.responseText);
+            if (xhr.status == 200) {
+                callback(xhr.responseText);
+            }
         }
     };
     xhr.open('GET', url);
@@ -84,7 +91,7 @@ function ajaxGet(url, callback, enableAnimation = false) {
 
 function loadArticle(fileName) {
     let filePath = `/src/article/${fileName}.md`;
-    ajaxGet(filePath, data => {
+    xhrGet(filePath, data => {
         contentElement.classList.remove('html-body');
         contentElement.classList.add('markdown-body');
         contentElement.innerHTML = marked(data);
@@ -96,7 +103,7 @@ function loadArticle(fileName) {
 
 function loadPage(fileName) {
     let filePath = `/src/page/${fileName}.html`;
-    ajaxGet(filePath, data => {
+    xhrGet(filePath, data => {
         contentElement.classList.remove('markdown-body');
         contentElement.classList.add('html-body');
         contentElement.innerHTML = data;
@@ -115,10 +122,10 @@ function refreshTitle() {
 }
 
 function refreshListener() {
-    let spaLinkElementArr = document.querySelectorAll('[sl]');
+    let spaLinkElementArr = document.querySelectorAll('[data-sl]');
     for (let spaLinkElement of spaLinkElementArr) {
         spaLinkElement.onclick = function() {
-            history.pushState(null, null, this.getAttribute('sl'));
+            history.pushState(null, null, this.dataset.sl);
             loadContent();
         };
     }
