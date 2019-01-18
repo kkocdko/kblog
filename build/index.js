@@ -1,3 +1,16 @@
+/*!
+ * kkocdko's blog builder
+ * 
+ * Version: 20190115
+ * 
+ * Author: kkocdko
+ * 
+ * License: Apache License 2.0
+ * 
+ * Matters: 
+ * 1. No CRLF support
+ * 2. 
+ */
 'use strict';
 
 const fs = require('fs');
@@ -8,7 +21,6 @@ fs.copydirSync = (srcDir, targetDir) => {
     if (fs.existsSync(targetDir)) {
         child_process.execSync(`rd /s /q "${targetDir}"`);
     }
-    // child_process.execFileSync('robocopy', ['/e', srcDir, targetDir]);
     try {
         // I don't know why throw error, it works so well
         child_process.execSync(`robocopy /e "${srcDir}" "${targetDir}"`);
@@ -40,7 +52,7 @@ function buildBlog(
     function readMeta(articleData, head) {
         let line = '';
         try {
-            line = articleData.match(`\\n${head}\\:\\s([^(\\n|\\r)]*)`)[1]; // Whole line
+            line = articleData.match(`\\n${head}\\:\\s([^\\n]*)`)[1]; // Whole line
         } catch (e) {
             console.error('Can not find this meta');
         }
@@ -76,7 +88,7 @@ function buildBlog(
         tagArrArr.push(readMeta(articleData, 'tags'));
         excerptArr.push(readMeta(articleData, 'excerpt'))[0];
         fs.writeFileSync(`${articleSaveDir}/${articleId}.md`,
-            articleData.replace(/---(.|\n|\r)+?---(\n|\r)*/, '') +
+            articleData.replace(/---(.|\n)+?---\n*/, '') +
             `\n<title>${articleTitle}</title>\n`
         );
     }
@@ -90,15 +102,15 @@ function buildBlog(
         for (let j = i, min = i - perPage; j > min && j > -1; j--) {
             let tagListStr = '';
             for (let tag of tagArrArr[j]) {
-                tagListStr += `<li sl="/tag#${tag}">${tag}</li>`;
+                tagListStr += `<li data-sl="/tag#${tag}">${tag}</li>`;
             }
             homeHtmlStr +=
                 `
             <li>
-                <h3 sl="/article/${idArr[j]}">${titleArr[j]}</h3>
+                <h3 data-sl="/article/${idArr[j]}">${titleArr[j]}</h3>
                 <p>${excerptArr[j]}</p>
                 <ul class="footer">
-                    <li sl="/category#${categoryArr[j]}">${categoryArr[j]}</li>
+                    <li data-sl="/category#${categoryArr[j]}">${categoryArr[j]}</li>
                     ${tagListStr}
                 </ul>
             </li>

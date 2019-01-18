@@ -2,9 +2,13 @@
 *::before,
 *::after {
     box-sizing: border-box;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0);
 }
 
-[sl] {
+[data-sl] {
     cursor: pointer;
 }
 
@@ -12,7 +16,6 @@ body {
     --theme-color: #3f51b5;
     background: #f8f9fa;
     min-height: 100vh;
-    margin: 0;
     font-family: -apple-system, "Microsoft Yahei", Arial, sans-serif;
 }
 
@@ -137,6 +140,31 @@ body {
     flex-direction: column;
 }
 
+#side-bar>.brand>#open__palette {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: rotate(0deg);
+    transition: 0.5s 0.3s;
+}
+
+#side-bar>.brand>#open__palette>svg {
+    height: 1.3em;
+    fill: #fff;
+    margin-top: 50%;
+    transform: translateY(-50%);
+}
+
+#side-bar.in>.brand>#open__palette {
+    opacity: 0.7;
+    transform: rotate(360deg);
+}
+
 #side-bar>.brand>.avatar {
     display: block;
     width: 80px;
@@ -147,15 +175,9 @@ body {
     background: url(/favicon.svg);
 }
 
-#side-bar>.nav {
-    margin: 0;
-    padding: 0;
-    background: #fff;
-}
+#side-bar>.nav {}
 
 #side-bar>.nav>li {
-    display: block;
-    text-decoration: none;
     color: #555;
     text-align: left;
     padding-left: 20px;
@@ -170,7 +192,7 @@ body {
 #side-bar>.nav>li>i>svg {
     height: 1.1em;
     fill: #555;
-    transform: translateY(15%);
+    transform: translateY(0.2em);
 }
 
 #side-bar>.nav>li:hover>i>svg {
@@ -190,7 +212,7 @@ body {
 #side-bar>.brand>.name {
     color: #fff;
     padding-left: 5px;
-    margin: 1em 0 0 0;
+    margin-top: 1em;
 }
 
 #content {
@@ -205,17 +227,9 @@ body {
     overflow: hidden;
 }
 
-#footer>p {
-    margin: 0;
-    font-size: 12px;
-    line-height: 2.9em;
-    text-align: center;
-}
-
 .post-list {
     width: 100%;
     padding: 10px 0 0 0;
-    margin: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -225,63 +239,48 @@ body {
     width: 100%;
     max-width: 600px;
     display: inline-block;
-    margin: 0 0 16px 0;
+    margin-bottom: 16px;
     padding: 15px;
     border-radius: 4px;
     background: #fff;
     box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
 }
 
-@media screen and (max-width: 770px) {
-    .post-list>li {
-        border-radius: 0;
-        max-width: unset;
-    }
-}
-
-.post-list>li>ul {
-    padding: 0;
-    list-style: none;
-    margin-right: 0.2em;
-}
-
 .post-list>li>ul>li {
     padding: 0.1em 0.5em;
     display: inline;
-    border: 1px solid #9c27b0;
+    color: var(--theme-color);
+    border: 1px solid var(--theme-color);
+    filter: saturate(0.5);
     font-size: 12px;
-    color: #9c27b0;
     cursor: pointer;
     margin-right: 0.3em;
     margin-bottom: 5px;
 }
 
 .post-list>li>ul>li:first-child {
-    margin-right: 0.5em;
+    margin-right: 0.4em;
     border: 1px solid var(--theme-color);
     color: var(--theme-color);
-}
-
-.post-list>li>ul>li:first-child:hover {
-    background: var(--theme-color);
+    filter: unset;
 }
 
 .post-list>li>ul>li:hover {
     color: #fff;
-    background: #9C27B0;
+    background: var(--theme-color);
 }
 
 .post-list>li>h3 {
     position: relative;
     display: inline-block;
     color: var(--theme-color);
-    margin: 0 0 6px 0;
     font-weight: normal;
     padding-bottom: 1px;
+    margin-bottom: 6px;
 }
 
 .post-list>li>p {
-    margin: 0 0 10px 0;
+    margin-bottom: 10px;
 }
 
 .post-list>li>h3::after {
@@ -292,7 +291,7 @@ body {
     bottom: 0;
     left: 0;
     background: var(--theme-color);
-    transition: 0.3s;
+    transition: .3s;
     transform: scaleX(0);
     transform-origin: bottom left;
 }
@@ -310,12 +309,23 @@ body {
     box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
 }
 
+#content.html-body {}
+
+#footer>p {
+    font-size: 12px;
+    line-height: 2.9em;
+    text-align: center;
+}
+
 @media screen and (max-width: 770px) {
     #content.markdown-body {
         margin: 0;
         border-radius: 0;
         max-width: unset;
     }
-}
 
-#content.html-body {}
+    .post-list>li {
+        border-radius: 0;
+        max-width: unset;
+    }
+}
