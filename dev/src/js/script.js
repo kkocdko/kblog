@@ -29,7 +29,7 @@ document.querySelector('#side-bar>.nav').addEventListener('click', () => {
 
 document.querySelector('#open__palette').addEventListener('click', () => {
     let color = prompt('Please input color (use css formal)', 'rgb(0, 150, 136)');
-    document.body.attributeStyleMap.set('--theme-color', color);
+    document.body.style.setProperty('--theme-color', color);
 });
 
 // ==============================
@@ -98,6 +98,7 @@ function loadArticle(fileName) {
         scrollTo(0, 0);
         refreshListener();
         refreshTitle();
+        fixHashScroll();
     }, true);
 }
 
@@ -109,7 +110,14 @@ function loadPage(fileName) {
         contentElement.innerHTML = data;
         refreshListener();
         refreshTitle();
+        fixHashScroll();
     }, true);
+}
+
+function fixHashScroll(selector = location.hash) {
+    if (selector != '') {
+        setTimeout(() => document.querySelector(selector).scrollIntoView());
+    }
 }
 
 function refreshTitle() {
