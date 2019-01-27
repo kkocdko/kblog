@@ -85,7 +85,6 @@ function buildBlog(
 
     fs.recurseSync(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
         if (!filename) return;
-        // it's file
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFileSync(`${distDir}/${relative}`, terser.minify(fileDataStr).code);
         // fs.writeFileSync(`${distDir}/${relative}`, fileDataStr);
@@ -108,7 +107,6 @@ function buildBlog(
 
     fs.recurseSync(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
         if (!filename) return;
-        // it's file
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFileSync(`${distDir}/${relative}`, cleancss.minify(fileDataStr).styles);
     });
