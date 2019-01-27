@@ -1,0 +1,25 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "description": "kkocdko's blog",
+  "main": "index.js",
+  "scripts": {
+    "test": "node build/index.js && cd dist && http-server",
+    "build": "node build/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkocdko/kkocdko.github.io.git"
+  },
+  "author": "kkocdko",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/kkocdko/kkocdko.github.io/issues"
+  },
+  "homepage": "https://github.com/kkocdko/kkocdko.github.io#readme",
+  "dependencies": {
+    "file-system": "^2.2.2",
+    "html-minifier": "^3.5.21",
+    "terser": "^3.14.1"
+  }
+}
