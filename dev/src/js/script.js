@@ -10,7 +10,7 @@ if (!Array.prototype.flat) {
             let arr = [];
             for (let item of this) {
                 if (Array.isArray(item)) {
-                    arr = arr.concat(item.flat(--num));
+                    arr = arr.concat(item.flat(num - 1));
                 } else {
                     arr.push(item);
                 }
@@ -137,26 +137,28 @@ async function loadContent() {
             }
         case 'archive':
             {
-                /**
-                 * Build archive page
-                 */
-                /* 
-                     let archiveHtmlStr = '<ul class="post-list compact">';
-                    for (let i = idArr.length - 1; i > -1; i++) {
-                
-                    }
-                    for (let category of categorySingleArr) {
-                        categoryHtmlStr += `<li id="${category}">`
-                        categoryHtmlStr += `<h3>${category}</h3>`;
-                        for (let i in categoryMemberArr[category].idArr) {
-                            categoryHtmlStr += `<h4 data-sl="/article/${categoryMemberArr[category].idArr[i]}">${categoryMemberArr[category].titleArr[i]}</h4>`;
-                        }
-                        categoryHtmlStr += '</li>';
-                    }
-                    categoryHtmlStr += '</ul>';
-                    categoryHtmlStr += '<title>Categories</title>';
-                    fs.writeFileSync(`${pageSaveDir}/category.html`, categoryHtmlStr);
-                 */
+                let articleInfoArr = await fetchJsonAsync('/src/json/articleinfo.json');
+                let htmlStr = '<ul class="post-list compact">';
+                htmlStr += '<li>';
+                htmlStr += '<h3>Archive</h3>';
+                for (let i = articleInfoArr.length - 1; i > -1; i--) {
+                    let articleInfo = articleInfoArr[i]
+                    htmlStr += (`
+                        <h4 data-sl="/article/${articleInfo.id}">
+                            <span>${articleInfo.date}</span>
+                            ${articleInfo.title}
+                        </h4>
+                    `);
+                }
+                htmlStr += '</li>';
+                htmlStr += '</ul>';
+                htmlStr += '<title>Archive</title>';
+                contentElement.classList.remove('markdown-body');
+                contentElement.classList.add('html-body');
+                contentElement.innerHTML = htmlStr;
+                refreshListener();
+                refreshTitle();
+                fixHashScroll();
             }
             break;
         case 'category':
