@@ -16,6 +16,7 @@ body {
     background: #f8f9fa;
     min-height: 100vh;
     font-family: -apple-system, "Microsoft Yahei", Arial, sans-serif;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
 #loading-indicator {
