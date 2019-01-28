@@ -55,7 +55,7 @@ function buildBlog(
             time: dateMetaArr[1],
             category: readMeta(articleData, 'category')[0],
             tagArr: readMeta(articleData, 'tags'),
-            excerpt: readMeta(articleData, 'excerpt')[0],
+            excerpt: readMeta(articleData, 'excerpt', '\n')[0],
         };
         postInfoArr.push(postInfo);
 
@@ -68,7 +68,7 @@ function buildBlog(
         );
     }
 
-    function readMeta(articleData, head, maxSearchLength = 700) {
+    function readMeta(articleData, head, spliter = ' ', maxSearchLength = 700) {
         articleData = articleData.substr(0, maxSearchLength);
         let line = '';
         try {
@@ -76,7 +76,7 @@ function buildBlog(
         } catch (e) {
             console.error('Can not find this meta');
         }
-        let valueArr = line.split(' ');
+        let valueArr = line.split(spliter);
         return valueArr;
     }
 
@@ -98,10 +98,10 @@ function buildBlog(
             htmlminifier.minify(fileDataStr, {
                 collapseBooleanAttributes: true,
                 removeAttributeQuotes: true,
-                removeComments:true,
+                removeComments: true,
                 collapseWhitespace: true,
-                sortAttributes:true,
-                sortClassName:true
+                sortAttributes: true,
+                sortClassName: true
             })
         );
     });

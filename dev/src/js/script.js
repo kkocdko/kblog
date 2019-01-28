@@ -252,18 +252,10 @@ async function loadContent() {
                 break;
             }
         case 'toy':
-            {
-                await loadMdPage('/src/page/toy.md');
-                break;
-            }
         case 'about':
-            {
-                await loadMdPage('/src/page/about.md');
-                break;
-            }
         case 'callingcard':
             {
-                await loadMdPage('/src/page/callingcard.md');
+                await loadMdPage(`/src/page/${firstPath}.md`);
                 break;
             }
         default:
