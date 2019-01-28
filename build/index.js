@@ -9,6 +9,7 @@
  * 
  * Matters:
  * 1. No CRLF support
+ * 2. Absolute path only
  */
 'use strict';
 
