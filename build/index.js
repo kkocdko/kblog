@@ -104,6 +104,7 @@ function buildBlog(
                 sortClassName: true
             })
         );
+        // fs.writeFileSync(`${distDir}/${relative}`, fileDataStr);
     });
 
     fs.recurseSync(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
@@ -112,7 +113,7 @@ function buildBlog(
         fs.writeFileSync(`${distDir}/${relative}`, cleancss.minify(fileDataStr).styles);
     });
 
-    fs.recurseSync(devDir, ['*.ico', '*.svg', 'toy/**/*.*'], (filepath, relative, filename) => {
+    fs.recurseSync(devDir, ['*.ico', '*.txt', '*.svg', 'toy/**/*.*'], (filepath, relative, filename) => {
         if (!filename) return;
         fs.copyFileSync(filepath, `${distDir}/${relative}`);
     });

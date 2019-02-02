@@ -143,12 +143,16 @@ async function loadContent() {
                 htmlStr += '<h3>Archive</h3>';
                 for (let i = articleInfoArr.length - 1; i > -1; i--) {
                     let articleInfo = articleInfoArr[i]
-                    htmlStr += (`
-                        <h4 data-sl="/article/${articleInfo.id}">
-                            <span>${articleInfo.date}</span>
-                            ${articleInfo.title}
-                        </h4>
-                    `);
+                    //                 // Source
+                    //                     htmlStr += (`
+                    //                         <h4 data-sl="/article/${articleInfo.id}">
+                    //                             <span>${articleInfo.date}</span>
+                    //                             ${articleInfo.title}
+                    //                         </h4>
+                    //                     `);
+
+                    // Remove spaces
+                    htmlStr += `<h4 data-sl="/article/${articleInfo.id}"><span>${articleInfo.date}</span>${articleInfo.title}</h4>`;
                 }
                 htmlStr += '</li>';
                 htmlStr += '</ul>';
