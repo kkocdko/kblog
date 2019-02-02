@@ -314,3 +314,29 @@ function refreshListener() {
         };
     }
 }
+
+/*
+// https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.3.0/Tween.js
+function scrollToTop(remainingLength = scrollY, time = 500, tickNumber = 0, timeLast = Date.now()) {
+    tickNumber++;
+    remainingLength -= 0;
+    let cubic = k => k * (2 - k);
+    let timeNow = Date.now();
+    let timeDiff = timeNow - timeLast;
+    timeDiff = (timeDiff > 16) ? timeDiff : 16;
+    let tick = time / timeDiff;
+    let multipleEveryTick = 1 / tick;
+    if (tickNumber < tick) {
+        requestAnimationFrame(() => scrollToTop(remainingLength, time, tickNumber, timeNow));
+        let multiple = cubic(multipleEveryTick * tickNumber);
+        let scrollLength = remainingLength * (1 - multiple);
+        scrollTo(0, scrollLength);
+    } else {
+        console.timeEnd()
+    }
+}
+
+console.time();
+scrollToTop();
+
+*/
