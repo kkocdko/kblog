@@ -1,7 +1,7 @@
 /*!
  * kkocdko's blog builder
  * 
- * Version: 20190127
+ * Version: 20190216
  * 
  * Author: kkocdko
  * 
@@ -20,10 +20,9 @@ const CleanCss = require('clean-css');
 const cleancss = new CleanCss({});
 
 function buildBlog(
-    projectDir = 'E:/Code/Repos/Web/Blog'
+    projectDir = 'E:/Code/Repos/Web/Blog',
+    developMode = false
 ) {
-    // ===============================
-
     const imageSrcDir = `${projectDir}/_img`;
     const articleSrcDir = `${projectDir}/_post`;
     const pageSrcDir = `${projectDir}/_page`;
@@ -45,7 +44,8 @@ function buildBlog(
     // ==============================
 
     let postInfoArr = [];
-    for (let articleFile of fs.readdirSync(articleSrcDir)) {
+    let articleFileArr = fs.readdirSync(articleSrcDir);
+    for (let articleFile of articleFileArr) {
         let articleData = fs.readFileSync(`${articleSrcDir}/${articleFile}`).toString();
         let dateMetaArr = readMeta(articleData, 'date');
         let postInfo = {
@@ -62,7 +62,7 @@ function buildBlog(
         /**
          * Write md file
          */
-        fs.writeFileSync(`${articleSaveDir}/${postInfo.id}.md`,
+        fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
             articleData.replace(/---(.|\n)+?---\n*/, '') +
             `\n<title>${postInfo.title}</title>\n`
         );
@@ -80,21 +80,26 @@ function buildBlog(
         return valueArr;
     }
 
-    fs.writeFileSync(`${jsonSaveDir}/articleinfo.json`, JSON.stringify(postInfoArr));
+    fs.writeFile(`${jsonSaveDir}/articleinfo.json`, JSON.stringify(postInfoArr));
 
     // ==============================
 
-    fs.recurseSync(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
+    fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
-        fs.writeFileSync(`${distDir}/${relative}`, terser.minify(fileDataStr).code);
-        // fs.writeFileSync(`${distDir}/${relative}`, fileDataStr);
+        fs.writeFile(`${distDir}/${relative}`,
+            (developMode) ?
+            fileDataStr :
+            terser.minify(fileDataStr).code
+        );
     });
 
-    fs.recurseSync(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
+    fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
-        fs.writeFileSync(`${distDir}/${relative}`,
+        fs.writeFile(`${distDir}/${relative}`,
+            (developMode) ?
+            fileDataStr :
             htmlminifier.minify(fileDataStr, {
                 collapseBooleanAttributes: true,
                 removeAttributeQuotes: true,
@@ -104,32 +109,39 @@ function buildBlog(
                 sortClassName: true
             })
         );
-        // fs.writeFileSync(`${distDir}/${relative}`, fileDataStr);
     });
 
-    fs.recurseSync(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
+    fs.recurse(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
-        fs.writeFileSync(`${distDir}/${relative}`, cleancss.minify(fileDataStr).styles);
+        fs.writeFile(`${distDir}/${relative}`,
+            (developMode) ?
+            fileDataStr :
+            cleancss.minify(fileDataStr).styles
+        );
+
     });
 
-    fs.recurseSync(devDir, ['*.ico', '*.txt', '*.svg', 'toy/**/*.*'], (filepath, relative, filename) => {
+    fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', 'toy/**/*.*'], (filepath, relative, filename) => {
         if (!filename) return;
-        fs.copyFileSync(filepath, `${distDir}/${relative}`);
+        fs.copyFile(filepath, `${distDir}/${relative}`);
     });
 
-    fs.recurseSync(pageSrcDir, ['*.*'], (filepath, relative, filename) => {
+    fs.recurse(pageSrcDir, ['*.*'], (filepath, relative, filename) => {
         if (!filename) return;
-        fs.copyFileSync(filepath, `${pageSaveDir}/${relative}`);
+        fs.copyFile(filepath, `${pageSaveDir}/${relative}`);
     });
 
-    fs.recurseSync(imageSrcDir, ['*.*'], (filepath, relative, filename) => {
+    fs.recurse(imageSrcDir, ['*.*'], (filepath, relative, filename) => {
         if (!filename) return;
-        fs.copyFileSync(filepath, `${imageSaveDir}/${relative}`);
+        fs.copyFile(filepath, `${imageSaveDir}/${relative}`);
     });
 }
 
 
 console.time('build');
 buildBlog();
-console.timeEnd('build');
+
+process.on('exit', () => {
+    console.timeEnd('build');
+});
