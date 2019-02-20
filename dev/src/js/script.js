@@ -4,21 +4,13 @@
 
 // ==============================
 
+/**
+ * Array.prototype.flat polyfill
+ * Imperfect, unable to set recursion's depth
+ */
 if (!Array.prototype.flat) {
-    Array.prototype.flat = function(num = 1) {
-        if (Number(num) > 0) {
-            let arr = [];
-            for (let item of this) {
-                if (Array.isArray(item)) {
-                    arr = arr.concat(item.flat(num - 1));
-                } else {
-                    arr.push(item);
-                }
-            }
-            return arr;
-        } else {
-            return this;
-        }
+    Array.prototype.flat = function(deep = Infinity) {
+        return this.reduce((result, item) => result.concat(Array.isArray(item) ? item.flat() : item), []);
     }
 }
 
@@ -28,8 +20,8 @@ const defaultTitle = 'kkocdko\'s blog';
 const contentElement = document.querySelector('#content');
 const loadingIndicator = document.querySelector('#loading-indicator');
 
-loadContent();
-window.onpopstate = loadContent;
+loadContentAsync();
+addEventListener('popstate', loadContentAsync);
 
 // ==============================
 
@@ -52,33 +44,24 @@ document.querySelector('#side-bar>.nav').addEventListener('click', () => {
 });
 
 document.querySelector('#open__palette').addEventListener('click', () => {
-    let color = prompt('Please input color (use css formal)', 'rgb(0, 150, 136)');
-    document.body.style.setProperty('--theme-color', color);
+    let color = prompt('Please input color (use css grammar)', 'rgb(0, 150, 136)');
+    if (color) {
+        document.body.style.setProperty('--theme-color', color);
+        document.querySelector('[name=theme-color]').content = color;
+    }
 });
 
 // ==============================
 
-async function loadContent() {
-    console.time('load');
+async function loadContentAsync() {
     loadingIndicator.classList.add('in');
-
     let pathName = location.pathname;
     let firstPath = pathName.split('/')[1];
-    async function loadMdPage(filePath) {
-        let articleData = await fetchTextAsync(filePath);
-        contentElement.classList.remove('html-body');
-        contentElement.classList.add('markdown-body');
-        contentElement.innerHTML = marked(articleData);
-        scrollTo(0, 0);
-        refreshListener();
-        refreshTitle();
-        fixHashScroll();
-    }
     switch (firstPath) {
         case 'article':
             {
                 let articleId = pathName.split('article/')[1].split('/')[0];
-                await loadMdPage(`/src/article/${articleId}.md`);
+                await loadMdPageAsync(`/src/article/${articleId}.md`);
                 break;
             }
         case 'home':
@@ -88,7 +71,7 @@ async function loadContent() {
                 let perPage = 10; // The article quantity of every page
                 let pageNumberMax = Math.ceil(articleInfoArr.length / perPage);
                 let htmlStr = '<ul class="post-list">';
-                for (let i = articleInfoArr.length - 1 - (curPageNumber - 1) * perPage, min = i - perPage; i > min && i > -1; i--) {
+                for (let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * perPage), min = i - perPage; i > min && i > -1; i--) {
                     let articleInfo = articleInfoArr[i];
                     let tagListStr = '';
                     for (let tag of articleInfo.tagArr) {
@@ -127,12 +110,9 @@ async function loadContent() {
                 htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`;
 
                 htmlStr += `<title>Home: ${curPageNumber}</title>`;
-                contentElement.classList.remove('markdown-body');
-                contentElement.classList.add('html-body');
+                setContentType('html');
                 contentElement.innerHTML = htmlStr;
-                refreshListener();
-                refreshTitle();
-                fixHashScroll();
+                afterContentLoads();
                 break;
             }
         case 'archive':
@@ -157,12 +137,9 @@ async function loadContent() {
                 htmlStr += '</li>';
                 htmlStr += '</ul>';
                 htmlStr += '<title>Archive</title>';
-                contentElement.classList.remove('markdown-body');
-                contentElement.classList.add('html-body');
+                setContentType('html');
                 contentElement.innerHTML = htmlStr;
-                refreshListener();
-                refreshTitle();
-                fixHashScroll();
+                afterContentLoads();
             }
             break;
         case 'category':
@@ -200,12 +177,9 @@ async function loadContent() {
                 }
                 htmlStr += '</ul>';
                 htmlStr += '<title>Categories</title>';
-                contentElement.classList.remove('markdown-body');
-                contentElement.classList.add('html-body');
+                setContentType('html');
                 contentElement.innerHTML = htmlStr;
-                refreshListener();
-                refreshTitle();
-                fixHashScroll();
+                afterContentLoads();
             }
             break;
         case 'tag':
@@ -247,30 +221,24 @@ async function loadContent() {
                 }
                 htmlStr += '</ul>';
                 htmlStr += '<title>Tags</title>';
-                contentElement.classList.remove('markdown-body');
-                contentElement.classList.add('html-body');
+                setContentType('html');
                 contentElement.innerHTML = htmlStr;
-                refreshListener();
-                refreshTitle();
-                fixHashScroll();
+                afterContentLoads();
                 break;
             }
         case 'toy':
         case 'about':
         case 'callingcard':
             {
-                await loadMdPage(`/src/page/${firstPath}.md`);
+                await loadMdPageAsync(`/src/page/${firstPath}.md`);
                 break;
             }
         default:
             {
-                await loadMdPage('/src/page/404.md');
+                await loadMdPageAsync('/src/page/404.md');
                 break;
             }
-            break;
     }
-
-    console.timeEnd('load');
     loadingIndicator.classList.remove('in');
 }
 
@@ -289,6 +257,33 @@ async function fetchJsonAsync(url) {
         });
     });
 };
+
+async function loadMdPageAsync(filePath) {
+    let articleData = await fetchTextAsync(filePath);
+    setContentType('markdown');
+    contentElement.innerHTML = marked(articleData);
+    scrollTo(0, 0);
+    afterContentLoads();
+}
+
+function setContentType(type) {
+    switch (type) {
+        case 'html':
+            contentElement.classList.remove('markdown-body');
+            contentElement.classList.add('html-body');
+            break;
+        case 'markdown':
+            contentElement.classList.remove('html-body');
+            contentElement.classList.add('markdown-body');
+            break;
+    }
+}
+
+function afterContentLoads() {
+    refreshListener();
+    refreshTitle();
+    fixHashScroll();
+}
 
 function fixHashScroll(selector = location.hash) {
     if (selector != '') {
@@ -310,7 +305,7 @@ function refreshListener() {
     for (let spaLinkElement of spaLinkElementArr) {
         spaLinkElement.onclick = function() {
             history.pushState(null, null, this.dataset.sl);
-            loadContent();
+            loadContentAsync();
         };
     }
 }
