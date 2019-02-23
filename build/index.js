@@ -1,7 +1,7 @@
 /*!
  * kkocdko's blog builder
  * 
- * Version: 20190216
+ * Version: 20190223
  * 
  * Author: kkocdko
  * 
@@ -15,9 +15,8 @@
 
 const fs = require('file-system'); // No native fs
 const terser = require('terser');
-const htmlminifier = require('html-minifier');
-const CleanCss = require('clean-css');
-const cleancss = new CleanCss({});
+// const htmlminifier = require('html-minifier');
+const cleancss = new(require('clean-css'))({});
 
 function buildBlog(
     projectDir = 'E:/Code/Repos/Web/Blog',
@@ -39,7 +38,7 @@ function buildBlog(
 
     try {
         fs.rmdirSync(distDir);
-    } catch (e) {}
+    } catch {}
 
     // ==============================
 
@@ -84,30 +83,21 @@ function buildBlog(
 
     // ==============================
 
-    fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
-        if (!filename) return;
-        let fileDataStr = fs.readFileSync(filepath).toString();
-        fs.writeFile(`${distDir}/${relative}`,
-            (developMode) ?
-            fileDataStr :
-            terser.minify(fileDataStr).code
-        );
-    });
-
     fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
             (developMode) ?
             fileDataStr :
-            htmlminifier.minify(fileDataStr, {
-                collapseBooleanAttributes: true,
-                removeAttributeQuotes: true,
-                removeComments: true,
-                collapseWhitespace: true,
-                sortAttributes: true,
-                sortClassName: true
-            })
+            fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // No inline css or js support!
+            //             htmlminifier.minify(fileDataStr, {
+            //                 collapseBooleanAttributes: true,
+            //                 removeAttributeQuotes: true,
+            //                 removeComments: true,
+            //                 collapseWhitespace: true,
+            //                 sortAttributes: true,
+            //                 sortClassName: true
+            //             })
         );
     });
 
@@ -115,11 +105,20 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode) ?
+            (developMode || filename.indexOf('.min.') != -1) ? // Filename has minimized mark
             fileDataStr :
             cleancss.minify(fileDataStr).styles
         );
+    });
 
+    fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
+        if (!filename) return;
+        let fileDataStr = fs.readFileSync(filepath).toString();
+        fs.writeFile(`${distDir}/${relative}`,
+            (developMode || filename.indexOf('.min.') != -1) ? // Filename has minimized mark
+            fileDataStr :
+            terser.minify(fileDataStr).code
+        );
     });
 
     fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', 'toy/**/*.*'], (filepath, relative, filename) => {
@@ -138,10 +137,6 @@ function buildBlog(
     });
 }
 
-
 console.time('build');
 buildBlog();
-
-process.on('exit', () => {
-    console.timeEnd('build');
-});
+process.on('exit', () => console.timeEnd('build'));
