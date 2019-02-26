@@ -15,7 +15,6 @@
 
 const fs = require('file-system'); // No native fs
 const terser = require('terser');
-// const htmlminifier = require('html-minifier');
 const cleancss = new(require('clean-css'))({});
 
 function buildBlog(
@@ -67,19 +66,19 @@ function buildBlog(
         );
     }
 
+    fs.writeFile(`${jsonSaveDir}/articleinfo.json`, JSON.stringify(postInfoArr));
+
     function readMeta(articleData, head, spliter = ' ', maxSearchLength = 700) {
         articleData = articleData.substr(0, maxSearchLength);
         let line = '';
         try {
-            line = articleData.match(`\\n${head}\\:\\s([^\\n]*)`)[1]; // Whole line
+            line = articleData.match(`\\n${head}:([^\\n]*)`)[1].trim(); // Whole line
         } catch (e) {
             console.error('Can not find this meta');
         }
         let valueArr = line.split(spliter);
         return valueArr;
     }
-
-    fs.writeFile(`${jsonSaveDir}/articleinfo.json`, JSON.stringify(postInfoArr));
 
     // ==============================
 
@@ -90,14 +89,6 @@ function buildBlog(
             (developMode) ?
             fileDataStr :
             fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // No inline css or js support!
-            //             htmlminifier.minify(fileDataStr, {
-            //                 collapseBooleanAttributes: true,
-            //                 removeAttributeQuotes: true,
-            //                 removeComments: true,
-            //                 collapseWhitespace: true,
-            //                 sortAttributes: true,
-            //                 sortClassName: true
-            //             })
         );
     });
 
