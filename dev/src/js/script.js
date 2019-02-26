@@ -10,30 +10,32 @@
  */
 if (!Array.prototype.flat) {
     Array.prototype.flat = function(deep = Infinity) {
-        return this.reduce((result, item) => result.concat(Array.isArray(item) ? item.flat() : item), []);
+        return this.reduce((result, item) => {
+            result.concat(Array.isArray(item) ? item.flat() : item);
+        }, []);
     }
 }
 
 // ==============================
 
-const defaultTitle = 'kkocdko\'s blog';
-const contentElement = document.querySelector('#content');
-const loadingIndicator = document.querySelector('#loading-indicator');
+let defaultTitle = 'kkocdko\'s blog';
+let contentElement = document.querySelector('#content');
+let loadingIndicator = document.querySelector('#loading-indicator');
 
 loadContentAsync();
 addEventListener('popstate', loadContentAsync);
 
 // ==============================
 
-const sideBar = document.querySelector('#side-bar');
-const mask = document.querySelector('#mask');
+let sideBar = document.querySelector('#side-bar');
+let mask = document.querySelector('#mask');
 
 mask.addEventListener('click', () => {
     sideBar.classList.remove('in');
     mask.classList.remove('in');
 });
 
-document.querySelector('#open__side-bar').addEventListener('click', () => {
+document.querySelector('#js-open-side-bar').addEventListener('click', () => {
     sideBar.classList.add('in');
     mask.classList.add('in');
 });
@@ -43,13 +45,26 @@ document.querySelector('#side-bar>.nav').addEventListener('click', () => {
     mask.classList.remove('in');
 });
 
-document.querySelector('#open__palette').addEventListener('click', () => {
+document.querySelector('#js-open-palette').addEventListener('click', () => {
     let color = prompt('Please input color (use css grammar)', 'rgb(0, 150, 136)');
     if (color) {
         document.body.style.setProperty('--theme-color', color);
         document.querySelector('[name=theme-color]').content = color;
     }
 });
+
+addEventListener('scroll', (() => {
+    let originScrollY = scrollY;
+    let topBar = document.querySelector('#top-bar');
+    return () => {
+        let relativeScrollY = scrollY - originScrollY;
+        originScrollY += relativeScrollY;
+
+        topBar.style.transform = `translateY(${relativeScrollY > 0 ? -100 : 0}%)`;
+    }
+})());
+
+document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop());
 
 // ==============================
 
@@ -201,7 +216,6 @@ async function loadContentAsync() {
                     tagMemberArr[tag].titleArr = [];
                 }
 
-
                 for (let articleInfo of articleInfoArr) {
                     for (let tag of articleInfo.tagArr) {
                         tagMemberArr[tag].idArr.push(articleInfo.id);
@@ -293,11 +307,9 @@ function fixHashScroll(selector = location.hash) {
 
 function refreshTitle() {
     let titleElementArr = document.querySelectorAll('title');
-    if (titleElementArr.length > 1) {
-        document.title = titleElementArr[titleElementArr.length - 1].innerText + ' - ' + defaultTitle;
-    } else {
-        document.title = defaultTitle;
-    }
+    document.title = titleElementArr.length > 1 ?
+        titleElementArr[titleElementArr.length - 1].innerText + ' - ' + defaultTitle :
+        defaultTitle;
 }
 
 function refreshListener() {
@@ -310,28 +322,46 @@ function refreshListener() {
     }
 }
 
-/*
-// https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.3.0/Tween.js
-function scrollToTop(remainingLength = scrollY, time = 500, tickNumber = 0, timeLast = Date.now()) {
-    tickNumber++;
-    remainingLength -= 0;
-    let cubic = k => k * (2 - k);
-    let timeNow = Date.now();
-    let timeDiff = timeNow - timeLast;
-    timeDiff = (timeDiff > 16) ? timeDiff : 16;
-    let tick = time / timeDiff;
-    let multipleEveryTick = 1 / tick;
-    if (tickNumber < tick) {
-        requestAnimationFrame(() => scrollToTop(remainingLength, time, tickNumber, timeNow));
-        let multiple = cubic(multipleEveryTick * tickNumber);
-        let scrollLength = remainingLength * (1 - multiple);
-        scrollTo(0, scrollLength);
-    } else {
-        console.timeEnd()
-    }
+function scrollToTop(duration = 750) {
+    // easeInOutCubic
+    let easeingFunction = t => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+
+    let originScrollY = scrollY;
+
+    // ===== For adaptive fps
+    // let lastTime = Date.now();
+
+    let frameTime = 16;
+    let frameCurrent = 0;
+
+    // ===== For adaptive fps
+    // let frameNumber = () => duration / frameTime;
+    // let timeMultiple = () => frameCurrent / frameNumber();
+    // let scrollMultiple = () => 1 - easeingFunction(timeMultiple());
+    // let targetScrollY = () => originScrollY * scrollMultiple();
+
+    // ===== For fixed fps
+    let frameNumber = duration / frameTime;
+    let timeMultiple = () => frameCurrent / frameNumber;
+    let scrollMultiple = () => 1 - easeingFunction(timeMultiple());
+    let targetScrollY = () => originScrollY * scrollMultiple();
+
+    let _scrollToTop = () => {
+        // ===== For adaptive fps
+        // if (frameCurrent < frameNumber()) {
+
+        // ===== For fixed fps
+        if (frameCurrent < frameNumber) {
+            frameCurrent++;
+
+            // ===== For adaptive fps
+            // let nowTime = Date.now();
+            // frameTime = nowTime - lastTime;
+            // lastTime = nowTime;
+
+            requestAnimationFrame(_scrollToTop);
+            scrollTo(0, targetScrollY());
+        }
+    };
+    _scrollToTop();
 }
-
-console.time();
-scrollToTop();
-
-*/
