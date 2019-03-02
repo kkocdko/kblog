@@ -98,15 +98,15 @@ async function loadContentAsync() {
                     //                         <li>
                     //                             <h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3>
                     //                             <p>${articleInfo.excerpt}</p>
-                    //                             <ul class="footer">
+                    //                             <ul class="post-footer">
                     //                                 <li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>
                     //                                 ${tagListStr}
                     //                             </ul>
                     //                         </li>
                     //                     `);
 
-                    // Remove spaces
-                    htmlStr += `<li><h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3><p>${articleInfo.excerpt}</p><ul class="footer"><li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>${tagListStr}</ul></li>`;
+                    // Compact
+                    htmlStr += `<li><h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3><p>${articleInfo.excerpt}</p><ul class="post-footer"><li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>${tagListStr}</ul></li>`;
 
                 }
                 htmlStr += '</ul>';
@@ -121,7 +121,7 @@ async function loadContentAsync() {
                 //                     </ul>
                 //                 `);
 
-                // Remove spaces
+                // Compact
                 htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`;
 
                 htmlStr += `<title>Home: ${curPageNumber}</title>`;
@@ -146,7 +146,7 @@ async function loadContentAsync() {
                     //                         </h4>
                     //                     `);
 
-                    // Remove spaces
+                    // Compact
                     htmlStr += `<h4 data-sl="/article/${articleInfo.id}"><span>${articleInfo.date}</span>${articleInfo.title}</h4>`;
                 }
                 htmlStr += '</li>';
@@ -300,8 +300,11 @@ function afterContentLoads() {
 }
 
 function fixHashScroll(selector = location.hash) {
+//     if (selector != '') {
+//         setTimeout(() => document.querySelector(selector).scrollIntoView());
+//     }
     if (selector != '') {
-        setTimeout(() => document.querySelector(selector).scrollIntoView());
+        setTimeout(document.querySelector(selector).scrollIntoView);
     }
 }
 
@@ -314,8 +317,8 @@ function refreshTitle() {
 
 function refreshListener() {
     let spaLinkElementArr = document.querySelectorAll('[data-sl]');
-    for (let spaLinkElement of spaLinkElementArr) {
-        spaLinkElement.onclick = function() {
+    for (let item of spaLinkElementArr) {
+        item.onclick = function() {
             history.pushState(null, null, this.dataset.sl);
             loadContentAsync();
         };
@@ -323,44 +326,17 @@ function refreshListener() {
 }
 
 function scrollToTop(duration = 750) {
-    // easeInOutCubic
     let easeingFunction = t => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-
     let originScrollY = scrollY;
-
-    // ===== For adaptive fps
-    // let lastTime = Date.now();
-
-    let frameTime = 16;
-    let frameCurrent = 0;
-
-    // ===== For adaptive fps
-    // let frameNumber = () => duration / frameTime;
-    // let timeMultiple = () => frameCurrent / frameNumber();
-    // let scrollMultiple = () => 1 - easeingFunction(timeMultiple());
-    // let targetScrollY = () => originScrollY * scrollMultiple();
-
-    // ===== For fixed fps
-    let frameNumber = duration / frameTime;
-    let timeMultiple = () => frameCurrent / frameNumber;
-    let scrollMultiple = () => 1 - easeingFunction(timeMultiple());
-    let targetScrollY = () => originScrollY * scrollMultiple();
-
+    let originTime = Date.now();
+    let passedTime = 0;
     let _scrollToTop = () => {
-        // ===== For adaptive fps
-        // if (frameCurrent < frameNumber()) {
-
-        // ===== For fixed fps
-        if (frameCurrent < frameNumber) {
-            frameCurrent++;
-
-            // ===== For adaptive fps
-            // let nowTime = Date.now();
-            // frameTime = nowTime - lastTime;
-            // lastTime = nowTime;
-
+        if (passedTime < duration) {
+            passedTime = Date.now() - originTime;
             requestAnimationFrame(_scrollToTop);
-            scrollTo(0, targetScrollY());
+            scrollTo({
+                top: originScrollY * (1 - easeingFunction(passedTime / duration))
+            });
         }
     };
     _scrollToTop();
