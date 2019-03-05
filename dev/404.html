@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
@@ -12,9 +13,10 @@
         <link rel="apple-touch-icon" href="/favicon.svg">
         <title>kkocdko's blog</title>
     </head>
+
     <body>
         <!-- Icons are from [Font-Awesome](https://github.com/FortAwesome/Font-Awesome) -->
-        <div id="side-bar">
+        <aside>
             <div class="brand">
                 <i id="js-open-palette">
                     <svg viewBox="0 0 512 512">
@@ -82,8 +84,8 @@
                     <span>Callingcard</span>
                 </li>
             </ul>
-        </div>
-        <div id="top-bar">
+        </aside>
+        <header>
             <i id="js-open-side-bar" class="icon">
                 <svg viewBox="0 0 448 512">
                     <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"></path>
@@ -95,18 +97,19 @@
                     <path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"></path>
                 </svg>
             </i>
-        </div>
+        </header>
         <div id="loading-indicator">
             <i></i>
         </div>
         <div id="content"></div>
-        <div id="footer">
+        <footer>
             <p>Run on Github Page.</p>
-        </div>
+        </footer>
         <div id="mask"></div>
         <script src="//lib.baomitu.com/marked/0.6.0/marked.min.js"></script>
         <!-- <script src="/src/js/marked.min.js"></script> -->
         <!-- <script src="//wechatfe.github.io/vconsole/lib/vconsole.min.js"></script> -->
         <script src="/src/js/script.js"></script>
     </body>
+
 </html>
