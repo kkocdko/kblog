@@ -128,6 +128,6 @@ function buildBlog(
     });
 }
 
-console.time('build');
+console.time('Build');
 buildBlog();
-process.on('exit', () => console.timeEnd('build'));
+process.on('exit', () => console.timeEnd('Build'));
