@@ -30,23 +30,30 @@ addEventListener('popstate', loadContentAsync);
 
 // ==============================
 
-let sideBar = document.querySelector('aside');
-let mask = document.querySelector('#mask');
+let sideBar = (() => {
+    let sideBarElement = document.querySelector('aside');
+    let maskElement = document.querySelector('#mask');
+    return {
+        show: () => {
+            sideBarElement.classList.add('in');
+            maskElement.classList.add('in');
+        },
+        hide: () => {
+            sideBarElement.classList.remove('in');
+            maskElement.classList.remove('in');
+        }
+    };
+})();
 
-mask.addEventListener('click', () => {
-    sideBar.classList.remove('in');
-    mask.classList.remove('in');
-});
+document.querySelector('#js-open-side-bar').addEventListener('click', sideBar.show);
 
-document.querySelector('#js-open-side-bar').addEventListener('click', () => {
-    sideBar.classList.add('in');
-    mask.classList.add('in');
-});
+mask.addEventListener('click', sideBar.hide);
 
-document.querySelector('aside>.nav').addEventListener('click', () => {
-    sideBar.classList.remove('in');
-    mask.classList.remove('in');
-});
+mask.addEventListener('touchstart', sideBar.hide, { passive: true });
+
+document.querySelector('aside>.nav').addEventListener('click', sideBar.hide);
+
+document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop());
 
 document.querySelector('#js-open-palette').addEventListener('click', () => {
     let color = prompt('Please input color (use css grammar)', 'rgb(156, 39, 176)');
@@ -71,8 +78,6 @@ addEventListener('scroll', (() => {
     }
 })());
 
-document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop());
-
 // ==============================
 
 async function loadContentAsync() {
@@ -93,7 +98,7 @@ async function loadContentAsync() {
                 let curPageNumber = Number(pathName.split('home/')[1].split('/')[0]);
                 let perPage = 10; // The article quantity of every page
                 let pageNumberMax = Math.ceil(articleInfoArr.length / perPage);
-                let htmlStr = '<ul class="post-list">';
+                let innerHTML = '<ul class="posts-list">';
                 for (let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * perPage), min = i - perPage; i > min && i > -1; i--) {
                     let articleInfo = articleInfoArr[i];
                     let tagListStr = '';
@@ -102,7 +107,7 @@ async function loadContentAsync() {
                     }
 
                     // Source
-                    // htmlStr += (`
+                    // innerHTML += (`
                     //     <li>
                     //         <h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3>
                     //         <p>${articleInfo.excerpt}</p>
@@ -114,13 +119,13 @@ async function loadContentAsync() {
                     // `);
 
                     // Compact
-                    htmlStr += `<li><h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3><p>${articleInfo.excerpt}</p><ul class="post-footer"><li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>${tagListStr}</ul></li>`;
+                    innerHTML += `<li><h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3><p>${articleInfo.excerpt}</p><ul class="post-footer"><li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>${tagListStr}</ul></li>`;
 
                 }
-                htmlStr += '</ul>';
+                innerHTML += '</ul>';
 
                 // Source
-                // htmlStr += (`
+                // innerHTML += (`
                 //     <ul class="page-number-nav">
                 //         <li data-sl="/home/1">[◀</li>
                 //         <li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li>
@@ -130,23 +135,23 @@ async function loadContentAsync() {
                 // `);
 
                 // Compact
-                htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`;
+                innerHTML += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`;
 
-                htmlStr += `<title>Home: ${curPageNumber}</title>`;
-                contentElement.innerHTML = htmlStr;
+                innerHTML += `<title>Home: ${curPageNumber}</title>`;
+                contentElement.innerHTML = innerHTML;
                 afterContentLoads();
                 break;
             }
         case 'archive':
             {
                 let articleInfoArr = await fetchJsonAsync('/src/json/articleinfo.json');
-                let htmlStr = '<ul class="post-list compact">';
-                htmlStr += '<li>';
-                htmlStr += '<h2>Archive</h2>';
+                let innerHTML = '<ul class="posts-list compact">';
+                innerHTML += '<li>';
+                innerHTML += '<h2>Archive</h2>';
                 for (let i = articleInfoArr.length - 1; i > -1; i--) {
                     let articleInfo = articleInfoArr[i]
                     // Source
-                    // htmlStr += (`
+                    // innerHTML += (`
                     //     <h4 data-sl="/article/${articleInfo.id}">
                     //         <span>${articleInfo.date}</span>
                     //          ${articleInfo.title}
@@ -154,12 +159,12 @@ async function loadContentAsync() {
                     // `);
 
                     // Compact
-                    htmlStr += `<h4 data-sl="/article/${articleInfo.id}"><span>${articleInfo.date}</span>${articleInfo.title}</h4>`;
+                    innerHTML += `<h4 data-sl="/article/${articleInfo.id}"><span>${articleInfo.date}</span>${articleInfo.title}</h4>`;
                 }
-                htmlStr += '</li>';
-                htmlStr += '</ul>';
-                htmlStr += '<title>Archive</title>';
-                contentElement.innerHTML = htmlStr;
+                innerHTML += '</li>';
+                innerHTML += '</ul>';
+                innerHTML += '<title>Archive</title>';
+                contentElement.innerHTML = innerHTML;
                 afterContentLoads();
             }
             break;
@@ -186,19 +191,19 @@ async function loadContentAsync() {
                     categoryMember.titleArr.push(articleInfo.title);
                 }
 
-                let htmlStr = '<ul class="post-list compact">';
+                let innerHTML = '<ul class="posts-list compact">';
                 for (let category of categorySingleArr) {
-                    htmlStr += `<li id="${category}">`
-                    htmlStr += `<h2>${category}</h2>`;
+                    innerHTML += `<li id="${category}">`
+                    innerHTML += `<h2>${category}</h2>`;
                     let categoryMember = categoryMemberArr[category];
                     for (let i = 0, l = categoryMember.idArr.length; i < l; i++) {
-                        htmlStr += `<h4 data-sl="/article/${categoryMember.idArr[i]}">${categoryMember.titleArr[i]}</h4>`;
+                        innerHTML += `<h4 data-sl="/article/${categoryMember.idArr[i]}">${categoryMember.titleArr[i]}</h4>`;
                     }
-                    htmlStr += '</li>';
+                    innerHTML += '</li>';
                 }
-                htmlStr += '</ul>';
-                htmlStr += '<title>Categories</title>';
-                contentElement.innerHTML = htmlStr;
+                innerHTML += '</ul>';
+                innerHTML += '<title>Categories</title>';
+                contentElement.innerHTML = innerHTML;
                 afterContentLoads();
             }
             break;
@@ -228,19 +233,19 @@ async function loadContentAsync() {
                     }
                 }
 
-                let htmlStr = '<ul class="post-list compact">';
+                let innerHTML = '<ul class="posts-list compact">';
                 for (let tag of tagSingleArr) {
-                    htmlStr += `<li id="${tag}">`
-                    htmlStr += `<h2>${tag}</h2>`;
+                    innerHTML += `<li id="${tag}">`
+                    innerHTML += `<h2>${tag}</h2>`;
                     let tagMember = tagMemberArr[tag];
                     for (let i = 0, l = tagMember.idArr.length; i < l; i++) {
-                        htmlStr += `<h4 data-sl="/article/${tagMember.idArr[i]}">${tagMember.titleArr[i]}</h4>`;
+                        innerHTML += `<h4 data-sl="/article/${tagMember.idArr[i]}">${tagMember.titleArr[i]}</h4>`;
                     }
-                    htmlStr += '</li>';
+                    innerHTML += '</li>';
                 }
-                htmlStr += '</ul>';
-                htmlStr += '<title>Tags</title>';
-                contentElement.innerHTML = htmlStr;
+                innerHTML += '</ul>';
+                innerHTML += '<title>Tags</title>';
+                contentElement.innerHTML = innerHTML;
                 afterContentLoads();
                 break;
             }
@@ -278,10 +283,10 @@ async function fetchJsonAsync(url) {
 
 async function loadMdPageAsync(filePath) {
     let articleData = await fetchTextAsync(filePath);
-    let htmlStr = '<article class=markdown-body>';
-    htmlStr += marked(articleData);
-    htmlStr += '</article>';
-    contentElement.innerHTML = htmlStr;
+    let innerHTML = '<article class=markdown-body>';
+    innerHTML += marked(articleData);
+    innerHTML += '</article>';
+    contentElement.innerHTML = innerHTML;
     scrollTo(0, 0);
     afterContentLoads();
 }
