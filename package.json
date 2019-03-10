@@ -4,7 +4,7 @@
   "description": "kkocdko's blog",
   "main": "index.js",
   "scripts": {
-    "dev": "node build/index.js && cd dist && http-server",
+    "dev": "node build/index.js && node build/server.js",
     "build": "node build/index.js"
   },
   "repository": {
