@@ -12,7 +12,7 @@
 
 body {
     --theme-color: rgb(63, 81, 181);
-    background: #f8f9fa;
+    background: rgb(248, 249, 250);
     min-height: 100vh;
     font-family: -apple-system, "Microsoft Yahei", Arial, sans-serif;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
@@ -95,9 +95,9 @@ header.out {
 
 header>i {
     float: left;
-    display: inline-block;
+    /* display: inline-block; */
     width: 50px;
-    height: 50px;
+    height: 100%;
     text-align: center;
     cursor: pointer;
 }
@@ -118,10 +118,9 @@ header>i.avatar {
 }
 
 header>i>svg {
-    height: 1.3em;
+    height: 22px;
+    margin: 14px 0;
     fill: #fff;
-    margin-top: 50%;
-    transform: translateY(-50%);
 }
 
 aside {
@@ -167,10 +166,9 @@ aside>.brand>#js-open-palette {
 }
 
 aside>.brand>#js-open-palette>svg {
-    height: 1.3em;
+    height: 22px;
+    margin: 14px 0;
     fill: #fff;
-    margin-top: 50%;
-    transform: translateY(-50%);
 }
 
 aside.in>.brand>#js-open-palette {
@@ -179,10 +177,8 @@ aside.in>.brand>#js-open-palette {
 }
 
 aside>.brand>.avatar {
-    display: block;
     width: 80px;
     height: 80px;
-    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
     border: 2px solid #fff;
     border-radius: 50%;
     background: url(/favicon.svg);
@@ -192,7 +188,6 @@ aside>.nav {}
 
 aside>.nav>li {
     color: #555;
-    text-align: left;
     padding-left: 20px;
     line-height: 45px;
 }
@@ -203,9 +198,10 @@ aside>.nav>li:hover {
 }
 
 aside>.nav>li>i>svg {
-    height: 1.1em;
+    position: relative;
+    top: 3px;
+    height: 18px;
     fill: #555;
-    transform: translateY(0.2em);
 }
 
 aside>.nav>li:hover>i>svg {
@@ -215,11 +211,8 @@ aside>.nav>li:hover>i>svg {
 aside>.nav>li>i {
     display: inline-block;
     width: 2em;
+    height: 45px;
     text-align: center;
-}
-
-aside>.nav>a>i {
-    width: 1.3em;
 }
 
 aside>.brand>.name {
@@ -229,6 +222,7 @@ aside>.brand>.name {
 }
 
 #content {
+    width: 100%;
     min-height: 100vh;
 }
 
@@ -238,7 +232,7 @@ aside>.brand>.name {
     z-index: 4;
 }
 
-.post-list {
+.posts-list {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -246,25 +240,29 @@ aside>.brand>.name {
     align-items: center;
 }
 
-.post-list>li {
+.posts-list>li {
     display: block;
     width: 100%;
     max-width: 700px;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
     padding: 15px;
     background: #fff;
-    box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 @media screen and (max-width: 770px) {
-    .post-list>li {
+    .posts-list>li {
         max-width: unset;
     }
 }
 
-.post-list .post-footer li {
+.posts-list .post-footer {
+    white-space: nowrap;
+    overflow: auto;
+}
+
+.posts-list .post-footer li {
     display: inline-block;
-    margin-top: 10px;
     margin-right: 0.4em;
     padding: 1px 0.5em;
     color: var(--theme-color);
@@ -273,31 +271,31 @@ aside>.brand>.name {
     font-size: 12px;
 }
 
-.post-list .post-footer li:first-child {
+.posts-list .post-footer li:first-child {
     margin-right: 0.9em;
     filter: unset;
 }
 
-.post-list .post-footer li:hover {
+.posts-list .post-footer li:hover {
     color: #fff;
     background: var(--theme-color);
 }
 
-.post-list h3 {
+.posts-list h3 {
     position: relative;
     display: inline-block;
+    padding-bottom: 3px;
     color: var(--theme-color);
     font-weight: normal;
     font-size: 20px;
     line-height: 100%;
-    padding-bottom: 3px;
 }
 
-.post-list p {
-    margin-top: 7px;
+.posts-list p {
+    margin: 7px 0;
 }
 
-.post-list h3::after {
+.posts-list h3::after {
     content: "";
     visibility: hidden;
     position: absolute;
@@ -311,12 +309,12 @@ aside>.brand>.name {
     transform-origin: bottom left;
 }
 
-.post-list h3:hover::after {
+.posts-list h3:hover::after {
     visibility: visible;
     transform: scaleX(1);
 }
 
-.post-list.compact h2 {
+.posts-list.compact h2 {
     display: inline-block;
     font-size: 20px;
     font-weight: bold;
@@ -326,11 +324,11 @@ aside>.brand>.name {
     margin-bottom: 0.1em;
 }
 
-.post-list.compact h2::after {
+.posts-list.compact h2::after {
     display: none;
 }
 
-.post-list.compact span {
+.posts-list.compact span {
     display: inline-block;
     height: 100%;
     opacity: 0.6;
@@ -341,11 +339,11 @@ aside>.brand>.name {
     font-size: 0.7em;
 }
 
-.post-list.compact span:hover {
+.posts-list.compact span:hover {
     opacity: 1;
 }
 
-.post-list.compact h4 {
+.posts-list.compact h4 {
     display: list-item;
     width: fit-content;
     margin-top: 0.5em;
@@ -357,15 +355,15 @@ aside>.brand>.name {
 
 .page-number-nav {
     text-align: center;
-    margin-top: -0.7em;
+    margin-top: -0.9em;
     user-select: none;
 }
 
 .page-number-nav>li {
     display: inline-block;
-    padding: 0.7em 1.7em;
+    padding: 0.9em 1.7em;
     color: var(--theme-color);
-    opacity: 0.7;
+    opacity: 0.75;
     font-size: 14px;
     font-weight: bold;
 }
@@ -377,10 +375,11 @@ aside>.brand>.name {
 #content>article {
     background: #fff;
     padding: 30px 20px;
-    margin: 10px auto 20px auto;
+    margin: 15px auto 20px auto;
+    width: 100%;
     max-width: 700px;
     min-height: 100vh;
-    box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px, rgba(0, 0, 0, 0.12) 0px 1px 5px 0px, rgba(0, 0, 0, 0.2) 0px 3px 1px -2px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
 }
 
 @media screen and (max-width: 770px) {
@@ -392,11 +391,12 @@ aside>.brand>.name {
 
 footer {
     background: var(--theme-color);
-    font-size: 12px;
     color: rgba(255, 255, 255, 0.7);
     opacity: 1;
+    font-size: 12px;
     line-height: 2.5em;
     text-align: center;
+    z-index: 4;
 }
 
 /* Developing Features */
