@@ -13,31 +13,31 @@
  */
 'use strict';
 
-const fs = require('file-system'); // No native fs
-const terser = require('terser');
-const cleancss = new(require('clean-css'))({});
+let fs = require('file-system'); // No native fs
+let terser = require('terser');
+let cleancss = new(require('clean-css'))({});
 
 function buildBlog(
     projectDir = 'E:/Code/Repos/Web/Blog',
     developMode = false
 ) {
-    const imageSrcDir = `${projectDir}/_img`;
-    const articleSrcDir = `${projectDir}/_post`;
-    const pageSrcDir = `${projectDir}/_page`;
+    let imageSrcDir = `${projectDir}/_img`;
+    let articleSrcDir = `${projectDir}/_post`;
+    let pageSrcDir = `${projectDir}/_page`;
 
-    const devDir = `${projectDir}/dev`;
-    const distDir = `${projectDir}/dist`;
+    let devDir = `${projectDir}/dev`;
+    let distDir = `${projectDir}/dist`;
 
-    const imageSaveDir = `${distDir}/src/img`;
-    const articleSaveDir = `${distDir}/src/article`;
-    const pageSaveDir = `${distDir}/src/page`;
-    const jsonSaveDir = `${distDir}/src/json`;
+    let imageSaveDir = `${distDir}/src/img`;
+    let articleSaveDir = `${distDir}/src/article`;
+    let pageSaveDir = `${distDir}/src/page`;
+    let jsonSaveDir = `${distDir}/src/json`;
 
     // ==============================
 
     try {
         fs.rmdirSync(distDir);
-    } catch {}
+    } catch (e) {}
 
     // ==============================
 
