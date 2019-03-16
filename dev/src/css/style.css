@@ -39,11 +39,11 @@ body {
 }
 
 @keyframes donut-spin {
-    from {
+    0% {
         transform: rotate(0deg);
     }
 
-    to {
+    100% {
         transform: rotate(360deg);
     }
 }
@@ -132,24 +132,25 @@ aside {
     height: 100vh;
     background: #fff;
     transform: translateX(-100%);
-    will-change: visibility, transform;
-    transition: visibility 0.3s, transform 0.3s;
+    will-change: transform;
+    transition: 0.3s;
     box-shadow: 5px 0 9px 0 rgba(0, 0, 0, 0.2);
+    overflow: hidden auto;
     z-index: 6;
 }
 
 aside.in {
-    transform: translateX(0);
+    transform: unset;
     visibility: visible;
 }
 
 aside>.brand {
-    background: var(--theme-color);
-    height: 210px;
-    padding-left: 20px;
     display: flex;
     justify-content: center;
     flex-direction: column;
+    height: 210px;
+    padding-left: 20px;
+    background: var(--theme-color);
 }
 
 aside>.brand>#js-open-palette {
@@ -161,7 +162,6 @@ aside>.brand>#js-open-palette {
     text-align: center;
     cursor: pointer;
     opacity: 0;
-    transform: rotate(0deg);
     transition: 0.5s 0.3s;
 }
 
@@ -236,8 +236,14 @@ aside>.brand>.name {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding-top: 10px;
+    padding-top: 15px;
     align-items: center;
+}
+
+@media screen and (max-width: 770px) {
+    .posts-list {
+        padding-top: 10px;
+    }
 }
 
 .posts-list>li {
@@ -247,7 +253,7 @@ aside>.brand>.name {
     margin-bottom: 15px;
     padding: 15px;
     background: #fff;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0;
 }
 
 @media screen and (max-width: 770px) {
@@ -256,14 +262,10 @@ aside>.brand>.name {
     }
 }
 
-.posts-list .post-footer {
-    white-space: nowrap;
-    overflow: auto;
-}
-
 .posts-list .post-footer li {
     display: inline-block;
-    margin-right: 0.4em;
+    margin-top: 7px;
+    margin-right: 0.5em;
     padding: 1px 0.5em;
     color: var(--theme-color);
     border: 1px solid var(--theme-color);
@@ -276,23 +278,19 @@ aside>.brand>.name {
     filter: unset;
 }
 
-.posts-list .post-footer li:hover {
-    color: #fff;
-    background: var(--theme-color);
-}
-
 .posts-list h3 {
     position: relative;
     display: inline-block;
-    padding-bottom: 3px;
+    margin-top: -3px;
     color: var(--theme-color);
     font-weight: normal;
     font-size: 20px;
-    line-height: 100%;
+    line-height: 26px;
 }
 
 .posts-list p {
-    margin: 7px 0;
+    margin-top: 9px;
+    margin-bottom: 5px;
 }
 
 .posts-list h3::after {
@@ -317,11 +315,9 @@ aside>.brand>.name {
 .posts-list.compact h2 {
     display: inline-block;
     font-size: 20px;
-    font-weight: bold;
     background: var(--theme-color);
     color: #fff;
     padding: 0.1em 0.3em;
-    margin-bottom: 0.1em;
 }
 
 .posts-list.compact h2::after {
@@ -329,18 +325,12 @@ aside>.brand>.name {
 }
 
 .posts-list.compact span {
-    display: inline-block;
-    height: 100%;
-    opacity: 0.6;
     padding: 0 0.3em;
     margin-right: 0.5em;
-    background: var(--theme-color);
-    color: #fff;
+    background: #fff;
+    color: var(--theme-color);
+    border: 1px solid var(--theme-color);
     font-size: 0.7em;
-}
-
-.posts-list.compact span:hover {
-    opacity: 1;
 }
 
 .posts-list.compact h4 {
