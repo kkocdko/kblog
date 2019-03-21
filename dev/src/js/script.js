@@ -12,9 +12,9 @@ if (!Array.prototype.flat) {
     Array.prototype.flat = function(deep = Infinity) {
         return this.reduce((accumulator, currentValue) => {
             return accumulator.concat(
-                Array.isArray(currentValue) ?
-                currentValue.flat() :
-                currentValue
+                Array.isArray(currentValue)
+                ? currentValue.flat()
+                : currentValue
             );
         }, []);
     }
@@ -22,7 +22,7 @@ if (!Array.prototype.flat) {
 
 // ==============================
 
-let defaultTitle = 'kkocdko\'s blog';
+let defaultTitle = 'KBlog';
 let contentElement = document.querySelector('#content');
 
 loadContentAsync();
@@ -283,28 +283,26 @@ async function fetchJsonAsync(url) {
 
 async function loadMdPageAsync(filePath) {
     let articleData = await fetchTextAsync(filePath);
-    let innerHTML = '<article class=markdown-body>';
-    innerHTML += marked(articleData);
-    innerHTML += '</article>';
+    let innerHTML = `<article class=markdown-body>${marked(articleData)}</article>`;
     contentElement.innerHTML = innerHTML;
     scrollTo(0, 0);
     afterContentLoads();
 }
 
 function afterContentLoads() {
-    // fixHashScroll
+    // Fix hash scroll
     let selector = location.hash;
     if (selector != '') {
         setTimeout(() => document.querySelector(selector).scrollIntoView());
     }
 
-    // refreshTitle
+    // Refresh title
     let titleElementArr = document.querySelectorAll('title');
-    document.title = titleElementArr.length > 1 ?
-        titleElementArr[titleElementArr.length - 1].innerText + ' - ' + defaultTitle :
-        defaultTitle;
+    document.title = titleElementArr.length > 1
+        ? titleElementArr[titleElementArr.length - 1].innerText + ' - ' + defaultTitle
+        : defaultTitle;
 
-    // refreshListener
+    // Set listeners
     let spaLinkElementArr = document.querySelectorAll('[data-sl]');
     for (let item of spaLinkElementArr) {
         item.onclick = function() {
@@ -317,7 +315,7 @@ function afterContentLoads() {
 function scrollToTop(duration = 750) {
     let easeingFunction = t => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
     let originScrollY = scrollY;
-    let originScrollX = scrollX;
+    let originScrollX = scrollX; // Keep abscissa
     let originTime = Date.now();
     let passedTime = 0;
     let _scrollToTop = () => {

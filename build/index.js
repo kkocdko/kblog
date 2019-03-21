@@ -19,7 +19,7 @@ let cleancss = new(require('clean-css'))({});
 
 function buildBlog(
     projectDir = 'E:/Code/Repos/Web/Blog',
-    developMode = false
+    developMode = true
 ) {
     let imageSrcDir = `${projectDir}/_img`;
     let articleSrcDir = `${projectDir}/_post`;
@@ -61,8 +61,8 @@ function buildBlog(
          * Write md file
          */
         fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
-            articleData.replace(/---(.|\n)+?---\n*/, '') +
-            `\n<title>${postInfo.title}</title>\n`
+            articleData.replace(/---(.|\n)+?---\n*/, '')
+            + `\n<title>${postInfo.title}</title>\n`
         );
     }
 
@@ -86,9 +86,9 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode) ?
-            fileDataStr :
-            fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // No inline css or js support!
+            (developMode)
+            ? fileDataStr
+            : fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // No inline css or js support!
         );
     });
 
@@ -96,9 +96,9 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode || filename.indexOf('.min.') != -1) ? // Filename has minimized mark
-            fileDataStr :
-            cleancss.minify(fileDataStr).styles
+            (developMode || filename.indexOf('.min.') != -1)
+            ? fileDataStr // Filename has minimized mark
+            : cleancss.minify(fileDataStr).styles
         );
     });
 
@@ -106,13 +106,13 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode || filename.indexOf('.min.') != -1) ? // Filename has minimized mark
-            fileDataStr :
-            terser.minify(fileDataStr).code
+            (developMode || filename.indexOf('.min.') != -1)
+            ? fileDataStr // Filename has minimized mark
+            : terser.minify(fileDataStr).code
         );
     });
 
-    fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', 'toy/**/*.*'], (filepath, relative, filename) => {
+    fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', '*.json', 'toy/**/*.*'], (filepath, relative, filename) => {
         if (!filename) return;
         fs.copyFile(filepath, `${distDir}/${relative}`);
     });

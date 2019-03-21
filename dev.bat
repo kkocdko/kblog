@@ -1,4 +1,9 @@
 @echo off
 cd /d %~dp0
-node build/index.js
-node build/server.js
+if "%1" == "called" (
+    title KBlog
+    node build/index.js
+    node build/server.js
+) else (
+    cmd /k %~nx0 called
+)
