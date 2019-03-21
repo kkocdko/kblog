@@ -1,7 +1,7 @@
 /*!
  * Lightweight static server
  * 
- * Version: 20190316
+ * Version: 20190318
  * 
  * Author: kkocdko
  * 
@@ -30,17 +30,11 @@ let serverConfig = {
 };
 
 let server = http.createServer((req, res) => {
-    if (req.url.search(/\/$/) == -1) {
-        res.writeHead(302, { 'Location': req.url + '/' });
-        res.end();
-    } else {
+    // Visit a dir or file with extension.
+    if (req.url.search(/\/$/) != -1 || req.url.indexOf('.') != -1) {
         let absolutePath = serverConfig.rootDir + req.url.replace(/\/$/, '');
         fs.stat(absolutePath, (e, stats) => {
-            if (e) {
-                // Error
-                res.writeHead(404, { 'Content-Type': mimeList['html'] });
-                fs.createReadStream(serverConfig.rootDir + '/404.html').pipe(res);
-            } else if (stats.isFile()) {
+            if (!e && stats.isFile()) {
                 // Is file
                 let extArr = absolutePath.split('.');
                 let extension = extArr[extArr.length - 1];
@@ -51,12 +45,20 @@ let server = http.createServer((req, res) => {
                 };
                 res.writeHead(200, { 'Content-Type': contentType });
                 fs.createReadStream(absolutePath).pipe(res);
-            } else if (fs.existsSync(absolutePath + '/index.html')) {
+            } else if (!e && fs.existsSync(absolutePath + '/index.html')) {
                 // Is folder
                 res.writeHead(200, { 'Content-Type': mimeList['html'] });
                 fs.createReadStream(absolutePath + '/index.html').pipe(res);
+            } else {
+                // Error
+                res.writeHead(404, { 'Content-Type': mimeList['html'] });
+                fs.createReadStream(serverConfig.rootDir + '/404.html').pipe(res);
             }
         });
+    } else {
+        // Jump to url + "/"
+        res.writeHead(302, { 'Location': req.url + '/' });
+        res.end();
     }
 });
 

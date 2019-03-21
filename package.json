@@ -1,7 +1,7 @@
 {
-  "name": "blog",
+  "name": "KBlog",
   "version": "1.0.0",
-  "description": "kkocdko's blog",
+  "description": "Kkocdko's blog",
   "main": "index.js",
   "scripts": {
     "dev": "node build/index.js && node build/server.js",
@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/kkocdko/kkocdko.github.io.git"
   },
-  "author": "kkocdko",
+  "author": "Kkocdko",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/kkocdko/kkocdko.github.io/issues"
