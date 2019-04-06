@@ -1,3 +1,10 @@
+/*!
+ * kkocdko's blog
+ * 
+ * Author: kkocdko
+ * 
+ * License: Apache License 2.0
+ */
 'use strict';
 
 // new VConsole();
@@ -252,15 +259,11 @@ async function loadContentAsync() {
         case 'toy':
         case 'about':
         case 'callingcard':
-            {
-                await loadMdPageAsync(`/src/page/${firstPath}.md`);
-                break;
-            }
+            await loadMdPageAsync(`/src/page/${firstPath}.md`);
+            break;
         default:
-            {
-                await loadMdPageAsync('/src/page/404.md');
-                break;
-            }
+            await loadMdPageAsync('/src/page/404.md');
+            break;
     }
     loadingIndicator.classList.remove('in');
 }
@@ -283,7 +286,7 @@ async function fetchJsonAsync(url) {
 
 async function loadMdPageAsync(filePath) {
     let articleData = await fetchTextAsync(filePath);
-    let innerHTML = `<article class=markdown-body>${marked(articleData)}</article>`;
+    let innerHTML = `<article class="markdown-body">${marked(articleData)}</article>`;
     contentElement.innerHTML = innerHTML;
     scrollTo(0, 0);
     afterContentLoads();
@@ -313,16 +316,17 @@ function afterContentLoads() {
 }
 
 function scrollToTop(duration = 750) {
-    let easeingFunction = t => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    let easeingFunction = t => --t * t * t + 1;
     let originScrollY = scrollY;
-    let originScrollX = scrollX; // Keep abscissa
+    // let originScrollX = scrollX; // Keep abscissa
     let originTime = Date.now();
     let passedTime = 0;
     let _scrollToTop = () => {
         if (passedTime < duration) {
             passedTime = Date.now() - originTime;
             requestAnimationFrame(_scrollToTop);
-            scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)));
+            // scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)));
+            scrollTo(0, originScrollY * (1 - easeingFunction(passedTime / duration)));
         }
     };
     _scrollToTop();

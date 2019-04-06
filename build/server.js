@@ -1,8 +1,6 @@
 /*!
  * Lightweight static server
  * 
- * Version: 20190318
- * 
  * Author: kkocdko
  * 
  * License: no license
@@ -20,6 +18,7 @@ let mimeList = {
     'md': 'text/markdown',
     'ico': 'image/x-icon',
     'svg': 'image/svg+xml',
+    'png': 'image/png',
     'webp': 'image/webp'
 };
 
