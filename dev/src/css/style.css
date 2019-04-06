@@ -82,7 +82,7 @@ header {
     height: 50px;
     width: 100%;
     background: var(--theme-color);
-    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px 0;
     transform: translateY(0%);
     transition: 0.3s;
     z-index: 4;
@@ -133,7 +133,7 @@ aside {
     transform: translateX(-100%);
     will-change: transform;
     transition: 0.3s;
-    box-shadow: 5px 0 9px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.2) 5px 0 9px 0;
     overflow: hidden auto;
     z-index: 6;
 }
@@ -182,8 +182,6 @@ aside>.brand>.avatar {
     border-radius: 50%;
     background: url(/favicon.svg);
 }
-
-aside>.nav {}
 
 aside>.nav>li {
     color: #555;
@@ -252,7 +250,7 @@ aside>.brand>.name {
     margin-bottom: 15px;
     padding: 15px;
     background: #fff;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0;
 }
 
 @media screen and (max-width: 770px) {
@@ -268,7 +266,7 @@ aside>.brand>.name {
     padding: 1px 0.5em;
     color: var(--theme-color);
     border: 1px solid var(--theme-color);
-    filter: grayscale(0.6);
+    filter: grayscale(0.5);
     font-size: 12px;
 }
 
@@ -329,12 +327,12 @@ aside>.brand>.name {
 }
 
 .posts-list.compact span {
-    padding: 0 0.3em;
     margin-right: 0.5em;
-    background: #fff;
-    color: var(--theme-color);
+    padding: 0 0.3em;
     border: 1px solid var(--theme-color);
     font-size: 0.7em;
+    color: var(--theme-color);
+    background: #fff;
 }
 
 .posts-list.compact h4 {
@@ -343,7 +341,7 @@ aside>.brand>.name {
     margin-top: 0.5em;
     margin-left: 1.5em;
     color: var(--theme-color);
-    filter: saturate(0.5);
+    filter: grayscale(0.5);
     font-weight: normal;
 }
 
@@ -357,7 +355,7 @@ aside>.brand>.name {
     display: inline-block;
     padding: 0.9em 1.7em;
     color: var(--theme-color);
-    opacity: 0.75;
+    opacity: 0.7;
     font-size: 14px;
     font-weight: bold;
 }
@@ -373,7 +371,7 @@ aside>.brand>.name {
     width: 100%;
     max-width: 700px;
     min-height: 100vh;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px 0;
 }
 
 @media screen and (max-width: 770px) {

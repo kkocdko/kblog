@@ -1,8 +1,6 @@
 /*!
  * kkocdko's blog builder
  * 
- * Version: 20190223
- * 
  * Author: kkocdko
  * 
  * License: Apache License 2.0
@@ -18,8 +16,8 @@ let terser = require('terser');
 let cleancss = new(require('clean-css'))({});
 
 function buildBlog(
-    projectDir = 'E:/Code/Repos/Web/Blog',
-    developMode = true
+    projectDir = __dirname + '/..',
+    developMode = false
 ) {
     let imageSrcDir = `${projectDir}/_img`;
     let articleSrcDir = `${projectDir}/_post`;
