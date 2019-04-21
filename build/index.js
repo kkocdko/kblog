@@ -14,6 +14,7 @@
 let fs = require('file-system'); // No native fs
 let terser = require('terser');
 let cleancss = new(require('clean-css'))({});
+// let cleancss=new(require('clean-css'))({level:{2:{all:true}}});
 
 function buildBlog(
     projectDir = __dirname + '/..',
@@ -35,7 +36,7 @@ function buildBlog(
 
     try {
         fs.rmdirSync(distDir);
-    } catch (e) {}
+    } catch {}
 
     // ==============================
 
@@ -55,9 +56,7 @@ function buildBlog(
         };
         postInfoArr.push(postInfo);
 
-        /**
-         * Write md file
-         */
+        // Write compact markdown file
         fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
             articleData.replace(/---(.|\n)+?---\n*/, '')
             + `\n<title>${postInfo.title}</title>\n`
@@ -71,8 +70,8 @@ function buildBlog(
         let line = '';
         try {
             line = articleData.match(`\\n${head}:([^\\n]*)`)[1].trim(); // Whole line
-        } catch (e) {
-            console.error('Can not find this meta');
+        } catch {
+            console.warn(`Can not find meta [${head}]`);
         }
         let valueArr = line.split(spliter);
         return valueArr;
@@ -81,12 +80,12 @@ function buildBlog(
     // ==============================
 
     fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
-        if (!filename) return;
+        if (!filename) return; // Is folder
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
             (developMode)
             ? fileDataStr
-            : fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // No inline css or js support!
+            : fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css or js will not be compressed
         );
     });
 
@@ -94,8 +93,8 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode || filename.indexOf('.min.') != -1)
-            ? fileDataStr // Filename has minimized mark
+            (developMode || filename.indexOf('.min.') > -1)
+            ? fileDataStr
             : cleancss.minify(fileDataStr).styles
         );
     });
@@ -104,8 +103,8 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode || filename.indexOf('.min.') != -1)
-            ? fileDataStr // Filename has minimized mark
+            (developMode || filename.indexOf('.min.') > -1)
+            ? fileDataStr
             : terser.minify(fileDataStr).code
         );
     });

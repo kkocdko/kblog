@@ -21,17 +21,15 @@ let mimeList = {
     'png': 'image/png',
     'webp': 'image/webp'
 };
-
-let serverConfig = {
+let config = {
     ip: '127.0.0.1',
     port: 8080,
     rootDir: __dirname + '/../dist'
 };
-
-let server = http.createServer((req, res) => {
+http.createServer((req, res) => {
     // Visit a dir or file with extension.
     if (req.url.search(/\/$/) != -1 || req.url.indexOf('.') != -1) {
-        let absolutePath = serverConfig.rootDir + req.url.replace(/\/$/, '');
+        let absolutePath = config.rootDir + req.url.replace(/\/$/, '');
         fs.stat(absolutePath, (e, stats) => {
             if (!e && stats.isFile()) {
                 // Is file
@@ -51,7 +49,7 @@ let server = http.createServer((req, res) => {
             } else {
                 // Error
                 res.writeHead(404, { 'Content-Type': mimeList['html'] });
-                fs.createReadStream(serverConfig.rootDir + '/404.html').pipe(res);
+                fs.createReadStream(config.rootDir + '/404.html').pipe(res);
             }
         });
     } else {
@@ -59,8 +57,5 @@ let server = http.createServer((req, res) => {
         res.writeHead(302, { 'Location': req.url + '/' });
         res.end();
     }
-});
-
-server.listen(serverConfig.port, serverConfig.ip);
-
-console.info(`Server is running on [${serverConfig.ip}:${serverConfig.port}]`);
+}).listen(config.port, config.ip);
+console.info(`Server is running on [${config.ip}:${config.port}]`);

@@ -76,7 +76,6 @@ addEventListener('scroll', (() => {
     return () => {
         let relativeScrollY = scrollY - originScrollY;
         originScrollY += relativeScrollY;
-
         if (relativeScrollY > 0) {
             topBar.classList.add('out');
         } else {
@@ -293,10 +292,10 @@ async function loadMdPageAsync(filePath) {
 }
 
 function afterContentLoads() {
-    // Fix hash scroll
-    let selector = location.hash;
-    if (selector != '') {
-        setTimeout(() => document.querySelector(selector).scrollIntoView());
+    // Fix hash anchor
+    let anchorElement = document.querySelector(location.hash || '--');
+    if (anchorElement) {
+        setTimeout(() => anchorElement.scrollIntoView());
     }
 
     // Refresh title
