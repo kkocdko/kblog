@@ -37,28 +37,26 @@ addEventListener('popstate', loadContentAsync);
 
 // ==============================
 
-let sideBar = (() => {
-    let sideBarElement = document.querySelector('aside');
-    let maskElement = document.querySelector('#mask');
-    return {
-        show: () => {
-            sideBarElement.classList.add('in');
-            maskElement.classList.add('in');
-        },
-        hide: () => {
-            sideBarElement.classList.remove('in');
-            maskElement.classList.remove('in');
-        }
-    };
-})();
+let sideBarElement = document.querySelector('aside');
+let maskElement = document.querySelector('#mask');
+let sideBarConsole = {
+    show() {
+        sideBarElement.classList.add('in');
+        maskElement.classList.add('in');
+    },
+    hide() {
+        sideBarElement.classList.remove('in');
+        maskElement.classList.remove('in');
+    }
+};
 
-document.querySelector('#js-open-side-bar').addEventListener('click', sideBar.show);
+document.querySelector('#js-open-side-bar').addEventListener('click', sideBarConsole.show);
 
-mask.addEventListener('click', sideBar.hide);
+maskElement.addEventListener('click', sideBarConsole.hide);
 
-mask.addEventListener('touchstart', sideBar.hide, { passive: true });
+maskElement.addEventListener('touchstart', sideBarConsole.hide, { passive: true });
 
-document.querySelector('aside>.nav').addEventListener('click', sideBar.hide);
+document.querySelector('aside>.nav').addEventListener('click', sideBarConsole.hide);
 
 document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop());
 
@@ -72,14 +70,14 @@ document.querySelector('#js-open-palette').addEventListener('click', () => {
 
 addEventListener('scroll', (() => {
     let originScrollY = scrollY;
-    let topBar = document.querySelector('header');
+    let topBarElement = document.querySelector('header');
     return () => {
         let relativeScrollY = scrollY - originScrollY;
         originScrollY += relativeScrollY;
         if (relativeScrollY > 0) {
-            topBar.classList.add('out');
+            topBarElement.classList.add('out');
         } else {
-            topBar.classList.remove('out');
+            topBarElement.classList.remove('out');
         }
     }
 })());
