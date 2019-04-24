@@ -3,7 +3,7 @@
  * 
  * Author: kkocdko
  * 
- * License: no license
+ * License: Unlicense
  */
 'use strict';
 
