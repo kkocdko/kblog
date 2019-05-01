@@ -13,11 +13,10 @@
 
 let fs = require('file-system'); // No native fs
 let terser = require('terser');
-let cleancss = new(require('clean-css'))({});
-// let cleancss=new(require('clean-css'))({level:{2:{all:true}}});
+let cleancss = require('clean-css');
 
 function buildBlog(
-    projectDir = __dirname + '/..',
+    projectDir = `${__dirname}/..`,
     developMode = false
 ) {
     let imageSrcDir = `${projectDir}/_img`;
@@ -95,7 +94,9 @@ function buildBlog(
         fs.writeFile(`${distDir}/${relative}`,
             (developMode || filename.indexOf('.min.') > -1)
             ? fileDataStr
-            : cleancss.minify(fileDataStr).styles
+            : (new cleancss({
+                level: { 2: { all: true } }
+            })).minify(fileDataStr).styles
         );
     });
 
@@ -105,7 +106,10 @@ function buildBlog(
         fs.writeFile(`${distDir}/${relative}`,
             (developMode || filename.indexOf('.min.') > -1)
             ? fileDataStr
-            : terser.minify(fileDataStr).code
+            : terser.minify(fileDataStr, {
+                compress: { toplevel: true },
+                mangle: { toplevel: true }
+            }).code
         );
     });
 
