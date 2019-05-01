@@ -31,24 +31,24 @@ if (!Array.prototype.flat) {
 
 let defaultTitle = 'KBlog';
 let contentElement = document.querySelector('#content');
+let loadingElement = document.querySelector('#loading-indicator');
+let maskElement = document.querySelector('#mask');
 
-loadContentAsync();
-addEventListener('popstate', loadContentAsync);
+let sideBarConsole = (() => {
+    let sideBarElement = document.querySelector('aside');
+    return {
+        show() {
+            sideBarElement.classList.add('in');
+            maskElement.classList.add('in');
+        },
+        hide() {
+            sideBarElement.classList.remove('in');
+            maskElement.classList.remove('in');
+        }
+    }
+})();
 
 // ==============================
-
-let sideBarElement = document.querySelector('aside');
-let maskElement = document.querySelector('#mask');
-let sideBarConsole = {
-    show() {
-        sideBarElement.classList.add('in');
-        maskElement.classList.add('in');
-    },
-    hide() {
-        sideBarElement.classList.remove('in');
-        maskElement.classList.remove('in');
-    }
-};
 
 document.querySelector('#js-open-side-bar').addEventListener('click', sideBarConsole.show);
 
@@ -82,11 +82,16 @@ addEventListener('scroll', (() => {
     }
 })());
 
+addEventListener('popstate', loadContentAsync);
+
+// ==============================
+
+loadContentAsync();
+
 // ==============================
 
 async function loadContentAsync() {
-    let loadingIndicator = document.querySelector('#loading-indicator');
-    loadingIndicator.classList.add('in');
+    loadingElement.classList.add('in');
     let pathName = location.pathname;
     let firstPath = pathName.split('/')[1];
     switch (firstPath) {
@@ -262,7 +267,7 @@ async function loadContentAsync() {
             await loadMdPageAsync('/src/page/404.md');
             break;
     }
-    loadingIndicator.classList.remove('in');
+    loadingElement.classList.remove('in');
 }
 
 async function fetchTextAsync(url) {
