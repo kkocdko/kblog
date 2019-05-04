@@ -14,7 +14,7 @@ body {
     --theme-color: rgb(63, 81, 181);
     background: rgb(248, 249, 250);
     min-height: 100vh;
-    font-family: -apple-system, "Microsoft Yahei", Arial, sans-serif;
+    font-family: -apple-system, "Microsoft Yahei", Arial;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -145,11 +145,9 @@ aside.in {
 }
 
 aside>.brand {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
     height: 210px;
-    padding-left: 20px;
+    padding-top: 45px;
+    padding-left: 30px;
     background: var(--theme-color);
 }
 
@@ -177,11 +175,18 @@ aside.in>.brand>#js-open-palette {
 }
 
 aside>.brand>.avatar {
-    width: 80px;
-    height: 80px;
+    display: block;
+    width: 90px;
+    height: 90px;
     border: 2px solid #fff;
     border-radius: 50%;
     background: url(/favicon.svg);
+}
+
+aside>.brand>.name {
+    color: #fff;
+    padding-top: 1em;
+    padding-left: 0.7em;
 }
 
 aside>.nav>li {
@@ -208,15 +213,9 @@ aside>.nav>li:hover>i>svg {
 
 aside>.nav>li>i {
     display: inline-block;
-    width: 2em;
+    width: 2.5em;
     height: 45px;
     text-align: center;
-}
-
-aside>.brand>.name {
-    color: #fff;
-    padding-left: 5px;
-    margin-top: 1em;
 }
 
 #content {

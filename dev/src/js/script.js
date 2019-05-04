@@ -317,7 +317,7 @@ function afterContentLoads() {
     }
 }
 
-function scrollToTop(duration = 750) {
+function scrollToTop(duration = 700) {
     let easeingFunction = t => --t * t * t + 1;
     let originScrollY = scrollY;
     // let originScrollX = scrollX; // Keep abscissa
