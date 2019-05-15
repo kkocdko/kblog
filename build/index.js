@@ -92,7 +92,7 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode || filename.indexOf('.min.') > -1)
+            (developMode || filename.indexOf('.min.') != -1)
             ? fileDataStr
             : (new cleancss({
                 level: { 2: { all: true } }
@@ -104,7 +104,7 @@ function buildBlog(
         if (!filename) return;
         let fileDataStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
-            (developMode || filename.indexOf('.min.') > -1)
+            (developMode || filename.indexOf('.min.') != -1)
             ? fileDataStr
             : terser.minify(fileDataStr, {
                 compress: { toplevel: true },
