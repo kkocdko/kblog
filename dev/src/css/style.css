@@ -84,13 +84,13 @@ header {
     width: 100%;
     background: var(--theme-color);
     box-shadow: rgba(0, 0, 0, 0.2) 0 0 5px 0;
-    transform: translateY(0%);
+    transform: translateY(-55px);
     transition: 0.3s;
     z-index: 4;
 }
 
-header.out {
-    transform: translateY(-55px);
+header.in {
+    transform: translateY(0);
 }
 
 header>i {
@@ -160,7 +160,7 @@ aside>.brand>#js-open-palette {
     text-align: center;
     cursor: pointer;
     opacity: 0;
-    transition: 0.5s 0.3s;
+    transition: 0.7s 0.3s;
 }
 
 aside>.brand>#js-open-palette>svg {
@@ -184,9 +184,11 @@ aside>.brand>.avatar {
 }
 
 aside>.brand>.name {
+    width: 90px;
+    font-size: 18px;
+    padding-top: 15px;
+    text-align: center;
     color: #fff;
-    padding-top: 1em;
-    padding-left: 0.7em;
 }
 
 aside>.nav>li {
