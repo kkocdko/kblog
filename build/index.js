@@ -57,7 +57,8 @@ function buildBlog(
 
         // Write compact markdown file
         fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
-            articleData.replace(/---(.|\n)+?---\n*/, '')
+            `<h2 class=lite>${postInfo.title}</h2>\n\n`
+            + articleData.replace(/---(.|\n)+?---\n*/, '')
             + `\n<title>${postInfo.title}</title>\n`
         );
     }
