@@ -363,9 +363,13 @@ aside>.nav>li>i {
     opacity: 1;
 }
 
+#content h2.lite {
+    font-weight: normal;
+}
+
 #content>article {
     margin: 15px auto 20px auto;
-    padding: 30px 20px;
+    padding: 25px 20px;
     width: 100%;
     max-width: 700px;
     min-height: 100vh;
