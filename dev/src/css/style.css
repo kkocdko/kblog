@@ -24,7 +24,7 @@ body {
     left: 0;
     z-index: 3;
     visibility: hidden;
-    padding-top: 15vh;
+    padding-top: 120px;
     width: 100%;
     height: 100vh;
     background: #fff;
@@ -50,9 +50,11 @@ body {
 
 #loading-indicator.in::before {
     display: inline-block;
-    width: 15vmin;
-    height: 15vmin;
-    border: 1.5vmin solid var(--theme-color);
+    width: 10vmin;
+    height: 10vmin;
+    min-width: 60px;
+    min-height: 60px;
+    border: 5px solid var(--theme-color);
     border-radius: 50%;
     content: "";
     border-top-color: rgba(0, 0, 0, 0.1);
