@@ -153,8 +153,7 @@ async function loadContentAsync() {
                 let innerHTML = '<ul class="posts-list compact">';
                 innerHTML += '<li>';
                 innerHTML += '<h2>Archive</h2>';
-                for (let i = articleInfoArr.length - 1; i > -1; i--) {
-                    let articleInfo = articleInfoArr[i]
+                for (let articleInfo of articleInfoArr) {
                     // Source
                     // innerHTML += (`
                     //     <h4 data-sl="/article/${articleInfo.id}">
@@ -280,9 +279,13 @@ async function loadMdPageAsync(filePath) {
 }
 
 function afterContentLoads() {
+    scrollTo(0, 0);
+
     // Fix hash anchor
     let anchorEl = document.querySelector(location.hash || '--');
-    if (anchorEl) anchorEl.scrollIntoView();
+    if (anchorEl) {
+        anchorEl.scrollIntoView();
+    }
 
     // Refresh title
     let titleElArr = document.querySelectorAll('title');

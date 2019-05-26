@@ -108,7 +108,10 @@ function buildBlog(
             (developMode || filename.indexOf('.min.') != -1)
             ? fileDataStr
             : terser.minify(fileDataStr, {
-                compress: { toplevel: true },
+                compress: {
+                    unsafe: true,
+                    toplevel: true
+                },
                 mangle: { toplevel: true }
             }).code
         );
