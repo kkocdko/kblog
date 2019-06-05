@@ -15,17 +15,7 @@
  * Array.prototype.flat polyfill
  * Imperfect, unable to set recursion's depth
  */
-if (!Array.prototype.flat) {
-    Array.prototype.flat = function(deep = Infinity) {
-        return this.reduce((accumulator, currentValue) => {
-            return accumulator.concat(
-                Array.isArray(currentValue)
-                ? currentValue.flat()
-                : currentValue
-            );
-        }, []);
-    }
-}
+if (!Array.prototype.flat) Array.prototype.flat = function(deep = Infinity) { return this.reduce((accumulator, currentValue) => accumulator.concat(Array.isArray(currentValue) ? currentValue.flat() : currentValue), []) }
 
 // ==============================
 
@@ -272,9 +262,8 @@ async function loadArticleInfoArrAsync() {
 async function loadMdPageAsync(filePath) {
     let response = await fetch(filePath);
     let articleData = await response.text();
-    let innerHTML = `<article class="markdown-body">${marked(articleData)}</article>`;
+    let innerHTML = `<div class="post-body"><article class="markdown-body">${marked(articleData)}</article></div>`;
     contentEl.innerHTML = innerHTML;
-    scrollTo(0, 0);
     afterContentLoads();
 }
 
