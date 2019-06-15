@@ -241,8 +241,8 @@ async function loadContentAsync() {
                 break;
             }
         case 'toy':
-        case 'about':
         case 'callingcard':
+        case 'about':
             await loadMdPageAsync(`/src/page/${firstPath}.md`);
             break;
         default:

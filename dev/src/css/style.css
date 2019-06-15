@@ -17,14 +17,14 @@ body {
 }
 
 #loading-indicator {
+    visibility: hidden;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 3;
-    visibility: hidden;
     padding-top: 120px;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: #fff;
     text-align: center;
     opacity: 0;
@@ -53,18 +53,18 @@ body {
     min-width: 60px;
     min-height: 60px;
     border: 5px solid var(--theme-color);
-    border-top-color: rgba(0, 0, 0, 0.1);
     border-radius: 50%;
+    border-top-color: rgba(0, 0, 0, 0.1);
     content: "";
     animation: donut-spin 0.5s linear infinite;
 }
 
 #mask {
+    visibility: hidden;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 5;
-    visibility: hidden;
     width: 100%;
     height: 100vh;
     background: #000;
@@ -95,6 +95,7 @@ header.in {
 
 header>i {
     float: left;
+    padding: 10px;
     width: 50px;
     height: 100%;
     text-align: center;
@@ -103,7 +104,7 @@ header>i {
 
 header>#js-gotop {
     float: right;
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 header>i.avatar {
@@ -117,20 +118,19 @@ header>i.avatar {
 }
 
 header>i>svg {
-    margin: 14px 0;
-    height: 22px;
     fill: #fff;
 }
 
 aside {
+    visibility: hidden;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 6;
-    visibility: hidden;
     overflow: hidden auto;
-    width: 260px;
-    height: 100vh;
+    width: 70%;
+    height: 100%;
+    max-width: 260px;
     background: #fff;
     box-shadow: 5px 0 9px 0 rgba(0, 0, 0, 0.2);
     transition: 0.3s;
@@ -143,27 +143,25 @@ aside.in {
 }
 
 aside>.brand {
-    padding-top: 45px;
-    padding-left: 30px;
-    height: 210px;
+    padding: 13% 0 9% 11%;
+    /* height: 210px; */
     background: var(--theme-color);
+    font-size: calc(15%);
 }
 
 aside>.brand>#js-open-palette {
     position: absolute;
     top: 0;
     right: 0;
+    padding: 10px;
     width: 50px;
     height: 50px;
-    text-align: center;
     opacity: 0;
     cursor: pointer;
     transition: 0.7s 0.3s;
 }
 
 aside>.brand>#js-open-palette>svg {
-    margin: 14px 0;
-    height: 22px;
     fill: #fff;
 }
 
@@ -174,24 +172,27 @@ aside.in>.brand>#js-open-palette {
 
 aside>.brand>.avatar {
     display: block;
-    width: 90px;
-    height: 90px;
+    width: 21vw;
+    max-width: 90px;
+    height: 21vw;
+    max-height: 90px;
     border: 2px solid #fff;
     border-radius: 50%;
     background: url("/favicon.svg");
 }
 
 aside>.brand>.name {
-    padding-top: 15px;
-    width: 90px;
+    margin-top: 13px;
+    width: 21vw;
+    max-width: 90px;
     color: #fff;
     text-align: center;
     font-size: 18px;
 }
 
 aside>.nav>li {
-    padding-left: 25px;
-    color: #444;
+    padding-left: 11%;
+    color: #333;
     line-height: 50px;
 }
 
@@ -202,8 +203,7 @@ aside>.nav>li:hover {
 
 aside>.nav>li>i>svg {
     position: relative;
-    top: 3px;
-    height: 18px;
+    top: 0.35em;
     fill: #555;
 }
 
@@ -213,8 +213,8 @@ aside>.nav>li:hover>i>svg {
 
 aside>.nav>li>i {
     display: inline-block;
-    width: 2.5em;
-    text-align: center;
+    margin-right: 0.2em;
+    width: 1.5em;
 }
 
 #content {
@@ -267,14 +267,14 @@ aside>.nav>li>i {
 }
 
 .posts-list h3::after {
+    visibility: hidden;
     position: absolute;
     bottom: 0;
     left: 0;
-    visibility: hidden;
     width: 100%;
     height: 1px;
-    background: var(--theme-color);
     content: "";
+    background: var(--theme-color);
     transition: 0.2s;
     transform: scaleX(0);
     transform-origin: bottom left;
