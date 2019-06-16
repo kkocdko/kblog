@@ -58,7 +58,7 @@ function buildBlog(
         // Write compact markdown file
         fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
             `<h2 class=lite>${postInfo.title}</h2>\n\n`
-            + articleData.replace(/---(.|\n)+?---\n*/, '')
+            + articleData.replace(/^(.|\n)+?---\n*/, '')
             + `\n<title>${postInfo.title}</title>\n`
         );
     }
@@ -108,10 +108,7 @@ function buildBlog(
             (developMode || filename.indexOf('.min.') != -1)
             ? fileDataStr
             : terser.minify(fileDataStr, {
-                compress: {
-                    unsafe: true,
-                    toplevel: true
-                },
+                compress: { unsafe: true, toplevel: true },
                 mangle: { toplevel: true }
             }).code
         );
