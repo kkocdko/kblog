@@ -144,7 +144,6 @@ aside.in {
 
 aside>.brand {
     padding: 13% 0 9% 11%;
-    /* height: 210px; */
     background: var(--theme-color);
     font-size: calc(15%);
 }
@@ -173,8 +172,8 @@ aside.in>.brand>#js-open-palette {
 aside>.brand>.avatar {
     display: block;
     width: 21vw;
-    max-width: 90px;
     height: 21vw;
+    max-width: 90px;
     max-height: 90px;
     border: 2px solid #fff;
     border-radius: 50%;
@@ -328,7 +327,7 @@ aside>.nav>li>i {
 }
 
 .post-footer li:first-child {
-    margin-right: 0.9em;
+    margin-right: 0.75em;
 }
 
 .post-footer li:hover {
