@@ -147,13 +147,13 @@ async function loadContentAsync() {
                     // Source
                     // innerHTML += (`
                     //     <h4 data-sl="/article/${articleInfo.id}">
-                    //         <span>${articleInfo.date}</span>
+                    //         <span class="post-date">${articleInfo.date}</span>
                     //          ${articleInfo.title}
                     //     </h4>
                     // `);
 
                     // Compact
-                    innerHTML += `<h4 data-sl="/article/${articleInfo.id}"><span>${articleInfo.date}</span>${articleInfo.title}</h4>`;
+                    innerHTML += `<h4 data-sl="/article/${articleInfo.id}"><span class="post-date">${articleInfo.date}</span>${articleInfo.title}</h4>`;
                 }
                 innerHTML += '</li>';
                 innerHTML += '</ul>';

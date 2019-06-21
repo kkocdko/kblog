@@ -17,11 +17,11 @@ body {
 }
 
 #loading-indicator {
-    visibility: hidden;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 3;
+    visibility: hidden;
     padding-top: 120px;
     width: 100%;
     height: 100%;
@@ -54,17 +54,17 @@ body {
     min-height: 60px;
     border: 5px solid var(--theme-color);
     border-radius: 50%;
-    border-top-color: rgba(0, 0, 0, 0.1);
     content: "";
+    border-top-color: rgba(0, 0, 0, 0.1);
     animation: donut-spin 0.5s linear infinite;
 }
 
 #mask {
-    visibility: hidden;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 5;
+    visibility: hidden;
     width: 100%;
     height: 100vh;
     background: #000;
@@ -122,11 +122,11 @@ header>i>svg {
 }
 
 aside {
-    visibility: hidden;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 6;
+    visibility: hidden;
     overflow: hidden auto;
     width: 70%;
     height: 100%;
@@ -160,13 +160,13 @@ aside>.brand>#js-open-palette {
     transition: 0.7s 0.3s;
 }
 
-aside>.brand>#js-open-palette>svg {
-    fill: #fff;
-}
-
 aside.in>.brand>#js-open-palette {
     opacity: 0.7;
     transform: rotate(360deg);
+}
+
+aside>.brand>#js-open-palette>svg {
+    fill: #fff;
 }
 
 aside>.brand>.avatar {
@@ -200,6 +200,12 @@ aside>.nav>li:hover {
     color: var(--theme-color);
 }
 
+aside>.nav>li>i {
+    display: inline-block;
+    margin-right: 0.7em;
+    width: 1.5em;
+}
+
 aside>.nav>li>i>svg {
     position: relative;
     top: 0.35em;
@@ -208,12 +214,6 @@ aside>.nav>li>i>svg {
 
 aside>.nav>li:hover>i>svg {
     fill: var(--theme-color);
-}
-
-aside>.nav>li>i {
-    display: inline-block;
-    margin-right: 0.7em;
-    width: 1.5em;
 }
 
 #content {
@@ -260,20 +260,16 @@ aside>.nav>li>i {
     font-size: 20px;
 }
 
-.posts-list p {
-    margin-top: 9px;
-    margin-bottom: 5px;
-}
 
 .posts-list h3::after {
-    visibility: hidden;
     position: absolute;
     bottom: 0;
     left: 0;
+    visibility: hidden;
     width: 100%;
     height: 1px;
-    content: "";
     background: var(--theme-color);
+    content: "";
     transition: 0.2s;
     transform: scaleX(0);
     transform-origin: bottom left;
@@ -284,25 +280,17 @@ aside>.nav>li>i {
     transform: scaleX(1);
 }
 
+.posts-list p {
+    margin-top: 9px;
+    margin-bottom: 5px;
+}
+
 .posts-list.compact h2 {
     display: inline-block;
     padding: 0.1em 0.3em;
     background: var(--theme-color);
     color: #fff;
     font-size: 20px;
-}
-
-.posts-list.compact h2::after {
-    display: none;
-}
-
-.posts-list.compact span {
-    margin-right: 0.5em;
-    padding: 0 0.3em;
-    border: 1px solid var(--theme-color);
-    background: #fff;
-    color: var(--theme-color);
-    font-size: 0.7em;
 }
 
 .posts-list.compact h4 {
@@ -315,7 +303,16 @@ aside>.nav>li>i {
     filter: grayscale(0.5);
 }
 
-.post-footer li {
+.post-date {
+    margin-right: 0.5em;
+    padding: 0 0.3em;
+    border: 1px solid var(--theme-color);
+    background: #fff;
+    color: var(--theme-color);
+    font-size: 0.7em;
+}
+
+.post-footer>li {
     display: inline-block;
     margin-top: 7px;
     margin-right: 0.5em;
@@ -326,11 +323,11 @@ aside>.nav>li>i {
     filter: grayscale(0.5);
 }
 
-.post-footer li:first-child {
+.post-footer>li:first-child {
     margin-right: 0.75em;
 }
 
-.post-footer li:hover {
+.post-footer>li:hover {
     filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
 }
 
@@ -353,10 +350,6 @@ aside>.nav>li>i {
     opacity: 1;
 }
 
-#content h2.lite {
-    font-weight: normal;
-}
-
 .post-body {
     display: flex;
     padding: 20px 0;
@@ -371,7 +364,7 @@ aside>.nav>li>i {
     }
 }
 
-.post-body article {
+.post-body>article {
     padding: 25px 20px;
     width: 100%;
     max-width: 700px;
@@ -380,8 +373,12 @@ aside>.nav>li>i {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
+.post-body>article h2.lite {
+    font-weight: normal;
+}
+
 @media screen and (max-width: 770px) {
-    .post-body article {
+    .post-body>article {
         max-width: unset;
     }
 }
