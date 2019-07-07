@@ -19,21 +19,22 @@ body {
 #loading-indicator {
     position: fixed;
     top: 0;
+    right: 0;
+    bottom: 0;
     left: 0;
     z-index: 3;
     visibility: hidden;
     padding-top: 120px;
-    width: 100%;
-    height: 100%;
     background: #fff;
     text-align: center;
     opacity: 0;
-    transition: 0.3s;
+    transition: 0.5s;
 }
 
 #loading-indicator.in {
     visibility: visible;
     opacity: 0.7;
+    transition: 0.3s;
 }
 
 @keyframes donut-spin {
@@ -107,7 +108,7 @@ header>#js-gotop {
     opacity: 0.95;
 }
 
-header>i.avatar {
+header>.avatar {
     float: left;
     margin: 10px 0;
     width: 30px;
@@ -124,12 +125,12 @@ header>i>svg {
 aside {
     position: fixed;
     top: 0;
+    bottom: 0;
     left: 0;
     z-index: 6;
     visibility: hidden;
     overflow: hidden auto;
     width: 70%;
-    height: 100%;
     max-width: 260px;
     background: #fff;
     box-shadow: 5px 0 9px 0 rgba(0, 0, 0, 0.2);
@@ -193,6 +194,7 @@ aside>.nav>li {
     padding-left: 11%;
     color: #333;
     line-height: 50px;
+    transition: 0.3s;
 }
 
 aside>.nav>li:hover {
@@ -200,45 +202,39 @@ aside>.nav>li:hover {
     color: var(--theme-color);
 }
 
-aside>.nav>li>i {
+aside>.nav>li i {
     display: inline-block;
     margin-right: 0.7em;
     width: 1.5em;
 }
 
-aside>.nav>li>i>svg {
+aside>.nav>li svg {
     position: relative;
     top: 0.35em;
     fill: #555;
 }
 
-aside>.nav>li:hover>i>svg {
+aside>.nav>li:hover svg {
     fill: var(--theme-color);
 }
 
 #content {
     width: 100%;
-    min-height: calc(100vh - 50px);
+    min-height: 100vh;
 }
 
 .posts-list {
     display: flex;
-    padding-top: 20px;
     width: 100%;
     flex-direction: column;
     align-items: center;
 }
 
-@media screen and (max-width: 770px) {
-    .posts-list {
-        padding-top: 10px;
-    }
-}
-
 .posts-list>li {
+    position: relative;
     display: block;
-    margin-bottom: 15px;
-    padding: 15px;
+    margin-top: 20px;
+    padding: 20px;
     width: 100%;
     max-width: 700px;
     background: #fff;
@@ -247,45 +243,29 @@ aside>.nav>li:hover>i>svg {
 
 @media screen and (max-width: 770px) {
     .posts-list>li {
+        margin-top: unset;
         max-width: unset;
     }
 }
 
-.posts-list h3 {
-    position: relative;
-    display: inline-block;
+.posts-list>li h3 {
     margin-top: -3px;
     color: var(--theme-color);
     font-weight: normal;
     font-size: 20px;
+    transition: 0.3s;
 }
 
-
-.posts-list h3::after {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    visibility: hidden;
-    width: 100%;
-    height: 1px;
-    background: var(--theme-color);
-    content: "";
-    transition: 0.2s;
-    transform: scaleX(0);
-    transform-origin: bottom left;
+.posts-list>li h3:hover {
+    text-shadow: 0 0 1px;
 }
 
-.posts-list h3:hover::after {
-    visibility: visible;
-    transform: scaleX(1);
-}
-
-.posts-list p {
+.posts-list>li p {
     margin-top: 9px;
     margin-bottom: 5px;
 }
 
-.posts-list.compact h2 {
+.posts-list.compact>li h2 {
     display: inline-block;
     padding: 0.1em 0.3em;
     background: var(--theme-color);
@@ -293,7 +273,7 @@ aside>.nav>li:hover>i>svg {
     font-size: 20px;
 }
 
-.posts-list.compact h4 {
+.posts-list.compact>li h4 {
     display: list-item;
     margin-top: 0.5em;
     margin-left: 1.5em;
@@ -316,11 +296,11 @@ aside>.nav>li:hover>i>svg {
     display: inline-block;
     margin-top: 7px;
     margin-right: 0.5em;
-    padding: 1px 0.5em;
+    padding: 1px 0.4em;
     border: 1px solid var(--theme-color);
     color: var(--theme-color);
     font-size: 12px;
-    filter: grayscale(0.5);
+    transition: 0.3s;
 }
 
 .post-footer>li:first-child {
@@ -328,18 +308,17 @@ aside>.nav>li:hover>i>svg {
 }
 
 .post-footer>li:hover {
-    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.2));
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .page-number-nav {
-    margin-top: -0.9em;
     text-align: center;
     user-select: none;
 }
 
 .page-number-nav>li {
     display: inline-block;
-    padding: 0.9em 1.7em;
+    padding: 0.7em 2em;
     color: var(--theme-color);
     font-weight: bold;
     font-size: 14px;
@@ -365,7 +344,7 @@ aside>.nav>li:hover>i>svg {
 }
 
 .post-body>article {
-    padding: 25px 20px;
+    padding: 20px;
     width: 100%;
     max-width: 700px;
     min-height: calc(100vh - 50px);
@@ -373,14 +352,14 @@ aside>.nav>li:hover>i>svg {
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
-.post-body>article h2.lite {
-    font-weight: normal;
-}
-
 @media screen and (max-width: 770px) {
     .post-body>article {
         max-width: unset;
     }
+}
+
+.post-body>article>h2.lite {
+    font-weight: normal;
 }
 
 footer {

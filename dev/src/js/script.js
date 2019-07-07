@@ -1,48 +1,30 @@
-/*!
- * kkocdko's blog
- * 
- * Author: kkocdko
- * 
- * License: Apache License 2.0
- */
 'use strict';
-
-// new VConsole();
-
-// ==============================
-
-/**
- * Array.prototype.flat polyfill
- * Imperfect, unable to set recursion's depth
- */
-if (!Array.prototype.flat) Array.prototype.flat = function(deep = Infinity) { return this.reduce((accumulator, currentValue) => accumulator.concat(Array.isArray(currentValue) ? currentValue.flat() : currentValue), []) }
-
-// ==============================
 
 let defaultTitle = 'KBlog';
 let articleInfoArr = [];
+
 let contentEl = document.querySelector('#content');
 let loadingEl = document.querySelector('#loading-indicator');
 let maskEl = document.querySelector('#mask');
 let sideBarEl = document.querySelector('aside');
 
-let showEl = el => el.classList.add('in');
-let hideEl = el => el.classList.remove('in');
+let fadeInEl = el => el.classList.add('in');
+let fadeOutEl = el => el.classList.remove('in');
 
-loadingEl.show = () => showEl(loadingEl);
-loadingEl.hide = () => hideEl(loadingEl);
-sideBarEl.show = () => [sideBarEl, maskEl].forEach(showEl);
-sideBarEl.hide = () => [sideBarEl, maskEl].forEach(hideEl);
+loadingEl.fadeIn = () => fadeInEl(loadingEl);
+loadingEl.fadeOut = () => fadeOutEl(loadingEl);
+sideBarEl.fadeIn = () => [sideBarEl, maskEl].forEach(fadeInEl);
+sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl);
 
 // ==============================
 
-document.querySelector('#js-open-side-bar').addEventListener('click', sideBarEl.show);
+document.querySelector('#js-open-side-bar').addEventListener('click', sideBarEl.fadeIn);
 
-maskEl.addEventListener('click', sideBarEl.hide);
+maskEl.addEventListener('click', sideBarEl.fadeOut);
 
-maskEl.addEventListener('touchstart', sideBarEl.hide, { passive: true });
+maskEl.addEventListener('touchstart', sideBarEl.fadeOut, { passive: true });
 
-document.querySelector('aside>.nav').addEventListener('click', sideBarEl.hide);
+document.querySelector('aside>.nav').addEventListener('click', sideBarEl.fadeOut);
 
 document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop());
 
@@ -50,21 +32,23 @@ document.querySelector('#js-open-palette').addEventListener('click', () => {
     let color = prompt('Please input color (use css grammar)', 'rgb(156, 39, 176)');
     if (color) {
         document.body.style.setProperty('--theme-color', color);
-        document.querySelector('[name=theme-color]').content = color;
+        document.querySelector('meta[name=theme-color]').content = color;
+        sideBarEl.fadeOut();
     }
 });
 
 addEventListener('scroll', (() => {
     let originScrollY = scrollY;
+    let currentScrollY = originScrollY;
     let topBarEl = document.querySelector('header');
     return () => {
-        let relativeScrollY = scrollY - originScrollY;
-        originScrollY += relativeScrollY;
-        if (relativeScrollY < 0) {
-            showEl(topBarEl);
+        currentScrollY = scrollY;
+        if (originScrollY < currentScrollY) {
+            fadeOutEl(topBarEl);
         } else {
-            hideEl(topBarEl);
+            fadeInEl(topBarEl);
         }
+        originScrollY = currentScrollY;
     }
 })());
 
@@ -77,88 +61,88 @@ loadContentAsync();
 // ==============================
 
 async function loadContentAsync() {
-    loadingEl.show();
+    loadingEl.fadeIn();
     let pathName = location.pathname;
     let firstPath = pathName.split('/')[1];
     switch (firstPath) {
         case 'article':
             {
-                let articleId = pathName.split('article/')[1].split('/')[0];
+                let articleId = pathName.match(/(?<=\/article\/)\d+/)[0];
                 await loadMdPageAsync(`/src/article/${articleId}.md`);
-                break;
             }
+            break;
         case 'home':
             {
                 await loadArticleInfoArrAsync();
-                let curPageNumber = Number(pathName.split('home/')[1].split('/')[0]);
+                let curPageNumber = Number(pathName.match(/(?<=\/home\/)\d+/)[0]);
                 let perPage = 10; // The article quantity of every page
                 let pageNumberMax = Math.ceil(articleInfoArr.length / perPage);
-                let innerHTML = '<ul class="posts-list">';
+                let htmlStr = '<ul class="posts-list">';
                 for (let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * perPage), min = i - perPage; i > min && i > -1; i--) {
-                    let articleInfo = articleInfoArr[i];
+                    let article = articleInfoArr[i];
                     let tagListStr = '';
-                    for (let tag of articleInfo.tagArr) {
+                    for (let tag of article.tagArr) {
                         tagListStr += `<li data-sl="/tag#${tag}">${tag}</li>`;
                     }
 
                     // Source
-                    // innerHTML += (`
+                    // htmlStr += `
                     //     <li>
-                    //         <h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3>
-                    //         <p>${articleInfo.excerpt}</p>
+                    //         <h3 data-sl="/article/${article.id}">${article.title}</h3>
+                    //         <p>${article.excerpt}</p>
                     //         <ul class="post-footer">
-                    //             <li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>
+                    //             <li data-sl="/category#${article.category}">${article.category}</li>
                     //             ${tagListStr}
                     //         </ul>
                     //     </li>
-                    // `);
+                    // `;
 
                     // Compact
-                    innerHTML += `<li><h3 data-sl="/article/${articleInfo.id}">${articleInfo.title}</h3><p>${articleInfo.excerpt}</p><ul class="post-footer"><li data-sl="/category#${articleInfo.category}">${articleInfo.category}</li>${tagListStr}</ul></li>`;
+                    htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagListStr}</ul></li>`;
 
                 }
-                innerHTML += '</ul>';
+                htmlStr += '</ul>';
 
                 // Source
-                // innerHTML += (`
+                // htmlStr += `
                 //     <ul class="page-number-nav">
                 //         <li data-sl="/home/1">[◀</li>
                 //         <li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li>
                 //         <li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li>
                 //         <li data-sl="/home/${pageNumberMax}">▶]</li>
                 //     </ul>
-                // `);
+                // `;
 
                 // Compact
-                innerHTML += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`;
+                htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`;
 
-                innerHTML += `<title>Home: ${curPageNumber}</title>`;
-                contentEl.innerHTML = innerHTML;
+                htmlStr += `<title>Home: ${curPageNumber}</title>`;
+                contentEl.innerHTML = htmlStr;
                 afterContentLoads();
-                break;
             }
+            break;
         case 'archive':
             {
                 await loadArticleInfoArrAsync();
-                let innerHTML = '<ul class="posts-list compact">';
-                innerHTML += '<li>';
-                innerHTML += '<h2>Archive</h2>';
-                for (let articleInfo of articleInfoArr) {
+                let htmlStr = '<ul class="posts-list compact">';
+                htmlStr += '<li>';
+                htmlStr += '<h2>Archive</h2>';
+                for (let article of articleInfoArr) {
                     // Source
-                    // innerHTML += (`
-                    //     <h4 data-sl="/article/${articleInfo.id}">
-                    //         <span class="post-date">${articleInfo.date}</span>
-                    //          ${articleInfo.title}
+                    // htmlStr += `
+                    //     <h4 data-sl="/article/${article.id}">
+                    //         <span class="post-date">${article.date}</span>
+                    //          ${article.title}
                     //     </h4>
-                    // `);
+                    // `;
 
                     // Compact
-                    innerHTML += `<h4 data-sl="/article/${articleInfo.id}"><span class="post-date">${articleInfo.date}</span>${articleInfo.title}</h4>`;
+                    htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`;
                 }
-                innerHTML += '</li>';
-                innerHTML += '</ul>';
-                innerHTML += '<title>Archive</title>';
-                contentEl.innerHTML = innerHTML;
+                htmlStr += '</li>';
+                htmlStr += '</ul>';
+                htmlStr += '<title>Archive</title>';
+                contentEl.innerHTML = htmlStr;
                 afterContentLoads();
             }
             break;
@@ -171,32 +155,31 @@ async function loadContentAsync() {
                 }
                 categoryArr = [...new Set(categoryArr)];
 
-                let categoryMemberArr = {};
+                let articleArrByCategory = {};
                 for (let category of categoryArr) {
-                    categoryMemberArr[category] = {};
-                    categoryMemberArr[category].idArr = [];
-                    categoryMemberArr[category].titleArr = [];
+                    articleArrByCategory[category] = [];
                 }
 
-                for (let articleInfo of articleInfoArr) {
-                    let categoryMember = categoryMemberArr[articleInfo.category];
-                    categoryMember.idArr.push(articleInfo.id);
-                    categoryMember.titleArr.push(articleInfo.title);
+                for (let article of articleInfoArr) {
+                    articleArrByCategory[article.category].push({
+                        id: article.id,
+                        title: article.title
+                    });
                 }
 
-                let innerHTML = '<ul class="posts-list compact">';
+                let htmlStr = '<ul class="posts-list compact">';
                 for (let category of categoryArr) {
-                    innerHTML += `<li id="${category}">`
-                    innerHTML += `<h2>${category}</h2>`;
-                    let categoryMember = categoryMemberArr[category];
-                    for (let i = 0, l = categoryMember.idArr.length; i < l; i++) {
-                        innerHTML += `<h4 data-sl="/article/${categoryMember.idArr[i]}">${categoryMember.titleArr[i]}</h4>`;
+                    htmlStr += `<li id="${category}">`
+                    htmlStr += `<h2>${category}</h2>`;
+                    let articleArr = articleArrByCategory[category];
+                    for (let article of articleArr) {
+                        htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`;
                     }
-                    innerHTML += '</li>';
+                    htmlStr += '</li>';
                 }
-                innerHTML += '</ul>';
-                innerHTML += '<title>Categories</title>';
-                contentEl.innerHTML = innerHTML;
+                htmlStr += '</ul>';
+                htmlStr += '<title>Categories</title>';
+                contentEl.innerHTML = htmlStr;
                 afterContentLoads();
             }
             break;
@@ -205,51 +188,51 @@ async function loadContentAsync() {
                 await loadArticleInfoArrAsync();
                 let tagArr = [];
                 for (let article of articleInfoArr) {
-                    tagArr.push(article.tagArr);
+                    tagArr.push(...article.tagArr);
                 }
-                tagArr = tagArr.flat(Infinity);
                 tagArr = [...new Set(tagArr)];
 
-                let tagMemberArr = {};
+                let articleArrByTag = {};
                 for (let tag of tagArr) {
-                    tagMemberArr[tag] = {};
-                    tagMemberArr[tag].idArr = [];
-                    tagMemberArr[tag].titleArr = [];
+                    articleArrByTag[tag] = [];
                 }
 
-                for (let articleInfo of articleInfoArr) {
-                    for (let tag of articleInfo.tagArr) {
-                        tagMemberArr[tag].idArr.push(articleInfo.id);
-                        tagMemberArr[tag].titleArr.push(articleInfo.title);
+                for (let article of articleInfoArr) {
+                    for (let tag of article.tagArr) {
+                        articleArrByTag[tag].push({
+                            id: article.id,
+                            title: article.title
+                        });
                     }
                 }
 
-                let innerHTML = '<ul class="posts-list compact">';
+                let htmlStr = '<ul class="posts-list compact">';
                 for (let tag of tagArr) {
-                    innerHTML += `<li id="${tag}">`
-                    innerHTML += `<h2>${tag}</h2>`;
-                    let tagMember = tagMemberArr[tag];
-                    for (let i = 0, l = tagMember.idArr.length; i < l; i++) {
-                        innerHTML += `<h4 data-sl="/article/${tagMember.idArr[i]}">${tagMember.titleArr[i]}</h4>`;
+                    htmlStr += `<li id="${tag}">`
+                    htmlStr += `<h2>${tag}</h2>`;
+                    let articleArr = articleArrByTag[tag];
+                    for (let article of articleArr) {
+                        htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`;
                     }
-                    innerHTML += '</li>';
+                    htmlStr += '</li>';
                 }
-                innerHTML += '</ul>';
-                innerHTML += '<title>Tags</title>';
-                contentEl.innerHTML = innerHTML;
+                htmlStr += '</ul>';
+                htmlStr += '<title>Tags</title>';
+                contentEl.innerHTML = htmlStr;
                 afterContentLoads();
-                break;
             }
+            break;
         case 'toy':
         case 'callingcard':
         case 'about':
+        case '404':
             await loadMdPageAsync(`/src/page/${firstPath}.md`);
             break;
         default:
-            await loadMdPageAsync('/src/page/404.md');
+            jumpToSpaLink('/404');
             break;
     }
-    loadingEl.hide();
+    loadingEl.fadeOut();
 }
 
 async function loadArticleInfoArrAsync() {
@@ -262,9 +245,17 @@ async function loadArticleInfoArrAsync() {
 async function loadMdPageAsync(filePath) {
     let response = await fetch(filePath);
     let articleData = await response.text();
-    let innerHTML = `<div class="post-body"><article class="markdown-body">${marked(articleData)}</article></div>`;
-    contentEl.innerHTML = innerHTML;
+    let htmlStr = `<div class="post-body"><article class="markdown-body">${marked(articleData)}</article></div>`;
+    contentEl.innerHTML = htmlStr;
     afterContentLoads();
+}
+
+function jumpToSpaLink(spaLink) {
+    if (typeof spaLink != 'string') {
+        spaLink = this.dataset.sl;
+    }
+    history.pushState(null, null, spaLink);
+    loadContentAsync();
 }
 
 function afterContentLoads() {
@@ -276,20 +267,20 @@ function afterContentLoads() {
         anchorEl.scrollIntoView();
     }
 
-    // Refresh title
-    let titleElArr = document.querySelectorAll('title');
-    document.title = titleElArr.length > 1
-        ? titleElArr[titleElArr.length - 1].innerText + ' - ' + defaultTitle
-        : defaultTitle;
+    setTimeout(() => {
+        // Refresh title
+        let titleElArr = document.querySelectorAll('title');
+        document.title = titleElArr.length > 1
+            ? titleElArr[titleElArr.length - 1].innerText + ' - ' + defaultTitle
+            : defaultTitle;
 
-    // Set listeners
-    let spaLinkElArr = document.querySelectorAll('[data-sl]');
-    for (let spaLinkEl of spaLinkElArr) {
-        spaLinkEl.onclick = function() {
-            history.pushState(null, null, this.dataset.sl);
-            loadContentAsync();
-        };
-    }
+        // Set listeners
+        let spaLinkElArr = document.querySelectorAll('[data-sl]');
+        for (let spaLinkEl of spaLinkElArr) {
+            spaLinkEl.removeEventListener('click', jumpToSpaLink);
+            spaLinkEl.addEventListener('click', jumpToSpaLink);
+        }
+    });
 }
 
 function scrollToTop(duration = 700) {
