@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <link rel="stylesheet" href="/src/css/style.css">
     <link rel="stylesheet" href="/src/css/markdown.css">
-    <meta name="theme-color" content="rgb(63, 81, 181)">
+    <meta name="theme-color" content="rgb(63,81,181)">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="icon" href="/favicon.svg">
     <title>KBlog</title>
@@ -98,13 +98,10 @@
     </aside>
     <div id="loading-indicator"></div>
     <div id="content"></div>
-    <footer>
-        <p>Run on Github Page.</p>
-    </footer>
+    <footer>Run on Github Page.</footer>
     <div id="mask"></div>
-    <script src="//lib.baomitu.com/marked/0.6.0/marked.min.js"></script>
-    <!-- <script src="/src/js/marked.min.js"></script> -->
-    <!-- <script src="//wechatfe.github.io/vconsole/lib/vconsole.min.js"></script> -->
+    <script src="//lib.baomitu.com/marked/0.6.0/marked.min.js" onerror="let s=document.createElement('script');s.src='/src/js/marked.min.js';parentNode.insertBefore(s,this)"></script>
+    <!-- <script src="//wechatfe.github.io/vconsole/lib/vconsole.min.js" onload="new VConsole()"></script> -->
     <script src="/src/js/script.js"></script>
 </body>
 
