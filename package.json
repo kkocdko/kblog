@@ -2,10 +2,10 @@
   "name": "KBlog",
   "version": "1.0.0",
   "description": "Kkocdko's blog",
-  "main": "index.js",
+  "main": "build/build.js",
   "scripts": {
-    "dev": "node build/index.js && node build/server.js",
-    "build": "node build/index.js"
+    "dev": "node build/build.js && node build/server.js",
+    "build": "node build/build.js"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,6 @@
   "dependencies": {
     "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
-    "terser": "^4.0.0"
+    "terser": "^4.1.0"
   }
 }
