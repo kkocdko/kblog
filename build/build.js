@@ -1,17 +1,11 @@
 /*!
- * kkocdko's blog builder
+ * Blog builder
  * 
- * Author: kkocdko
- * 
- * License: Apache License 2.0
- * 
- * Matters:
- * 1. No CRLF support
- * 2. Absolute path only
+ * Matter: No CRLF support
  */
 'use strict';
 
-let fs = require('file-system'); // No native fs
+let fs = require('file-system'); // This is not native fs
 let terser = require('terser');
 let cleancss = require('clean-css');
 
@@ -42,34 +36,34 @@ function buildBlog(
     let postInfoArr = [];
     let articleFileArr = fs.readdirSync(articleSrcDir);
     for (let articleFile of articleFileArr) {
-        let articleData = fs.readFileSync(`${articleSrcDir}/${articleFile}`).toString();
-        let dateMetaArr = readMeta(articleData, 'date');
+        let articleStr = fs.readFileSync(`${articleSrcDir}/${articleFile}`).toString();
+        let dateMetaArr = readMeta(articleStr, 'date');
         let postInfo = {
             id: dateMetaArr[0].replace(/\-/g, '') + dateMetaArr[1].replace(/\:/g, ''),
-            title: readMeta(articleData, 'title')[0],
+            title: readMeta(articleStr, 'title')[0],
             date: dateMetaArr[0],
             time: dateMetaArr[1],
-            category: readMeta(articleData, 'category')[0],
-            tagArr: readMeta(articleData, 'tags'),
-            excerpt: readMeta(articleData, 'excerpt', '\n')[0],
+            category: readMeta(articleStr, 'category')[0],
+            tagArr: readMeta(articleStr, 'tags'),
+            excerpt: readMeta(articleStr, 'excerpt', '\n')[0],
         };
         postInfoArr.push(postInfo);
 
         // Write compact markdown file
         fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
             `<h2 class=lite>${postInfo.title}</h2>\n\n`
-            + articleData.replace(/^(.|\n)+?---\n*/, '')
+            + articleStr.replace(/^(.|\n)+?---\n*/, '')
             + `\n<title>${postInfo.title}</title>\n`
         );
     }
 
     fs.writeFile(`${jsonSaveDir}/articleinfo.json`, JSON.stringify(postInfoArr));
 
-    function readMeta(articleData, head, spliter = ' ', maxSearchLength = 700) {
-        articleData = articleData.substr(0, maxSearchLength);
+    function readMeta(articleStr, head, spliter = ' ', maxSearchLength = 700) {
+        articleStr = articleStr.substr(0, maxSearchLength);
         let line = '';
         try {
-            line = articleData.match(`\\n${head}:([^\\n]*)`)[1].trim(); // Whole line
+            line = articleStr.match(`\\n${head}:([^\\n]*)`)[1].trim(); // Whole line
         } catch {
             console.warn(`Can not find meta [${head}]`);
         }
@@ -81,33 +75,36 @@ function buildBlog(
 
     fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
         if (!filename) return; // Is folder
-        let fileDataStr = fs.readFileSync(filepath).toString();
+        let fileStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
             (developMode)
-            ? fileDataStr
-            : fileDataStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css or js will not be compressed
+            ? fileStr
+            : fileStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css and js will not be compressed
         );
     });
 
     fs.recurse(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
         if (!filename) return;
-        let fileDataStr = fs.readFileSync(filepath).toString();
+        let fileStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
             (developMode || filename.indexOf('.min.') != -1)
-            ? fileDataStr
+            ? fileStr
             : (new cleancss({
-                level: { 2: { all: true } }
-            })).minify(fileDataStr).styles
+                level: {
+                    1: { specialComments: 'none' },
+                    2: { all: true }
+                }
+            })).minify(fileStr).styles
         );
     });
 
     fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
         if (!filename) return;
-        let fileDataStr = fs.readFileSync(filepath).toString();
+        let fileStr = fs.readFileSync(filepath).toString();
         fs.writeFile(`${distDir}/${relative}`,
             (developMode || filename.indexOf('.min.') != -1)
-            ? fileDataStr
-            : terser.minify(fileDataStr, {
+            ? fileStr
+            : terser.minify(fileStr, {
                 compress: { unsafe: true, toplevel: true },
                 mangle: { toplevel: true }
             }).code
