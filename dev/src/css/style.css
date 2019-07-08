@@ -234,7 +234,7 @@ aside>.nav>li:hover svg {
     position: relative;
     display: block;
     margin-top: 20px;
-    padding: 20px;
+    padding: 17px;
     width: 100%;
     max-width: 700px;
     background: #fff;
@@ -261,8 +261,8 @@ aside>.nav>li:hover svg {
 }
 
 .posts-list>li p {
-    margin-top: 9px;
-    margin-bottom: 5px;
+    margin-top: 11px;
+    margin-bottom: 7px;
 }
 
 .posts-list.compact>li h2 {
@@ -296,7 +296,7 @@ aside>.nav>li:hover svg {
     display: inline-block;
     margin-top: 7px;
     margin-right: 0.5em;
-    padding: 1px 0.4em;
+    padding: 2px 0.4em;
     border: 1px solid var(--theme-color);
     color: var(--theme-color);
     font-size: 12px;
