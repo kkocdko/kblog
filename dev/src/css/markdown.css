@@ -113,10 +113,6 @@
 .markdown-body code,
 .markdown-body kbd {
     font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
-}
-
-.markdown-body pre,
-.markdown-body code {
     font-size: 12px;
 }
 
@@ -159,7 +155,6 @@
     box-shadow: inset 0 -1px 0 #c6cbd1;
     color: #444d56;
     vertical-align: middle;
-    font-size: 11px;
     line-height: 10px;
     border-bottom-color: #c6cbd1;
 }

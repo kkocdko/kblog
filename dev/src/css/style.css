@@ -144,7 +144,7 @@ aside.in {
 }
 
 aside>.brand {
-    padding: 13% 0 9% 11%;
+    padding: 13% 0 9% 12.5%;
     background: var(--theme-color);
     font-size: calc(15%);
 }
@@ -226,8 +226,15 @@ aside>.nav>li:hover svg {
 .posts-list {
     display: flex;
     width: 100%;
+    padding: 20px 0;
     flex-direction: column;
     align-items: center;
+}
+
+@media screen and (max-width: 770px) {
+    .posts-list {
+        padding: 0;
+    }
 }
 
 .posts-list>li {
@@ -243,9 +250,13 @@ aside>.nav>li:hover svg {
 
 @media screen and (max-width: 770px) {
     .posts-list>li {
-        margin-top: unset;
+        margin-top: 0;
         max-width: unset;
     }
+}
+
+.posts-list>li:first-child {
+    margin-top: 0;
 }
 
 .posts-list>li h3 {
@@ -253,7 +264,7 @@ aside>.nav>li:hover svg {
     color: var(--theme-color);
     font-weight: normal;
     font-size: 20px;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .posts-list>li h3:hover {
@@ -300,7 +311,7 @@ aside>.nav>li:hover svg {
     border: 1px solid var(--theme-color);
     color: var(--theme-color);
     font-size: 12px;
-    transition: 0.3s;
+    transition: 0.2s;
 }
 
 .post-footer>li:first-child {
@@ -314,6 +325,13 @@ aside>.nav>li:hover svg {
 .page-number-nav {
     text-align: center;
     user-select: none;
+    margin-top: -20px;
+}
+
+@media screen and (max-width: 770px) {
+    .page-number-nav {
+        margin-top: 0;
+    }
 }
 
 .page-number-nav>li {

@@ -6,6 +6,7 @@ let articleInfoArr = [];
 let contentEl = document.querySelector('#content');
 let loadingEl = document.querySelector('#loading-indicator');
 let maskEl = document.querySelector('#mask');
+let topBarEl = document.querySelector('header');
 let sideBarEl = document.querySelector('aside');
 
 let fadeInEl = el => el.classList.add('in');
@@ -40,7 +41,6 @@ document.querySelector('#js-open-palette').addEventListener('click', () => {
 addEventListener('scroll', (() => {
     let originScrollY = scrollY;
     let currentScrollY = originScrollY;
-    let topBarEl = document.querySelector('header');
     return () => {
         currentScrollY = scrollY;
         if (originScrollY < currentScrollY) {
@@ -127,7 +127,8 @@ async function loadContentAsync() {
                 let htmlStr = '<ul class="posts-list compact">';
                 htmlStr += '<li>';
                 htmlStr += '<h2>Archive</h2>';
-                for (let article of articleInfoArr) {
+                for (let i = articleInfoArr.length - 1; i > -1; i--) {
+                    let article = articleInfoArr[i];
                     // Source
                     // htmlStr += `
                     //     <h4 data-sl="/article/${article.id}">
@@ -168,11 +169,13 @@ async function loadContentAsync() {
                 }
 
                 let htmlStr = '<ul class="posts-list compact">';
-                for (let category of categoryArr) {
+                for (let i = categoryArr.length - 1; i > -1; i--) {
+                    let category = categoryArr[i];
                     htmlStr += `<li id="${category}">`
                     htmlStr += `<h2>${category}</h2>`;
                     let articleArr = articleArrByCategory[category];
-                    for (let article of articleArr) {
+                    for (let i = articleArr.length - 1; i > -1; i--) {
+                        let article = articleInfoArr[i];
                         htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`;
                     }
                     htmlStr += '</li>';
@@ -207,11 +210,13 @@ async function loadContentAsync() {
                 }
 
                 let htmlStr = '<ul class="posts-list compact">';
-                for (let tag of tagArr) {
+                for (let i = tagArr.length - 1; i > -1; i--) {
+                    let tag = tagArr[i];
                     htmlStr += `<li id="${tag}">`
                     htmlStr += `<h2>${tag}</h2>`;
                     let articleArr = articleArrByTag[tag];
-                    for (let article of articleArr) {
+                    for (let i = articleArr.length - 1; i > -1; i--) {
+                        let article = articleArr[i];
                         htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`;
                     }
                     htmlStr += '</li>';
@@ -275,11 +280,10 @@ function afterContentLoads() {
             : defaultTitle;
 
         // Set listeners
-        let spaLinkElArr = document.querySelectorAll('[data-sl]');
-        for (let spaLinkEl of spaLinkElArr) {
-            spaLinkEl.removeEventListener('click', jumpToSpaLink);
-            spaLinkEl.addEventListener('click', jumpToSpaLink);
-        }
+        document.querySelectorAll('[data-sl]').forEach(el => {
+            el.removeEventListener('click', jumpToSpaLink);
+            el.addEventListener('click', jumpToSpaLink);
+        });
     });
 }
 
