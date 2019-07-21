@@ -1,60 +1,60 @@
 /*!
  * Lightweight static server
- * 
+ *
  * License: Unlicense
  */
-'use strict';
+'use strict'
 
-let fs = require('fs');
-let http = require('http');
+const fs = require('fs')
+const http = require('http')
 
-let config = {
-    ip: '127.0.0.1',
-    port: 8080,
-    rootDir: __dirname + '/../dist'
-};
-let mimeList = {
-    'html': 'text/html',
-    'css': 'text/css',
-    'js': 'application/javascript',
-    'json': 'application/json',
-    'md': 'text/markdown',
-    'ico': 'image/x-icon',
-    'svg': 'image/svg+xml',
-    'png': 'image/png',
-    'webp': 'image/webp'
-};
-let server = http.createServer((req, res) => {
-    // Visit a dir or file with extension?
-    if (req.url.search(/\/$/) == -1 && req.url.indexOf('.') == -1) {
-        // Neither? Jump to url + "/"
-        res.writeHead(302, { 'Location': req.url + '/' });
-        res.end();
-        return;
+const config = {
+  ip: '127.0.0.1',
+  port: 8080,
+  rootDir: `${__dirname}/../dist`
+}
+const mimeList = {
+  html: 'text/html',
+  css: 'text/css',
+  js: 'application/javascript',
+  json: 'application/json',
+  md: 'text/markdown',
+  ico: 'image/x-icon',
+  svg: 'image/svg+xml',
+  png: 'image/png',
+  webp: 'image/webp'
+}
+const server = http.createServer((req, res) => {
+  // Visit a dir or file with extension?
+  if (req.url.search(/\/$/) === -1 && req.url.indexOf('.') === -1) {
+    // Neither? Jump to url + "/"
+    res.writeHead(302, { Location: req.url + '/' })
+    res.end()
+    return
+  }
+  const absolutePath = config.rootDir + req.url.replace(/\/$/, '')
+  fs.stat(absolutePath, (e, stats) => {
+    if (!e && stats.isFile()) {
+      // Is file
+      const extArr = absolutePath.split('.')
+      const extension = extArr[extArr.length - 1]
+      let contentType = mimeList[extension]
+      if (!contentType) {
+        contentType = ''
+        console.warn('Unknown extension: ' + extension)
+      };
+      res.writeHead(200, { 'Content-Type': contentType })
+      fs.createReadStream(absolutePath).pipe(res)
+    } else if (!e && fs.existsSync(absolutePath + '/index.html')) {
+      // Is folder
+      res.writeHead(200, { 'Content-Type': mimeList['html'] })
+      fs.createReadStream(absolutePath + '/index.html').pipe(res)
+    } else {
+      // Error
+      res.writeHead(404, { 'Content-Type': mimeList['html'] })
+      fs.createReadStream(config.rootDir + '/404.html').pipe(res)
     }
-    let absolutePath = config.rootDir + req.url.replace(/\/$/, '');
-    fs.stat(absolutePath, (e, stats) => {
-        if (!e && stats.isFile()) {
-            // Is file
-            let extArr = absolutePath.split('.');
-            let extension = extArr[extArr.length - 1];
-            let contentType = mimeList[extension];
-            if (!contentType) {
-                contentType = '';
-                console.warn('Unknown extension: ' + extension);
-            };
-            res.writeHead(200, { 'Content-Type': contentType });
-            fs.createReadStream(absolutePath).pipe(res);
-        } else if (!e && fs.existsSync(absolutePath + '/index.html')) {
-            // Is folder
-            res.writeHead(200, { 'Content-Type': mimeList['html'] });
-            fs.createReadStream(absolutePath + '/index.html').pipe(res);
-        } else {
-            // Error
-            res.writeHead(404, { 'Content-Type': mimeList['html'] });
-            fs.createReadStream(config.rootDir + '/404.html').pipe(res);
-        }
-    });
-});
-server.listen(config.port, config.ip);
-console.info(`Server is running on [${config.ip}:${config.port}]`);
+  })
+})
+server.listen(config.port, config.ip)
+console.info(`Server is running on [${config.ip}:${config.port}]`)
