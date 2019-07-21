@@ -1,14 +1,15 @@
-<h1 style="text-align:center">
-<img style="width:37px;vertical-align:bottom" src="//kkocdko.github.io/favicon.svg">
+<h1 align="center">
+<img height="43" align="top" src="https://kkocdko.github.io/favicon.svg">
 KBlog
-<br>
-<p style="font-size:14px;margin:7px 0 -3px 0">
-A static blog solution, lightweight, fast, beautiful and practical.
-</p>
-<img src="//img.shields.io/github/languages/code-size/kkocdko/kkocdko.github.io.svg?color=brightgreen">
-<img src="//img.shields.io/badge/code_style-standard-brightgreen.svg">
-<img src="//img.shields.io/github/license/kkocdko/kkocdko.github.io.svg?color=brightgreen">
 </h1>
+<p align="center">
+A static blog solution. Lightweight, fast, beautiful and practical.
+</p>
+<p align="center">
+<img src="https://img.shields.io/github/languages/code-size/kkocdko/kkocdko.github.io.svg?color=brightgreen">
+<img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg">
+<img src="https://img.shields.io/github/license/kkocdko/kkocdko.github.io.svg?color=brightgreen">
+</p>
 
 ### Demo
 
@@ -18,9 +19,7 @@ A static blog solution, lightweight, fast, beautiful and practical.
 
 ### Features
 
-* SPA with native javascript, see [History API](https://developer.mozilla.org/docs/Web/API/History).
-
-* Size < 40kb before gzip.
+* SPA with native javascript, size < 40kb before gzip.
 
 * Build quickly, few dependents.
 
