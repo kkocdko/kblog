@@ -7,17 +7,17 @@
  */
 
 .markdown-body * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .markdown-body {
-    color: #24292e;
-    word-wrap: break-word;
-    font-size: 16px;
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
-    line-height: 1.5;
+  color: #24292e;
+  word-wrap: break-word;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  line-height: 1.5;
 }
 
 .markdown-body h1,
@@ -26,41 +26,41 @@
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-    margin-top: 24px;
-    margin-bottom: 16px;
-    font-weight: 600;
-    line-height: 1.25;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .markdown-body h1 {
-    font-size: 2em;
+  font-size: 2em;
 }
 
 .markdown-body h1,
 .markdown-body h2 {
-    padding-bottom: 0.3em;
-    border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
 }
 
 .markdown-body h2 {
-    font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .markdown-body h3 {
-    font-size: 1.25em;
+  font-size: 1.25em;
 }
 
 .markdown-body h4 {
-    font-size: 1em;
+  font-size: 1em;
 }
 
 .markdown-body h5 {
-    font-size: 0.875em;
+  font-size: 0.875em;
 }
 
 .markdown-body h6 {
-    color: #6a737d;
-    font-size: 0.85em;
+  color: #6a737d;
+  font-size: 0.85em;
 }
 
 .markdown-body blockquote,
@@ -70,162 +70,162 @@
 .markdown-body pre,
 .markdown-body table,
 .markdown-body ul {
-    margin-bottom: 16px;
+  margin-bottom: 16px;
 }
 
 .markdown-body a {
-    outline: none;
-    color: #0366d6;
-    text-decoration: none;
+  outline: none;
+  color: #0366d6;
+  text-decoration: none;
 }
 
 .markdown-body a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .markdown-body strong {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .markdown-body table {
-    border-collapse: collapse;
-    border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 .markdown-body details summary {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .markdown-body hr {
-    margin: 24px 0;
-    height: 0.25em;
-    border: 0;
-    background: #e1e4e8;
+  margin: 24px 0;
+  height: 0.25em;
+  border: 0;
+  background: #e1e4e8;
 }
 
 .markdown-body blockquote {
-    padding: 0 1em;
-    border-left: 0.25em solid #dfe2e5;
-    color: #6a737d;
+  padding: 0 1em;
+  border-left: 0.25em solid #dfe2e5;
+  color: #6a737d;
 }
 
 .markdown-body pre,
 .markdown-body code,
 .markdown-body kbd {
-    font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
-    font-size: 12px;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace;
+  font-size: 12px;
 }
 
 .markdown-body pre {
-    overflow: auto;
-    padding: 16px;
-    border-radius: 3px;
-    background: #f6f8fa;
-    word-wrap: normal;
-    font-size: 85%;
-    line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+  border-radius: 3px;
+  background: #f6f8fa;
+  word-wrap: normal;
+  font-size: 85%;
+  line-height: 1.45;
 }
 
 .markdown-body code {
-    padding: 0.2em 0.4em;
-    border-radius: 3px;
-    background: rgba(27, 31, 35, 0.05);
-    font-size: 85%;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  background: rgba(27, 31, 35, 0.05);
+  font-size: 85%;
 }
 
 .markdown-body pre>code {
-    display: inline;
-    overflow: visible;
-    padding: 0;
-    border: 0;
-    background: none;
-    white-space: pre;
-    word-wrap: normal;
-    font-size: 100%;
-    line-height: inherit;
-    word-break: normal;
+  display: inline;
+  overflow: visible;
+  padding: 0;
+  border: 0;
+  background: none;
+  white-space: pre;
+  word-wrap: normal;
+  font-size: 100%;
+  line-height: inherit;
+  word-break: normal;
 }
 
 .markdown-body kbd {
-    display: inline-block;
-    padding: 3px 5px;
-    border: 1px solid #d1d5da;
-    border-radius: 3px;
-    background: #fafbfc;
-    box-shadow: inset 0 -1px 0 #c6cbd1;
-    color: #444d56;
-    vertical-align: middle;
-    line-height: 10px;
-    border-bottom-color: #c6cbd1;
+  display: inline-block;
+  padding: 3px 5px;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  background: #fafbfc;
+  box-shadow: inset 0 -1px 0 #c6cbd1;
+  color: #444d56;
+  vertical-align: middle;
+  line-height: 10px;
+  border-bottom-color: #c6cbd1;
 }
 
 .markdown-body ol,
 .markdown-body ul {
-    padding-left: 2em;
+  padding-left: 2em;
 }
 
 .markdown-body li {
-    word-wrap: break-all;
+  word-wrap: break-all;
 }
 
 .markdown-body li>p {
-    margin-top: 16px;
+  margin-top: 16px;
 }
 
 .markdown-body li+li {
-    margin-top: 0.25em;
+  margin-top: 0.25em;
 }
 
 .markdown-body dl dt {
-    margin-top: 16px;
-    font-weight: 600;
-    font-style: italic;
-    font-size: 1em;
+  margin-top: 16px;
+  font-weight: 600;
+  font-style: italic;
+  font-size: 1em;
 }
 
 .markdown-body dl dd {
-    margin-bottom: 16px;
-    padding: 0 16px;
+  margin-bottom: 16px;
+  padding: 0 16px;
 }
 
 .markdown-body table {
-    display: block;
-    overflow: auto;
-    width: 100%;
+  display: block;
+  overflow: auto;
+  width: 100%;
 }
 
 .markdown-body table td,
 .markdown-body table th {
-    padding: 6px 13px;
-    border: 1px solid #dfe2e5;
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
 }
 
 .markdown-body table th {
-    font-weight: 600;
+  font-weight: 600;
 }
 
 .markdown-body table tr {
-    border-top: 1px solid #c6cbd1;
-    background: #fff;
+  border-top: 1px solid #c6cbd1;
+  background: #fff;
 }
 
 .markdown-body table tr:nth-child(2n) {
-    background: #f6f8fa;
+  background: #f6f8fa;
 }
 
 .markdown-body img {
-    box-sizing: content-box;
-    max-width: 100%;
-    border: none;
-    background: #fff;
+  box-sizing: content-box;
+  max-width: 100%;
+  border: none;
+  background: #fff;
 }
 
 .markdown-body>:first-child,
 .markdown-body>:first-child>:first-child {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .markdown-body>:last-child,
 .markdown-body>:last-child>:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
