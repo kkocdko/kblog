@@ -51,9 +51,9 @@ function buildBlog (
 
     // Write compact markdown file
     fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
-      `<h2 class=lite>${postInfo.title}</h2>\n\n` +
-            articleStr.replace(/^(.|\n)+?---\n*/, '') +
-            `\n<title>${postInfo.title}</title>\n`
+      `<h2 class="lite">${postInfo.title}</h2>` +
+      articleStr.replace(/^(.|\n)+?---/, '') +
+      `\n<title>${postInfo.title}</title>\n`
     )
   }
 
@@ -77,7 +77,7 @@ function buildBlog (
     if (!filename) return // Is folder
     const fileStr = fs.readFileSync(filepath).toString()
     fs.writeFile(`${distDir}/${relative}`,
-      (developMode)
+      developMode
         ? fileStr
         : fileStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css and js will not be compressed
     )
@@ -87,7 +87,7 @@ function buildBlog (
     if (!filename) return
     const fileStr = fs.readFileSync(filepath).toString()
     fs.writeFile(`${distDir}/${relative}`,
-      (developMode || filename.indexOf('.min.') !== -1)
+      developMode || filename.indexOf('.min.') !== -1
         ? fileStr
         : (new Cleancss({
           level: {
@@ -102,7 +102,7 @@ function buildBlog (
     if (!filename) return
     const fileStr = fs.readFileSync(filepath).toString()
     fs.writeFile(`${distDir}/${relative}`,
-      (developMode || filename.indexOf('.min.') !== -1)
+      developMode || filename.indexOf('.min.') !== -1
         ? fileStr
         : terser.minify(fileStr, {
           compress: { unsafe: true, toplevel: true },

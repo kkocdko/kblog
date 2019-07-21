@@ -225,8 +225,8 @@ aside>.nav>li:hover svg {
 
 .posts-list {
   display: flex;
-  width: 100%;
   padding: 20px 0;
+  width: 100%;
   flex-direction: column;
   align-items: center;
 }
@@ -296,11 +296,9 @@ aside>.nav>li:hover svg {
 
 .post-date {
   margin-right: 0.5em;
-  padding: 0 0.3em;
+  padding: 1px 0.4em;
   border: 1px solid var(--theme-color);
-  background: #fff;
-  color: var(--theme-color);
-  font-size: 0.7em;
+  font-size: 12px;
 }
 
 .post-footer>li {
@@ -315,7 +313,7 @@ aside>.nav>li:hover svg {
 }
 
 .post-footer>li:first-child {
-  margin-right: 0.75em;
+  margin-right: 0.7em;
 }
 
 .post-footer>li:hover {
@@ -323,9 +321,9 @@ aside>.nav>li:hover svg {
 }
 
 .page-number-nav {
+  margin-top: -20px;
   text-align: center;
   user-select: none;
-  margin-top: -20px;
 }
 
 @media screen and (max-width: 770px) {

@@ -39,8 +39,8 @@ document.querySelector('#js-open-palette').addEventListener('click', () => {
 })
 
 window.addEventListener('scroll', (() => {
-  let originScrollY = window.scrollY
-  let currentScrollY = originScrollY
+  let currentScrollY = window.scrollY
+  let originScrollY = currentScrollY
   return () => {
     currentScrollY = window.scrollY
     if (originScrollY < currentScrollY) {
@@ -248,8 +248,8 @@ async function loadArticleInfoArrAsync () {
 
 async function loadMdPageAsync (filePath) {
   const response = await window.fetch(filePath)
-  const articleData = await response.text()
-  const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(articleData)}</article></div>`
+  const markdownStr = await response.text()
+  const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
   contentEl.innerHTML = htmlStr
   afterContentLoads()
 }
@@ -292,13 +292,13 @@ function scrollToTop (duration = 700) {
   // const originScrollX = scrollX; // Keep abscissa
   const originTime = Date.now()
   let passedTime = 0
-  const _scrollToTop = () => {
+  const animationScroll = () => {
     if (passedTime < duration) {
       passedTime = Date.now() - originTime
-      window.requestAnimationFrame(_scrollToTop)
+      window.requestAnimationFrame(animationScroll)
       // window.scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)));
       window.scrollTo(0, originScrollY * (1 - easeingFunction(passedTime / duration)))
     }
   }
-  _scrollToTop()
+  animationScroll()
 }
