@@ -54,6 +54,8 @@ window.addEventListener('scroll', (() => {
 
 window.addEventListener('popstate', loadContentAsync)
 
+window.addEventListener('DOMContentLoaded', () => { sideBarEl.style.display = 'unset' })
+
 // ==============================
 
 loadContentAsync()
@@ -174,7 +176,7 @@ async function loadContentAsync () {
           htmlStr += `<h2>${category}</h2>`
           const articleArr = articleArrByCategory[category]
           for (let i = articleArr.length - 1; i > -1; i--) {
-            const article = articleInfoArr[i]
+            const article = articleArr[i]
             htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
           }
           htmlStr += '</li>'
