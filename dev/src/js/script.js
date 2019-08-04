@@ -69,24 +69,26 @@ async function loadContentAsync () {
   switch (firstPath) {
     case 'article':
       {
-        const articleId = pathName.match(/(?<=\/article\/)\d+/)[0]
+        const articleId = pathName.split('article/')[1].split('/')[0]
         await loadMdPageAsync(`/src/article/${articleId}.md`)
       }
       break
     case 'home':
       {
         await loadArticleInfoArrAsync()
-        const curPageNumber = Number(pathName.match(/(?<=\/home\/)\d+/)[0])
-        const perPage = 10 // The article quantity of every page
-        const pageNumberMax = Math.ceil(articleInfoArr.length / perPage)
+        const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
+        const articleNumberPerPage = 10
         let htmlStr = '<ul class="posts-list">'
-        for (let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * perPage), min = i - perPage; i > min && i > -1; i--) {
+        for (
+          let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleNumberPerPage), minI = i - articleNumberPerPage;
+          i > minI && i > -1;
+          i--
+        ) {
           const article = articleInfoArr[i]
           let tagListStr = ''
           for (const tag of article.tagArr) {
             tagListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
           }
-
           // Source
           // htmlStr += `
           // <li>
@@ -104,6 +106,7 @@ async function loadContentAsync () {
         }
         htmlStr += '</ul>'
 
+        const pageNumberMax = Math.ceil(articleInfoArr.length / articleNumberPerPage)
         // Source
         // htmlStr += `
         // <ul class="page-number-nav">
