@@ -289,7 +289,7 @@ aside>.nav>li:hover svg {
   display: list-item;
   margin-top: 0.5em;
   margin-left: 1.5em;
-  width: fit-content;
+  width: max-content;
   color: var(--theme-color);
   font-weight: normal;
   filter: grayscale(0.5);
