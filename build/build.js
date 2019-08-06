@@ -6,8 +6,39 @@
 'use strict'
 
 const fs = require('file-system') // This is not native fs
-const terser = require('terser')
+const Terser = require('terser')
 const Cleancss = require('clean-css')
+
+const minifyOptions = {
+  cleancss: {
+    level: {
+      1: { specialComments: 'none' },
+      2: { all: true }
+    }
+  },
+  terser: {
+    compress: {
+      toplevel: true,
+      arguments: true,
+      booleans_as_integers: true,
+      drop_console: true,
+      hoist_funs: true,
+      passes: 3,
+      unsafe: true,
+      unsafe_arrows: true,
+      unsafe_Function: true,
+      unsafe_comps: true,
+      unsafe_math: true,
+      unsafe_methods: true,
+      unsafe_proto: true,
+      unsafe_regexp: true,
+      unsafe_undefined: true
+    },
+    mangle: {
+      toplevel: true
+    }
+  }
+}
 
 function buildBlog (
   projectDir = `${__dirname}/..`,
@@ -36,7 +67,7 @@ function buildBlog (
   const postInfoArr = []
   const articleFileArr = fs.readdirSync(articleSrcDir)
   for (const articleFile of articleFileArr) {
-    const articleStr = fs.readFileSync(`${articleSrcDir}/${articleFile}`).toString()
+    const articleStr = readFileStr(`${articleSrcDir}/${articleFile}`)
     const dateMetaArr = readMeta(articleStr, 'date')
     const postInfo = {
       id: dateMetaArr[0].replace(/-/g, '') + dateMetaArr[1].replace(/:/g, ''),
@@ -75,7 +106,7 @@ function buildBlog (
 
   fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
     if (!filename) return // Is folder
-    const fileStr = fs.readFileSync(filepath).toString()
+    const fileStr = readFileStr(filepath)
     fs.writeFile(`${distDir}/${relative}`,
       developMode
         ? fileStr
@@ -85,29 +116,31 @@ function buildBlog (
 
   fs.recurse(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
     if (!filename) return
-    const fileStr = fs.readFileSync(filepath).toString()
+    const cssStr = readFileStr(filepath)
     fs.writeFile(`${distDir}/${relative}`,
       developMode || filename.indexOf('.min.') !== -1
-        ? fileStr
-        : (new Cleancss({
-          level: {
-            1: { specialComments: 'none' },
-            2: { all: true }
-          }
-        })).minify(fileStr).styles
+        ? cssStr
+        : new Cleancss(minifyOptions.cleancss).minify(cssStr).styles
     )
   })
 
   fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
     if (!filename) return
-    const fileStr = fs.readFileSync(filepath).toString()
+    const jsStr = readFileStr(filepath)
     fs.writeFile(`${distDir}/${relative}`,
       developMode || filename.indexOf('.min.') !== -1
-        ? fileStr
-        : terser.minify(fileStr, {
-          compress: { unsafe: true, toplevel: true },
-          mangle: { toplevel: true }
-        }).code
+        ? jsStr
+        : (() => {
+          const transformer = new Terser.TreeTransformer(node => {
+            if (node instanceof Terser.AST_Const) {
+              return new Terser.AST_Let(node)
+            }
+          })
+          const ast = Terser.parse(jsStr).transform(transformer)
+          let minifiedJsStr = Terser.minify(ast, minifyOptions.terser).code
+          minifiedJsStr = minifiedJsStr.substr(0, minifiedJsStr.length - 1)
+          return minifiedJsStr
+        })()
     )
   })
 
@@ -125,6 +158,10 @@ function buildBlog (
     if (!filename) return
     fs.copyFile(filepath, `${imageSaveDir}/${relative}`)
   })
+}
+
+function readFileStr (filePath) {
+  return fs.readFileSync(filePath).toString()
 }
 
 console.time('Build')

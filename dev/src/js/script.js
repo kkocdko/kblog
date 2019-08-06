@@ -67,170 +67,165 @@ async function loadContentAsync () {
   const pathName = window.location.pathname
   const firstPath = pathName.split('/')[1]
   switch (firstPath) {
-    case 'article':
-      {
-        const articleId = pathName.split('article/')[1].split('/')[0]
-        await loadMdPageAsync(`/src/article/${articleId}.md`)
-      }
+    case 'article': {
+      const articleId = pathName.split('article/')[1].split('/')[0]
+      await loadMdPageAsync(`/src/article/${articleId}.md`)
       break
-    case 'home':
-      {
-        await loadArticleInfoArrAsync()
-        const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
-        const articleNumberPerPage = 10
-        let htmlStr = '<ul class="posts-list">'
-        for (
-          let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleNumberPerPage), minI = i - articleNumberPerPage;
-          i > minI && i > -1;
-          i--
-        ) {
-          const article = articleInfoArr[i]
-          let tagListStr = ''
-          for (const tag of article.tagArr) {
-            tagListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
-          }
-          // Source
-          // htmlStr += `
-          // <li>
-          //   <h3 data-sl="/article/${article.id}">${article.title}</h3>
-          //   <p>${article.excerpt}</p>
-          //   <ul class="post-footer">
-          //     <li data-sl="/category#${article.category}">${article.category}</li>
-          //     ${tagListStr}
-          //   </ul>
-          // </li>
-          // `;
-
-          // Compact
-          htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagListStr}</ul></li>`
+    }
+    case 'home': {
+      await loadArticleInfoArrAsync()
+      const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
+      const articleNumberPerPage = 10
+      let htmlStr = '<ul class="posts-list">'
+      for (
+        let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleNumberPerPage), minI = i - articleNumberPerPage;
+        i > minI && i > -1;
+        i--
+      ) {
+        const article = articleInfoArr[i]
+        let tagListStr = ''
+        for (const tag of article.tagArr) {
+          tagListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
         }
-        htmlStr += '</ul>'
-
-        const pageNumberMax = Math.ceil(articleInfoArr.length / articleNumberPerPage)
         // Source
         // htmlStr += `
-        // <ul class="page-number-nav">
-        //   <li data-sl="/home/1">[◀</li>
-        //   <li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li>
-        //   <li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li>
-        //   <li data-sl="/home/${pageNumberMax}">▶]</li>
-        // </ul>
+        // <li>
+        //   <h3 data-sl="/article/${article.id}">${article.title}</h3>
+        //   <p>${article.excerpt}</p>
+        //   <ul class="post-footer">
+        //     <li data-sl="/category#${article.category}">${article.category}</li>
+        //     ${tagListStr}
+        //   </ul>
+        // </li>
         // `;
 
         // Compact
-        htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`
-
-        htmlStr += `<title>Home: ${curPageNumber}</title>`
-        contentEl.innerHTML = htmlStr
-        afterContentLoads()
+        htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagListStr}</ul></li>`
       }
-      break
-    case 'archive':
-      {
-        await loadArticleInfoArrAsync()
-        let htmlStr = '<ul class="posts-list compact">'
-        htmlStr += '<li>'
-        htmlStr += '<h2>Archive</h2>'
-        for (let i = articleInfoArr.length - 1; i > -1; i--) {
-          const article = articleInfoArr[i]
-          // Source
-          // htmlStr += `
-          // <h4 data-sl="/article/${article.id}">
-          //   <span class="post-date">${article.date}</span>
-          //    ${article.title}
-          // </h4>
-          // `;
+      htmlStr += '</ul>'
 
-          // Compact
-          htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`
+      const pageNumberMax = Math.ceil(articleInfoArr.length / articleNumberPerPage)
+      // Source
+      // htmlStr += `
+      // <ul class="page-number-nav">
+      //   <li data-sl="/home/1">[◀</li>
+      //   <li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li>
+      //   <li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li>
+      //   <li data-sl="/home/${pageNumberMax}">▶]</li>
+      // </ul>
+      // `;
+
+      // Compact
+      htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`
+
+      htmlStr += `<title>Home: ${curPageNumber}</title>`
+      contentEl.innerHTML = htmlStr
+      afterContentLoads()
+      break
+    }
+    case 'archive': {
+      await loadArticleInfoArrAsync()
+      let htmlStr = '<ul class="posts-list compact">'
+      htmlStr += '<li>'
+      htmlStr += '<h2>Archive</h2>'
+      for (let i = articleInfoArr.length - 1; i > -1; i--) {
+        const article = articleInfoArr[i]
+        // Source
+        // htmlStr += `
+        // <h4 data-sl="/article/${article.id}">
+        //   <span class="post-date">${article.date}</span>
+        //    ${article.title}
+        // </h4>
+        // `;
+
+        // Compact
+        htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`
+      }
+      htmlStr += '</li>'
+      htmlStr += '</ul>'
+      htmlStr += '<title>Archive</title>'
+      contentEl.innerHTML = htmlStr
+      afterContentLoads()
+      break
+    }
+    case 'category': {
+      await loadArticleInfoArrAsync()
+      let categoryArr = []
+      for (const article of articleInfoArr) {
+        categoryArr.push(article.category)
+      }
+      categoryArr = [...new Set(categoryArr)]
+
+      const articleArrByCategory = {}
+      for (const category of categoryArr) {
+        articleArrByCategory[category] = []
+      }
+
+      for (const article of articleInfoArr) {
+        articleArrByCategory[article.category].push({
+          id: article.id,
+          title: article.title
+        })
+      }
+
+      let htmlStr = '<ul class="posts-list compact">'
+      for (let i = categoryArr.length - 1; i > -1; i--) {
+        const category = categoryArr[i]
+        htmlStr += `<li id="${category}">`
+        htmlStr += `<h2>${category}</h2>`
+        const articleArr = articleArrByCategory[category]
+        for (let i = articleArr.length - 1; i > -1; i--) {
+          const article = articleArr[i]
+          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
         }
         htmlStr += '</li>'
-        htmlStr += '</ul>'
-        htmlStr += '<title>Archive</title>'
-        contentEl.innerHTML = htmlStr
-        afterContentLoads()
       }
+      htmlStr += '</ul>'
+      htmlStr += '<title>Categories</title>'
+      contentEl.innerHTML = htmlStr
+      afterContentLoads()
       break
-    case 'category':
-      {
-        await loadArticleInfoArrAsync()
-        let categoryArr = []
-        for (const article of articleInfoArr) {
-          categoryArr.push(article.category)
-        }
-        categoryArr = [...new Set(categoryArr)]
+    }
+    case 'tag': {
+      await loadArticleInfoArrAsync()
+      let tagArr = []
+      for (const article of articleInfoArr) {
+        tagArr.push(...article.tagArr)
+      }
+      tagArr = [...new Set(tagArr)]
 
-        const articleArrByCategory = {}
-        for (const category of categoryArr) {
-          articleArrByCategory[category] = []
-        }
+      const articleArrByTag = {}
+      for (const tag of tagArr) {
+        articleArrByTag[tag] = []
+      }
 
-        for (const article of articleInfoArr) {
-          articleArrByCategory[article.category].push({
+      for (const article of articleInfoArr) {
+        for (const tag of article.tagArr) {
+          articleArrByTag[tag].push({
             id: article.id,
             title: article.title
           })
         }
-
-        let htmlStr = '<ul class="posts-list compact">'
-        for (let i = categoryArr.length - 1; i > -1; i--) {
-          const category = categoryArr[i]
-          htmlStr += `<li id="${category}">`
-          htmlStr += `<h2>${category}</h2>`
-          const articleArr = articleArrByCategory[category]
-          for (let i = articleArr.length - 1; i > -1; i--) {
-            const article = articleArr[i]
-            htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
-          }
-          htmlStr += '</li>'
-        }
-        htmlStr += '</ul>'
-        htmlStr += '<title>Categories</title>'
-        contentEl.innerHTML = htmlStr
-        afterContentLoads()
       }
-      break
-    case 'tag':
-      {
-        await loadArticleInfoArrAsync()
-        let tagArr = []
-        for (const article of articleInfoArr) {
-          tagArr.push(...article.tagArr)
-        }
-        tagArr = [...new Set(tagArr)]
 
-        const articleArrByTag = {}
-        for (const tag of tagArr) {
-          articleArrByTag[tag] = []
+      let htmlStr = '<ul class="posts-list compact">'
+      for (let i = tagArr.length - 1; i > -1; i--) {
+        const tag = tagArr[i]
+        htmlStr += `<li id="${tag}">`
+        htmlStr += `<h2>${tag}</h2>`
+        const articleArr = articleArrByTag[tag]
+        for (let i = articleArr.length - 1; i > -1; i--) {
+          const article = articleArr[i]
+          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
         }
-
-        for (const article of articleInfoArr) {
-          for (const tag of article.tagArr) {
-            articleArrByTag[tag].push({
-              id: article.id,
-              title: article.title
-            })
-          }
-        }
-
-        let htmlStr = '<ul class="posts-list compact">'
-        for (let i = tagArr.length - 1; i > -1; i--) {
-          const tag = tagArr[i]
-          htmlStr += `<li id="${tag}">`
-          htmlStr += `<h2>${tag}</h2>`
-          const articleArr = articleArrByTag[tag]
-          for (let i = articleArr.length - 1; i > -1; i--) {
-            const article = articleArr[i]
-            htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
-          }
-          htmlStr += '</li>'
-        }
-        htmlStr += '</ul>'
-        htmlStr += '<title>Tags</title>'
-        contentEl.innerHTML = htmlStr
-        afterContentLoads()
+        htmlStr += '</li>'
       }
+      htmlStr += '</ul>'
+      htmlStr += '<title>Tags</title>'
+      contentEl.innerHTML = htmlStr
+      afterContentLoads()
       break
+    }
     case 'toy':
     case 'callingcard':
     case 'about':
