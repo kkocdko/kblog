@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/kkocdko/kkocdko.github.io.git"
   },
-  "author": "Kkocdko",
+  "author": "kkocdko",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/kkocdko/kkocdko.github.io/issues"
@@ -20,6 +20,6 @@
   "dependencies": {
     "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
-    "terser": "^4.1.2"
+    "terser": "^4.1.3"
   }
 }
