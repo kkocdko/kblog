@@ -19,7 +19,7 @@ A static blog solution. Lightweight, fast, beautiful and practical.
 
 ### Features
 
-* SPA with native javascript, size < 40kb before gzip.
+* SPA with native javascript, size < 35kb before gzip.
 
 * Build quickly, few dependents.
 
@@ -29,21 +29,21 @@ A static blog solution. Lightweight, fast, beautiful and practical.
 
 * Navigation by 404 page, very bad for SEO.
 
-* Only supports modern browsers like `Chrome55+`, `Firefox52+` (Test date: 20190215)
+* Only supports modern browsers like `Chrome55+`, `Firefox59+` (Test date: 20190807).
 
 ### Usage
 
-1. You need [NodeJS](https://nodejs.org).
+* You need [NodeJS](https://nodejs.org).
 
-2. Download the `develop` branch of this repo.
+1. Download the `develop` branch of this repo.
 
-3. Enter the blog directory and run `npm install`.
+2. Enter the blog directory and run `npm install`.
 
-4. Write posts in the format of the example into `_post` directory.
+3. Write posts in the format of the example into `_post` directory.
 
-5. Run `npm run dev`, and then open your blog in browser.
+4. Run `npm run dev` and view your blog in browser.
 
-6. Push to github. You should put the content of `dist` directory into master branch.
+5. Put the content of `dist` directory into master branch, then push to github.
 
 ### Migrating
 

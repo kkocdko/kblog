@@ -48,6 +48,7 @@ body {
 }
 
 #loading-indicator.in::before {
+  content: "";
   display: inline-block;
   width: 10vmin;
   height: 10vmin;
@@ -55,7 +56,6 @@ body {
   min-height: 60px;
   border: 5px solid var(--theme-color);
   border-radius: 50%;
-  content: "";
   border-top-color: rgba(0, 0, 0, 0.1);
   animation: donut-spin 0.5s linear infinite;
 }
@@ -262,6 +262,7 @@ aside>.nav>li:hover svg {
 
 .posts-list>li h3 {
   margin-top: -3px;
+  width: max-content;
   color: var(--theme-color);
   font-weight: normal;
   font-size: 20px;
