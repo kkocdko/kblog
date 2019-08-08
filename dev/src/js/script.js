@@ -21,9 +21,7 @@ sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
 
 document.querySelector('#js-open-side-bar').addEventListener('click', sideBarEl.fadeIn)
 
-maskEl.addEventListener('click', sideBarEl.fadeOut)
-
-maskEl.addEventListener('touchstart', sideBarEl.fadeOut, { passive: true })
+maskEl.addEventListener('pointerdown', sideBarEl.fadeOut)
 
 document.querySelector('aside>.nav').addEventListener('click', sideBarEl.fadeOut)
 
@@ -34,15 +32,13 @@ document.querySelector('#js-open-palette').addEventListener('click', () => {
   if (color) {
     document.body.style.setProperty('--theme-color', color)
     document.querySelector('meta[name=theme-color]').content = color
-    sideBarEl.fadeOut()
   }
 })
 
 window.addEventListener('scroll', (() => {
-  let currentScrollY = window.scrollY
-  let originScrollY = currentScrollY
+  let originScrollY = window.scrollY
   return () => {
-    currentScrollY = window.scrollY
+    const currentScrollY = window.scrollY
     if (originScrollY < currentScrollY) {
       fadeOutEl(topBarEl)
     } else {
@@ -75,10 +71,10 @@ async function loadContentAsync () {
     case 'home': {
       await loadArticleInfoArrAsync()
       const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
-      const articleNumberPerPage = 10
+      const articleCountPerPage = 10
       let htmlStr = '<ul class="posts-list">'
       for (
-        let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleNumberPerPage), minI = i - articleNumberPerPage;
+        let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleCountPerPage), minI = i - articleCountPerPage;
         i > minI && i > -1;
         i--
       ) {
@@ -104,7 +100,7 @@ async function loadContentAsync () {
       }
       htmlStr += '</ul>'
 
-      const pageNumberMax = Math.ceil(articleInfoArr.length / articleNumberPerPage)
+      const pageNumberMax = Math.ceil(articleInfoArr.length / articleCountPerPage)
       // Source
       // htmlStr += `
       // <ul class="page-number-nav">
@@ -255,33 +251,35 @@ async function loadMdPageAsync (filePath) {
 }
 
 function jumpToSpaLink (spaLink) {
-  if (typeof spaLink !== 'string') {
-    spaLink = this.dataset.sl
-  }
   window.history.pushState(null, null, spaLink)
   loadContentAsync()
+}
+
+function onSpaLinkClick () {
+  const spaLink = this.dataset.sl
+  jumpToSpaLink(spaLink)
 }
 
 function afterContentLoads () {
   window.scrollTo(0, 0)
 
-  // Fix hash anchor
-  const anchorEl = document.querySelector(window.location.hash || '--')
-  if (anchorEl) {
-    anchorEl.scrollIntoView()
-  }
-
   setTimeout(() => {
+    // Fix hash anchor
+    const anchorEl = document.querySelector(window.location.hash || '--')
+    if (anchorEl) {
+      anchorEl.scrollIntoView()
+    }
+
     // Refresh title
-    const titleElArr = document.querySelectorAll('title')
-    document.title = titleElArr.length > 1
-      ? titleElArr[titleElArr.length - 1].innerText + ' - ' + defaultTitle
+    const titleEl = document.querySelector('body title')
+    document.title = titleEl
+      ? titleEl.textContent
       : defaultTitle
 
     // Set listeners
     document.querySelectorAll('[data-sl]').forEach(el => {
-      el.removeEventListener('click', jumpToSpaLink)
-      el.addEventListener('click', jumpToSpaLink)
+      el.removeEventListener('click', onSpaLinkClick)
+      el.addEventListener('click', onSpaLinkClick)
     })
   })
 }
@@ -290,11 +288,11 @@ function scrollToTop (duration = 700) {
   const easeingFunction = t => --t * t * t + 1
   const originScrollY = window.scrollY
   // const originScrollX = scrollX; // Keep abscissa
-  const originTime = Date.now()
+  const startTime = Date.now()
   let passedTime = 0
   const animationScroll = () => {
     if (passedTime < duration) {
-      passedTime = Date.now() - originTime
+      passedTime = Date.now() - startTime
       window.requestAnimationFrame(animationScroll)
       // window.scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)));
       window.scrollTo(0, originScrollY * (1 - easeingFunction(passedTime / duration)))
