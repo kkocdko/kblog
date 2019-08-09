@@ -17,13 +17,13 @@ body {
 }
 
 #loading-indicator {
+  visibility: hidden;
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 3;
-  visibility: hidden;
   padding-top: 120px;
   background: #fff;
   text-align: center;
@@ -61,11 +61,11 @@ body {
 }
 
 #mask {
+  visibility: hidden;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 5;
-  visibility: hidden;
   width: 100%;
   height: 100vh;
   background: #000;
@@ -123,13 +123,13 @@ header>i>svg {
 }
 
 aside {
-  position: fixed;
   display: none;
+  visibility: hidden;
+  position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   z-index: 6;
-  visibility: hidden;
   overflow: hidden auto;
   width: 70%;
   max-width: 260px;
@@ -195,12 +195,6 @@ aside>.nav>li {
   padding-left: 11%;
   color: #333;
   line-height: 50px;
-  transition: 0.3s;
-}
-
-aside>.nav>li:hover {
-  background: rgba(0, 0, 0, 0.05);
-  color: var(--theme-color);
 }
 
 aside>.nav>li i {
@@ -215,31 +209,26 @@ aside>.nav>li svg {
   fill: #555;
 }
 
-aside>.nav>li:hover svg {
-  fill: var(--theme-color);
-}
-
 #content {
   width: 100%;
   min-height: 100vh;
 }
 
-.posts-list {
+.post-list {
   display: flex;
-  padding: 20px 0;
-  width: 100%;
   flex-direction: column;
   align-items: center;
+  padding: 20px 0;
+  width: 100%;
 }
 
 @media screen and (max-width: 770px) {
-  .posts-list {
+  .post-list {
     padding: 0;
   }
 }
 
-.posts-list>li {
-  position: relative;
+.post-list>li {
   display: block;
   margin-top: 20px;
   padding: 17px;
@@ -250,35 +239,30 @@ aside>.nav>li:hover svg {
 }
 
 @media screen and (max-width: 770px) {
-  .posts-list>li {
+  .post-list>li {
     margin-top: 0;
     max-width: unset;
   }
 }
 
-.posts-list>li:first-child {
+.post-list>li:first-child {
   margin-top: 0;
 }
 
-.posts-list>li h3 {
+.post-list>li h3 {
+  display: inline-block;
   margin-top: -3px;
-  width: max-content;
   color: var(--theme-color);
   font-weight: normal;
   font-size: 20px;
-  transition: 0.2s;
 }
 
-.posts-list>li h3:hover {
-  text-shadow: 0 0 1px;
-}
-
-.posts-list>li p {
+.post-list>li p {
   margin-top: 11px;
   margin-bottom: 7px;
 }
 
-.posts-list.compact>li h2 {
+.post-list.compact>li h2 {
   display: inline-block;
   padding: 0.1em 0.3em;
   background: var(--theme-color);
@@ -286,21 +270,11 @@ aside>.nav>li:hover svg {
   font-size: 20px;
 }
 
-.posts-list.compact>li h4 {
-  display: list-item;
+.post-list.compact>li h4 {
   margin-top: 0.5em;
-  margin-left: 1.5em;
-  width: max-content;
+  margin-left: 0.7em;
   color: var(--theme-color);
   font-weight: normal;
-  filter: grayscale(0.5);
-}
-
-.post-date {
-  margin-right: 0.5em;
-  padding: 1px 0.4em;
-  border: 1px solid var(--theme-color);
-  font-size: 12px;
 }
 
 .post-footer>li {
@@ -311,48 +285,25 @@ aside>.nav>li:hover svg {
   border: 1px solid var(--theme-color);
   color: var(--theme-color);
   font-size: 12px;
-  transition: 0.2s;
 }
 
 .post-footer>li:first-child {
   margin-right: 0.7em;
 }
 
-.post-footer>li:hover {
-  background: rgba(0, 0, 0, 0.03);
-}
-
-.page-number-nav {
-  margin-top: -20px;
-  text-align: center;
-  user-select: none;
-}
-
-@media screen and (max-width: 770px) {
-  .page-number-nav {
-    margin-top: 0;
-  }
-}
-
-.page-number-nav>li {
-  display: inline-block;
-  padding: 0.7em 2em;
-  color: var(--theme-color);
-  font-weight: bold;
-  font-size: 14px;
-  opacity: 0.7;
-}
-
-.page-number-nav>li:hover {
-  opacity: 1;
+.post-date {
+  margin-right: 0.5em;
+  padding: 1px 0.4em;
+  border: 1px solid var(--theme-color);
+  font-size: 12px;
 }
 
 .post-body {
   display: flex;
-  padding: 20px 0;
-  width: 100%;
   flex-direction: column;
   align-items: center;
+  padding: 20px 0;
+  width: 100%;
 }
 
 @media screen and (max-width: 770px) {
@@ -376,8 +327,29 @@ aside>.nav>li:hover svg {
   }
 }
 
-.post-body>article>h2.lite {
+.post-body h2.lite {
   font-weight: normal;
+}
+
+.page-number-nav {
+  margin-top: -20px;
+  text-align: center;
+  user-select: none;
+}
+
+@media screen and (max-width: 770px) {
+  .page-number-nav {
+    margin-top: 0;
+  }
+}
+
+.page-number-nav>li {
+  display: inline-block;
+  padding: 0.7em 2em;
+  color: var(--theme-color);
+  font-weight: bold;
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 footer {

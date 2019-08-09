@@ -72,7 +72,7 @@ async function loadContentAsync () {
       await loadArticleInfoArrAsync()
       const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
       const articleCountPerPage = 10
-      let htmlStr = '<ul class="posts-list">'
+      let htmlStr = '<ul class="post-list">'
       for (
         let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleCountPerPage), minI = i - articleCountPerPage;
         i > minI && i > -1;
@@ -121,7 +121,7 @@ async function loadContentAsync () {
     }
     case 'archive': {
       await loadArticleInfoArrAsync()
-      let htmlStr = '<ul class="posts-list compact">'
+      let htmlStr = '<ul class="post-list compact">'
       htmlStr += '<li>'
       htmlStr += '<h2>Archive</h2>'
       for (let i = articleInfoArr.length - 1; i > -1; i--) {
@@ -164,7 +164,7 @@ async function loadContentAsync () {
         })
       }
 
-      let htmlStr = '<ul class="posts-list compact">'
+      let htmlStr = '<ul class="post-list compact">'
       for (let i = categoryArr.length - 1; i > -1; i--) {
         const category = categoryArr[i]
         htmlStr += `<li id="${category}">`
@@ -204,7 +204,7 @@ async function loadContentAsync () {
         }
       }
 
-      let htmlStr = '<ul class="posts-list compact">'
+      let htmlStr = '<ul class="post-list compact">'
       for (let i = tagArr.length - 1; i > -1; i--) {
         const tag = tagArr[i]
         htmlStr += `<li id="${tag}">`
