@@ -38,11 +38,7 @@ const server = http.createServer((req, res) => {
       // Is file
       const extArr = absolutePath.split('.')
       const extension = extArr[extArr.length - 1]
-      let contentType = mimeList[extension]
-      if (!contentType) {
-        contentType = ''
-        console.warn('Unknown extension: ' + extension)
-      };
+      const contentType = mimeList[extension] || ''
       res.writeHead(200, { 'Content-Type': contentType })
       fs.createReadStream(absolutePath).pipe(res)
     } else if (!e && fs.existsSync(absolutePath + '/index.html')) {

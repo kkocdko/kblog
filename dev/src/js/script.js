@@ -1,6 +1,6 @@
 'use strict'
 
-const defaultTitle = 'KBlog'
+const defaultTitle = 'K\'s Blog'
 let articleInfoArr = []
 
 const contentEl = document.querySelector('#content')
@@ -244,6 +244,10 @@ async function loadArticleInfoArrAsync () {
 
 async function loadMdPageAsync (filePath) {
   const response = await window.fetch(filePath)
+  if (response.status === 404) {
+    jumpToSpaLink('/404')
+    return
+  }
   const markdownStr = await response.text()
   const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
   contentEl.innerHTML = htmlStr
@@ -273,7 +277,7 @@ function afterContentLoads () {
     // Refresh title
     const titleEl = document.querySelector('body title')
     document.title = titleEl
-      ? titleEl.textContent
+      ? titleEl.textContent + ' - ' + defaultTitle
       : defaultTitle
 
     // Set listeners
