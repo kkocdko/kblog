@@ -23,7 +23,7 @@ const minifyOptions = {
       booleans_as_integers: true,
       drop_console: true,
       hoist_funs: true,
-      passes: 3,
+      passes: 2,
       unsafe: true,
       unsafe_arrows: true,
       unsafe_Function: true,
@@ -71,7 +71,7 @@ function buildBlog (
     const dateMetaArr = readMeta(articleStr, 'date')
     const postInfo = {
       id: dateMetaArr[0].replace(/-/g, '') + dateMetaArr[1].replace(/:/g, ''),
-      title: readMeta(articleStr, 'title')[0],
+      title: readMeta(articleStr, 'title', '\n')[0],
       date: dateMetaArr[0],
       time: dateMetaArr[1],
       category: readMeta(articleStr, 'category')[0],
@@ -137,8 +137,7 @@ function buildBlog (
             }
           })
           const ast = Terser.parse(jsStr).transform(transformer)
-          let minifiedJsStr = Terser.minify(ast, minifyOptions.terser).code
-          minifiedJsStr = minifiedJsStr.substr(0, minifiedJsStr.length - 1)
+          const minifiedJsStr = Terser.minify(ast, minifyOptions.terser).code.replace(/;$/, '')
           return minifiedJsStr
         })()
     )

@@ -354,8 +354,12 @@ aside>.nav>li svg {
 
 footer {
   background: var(--theme-color);
-  color: rgba(255, 255, 255, 0.7);
   text-align: center;
   font-size: 12px;
   line-height: 30px;
+}
+
+footer * {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
 }
