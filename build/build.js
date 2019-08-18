@@ -82,9 +82,9 @@ function buildBlog (
 
     // Write compact markdown file
     fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
-      `<h2 class="lite">${postInfo.title}</h2>` +
-      articleStr.replace(/^(.|\n)+?---/, '') +
-      `\n<title>${postInfo.title}</title>\n`
+      `<h2 class="lite">${postInfo.title}</h2>\n\n` +
+      articleStr.replace(/^(.|\n)+?---/, '').trim() +
+      `\n\n<title>${postInfo.title}</title>\n`
     )
   }
 

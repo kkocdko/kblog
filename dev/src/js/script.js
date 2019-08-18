@@ -265,13 +265,13 @@ function onSpaLinkClick () {
 }
 
 function afterContentLoads () {
-  window.scrollTo(0, 0)
-
   setTimeout(() => {
-    // Fix hash anchor
+    // Fix anchor
     const anchorEl = document.querySelector(window.location.hash || '--')
     if (anchorEl) {
       anchorEl.scrollIntoView()
+    } else {
+      window.scrollTo(0, 0)
     }
 
     // Refresh title
