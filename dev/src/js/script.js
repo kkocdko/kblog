@@ -21,7 +21,9 @@ sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
 
 document.querySelector('#js-open-side-bar').addEventListener('click', sideBarEl.fadeIn)
 
-maskEl.addEventListener('pointerdown', sideBarEl.fadeOut)
+maskEl.addEventListener('mousedown', sideBarEl.fadeOut)
+
+maskEl.addEventListener('touchstart', sideBarEl.fadeOut, { passive: true })
 
 document.querySelector('aside>.nav').addEventListener('click', sideBarEl.fadeOut)
 
@@ -251,6 +253,7 @@ async function loadMdPageAsync (filePath) {
   const markdownStr = await response.text()
   const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
   contentEl.innerHTML = htmlStr
+  window.scrollTo(0, 0)
   afterContentLoads()
 }
 
@@ -270,8 +273,6 @@ function afterContentLoads () {
     const anchorEl = document.querySelector(window.location.hash || '--')
     if (anchorEl) {
       anchorEl.scrollIntoView()
-    } else {
-      window.scrollTo(0, 0)
     }
 
     // Refresh title

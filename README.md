@@ -29,7 +29,7 @@ A static blog solution. Lightweight, fast, beautiful and practical.
 
 * Navigation by 404 page, very bad for SEO.
 
-* Only supports modern browsers like `Chrome55+`, `Firefox59+` (Test date: 20190807).
+* Only supports modern browsers like `Chrome55+`, `Firefox52+` (Test date: 20190807).
 
 ### Usage
 
