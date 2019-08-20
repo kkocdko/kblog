@@ -233,7 +233,7 @@ aside>.nav>li svg {
   width: 100%;
   max-width: 700px;
   background: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (max-width: 770px) {
@@ -254,7 +254,7 @@ aside>.nav>li svg {
 }
 
 .post-list>li p {
-  margin-top: 11px;
+  margin-top: 10px;
   margin-bottom: 7px;
 }
 
@@ -276,7 +276,7 @@ aside>.nav>li svg {
   display: inline-block;
   margin-top: 7px;
   margin-right: 0.5em;
-  padding: 2px 0.4em;
+  padding: 1px 0.4em 2px;
   border: 1px solid var(--theme-color);
   color: var(--theme-color);
   font-size: 12px;
@@ -313,7 +313,7 @@ aside>.nav>li svg {
   max-width: 700px;
   min-height: calc(100vh - 50px);
   background: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (max-width: 770px) {
@@ -327,20 +327,20 @@ aside>.nav>li svg {
 }
 
 .page-number-nav {
-  margin-top: -20px;
+  margin-top: -22px;
   text-align: center;
   user-select: none;
 }
 
 @media screen and (max-width: 770px) {
   .page-number-nav {
-    margin-top: 0;
+    margin-top: -2px;
   }
 }
 
 .page-number-nav>li {
   display: inline-block;
-  padding: 0.7em 2em;
+  padding: 0.9em 2em;
   color: var(--theme-color);
   font-weight: bold;
   font-size: 14px;
