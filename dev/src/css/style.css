@@ -233,7 +233,7 @@ aside>.nav>li svg {
   width: 100%;
   max-width: 700px;
   background: #fff;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (max-width: 770px) {
@@ -313,7 +313,7 @@ aside>.nav>li svg {
   max-width: 700px;
   min-height: calc(100vh - 50px);
   background: #fff;
-  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (max-width: 770px) {
