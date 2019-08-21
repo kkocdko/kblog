@@ -25,7 +25,10 @@ maskEl.addEventListener('mousedown', sideBarEl.fadeOut)
 
 maskEl.addEventListener('touchstart', sideBarEl.fadeOut, { passive: true })
 
-document.querySelector('aside>.nav').addEventListener('click', sideBarEl.fadeOut)
+document.querySelector('aside>.nav').addEventListener('click', () => {
+  window.scrollTo(0, 0)
+  sideBarEl.fadeOut()
+})
 
 document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop())
 
@@ -257,16 +260,6 @@ async function loadMdPageAsync (filePath) {
   afterContentLoads()
 }
 
-function jumpToSpaLink (spaLink) {
-  window.history.pushState(null, null, spaLink)
-  loadContentAsync()
-}
-
-function onSpaLinkClick () {
-  const spaLink = this.dataset.sl
-  jumpToSpaLink(spaLink)
-}
-
 function afterContentLoads () {
   setTimeout(() => {
     // Fix anchor
@@ -287,6 +280,16 @@ function afterContentLoads () {
       el.addEventListener('click', onSpaLinkClick)
     })
   })
+}
+
+function jumpToSpaLink (spaLink) {
+  window.history.pushState(null, null, spaLink)
+  loadContentAsync()
+}
+
+function onSpaLinkClick () {
+  const spaLink = this.dataset.sl
+  jumpToSpaLink(spaLink)
 }
 
 function scrollToTop (duration = 700) {
