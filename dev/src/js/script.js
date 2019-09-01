@@ -17,6 +17,8 @@ loadingEl.fadeOut = () => fadeOutEl(loadingEl)
 sideBarEl.fadeIn = () => [sideBarEl, maskEl].forEach(fadeInEl)
 sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
 
+loadContentAsync()
+
 // ==============================
 
 document.querySelector('#js-open-side-bar').addEventListener('click', sideBarEl.fadeIn)
@@ -55,11 +57,9 @@ window.addEventListener('scroll', (() => {
 
 window.addEventListener('popstate', loadContentAsync)
 
+// Fix the Blink's css bug
 window.addEventListener('DOMContentLoaded', () => { sideBarEl.style.display = 'unset' })
-
-// ==============================
-
-loadContentAsync()
+if (document.readyState === 'complete') { sideBarEl.style.display = 'unset' }
 
 // ==============================
 
