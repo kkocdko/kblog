@@ -110,14 +110,14 @@ async function loadContentAsync () {
       // htmlStr += `
       // <ul class="page-number-nav">
       //   <li data-sl="/home/1">[◀</li>
-      //   <li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li>
-      //   <li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li>
+      //   <li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li>
+      //   <li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li>
       //   <li data-sl="/home/${pageNumberMax}">▶]</li>
       // </ul>
       // `;
 
       // Compact
-      htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${(curPageNumber > 1) ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${(curPageNumber < pageNumberMax) ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`
+      htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`
 
       htmlStr += `<title>Home: ${curPageNumber}</title>`
       contentEl.innerHTML = htmlStr
@@ -242,7 +242,7 @@ async function loadContentAsync () {
 
 async function loadArticleInfoArrAsync () {
   if (articleInfoArr.length === 0) {
-    const response = await window.fetch(`/src/json/articleinfo.json`)
+    const response = await window.fetch('/src/json/articleinfo.json')
     articleInfoArr = await response.json()
   }
 }
