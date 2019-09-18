@@ -227,14 +227,12 @@ async function loadContentAsync () {
       afterContentLoads()
       break
     }
-    case 'toy':
-    case 'callingcard':
-    case 'about':
-    case '404':
-      await loadMdPageAsync(`/src/page/${firstPath}.md`)
-      break
+    // case 'toy':
+    // case 'callingcard':
+    // case 'about':
+    // case '404':
     default:
-      jumpToSpaLink('/404')
+      await loadMdPageAsync(`/src/page/${firstPath}.md`)
       break
   }
   loadingEl.fadeOut()
@@ -248,10 +246,9 @@ async function loadArticleInfoArrAsync () {
 }
 
 async function loadMdPageAsync (filePath) {
-  const response = await window.fetch(filePath)
+  let response = await window.fetch(filePath)
   if (response.status === 404) {
-    jumpToSpaLink('/404')
-    return
+    response = await window.fetch('/src/page/404.md')
   }
   const markdownStr = await response.text()
   const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
