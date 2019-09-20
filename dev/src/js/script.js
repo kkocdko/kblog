@@ -1,6 +1,8 @@
 'use strict'
 
-const defaultTitle = 'K\'s Blog'
+// ==============================
+
+const defaultTitle = document.title
 let articleInfoArr = []
 
 const contentEl = document.querySelector('#content')
@@ -16,6 +18,14 @@ loadingEl.fadeIn = () => fadeInEl(loadingEl)
 loadingEl.fadeOut = () => fadeOutEl(loadingEl)
 sideBarEl.fadeIn = () => [sideBarEl, maskEl].forEach(fadeInEl)
 sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
+
+// ==============================
+
+// Fix the Blink's css bug
+window.addEventListener('DOMContentLoaded', () => { sideBarEl.style.display = 'unset' })
+if (document.readyState === 'complete') { sideBarEl.style.display = 'unset' }
+
+// ==============================
 
 loadContentAsync()
 
@@ -57,10 +67,6 @@ window.addEventListener('scroll', (() => {
 
 window.addEventListener('popstate', loadContentAsync)
 
-// Fix the Blink's css bug
-window.addEventListener('DOMContentLoaded', () => { sideBarEl.style.display = 'unset' })
-if (document.readyState === 'complete') { sideBarEl.style.display = 'unset' }
-
 // ==============================
 
 async function loadContentAsync () {
@@ -90,13 +96,13 @@ async function loadContentAsync () {
         }
         // Source
         // htmlStr += `
-        // <li>
-        //   <h3 data-sl="/article/${article.id}">${article.title}</h3>
-        //   <p>${article.excerpt}</p>
-        //   <ul class="post-footer">
-        //     <li data-sl="/category#${article.category}">${article.category}</li>
-        //     ${tagListStr}
-        //   </ul>
+        //   <li>
+        //     <h3 data-sl="/article/${article.id}">${article.title}</h3>
+        //     <p>${article.excerpt}</p>
+        //     <ul class="post-footer">
+        //       <li data-sl="/category#${article.category}">${article.category}</li>
+        //       ${tagListStr}
+        //     </ul>
         // </li>
         // `;
 
@@ -108,12 +114,12 @@ async function loadContentAsync () {
       const pageNumberMax = Math.ceil(articleInfoArr.length / articleCountPerPage)
       // Source
       // htmlStr += `
-      // <ul class="page-number-nav">
-      //   <li data-sl="/home/1">[◀</li>
-      //   <li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li>
-      //   <li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li>
-      //   <li data-sl="/home/${pageNumberMax}">▶]</li>
-      // </ul>
+      //   <ul class="page-number-nav">
+      //     <li data-sl="/home/1">[◀</li>
+      //     <li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li>
+      //     <li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li>
+      //     <li data-sl="/home/${pageNumberMax}">▶]</li>
+      //   </ul>
       // `;
 
       // Compact
@@ -126,25 +132,27 @@ async function loadContentAsync () {
     }
     case 'archive': {
       await loadArticleInfoArrAsync()
-      let htmlStr = '<ul class="post-list compact">'
-      htmlStr += '<li>'
-      htmlStr += '<h2>Archive</h2>'
+      let htmlStr =
+        '<ul class="post-list compact">' +
+        '<li>' +
+        '<h2>Archive</h2>'
       for (let i = articleInfoArr.length - 1; i > -1; i--) {
         const article = articleInfoArr[i]
         // Source
         // htmlStr += `
-        // <h4 data-sl="/article/${article.id}">
-        //   <span class="post-date">${article.date}</span>
-        //    ${article.title}
-        // </h4>
+        //   <h4 data-sl="/article/${article.id}">
+        //     <span class="post-date">${article.date}</span>
+        //      ${article.title}
+        //   </h4>
         // `;
 
         // Compact
         htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`
       }
-      htmlStr += '</li>'
-      htmlStr += '</ul>'
-      htmlStr += '<title>Archive</title>'
+      htmlStr +=
+        '</li>' +
+        '</ul>' +
+        '<title>Archive</title>'
       contentEl.innerHTML = htmlStr
       afterContentLoads()
       break
@@ -181,8 +189,9 @@ async function loadContentAsync () {
         }
         htmlStr += '</li>'
       }
-      htmlStr += '</ul>'
-      htmlStr += '<title>Categories</title>'
+      htmlStr +=
+        '</ul>' +
+        '<title>Categories</title>'
       contentEl.innerHTML = htmlStr
       afterContentLoads()
       break
@@ -221,8 +230,9 @@ async function loadContentAsync () {
         }
         htmlStr += '</li>'
       }
-      htmlStr += '</ul>'
-      htmlStr += '<title>Tags</title>'
+      htmlStr +=
+        '</ul>' +
+        '<title>Tags</title>'
       contentEl.innerHTML = htmlStr
       afterContentLoads()
       break
@@ -292,14 +302,14 @@ function onSpaLinkClick () {
 function scrollToTop (duration = 700) {
   const easeingFunction = t => --t * t * t + 1
   const originScrollY = window.scrollY
-  // const originScrollX = scrollX; // Keep abscissa
+  // const originScrollX = scrollX
   const startTime = Date.now()
   let passedTime = 0
   const animationScroll = () => {
     if (passedTime < duration) {
       passedTime = Date.now() - startTime
       window.requestAnimationFrame(animationScroll)
-      // window.scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)));
+      // window.scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)))
       window.scrollTo(0, originScrollY * (1 - easeingFunction(passedTime / duration)))
     }
   }
