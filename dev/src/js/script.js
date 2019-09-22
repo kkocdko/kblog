@@ -22,8 +22,9 @@ sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
 // ==============================
 
 // Fix the Blink's css bug
-window.addEventListener('DOMContentLoaded', () => { sideBarEl.style.display = 'unset' })
-if (document.readyState === 'complete') { sideBarEl.style.display = 'unset' }
+const unlockSideBar = () => setTimeout(() => { sideBarEl.style.display = maskEl.style.display = 'unset' }, 300)
+window.addEventListener('DOMContentLoaded', unlockSideBar)
+if (document.readyState === 'complete') unlockSideBar()
 
 // ==============================
 
@@ -45,7 +46,7 @@ document.querySelector('aside>.nav').addEventListener('click', () => {
 document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop())
 
 document.querySelector('#js-open-palette').addEventListener('click', () => {
-  const color = window.prompt('Please input color (use css grammar)', 'rgb(156, 39, 176)')
+  const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 150, 136)')
   if (color) {
     document.body.style.setProperty('--theme-color', color)
     document.querySelector('meta[name=theme-color]').content = color

@@ -16,68 +16,6 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-#loading-indicator {
-  visibility: hidden;
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 3;
-  padding-top: 120px;
-  background: #fff;
-  text-align: center;
-  opacity: 0;
-  transition: 0.5s;
-}
-
-#loading-indicator.in {
-  visibility: visible;
-  opacity: 0.7;
-  transition: 0.3s;
-}
-
-@keyframes donut-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-#loading-indicator.in::before {
-  content: "";
-  display: inline-block;
-  width: 10vmin;
-  height: 10vmin;
-  min-width: 60px;
-  min-height: 60px;
-  border: 5px solid var(--theme-color);
-  border-radius: 50%;
-  border-top-color: rgba(0, 0, 0, 0.1);
-  animation: donut-spin 0.5s linear infinite;
-}
-
-#mask {
-  visibility: hidden;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 5;
-  background: #000;
-  opacity: 0;
-  transition: 0.3s;
-}
-
-#mask.in {
-  visibility: visible;
-  opacity: 0.5;
-}
-
 header {
   position: fixed;
   top: 0;
@@ -123,6 +61,7 @@ header>i>svg {
 }
 
 aside {
+  /* Fix the Blink's css bug */
   display: none;
   visibility: hidden;
   position: fixed;
@@ -208,6 +147,69 @@ aside>.nav>li svg {
   fill: #555;
 }
 
+#mask {
+  /* Fix the Blink's css bug */
+  display: none;
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  background: #000;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+#mask.in {
+  visibility: visible;
+  opacity: 0.5;
+}
+
+#loading-indicator {
+  visibility: hidden;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 3;
+  background: #fff;
+  text-align: center;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+#loading-indicator.in {
+  visibility: visible;
+  opacity: 0.7;
+  transition: 0.3s;
+}
+
+@keyframes donut-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#loading-indicator.in::after {
+  content: "";
+  display: inline-block;
+  margin-top: 120px;
+  width: 10vmin;
+  height: 10vmin;
+  min-width: 60px;
+  min-height: 60px;
+  border: 5px solid var(--theme-color);
+  border-radius: 50%;
+  border-top-color: rgba(0, 0, 0, 0.1);
+  animation: donut-spin 0.5s linear infinite;
+}
+
 #content {
   margin-top: 50px;
   min-height: 100vh;
@@ -233,7 +235,7 @@ aside>.nav>li svg {
   width: 100%;
   max-width: 700px;
   background: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
 }
 
 @media screen and (max-width: 770px) {
@@ -313,7 +315,7 @@ aside>.nav>li svg {
   max-width: 700px;
   min-height: calc(100vh - 50px);
   background: #fff;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.35);
 }
 
 @media screen and (max-width: 770px) {
