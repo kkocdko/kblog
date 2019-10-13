@@ -43,14 +43,23 @@ const server = http.createServer((req, res) => {
       fs.createReadStream(absolutePath).pipe(res)
     } else if (!e && fs.existsSync(absolutePath + '/index.html')) {
       // Is folder
-      res.writeHead(200, { 'Content-Type': mimeList['html'] })
+      res.writeHead(200, { 'Content-Type': mimeList.html })
       fs.createReadStream(absolutePath + '/index.html').pipe(res)
     } else {
       // Error
-      res.writeHead(404, { 'Content-Type': mimeList['html'] })
+      res.writeHead(404, { 'Content-Type': mimeList.html })
       fs.createReadStream(config.rootDir + '/404.html').pipe(res)
     }
   })
 })
+server.on('error', e => {
+  if (e.code === 'EADDRINUSE') {
+    server.close()
+    config.port++
+    server.listen(config.port, config.ip)
+  }
+})
+server.on('listening', () => {
+  console.info(`Server is running on [${config.ip}:${config.port}]`)
+})
 server.listen(config.port, config.ip)
-console.info(`Server is running on [${config.ip}:${config.port}]`)
