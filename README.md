@@ -1,35 +1,35 @@
 <h1 align="center">
 <img height="43" align="top" src="https://kkocdko.github.io/favicon.svg">
-KBlog
+kblog
 </h1>
 <p align="center">
-A static blog solution. Lightweight, fast, beautiful and practical.
+An unique blog solution. Lightweight, fast, beautiful and practical.
 </p>
 <p align="center">
-<img src="https://img.shields.io/github/languages/code-size/kkocdko/kkocdko.github.io.svg?color=brightgreen">
-<img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg">
-<img src="https://img.shields.io/github/license/kkocdko/kkocdko.github.io.svg?color=brightgreen">
+<img src="https://img.shields.io/github/languages/code-size/kkocdko/kkocdko.github.io.svg?style=flat-square&color=4caf50">
+<img src="https://img.shields.io/badge/code_style-standard-0.svg?style=flat-square&color=4caf50">
+<img src="https://img.shields.io/github/license/kkocdko/kkocdko.github.io.svg?style=flat-square&color=4caf50">
 </p>
 
 ### Demo
 
-![001](https://kkocdko.github.io/src/img/20190101-001011-001.webp)
-
-<https://kkocdko.github.io>
+My blog: <https://kkocdko.github.io>
 
 ### Features
 
-* SPA with native javascript, size < 35kb before gzip.
+* SPA with native javascript, size < 15kb minify + gzip.
 
 * Build quickly, few dependents.
 
 * Mobile & Desktop. Follow [Material Design](https://www.material.io).
 
-#### but...
+### Matters
 
 * Navigation by 404 page, very bad for SEO.
 
-* Only supports modern browsers like `Chrome49+`, `Firefox39+` (Test date: 20190807).
+* No `CRLF` support. Must use the `LF` newline in all files.
+
+* Only supports modern browsers. Target to `Chrome55+` and `Firefox52+`, support to `Chrome49+` and `Firefox50+` (Test date: 2019-10-13).
 
 ### Usage
 
