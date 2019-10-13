@@ -1,5 +1,9 @@
 'use strict'
 
+// In development mode, if the "async" is not supported, stop script
+// Terser's "hoist_funs" option do the same thing
+async () => {}
+
 // ==============================
 
 const defaultTitle = document.title
@@ -46,7 +50,7 @@ document.querySelector('aside>.nav').addEventListener('click', () => {
 document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop())
 
 document.querySelector('#js-open-palette').addEventListener('click', () => {
-  const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 150, 136)')
+  const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 137, 123)')
   if (color) {
     document.body.style.setProperty('--theme-color', color)
     document.querySelector('meta[name=theme-color]').content = color
