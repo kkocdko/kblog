@@ -1,7 +1,7 @@
 {
-  "name": "KBlog",
+  "name": "kblog",
   "version": "1.0.0",
-  "description": "A static blog solution. Lightweight, fast, beautiful and practical.",
+  "description": "An unique blog solution. Lightweight, fast, beautiful and practical.",
   "main": "build/build.js",
   "scripts": {
     "dev": "node build/build.js && node build/server.js",
@@ -20,6 +20,6 @@
   "dependencies": {
     "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
-    "terser": "^4.3.1"
+    "terser": "^4.3.8"
   }
 }
