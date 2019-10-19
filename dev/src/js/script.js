@@ -120,15 +120,15 @@ async function loadContentAsync () {
       // Source
       // htmlStr += `
       //   <ul class="page-number-nav">
-      //     <li data-sl="/home/1">[◀</li>
+      //     <li data-sl="/home/1">〈◀</li>
       //     <li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li>
       //     <li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li>
-      //     <li data-sl="/home/${pageNumberMax}">▶]</li>
+      //     <li data-sl="/home/${pageNumberMax}">▶〉</li>
       //   </ul>
       // `;
 
       // Compact
-      htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">[◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶]</li></ul>`
+      htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
 
       htmlStr += `<title>Home: ${curPageNumber}</title>`
       contentEl.innerHTML = htmlStr
