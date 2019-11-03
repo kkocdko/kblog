@@ -30,7 +30,7 @@ try {
   //     position: fixed;
   //     top: 50%;
   //     left: 50%;
-  //     z-index: 9;
+  //     z-index: 19;
   //     padding: 20px;
   //     width: 90%;
   //     max-width: 500px;
@@ -53,5 +53,5 @@ try {
   //   </div>
   // `)
   // Compact
-  document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;top:50%;left:50%;z-index:9;padding:20px;width:90%;max-width:500px;border-radius:7px;background:#fff;box-shadow:0 0 0 50vmax rgba(0,0,0,.3),0 2px 9px rgba(0,0,0,.3);line-height:1.7em;transform:translate(-50%,-50%)"><p>Your browser is too old, page may not work properly.</p><p>Please upgrade to the latest browser as soon as possible.</p><br><button onclick="parentNode.remove()"style="float:right;padding:7px 20px;border:1px solid #ccc;border-radius:4px;background:#fff">I got it</button></div>')
+  document.body.insertAdjacentHTML('beforeend', '<div style="position:fixed;top:50%;left:50%;z-index:19;padding:20px;width:90%;max-width:500px;border-radius:7px;background:#fff;box-shadow:0 0 0 50vmax rgba(0,0,0,.3),0 2px 9px rgba(0,0,0,.3);line-height:1.7em;transform:translate(-50%,-50%)"><p>Your browser is too old, page may not work properly.</p><p>Please upgrade to the latest browser as soon as possible.</p><br><button onclick="parentNode.remove()"style="float:right;padding:7px 20px;border:1px solid #ccc;border-radius:4px;background:#fff">I got it</button></div>')
 }
