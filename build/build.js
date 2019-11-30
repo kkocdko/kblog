@@ -68,21 +68,21 @@ try {
 
 // ==============================
 
-const postInfoArr = []
-const articleFileArr = fs.readdirSync(articleSrcDir)
-for (const articleFile of articleFileArr) {
+const articlesList = []
+const articleFilesList = fs.readdirSync(articleSrcDir)
+for (const articleFile of articleFilesList) {
   const articleStr = readFileStr(`${articleSrcDir}/${articleFile}`)
-  const dateMetaArr = readMeta(articleStr, 'date')
+  const dateMetaList = readMeta(articleStr, 'date')
   const postInfo = {
-    id: dateMetaArr[0].replace(/-/g, '') + dateMetaArr[1].replace(/:/g, ''),
+    id: dateMetaList[0].replace(/-/g, '') + dateMetaList[1].replace(/:/g, ''),
     title: readMeta(articleStr, 'title', '\n')[0], // No CRLF support !!!
-    date: dateMetaArr[0],
-    time: dateMetaArr[1],
+    date: dateMetaList[0],
+    time: dateMetaList[1],
     category: readMeta(articleStr, 'category')[0],
-    tagArr: readMeta(articleStr, 'tags'),
+    tagsList: readMeta(articleStr, 'tags'),
     excerpt: readMeta(articleStr, 'excerpt', '\n')[0]
   }
-  postInfoArr.push(postInfo)
+  articlesList.push(postInfo)
 
   // Write compact markdown file
   fs.writeFile(`${articleSaveDir}/${postInfo.id}.md`,
@@ -92,13 +92,13 @@ for (const articleFile of articleFileArr) {
   )
 }
 
-fs.writeFile(`${jsonSaveDir}/articleinfo.json`, JSON.stringify(postInfoArr))
+fs.writeFile(`${jsonSaveDir}/articleslist.json`, JSON.stringify(articlesList))
 
 // ==============================
 
-fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) => {
-  if (!filename) return // Is folder
-  const fileStr = readFileStr(filepath)
+fs.recurse(devDir, ['src/**/*.html', '*.html'], (path, relative, name) => {
+  if (!name) return
+  const fileStr = readFileStr(path)
   fs.writeFile(`${distDir}/${relative}`,
     config.developMode
       ? fileStr
@@ -106,21 +106,21 @@ fs.recurse(devDir, ['src/**/*.html', '*.html'], (filepath, relative, filename) =
   )
 })
 
-fs.recurse(devDir, ['src/**/*.css'], (filepath, relative, filename) => {
-  if (!filename) return
-  const cssStr = readFileStr(filepath)
+fs.recurse(devDir, ['src/**/*.css'], (path, relative, name) => {
+  if (!name) return
+  const cssStr = readFileStr(path)
   fs.writeFile(`${distDir}/${relative}`,
-    config.developMode || /\.min\./.test(filename)
+    config.developMode || /\.min\./.test(name)
       ? cssStr
       : new Cleancss(config.minifyOptions.cleancss).minify(cssStr).styles
   )
 })
 
-fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
-  if (!filename) return
-  const jsStr = readFileStr(filepath)
+fs.recurse(devDir, ['src/**/*.js'], (path, relative, name) => {
+  if (!name) return
+  const jsStr = readFileStr(path)
   fs.writeFile(`${distDir}/${relative}`,
-    config.developMode || /\.min\./.test(filename)
+    config.developMode || /\.min\./.test(name)
       ? jsStr
       : (() => {
         const transformer = new Terser.TreeTransformer(node => {
@@ -135,19 +135,16 @@ fs.recurse(devDir, ['src/**/*.js'], (filepath, relative, filename) => {
   )
 })
 
-fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', '*.json', 'toy/**/*.*'], (filepath, relative, filename) => {
-  if (!filename) return
-  fs.copyFile(filepath, `${distDir}/${relative}`)
+fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', '*.json', 'toy/**/*.*'], (path, relative, name) => {
+  if (name)fs.copyFile(path, `${distDir}/${relative}`)
 })
 
-fs.recurse(pageSrcDir, ['*.*'], (filepath, relative, filename) => {
-  if (!filename) return
-  fs.copyFile(filepath, `${pageSaveDir}/${relative}`)
+fs.recurse(pageSrcDir, ['*.*'], (path, relative, name) => {
+  if (name)fs.copyFile(path, `${pageSaveDir}/${relative}`)
 })
 
-fs.recurse(imageSrcDir, ['*.*'], (filepath, relative, filename) => {
-  if (!filename) return
-  fs.copyFile(filepath, `${imageSaveDir}/${relative}`)
+fs.recurse(imageSrcDir, ['*.*'], (path, relative, name) => {
+  if (name) fs.copyFile(path, `${imageSaveDir}/${relative}`)
 })
 
 // ==============================

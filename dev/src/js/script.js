@@ -3,26 +3,26 @@
 // ==============================
 
 const defaultTitle = document.title
-let articleInfoArr = []
+let articlesList = []
 
-const contentEl = document.querySelector('#content')
-const loadingEl = document.querySelector('#loading-indicator')
-const maskEl = document.querySelector('#mask')
-const topBarEl = document.querySelector('header')
-const sideBarEl = document.querySelector('aside')
+const contentBox = document.querySelector('#content')
+const loadingIndicator = document.querySelector('#loading-indicator')
+const mask = document.querySelector('#mask')
+const topBar = document.querySelector('header')
+const sideBar = document.querySelector('aside')
 
 const fadeInEl = el => el.classList.add('in')
 const fadeOutEl = el => el.classList.remove('in')
 
-loadingEl.fadeIn = () => fadeInEl(loadingEl)
-loadingEl.fadeOut = () => fadeOutEl(loadingEl)
-sideBarEl.fadeIn = () => [sideBarEl, maskEl].forEach(fadeInEl)
-sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
+loadingIndicator.fadeIn = () => fadeInEl(loadingIndicator)
+loadingIndicator.fadeOut = () => fadeOutEl(loadingIndicator)
+sideBar.fadeIn = () => [sideBar, mask].forEach(fadeInEl)
+sideBar.fadeOut = () => [sideBar, mask].forEach(fadeOutEl)
 
 // ==============================
 
 // Fix the Blink's css bug
-const unlockSideBar = () => setTimeout(() => { sideBarEl.style.display = maskEl.style.display = 'unset' }, 700)
+const unlockSideBar = () => setTimeout(() => { sideBar.style.display = mask.style.display = 'unset' }, 700)
 window.addEventListener('DOMContentLoaded', unlockSideBar)
 if (document.readyState === 'complete') unlockSideBar()
 
@@ -32,15 +32,15 @@ loadContentAsync()
 
 // ==============================
 
-document.querySelector('#js-open-side-bar').addEventListener('click', sideBarEl.fadeIn)
+document.querySelector('#js-open-side-bar').addEventListener('click', sideBar.fadeIn)
 
-maskEl.addEventListener('mousedown', sideBarEl.fadeOut)
+mask.addEventListener('mousedown', sideBar.fadeOut)
 
-maskEl.addEventListener('touchstart', sideBarEl.fadeOut, { passive: true })
+mask.addEventListener('touchstart', sideBar.fadeOut, { passive: true })
 
 document.querySelector('aside>.nav').addEventListener('click', () => {
   window.scrollTo(0, 0)
-  sideBarEl.fadeOut()
+  sideBar.fadeOut()
 })
 
 document.querySelector('#js-gotop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
@@ -58,9 +58,9 @@ window.addEventListener('scroll', (() => {
   return () => {
     const currentScrollY = window.scrollY
     if (originScrollY < currentScrollY) {
-      fadeOutEl(topBarEl)
+      fadeOutEl(topBar)
     } else {
-      fadeInEl(topBarEl)
+      fadeInEl(topBar)
     }
     originScrollY = currentScrollY
   }
@@ -71,7 +71,7 @@ window.addEventListener('popstate', loadContentAsync)
 // ==============================
 
 async function loadContentAsync () {
-  loadingEl.fadeIn()
+  loadingIndicator.fadeIn()
   const pathName = window.location.pathname
   const firstPath = pathName.split('/')[1]
   switch (firstPath) {
@@ -81,19 +81,19 @@ async function loadContentAsync () {
       break
     }
     case 'home': {
-      await loadArticleInfoArrAsync()
+      await loadArticlesListAsync()
       const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
-      const articleCountPerPage = 10
+      const countPerPage = 10
       let htmlStr = '<ul class="post-list">'
       for (
-        let i = articleInfoArr.length - 1 - ((curPageNumber - 1) * articleCountPerPage), minI = i - articleCountPerPage;
+        let i = articlesList.length - 1 - ((curPageNumber - 1) * countPerPage), minI = i - countPerPage;
         i > minI && i > -1;
         i--
       ) {
-        const article = articleInfoArr[i]
-        let tagListStr = ''
-        for (const tag of article.tagArr) {
-          tagListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
+        const article = articlesList[i]
+        let tagsListStr = ''
+        for (const tag of article.tagsList) {
+          tagsListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
         }
         // Source
         // htmlStr += `
@@ -102,17 +102,17 @@ async function loadContentAsync () {
         //     <p>${article.excerpt}</p>
         //     <ul class="post-footer">
         //       <li data-sl="/category#${article.category}">${article.category}</li>
-        //       ${tagListStr}
+        //       ${tagsListStr}
         //     </ul>
         // </li>
         // `;
 
         // Compact
-        htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagListStr}</ul></li>`
+        htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagsListStr}</ul></li>`
       }
       htmlStr += '</ul>'
 
-      const pageNumberMax = Math.ceil(articleInfoArr.length / articleCountPerPage)
+      const pageNumberMax = Math.ceil(articlesList.length / countPerPage)
       // Source
       // htmlStr += `
       //   <ul class="page-number-nav">
@@ -127,18 +127,18 @@ async function loadContentAsync () {
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
 
       htmlStr += `<title>Home: ${curPageNumber}</title>`
-      contentEl.innerHTML = htmlStr
+      contentBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
     case 'archive': {
-      await loadArticleInfoArrAsync()
+      await loadArticlesListAsync()
       let htmlStr =
         '<ul class="post-list compact">' +
         '<li>' +
         '<h2>Archive</h2>'
-      for (let i = articleInfoArr.length - 1; i > -1; i--) {
-        const article = articleInfoArr[i]
+      for (let i = articlesList.length - 1; i > -1; i--) {
+        const article = articlesList[i]
         // Source
         // htmlStr += `
         //   <h4 data-sl="/article/${article.id}">
@@ -154,38 +154,38 @@ async function loadContentAsync () {
         '</li>' +
         '</ul>' +
         '<title>Archive</title>'
-      contentEl.innerHTML = htmlStr
+      contentBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
     case 'category': {
-      await loadArticleInfoArrAsync()
-      let categoryArr = []
-      for (const article of articleInfoArr) {
-        categoryArr.push(article.category)
+      await loadArticlesListAsync()
+      let categoriesList = []
+      for (const article of articlesList) {
+        categoriesList.push(article.category)
       }
-      categoryArr = [...new Set(categoryArr)]
+      categoriesList = [...new Set(categoriesList)]
 
-      const articleArrByCategory = {}
-      for (const category of categoryArr) {
-        articleArrByCategory[category] = []
+      const articlesListByCategory = {}
+      for (const category of categoriesList) {
+        articlesListByCategory[category] = []
       }
 
-      for (const article of articleInfoArr) {
-        articleArrByCategory[article.category].push({
+      for (const article of articlesList) {
+        articlesListByCategory[article.category].push({
           id: article.id,
           title: article.title
         })
       }
 
       let htmlStr = '<ul class="post-list compact">'
-      for (let i = categoryArr.length - 1; i > -1; i--) {
-        const category = categoryArr[i]
+      for (let i = categoriesList.length - 1; i > -1; i--) {
+        const category = categoriesList[i]
         htmlStr += `<li id="${category}">`
         htmlStr += `<h2>${category}</h2>`
-        const articleArr = articleArrByCategory[category]
-        for (let i = articleArr.length - 1; i > -1; i--) {
-          const article = articleArr[i]
+        const articlesList = articlesListByCategory[category]
+        for (let i = articlesList.length - 1; i > -1; i--) {
+          const article = articlesList[i]
           htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
         }
         htmlStr += '</li>'
@@ -193,26 +193,26 @@ async function loadContentAsync () {
       htmlStr +=
         '</ul>' +
         '<title>Categories</title>'
-      contentEl.innerHTML = htmlStr
+      contentBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
     case 'tag': {
-      await loadArticleInfoArrAsync()
-      let tagArr = []
-      for (const article of articleInfoArr) {
-        tagArr.push(...article.tagArr)
+      await loadArticlesListAsync()
+      let tagsList = []
+      for (const article of articlesList) {
+        tagsList.push(...article.tagsList)
       }
-      tagArr = [...new Set(tagArr)]
+      tagsList = [...new Set(tagsList)]
 
-      const articleArrByTag = {}
-      for (const tag of tagArr) {
-        articleArrByTag[tag] = []
+      const articlesListByTag = {}
+      for (const tag of tagsList) {
+        articlesListByTag[tag] = []
       }
 
-      for (const article of articleInfoArr) {
-        for (const tag of article.tagArr) {
-          articleArrByTag[tag].push({
+      for (const article of articlesList) {
+        for (const tag of article.tagsList) {
+          articlesListByTag[tag].push({
             id: article.id,
             title: article.title
           })
@@ -220,13 +220,13 @@ async function loadContentAsync () {
       }
 
       let htmlStr = '<ul class="post-list compact">'
-      for (let i = tagArr.length - 1; i > -1; i--) {
-        const tag = tagArr[i]
+      for (let i = tagsList.length - 1; i > -1; i--) {
+        const tag = tagsList[i]
         htmlStr += `<li id="${tag}">`
         htmlStr += `<h2>${tag}</h2>`
-        const articleArr = articleArrByTag[tag]
-        for (let i = articleArr.length - 1; i > -1; i--) {
-          const article = articleArr[i]
+        const articlesList = articlesListByTag[tag]
+        for (let i = articlesList.length - 1; i > -1; i--) {
+          const article = articlesList[i]
           htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
         }
         htmlStr += '</li>'
@@ -234,7 +234,7 @@ async function loadContentAsync () {
       htmlStr +=
         '</ul>' +
         '<title>Tags</title>'
-      contentEl.innerHTML = htmlStr
+      contentBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
@@ -246,13 +246,13 @@ async function loadContentAsync () {
       await loadMdPageAsync(`/src/page/${firstPath}.md`)
       break
   }
-  loadingEl.fadeOut()
+  loadingIndicator.fadeOut()
 }
 
-async function loadArticleInfoArrAsync () {
-  if (articleInfoArr.length === 0) {
-    const response = await window.fetch('/src/json/articleinfo.json')
-    articleInfoArr = await response.json()
+async function loadArticlesListAsync () {
+  if (articlesList.length === 0) {
+    const response = await window.fetch('/src/json/articleslist.json')
+    articlesList = await response.json()
   }
 }
 
@@ -262,7 +262,7 @@ async function loadMdPageAsync (filePath) {
     ? '<h3 style="text-align:center;font-size:7vmin">404 no found</h3><title>404 no found</title>'
     : await response.text()
   const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
-  contentEl.innerHTML = htmlStr
+  contentBox.innerHTML = htmlStr
   window.scrollTo(0, 0)
   afterContentLoads()
 }
@@ -270,15 +270,15 @@ async function loadMdPageAsync (filePath) {
 function afterContentLoads () {
   setTimeout(() => {
     // Fix anchor
-    const anchorEl = document.querySelector(window.location.hash || '--')
-    if (anchorEl) {
-      anchorEl.scrollIntoView()
+    const anchorElement = document.querySelector(window.location.hash || '--')
+    if (anchorElement) {
+      anchorElement.scrollIntoView()
     }
 
     // Refresh title
-    const titleEl = document.querySelector('body title')
-    document.title = titleEl
-      ? titleEl.textContent + ' - ' + defaultTitle
+    const titleTag = document.querySelector('body title')
+    document.title = titleTag
+      ? titleTag.textContent + ' - ' + defaultTitle
       : defaultTitle
 
     // Set listeners
