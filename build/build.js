@@ -1,7 +1,7 @@
 'use strict'
 
 const config = {
-  developMode: false,
+  developMode: process.argv.includes('--dev-mode'),
   projectDir: `${__dirname}/..`,
   minifyOptions: {
     cleancss: {

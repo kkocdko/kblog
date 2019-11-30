@@ -13,6 +13,7 @@ const config = {
   port: 8080,
   rootDir: `${__dirname}/../dist`
 }
+
 const mimeList = {
   html: 'text/html',
   css: 'text/css',
@@ -24,6 +25,7 @@ const mimeList = {
   png: 'image/png',
   webp: 'image/webp'
 }
+
 const server = http.createServer((req, res) => {
   // Visit a dir or file with extension?
   if (req.url.search(/\/$/) === -1 && req.url.indexOf('.') === -1) {
@@ -52,6 +54,7 @@ const server = http.createServer((req, res) => {
     }
   })
 })
+
 server.on('error', e => {
   if (e.code === 'EADDRINUSE') {
     server.close()
@@ -59,7 +62,9 @@ server.on('error', e => {
     server.listen(config.port, config.ip)
   }
 })
+
 server.on('listening', () => {
   console.info(`Server is running on [${config.ip}:${config.port}]`)
 })
+
 server.listen(config.port, config.ip)
