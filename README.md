@@ -7,7 +7,7 @@ An unique blog solution. Lightweight, fast, beautiful and practical.
 </p>
 <p align="center">
 <img src="https://img.shields.io/github/languages/code-size/kkocdko/kkocdko.github.io.svg?style=flat-square&color=4caf50">
-<img src="https://img.shields.io/badge/code_style-standard-0.svg?style=flat-square&color=4caf50">
+<img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg?style=flat-square&color=4caf50">
 <img src="https://img.shields.io/github/license/kkocdko/kkocdko.github.io.svg?style=flat-square&color=4caf50">
 </p>
 
@@ -17,7 +17,7 @@ My blog: <https://kkocdko.github.io>
 
 ### Features
 
-* SPA with native javascript, size < 15kb minify + gzip.
+* SPA with pure javascript, size < 15kb minify + gzip.
 
 * Build quickly, few dependents.
 
@@ -29,21 +29,21 @@ My blog: <https://kkocdko.github.io>
 
 * No `CRLF` support. Must use the `LF` newline in all files.
 
-* Only supports modern browsers. Target to `Chrome55+` and `Firefox52+`, support to `Chrome49+` and `Firefox50+` (Test date: 2019-10-13).
+* Only supports modern browsers. Target to `Chrome55+` and `Firefox52+`.
 
 ### Usage
-
-* You need [NodeJS](https://nodejs.org).
 
 1. Download the `develop` branch of this repo.
 
 2. Enter the blog directory and run `npm install`.
+    * Need [NodeJS](https://nodejs.org).
 
-3. Write posts in the format of the example into `_post` directory.
+3. Write posts in the format of the example to `_post` folder.
+    * You can put images into `_img` directory, using them like this in posts: `![001](/src/img/001.png)`
 
-4. Run `npm run dev` and view your blog in browser.
+4. (Optional) Run `npm run dev` and view your blog in browser.
 
-5. Put the content of `dist` directory into master branch, then push to github.
+5. Run `npm run build` and put the content of `dist` directory into master branch, then push to github.
 
 ### Migrating
 

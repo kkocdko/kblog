@@ -4,7 +4,7 @@
   "description": "An unique blog solution. Lightweight, fast, beautiful and practical.",
   "main": "build/build.js",
   "scripts": {
-    "dev": "node build/build.js && node build/server.js",
+    "dev": "node build/build.js --dev-mode && node build/server.js",
     "build": "node build/build.js"
   },
   "repository": {
@@ -20,6 +20,6 @@
   "dependencies": {
     "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
-    "terser": "^4.3.9"
+    "terser": "^4.4.0"
   }
 }
