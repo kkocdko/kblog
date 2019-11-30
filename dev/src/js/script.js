@@ -22,7 +22,7 @@ sideBarEl.fadeOut = () => [sideBarEl, maskEl].forEach(fadeOutEl)
 // ==============================
 
 // Fix the Blink's css bug
-const unlockSideBar = () => setTimeout(() => { sideBarEl.style.display = maskEl.style.display = 'unset' }, 300)
+const unlockSideBar = () => setTimeout(() => { sideBarEl.style.display = maskEl.style.display = 'unset' }, 700)
 window.addEventListener('DOMContentLoaded', unlockSideBar)
 if (document.readyState === 'complete') unlockSideBar()
 
@@ -43,7 +43,7 @@ document.querySelector('aside>.nav').addEventListener('click', () => {
   sideBarEl.fadeOut()
 })
 
-document.querySelector('#js-gotop').addEventListener('click', () => scrollToTop())
+document.querySelector('#js-gotop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
 
 document.querySelector('#js-open-palette').addEventListener('click', () => {
   const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 137, 123)')
@@ -257,11 +257,10 @@ async function loadArticleInfoArrAsync () {
 }
 
 async function loadMdPageAsync (filePath) {
-  let response = await window.fetch(filePath)
-  if (response.status === 404) {
-    response = await window.fetch('/src/page/404.md')
-  }
-  const markdownStr = await response.text()
+  const response = await window.fetch(filePath)
+  const markdownStr = response.status === 404
+    ? '<h3 style="text-align:center;font-size:7vmin">404 no found</h3><title>404 no found</title>'
+    : await response.text()
   const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
   contentEl.innerHTML = htmlStr
   window.scrollTo(0, 0)
@@ -298,21 +297,4 @@ function jumpToSpaLink (spaLink) {
 function onSpaLinkClick () {
   const spaLink = this.dataset.sl
   jumpToSpaLink(spaLink)
-}
-
-function scrollToTop (duration = 700) {
-  const easeingFunction = t => --t * t * t + 1
-  const originScrollY = window.scrollY
-  // const originScrollX = scrollX
-  const startTime = Date.now()
-  let passedTime = 0
-  const animationScroll = () => {
-    if (passedTime < duration) {
-      passedTime = Date.now() - startTime
-      window.requestAnimationFrame(animationScroll)
-      // window.scrollTo(originScrollX, originScrollY * (1 - easeingFunction(passedTime / duration)))
-      window.scrollTo(0, originScrollY * (1 - easeingFunction(passedTime / duration)))
-    }
-  }
-  animationScroll()
 }
