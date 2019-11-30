@@ -22,9 +22,7 @@ sideBar.fadeOut = () => [sideBar, mask].forEach(fadeOutEl)
 // ==============================
 
 // Fix the Blink's css bug
-const unlockSideBar = () => setTimeout(() => { sideBar.style.display = mask.style.display = 'unset' }, 700)
-window.addEventListener('DOMContentLoaded', unlockSideBar)
-if (document.readyState === 'complete') unlockSideBar()
+setTimeout(() => { sideBar.style.display = mask.style.display = 'unset' }, 700)
 
 // ==============================
 
@@ -82,19 +80,20 @@ async function loadContentAsync () {
     }
     case 'home': {
       await loadArticlesListAsync()
+
       const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
       const countPerPage = 10
       let htmlStr = '<ul class="post-list">'
       for (
-        let i = articlesList.length - 1 - ((curPageNumber - 1) * countPerPage), minI = i - countPerPage;
-        i > minI && i > -1;
-        i--
+        let i = (curPageNumber - 1) * countPerPage, maxI = i + countPerPage, l = articlesList.length;
+        i < maxI && i < l;
+        i++
       ) {
         const article = articlesList[i]
         let tagsListStr = ''
-        for (const tag of article.tagsList) {
+        article.tagsList.forEach(tag => {
           tagsListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
-        }
+        })
         // Source
         // htmlStr += `
         //   <li>
@@ -106,7 +105,6 @@ async function loadContentAsync () {
         //     </ul>
         // </li>
         // `;
-
         // Compact
         htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagsListStr}</ul></li>`
       }
@@ -122,7 +120,6 @@ async function loadContentAsync () {
       //     <li data-sl="/home/${pageNumberMax}">▶〉</li>
       //   </ul>
       // `;
-
       // Compact
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
 
@@ -133,12 +130,12 @@ async function loadContentAsync () {
     }
     case 'archive': {
       await loadArticlesListAsync()
+
       let htmlStr =
         '<ul class="post-list compact">' +
         '<li>' +
         '<h2>Archive</h2>'
-      for (let i = articlesList.length - 1; i > -1; i--) {
-        const article = articlesList[i]
+      articlesList.forEach(article => {
         // Source
         // htmlStr += `
         //   <h4 data-sl="/article/${article.id}">
@@ -146,10 +143,9 @@ async function loadContentAsync () {
         //      ${article.title}
         //   </h4>
         // `;
-
         // Compact
         htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`
-      }
+      })
       htmlStr +=
         '</li>' +
         '</ul>' +
@@ -160,36 +156,34 @@ async function loadContentAsync () {
     }
     case 'category': {
       await loadArticlesListAsync()
+
       let categoriesList = []
-      for (const article of articlesList) {
+      articlesList.forEach(article => {
         categoriesList.push(article.category)
-      }
+      })
       categoriesList = [...new Set(categoriesList)]
 
       const articlesListByCategory = {}
-      for (const category of categoriesList) {
+      categoriesList.forEach(category => {
         articlesListByCategory[category] = []
-      }
+      })
 
-      for (const article of articlesList) {
+      articlesList.forEach(article => {
         articlesListByCategory[article.category].push({
           id: article.id,
           title: article.title
         })
-      }
+      })
 
       let htmlStr = '<ul class="post-list compact">'
-      for (let i = categoriesList.length - 1; i > -1; i--) {
-        const category = categoriesList[i]
+      categoriesList.forEach(category => {
         htmlStr += `<li id="${category}">`
         htmlStr += `<h2>${category}</h2>`
-        const articlesList = articlesListByCategory[category]
-        for (let i = articlesList.length - 1; i > -1; i--) {
-          const article = articlesList[i]
+        articlesListByCategory[category].forEach(article => {
           htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
-        }
+        })
         htmlStr += '</li>'
-      }
+      })
       htmlStr +=
         '</ul>' +
         '<title>Categories</title>'
@@ -199,38 +193,37 @@ async function loadContentAsync () {
     }
     case 'tag': {
       await loadArticlesListAsync()
+
       let tagsList = []
-      for (const article of articlesList) {
+      articlesList.forEach(article => {
         tagsList.push(...article.tagsList)
-      }
+      })
       tagsList = [...new Set(tagsList)]
 
       const articlesListByTag = {}
-      for (const tag of tagsList) {
+      tagsList.forEach(tag => {
         articlesListByTag[tag] = []
-      }
+      })
 
-      for (const article of articlesList) {
-        for (const tag of article.tagsList) {
+      articlesList.forEach(article => {
+        article.tagsList.forEach(tag => {
           articlesListByTag[tag].push({
             id: article.id,
             title: article.title
           })
-        }
-      }
+        })
+      })
 
       let htmlStr = '<ul class="post-list compact">'
-      for (let i = tagsList.length - 1; i > -1; i--) {
-        const tag = tagsList[i]
-        htmlStr += `<li id="${tag}">`
-        htmlStr += `<h2>${tag}</h2>`
-        const articlesList = articlesListByTag[tag]
-        for (let i = articlesList.length - 1; i > -1; i--) {
-          const article = articlesList[i]
+      tagsList.forEach(tag => {
+        htmlStr +=
+          `<li id="${tag}">` +
+          `<h2>${tag}</h2>`
+        articlesListByTag[tag].forEach(article => {
           htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
-        }
+        })
         htmlStr += '</li>'
-      }
+      })
       htmlStr +=
         '</ul>' +
         '<title>Tags</title>'

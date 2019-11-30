@@ -69,8 +69,7 @@ try {
 // ==============================
 
 const articlesList = []
-const articleFilesList = fs.readdirSync(articleSrcDir)
-for (const articleFile of articleFilesList) {
+fs.readdirSync(articleSrcDir).forEach(articleFile => {
   const articleStr = readFileStr(`${articleSrcDir}/${articleFile}`)
   const dateMetaList = readMeta(articleStr, 'date')
   const postInfo = {
@@ -90,19 +89,19 @@ for (const articleFile of articleFilesList) {
       articleStr.replace(/^(.|\n)+?---/, '').trim() +
       `\n\n<title>${postInfo.title}</title>\n`
   )
-}
+})
 
-fs.writeFile(`${jsonSaveDir}/articleslist.json`, JSON.stringify(articlesList))
+fs.writeFile(`${jsonSaveDir}/articleslist.json`, JSON.stringify(articlesList.reverse()))
 
 // ==============================
 
 fs.recurse(devDir, ['src/**/*.html', '*.html'], (path, relative, name) => {
   if (!name) return
-  const fileStr = readFileStr(path)
+  const htmlStr = readFileStr(path)
   fs.writeFile(`${distDir}/${relative}`,
-    config.developMode
-      ? fileStr
-      : fileStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css and js will not be compressed
+    config.developMode || /\.min\./.test(name)
+      ? htmlStr
+      : htmlStr.replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css and js will not be compressed
   )
 })
 
