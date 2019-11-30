@@ -1,9 +1,5 @@
 'use strict'
 
-// In development mode, if the "async" is not supported, stop script
-// Terser's "hoist_funs" option do the same thing
-async () => {}
-
 // ==============================
 
 const defaultTitle = document.title
