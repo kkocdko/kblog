@@ -282,12 +282,7 @@ function afterContentLoads () {
   })
 }
 
-function jumpToSpaLink (spaLink) {
-  window.history.pushState(null, null, spaLink)
-  loadContentAsync()
-}
-
 function onSpaLinkClick () {
-  const spaLink = this.dataset.sl
-  jumpToSpaLink(spaLink)
+  window.history.pushState(null, null, this.dataset.sl)
+  loadContentAsync()
 }
