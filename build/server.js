@@ -7,6 +7,7 @@
 
 const fs = require('fs')
 const http = require('http')
+const readline = require('readline')
 
 const config = {
   ip: '127.0.0.1',
@@ -60,11 +61,19 @@ server.on('error', e => {
     server.close()
     config.port++
     server.listen(config.port, config.ip)
+  } else {
+    console.error('Server error: ', e)
   }
 })
 
 server.on('listening', () => {
-  console.info(`Server is running on [${config.ip}:${config.port}]`)
+  console.info(`Server is running on: ${config.ip}:${config.port}`)
 })
 
 server.listen(config.port, config.ip)
+
+const readlineInterface = readline.createInterface({ input: process.stdin, output: process.stdout })
+readlineInterface.question('', () => {
+  readlineInterface.close()
+  process.exit()
+})

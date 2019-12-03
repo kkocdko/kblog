@@ -41,7 +41,9 @@ document.querySelector('aside>.nav').addEventListener('click', () => {
   sideBar.fadeOut()
 })
 
-document.querySelector('#js-gotop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }))
+document.querySelector('#js-gotop').addEventListener('click', () =>
+  document.documentElement.scrollIntoView({ behavior: 'smooth' })
+)
 
 document.querySelector('#js-open-palette').addEventListener('click', () => {
   const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 137, 123)')
@@ -157,30 +159,23 @@ async function loadContentAsync () {
     case 'category': {
       await loadArticlesListAsync()
 
-      let categoriesList = []
-      articlesList.forEach(article => {
-        categoriesList.push(article.category)
-      })
-      categoriesList = [...new Set(categoriesList)]
-
-      const articlesListByCategory = {}
-      categoriesList.forEach(category => {
-        articlesListByCategory[category] = []
-      })
-
-      articlesList.forEach(article => {
-        articlesListByCategory[article.category].push({
-          id: article.id,
-          title: article.title
-        })
+      const categoriesList = [...new Set(
+        articlesList.map(({ category }) => category)
+      )]
+      const articlesListByCategory = new Map(categoriesList.map(category =>
+        [category, []]
+      ))
+      articlesList.forEach(({ id, title, category }) => {
+        articlesListByCategory.get(category).push({ id, title })
       })
 
       let htmlStr = '<ul class="post-list compact">'
-      categoriesList.forEach(category => {
-        htmlStr += `<li id="${category}">`
-        htmlStr += `<h2>${category}</h2>`
-        articlesListByCategory[category].forEach(article => {
-          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
+      articlesListByCategory.forEach((list, category) => {
+        htmlStr +=
+          `<li id="${category}">` +
+          `<h2>${category}</h2>`
+        list.forEach(({ id, title }) => {
+          htmlStr += `<h4 data-sl="/article/${id}">${title}</h4>`
         })
         htmlStr += '</li>'
       })
@@ -194,33 +189,28 @@ async function loadContentAsync () {
     case 'tag': {
       await loadArticlesListAsync()
 
-      let tagsList = []
-      articlesList.forEach(article => {
-        tagsList.push(...article.tagsList)
+      // const tagsList = [...new Set(articlesList.flatMap(({ tagsList }) => tagsList))]
+      const tagsListSet = new Set()
+      articlesList.forEach(({ tagsList }) => {
+        tagsList.forEach(tag => { tagsListSet.add(tag) })
       })
-      tagsList = [...new Set(tagsList)]
-
-      const articlesListByTag = {}
-      tagsList.forEach(tag => {
-        articlesListByTag[tag] = []
-      })
-
-      articlesList.forEach(article => {
-        article.tagsList.forEach(tag => {
-          articlesListByTag[tag].push({
-            id: article.id,
-            title: article.title
-          })
+      const tagsList = [...tagsListSet]
+      const articlesListByTag = new Map(tagsList.map(tag =>
+        [tag, []]
+      ))
+      articlesList.forEach(({ id, title, tagsList }) => {
+        tagsList.forEach(tag => {
+          articlesListByTag.get(tag).push({ id, title })
         })
       })
 
       let htmlStr = '<ul class="post-list compact">'
-      tagsList.forEach(tag => {
+      articlesListByTag.forEach((list, tag) => {
         htmlStr +=
           `<li id="${tag}">` +
           `<h2>${tag}</h2>`
-        articlesListByTag[tag].forEach(article => {
-          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
+        list.forEach(({ id, title }) => {
+          htmlStr += `<h4 data-sl="/article/${id}">${title}</h4>`
         })
         htmlStr += '</li>'
       })
