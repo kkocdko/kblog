@@ -33,7 +33,7 @@ header.in {
   transform: translateY(0);
 }
 
-header>i {
+header i {
   float: left;
   padding: 10px;
   width: 50px;
@@ -41,11 +41,11 @@ header>i {
   cursor: pointer;
 }
 
-header>#js-gotop {
+header #js-gotop {
   float: right;
 }
 
-header>.avatar {
+header .avatar {
   margin: 10px 0;
   width: 30px;
   height: 30px;
@@ -54,13 +54,11 @@ header>.avatar {
   background: url("/favicon.svg");
 }
 
-header>i>svg {
+header svg {
   fill: #fff;
 }
 
 aside {
-  /* Fix the Blink's css bug */
-  display: none;
   visibility: hidden;
   position: fixed;
   top: 0;
@@ -81,12 +79,12 @@ aside.in {
   transform: translateX(0);
 }
 
-aside>.brand {
+aside .brand {
   padding: 13% 0 9% 12.5%;
   background: var(--theme-color);
 }
 
-aside>.brand>#js-open-palette {
+aside #js-open-palette {
   position: absolute;
   top: 0;
   right: 0;
@@ -98,16 +96,16 @@ aside>.brand>#js-open-palette {
   transition: 0.7s 0.3s;
 }
 
-aside.in>.brand>#js-open-palette {
+aside.in #js-open-palette {
   opacity: 0.7;
   transform: rotate(360deg);
 }
 
-aside>.brand>#js-open-palette>svg {
+aside #js-open-palette svg {
   fill: #fff;
 }
 
-aside>.brand>.avatar {
+aside .avatar {
   display: block;
   width: 21vw;
   height: 21vw;
@@ -118,7 +116,7 @@ aside>.brand>.avatar {
   background: url("/favicon.svg");
 }
 
-aside>.brand>.name {
+aside .name {
   margin-top: 13px;
   width: 21vw;
   max-width: 90px;
@@ -127,26 +125,24 @@ aside>.brand>.name {
   font-size: 18px;
 }
 
-aside>.nav>li {
+aside li {
   padding-left: 11%;
   color: #333;
   line-height: 50px;
 }
 
-aside>.nav>li i {
+aside li i {
   display: inline-block;
   margin-right: 0.7em;
   width: 1.5em;
 }
 
-aside>.nav>li svg {
+aside li svg {
   vertical-align: middle;
   fill: #555;
 }
 
 #mask {
-  /* Fix the Blink's css bug */
-  display: none;
   visibility: hidden;
   position: fixed;
   top: 0;
@@ -164,7 +160,7 @@ aside>.nav>li svg {
   opacity: 0.5;
 }
 
-#loading-indicator {
+#loading {
   visibility: hidden;
   position: fixed;
   top: 0;
@@ -177,7 +173,7 @@ aside>.nav>li svg {
   transition: 0.5s;
 }
 
-#loading-indicator.in {
+#loading.in {
   visibility: visible;
   opacity: 0.7;
   transition: 0.3s;
@@ -193,7 +189,7 @@ aside>.nav>li svg {
   }
 }
 
-#loading-indicator.in::after {
+#loading.in::after {
   content: "";
   display: inline-block;
   margin-top: 120px;
@@ -256,17 +252,17 @@ aside>.nav>li svg {
   }
 }
 
-.post-list>li h3 {
+.post-list h3 {
   color: var(--theme-color);
   font-weight: normal;
   font-size: 20px;
 }
 
-.post-list>li p {
+.post-list p {
   margin: 10px 0 7px;
 }
 
-.post-list.compact>li h2 {
+.post-list.compact h2 {
   display: inline-block;
   padding: 0.1em 0.3em;
   background: var(--theme-color);
@@ -274,23 +270,23 @@ aside>.nav>li svg {
   font-size: 20px;
 }
 
-.post-list.compact>li h4 {
+.post-list.compact h4 {
   margin: 0.5em 0 0 0.7em;
   color: var(--theme-color);
   font-weight: normal;
 }
 
-.post-footer>li {
+.post-footer li {
   display: inline-block;
   margin-top: 7px;
   margin-right: 0.5em;
-  padding: 1px 0.4em 2px;
+  padding: 2px 5px;
   border: 1px solid var(--theme-color);
   color: var(--theme-color);
   font-size: 12px;
 }
 
-.post-footer>li:first-child {
+.post-footer li:first-child {
   margin-right: 0.7em;
 }
 
@@ -301,7 +297,7 @@ aside>.nav>li svg {
   font-size: 12px;
 }
 
-.post-body>article {
+.post-body {
   margin: 0 auto;
   padding: 20px;
   width: 700px;
@@ -311,7 +307,7 @@ aside>.nav>li svg {
 }
 
 @media screen and (max-width: 770px) {
-  .post-body>article {
+  .post-body {
     width: 100%;
     box-shadow: none;
   }
@@ -322,24 +318,24 @@ aside>.nav>li svg {
 }
 
 .page-number-nav {
-  margin-bottom: -20px;
+  margin: 5px 0 -15px;
   text-align: center;
   user-select: none;
 }
 
 @media screen and (max-width: 770px) {
   .page-number-nav {
-    margin-bottom: 1px;
+    margin: 0 0 2px;
     border-top: 1px solid #ddd;
   }
 }
 
-.page-number-nav>li {
+.page-number-nav li {
   display: inline-block;
-  padding: 0.8em 1.6em;
+  padding: 0.7em 1.6em;
   color: var(--theme-color);
   font-weight: 900;
-  font-size: 16px;
+  font-size: 14px;
   opacity: 0.7;
 }
 
