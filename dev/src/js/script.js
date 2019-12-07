@@ -6,23 +6,13 @@ const defaultTitle = document.title
 let articlesList = []
 
 const contentBox = document.querySelector('#content')
-const loadingIndicator = document.querySelector('#loading-indicator')
-const mask = document.querySelector('#mask')
+const loadingIndicator = document.querySelector('#loading')
+const maskLayer = document.querySelector('#mask')
 const topBar = document.querySelector('header')
 const sideBar = document.querySelector('aside')
 
-const fadeInEl = el => el.classList.add('in')
-const fadeOutEl = el => el.classList.remove('in')
-
-loadingIndicator.fadeIn = () => fadeInEl(loadingIndicator)
-loadingIndicator.fadeOut = () => fadeOutEl(loadingIndicator)
-sideBar.fadeIn = () => [sideBar, mask].forEach(fadeInEl)
-sideBar.fadeOut = () => [sideBar, mask].forEach(fadeOutEl)
-
-// ==============================
-
-// Fix the Blink's css bug
-setTimeout(() => { sideBar.style.display = mask.style.display = 'unset' }, 700)
+sideBar.fadeIn = () => [sideBar, maskLayer].forEach(fadeInElement)
+sideBar.fadeOut = () => [sideBar, maskLayer].forEach(fadeOutElement)
 
 // ==============================
 
@@ -30,19 +20,20 @@ loadContentAsync()
 
 // ==============================
 
-document.querySelector('#js-open-side-bar').addEventListener('click', sideBar.fadeIn)
+document.querySelector('#js-open-sidebar').addEventListener('click', sideBar.fadeIn)
 
-mask.addEventListener('mousedown', sideBar.fadeOut)
+maskLayer.addEventListener('mousedown', sideBar.fadeOut)
 
-mask.addEventListener('touchstart', sideBar.fadeOut, { passive: true })
+maskLayer.addEventListener('touchstart', sideBar.fadeOut, { passive: true })
 
-document.querySelector('aside>.nav').addEventListener('click', () => {
-  window.scrollTo(0, 0)
+document.querySelector('aside ul').addEventListener('click', () => {
+  window.scroll(0, 0)
   sideBar.fadeOut()
 })
 
 document.querySelector('#js-gotop').addEventListener('click', () =>
-  document.documentElement.scrollIntoView({ behavior: 'smooth' })
+  // window.scroll({ top: 0, behavior: 'smooth' })
+  document.lastChild.scrollIntoView({ behavior: 'smooth' })
 )
 
 document.querySelector('#js-open-palette').addEventListener('click', () => {
@@ -58,9 +49,9 @@ window.addEventListener('scroll', (() => {
   return () => {
     const currentScrollY = window.scrollY
     if (originScrollY < currentScrollY) {
-      fadeOutEl(topBar)
+      fadeOutElement(topBar)
     } else {
-      fadeInEl(topBar)
+      fadeInElement(topBar)
     }
     originScrollY = currentScrollY
   }
@@ -70,20 +61,25 @@ window.addEventListener('popstate', loadContentAsync)
 
 // ==============================
 
+// Fix the Blink's css bug
+setTimeout(() => [sideBar, maskLayer].forEach(el => el.removeAttribute('style')), 700)
+
+// ==============================
+
 async function loadContentAsync () {
-  loadingIndicator.fadeIn()
+  fadeInElement(loadingIndicator)
   const pathName = window.location.pathname
   const firstPath = pathName.split('/')[1]
   switch (firstPath) {
     case 'article': {
-      const articleId = pathName.split('article/')[1].split('/')[0]
+      const articleId = pathName.split(firstPath)[1].split('/')[1]
       await loadMdPageAsync(`/src/article/${articleId}.md`)
       break
     }
     case 'home': {
       await loadArticlesListAsync()
 
-      const curPageNumber = Number(pathName.split('home/')[1].split('/')[0])
+      const curPageNumber = Number(pathName.split(firstPath)[1].split('/')[1])
       const countPerPage = 10
       let htmlStr = '<ul class="post-list">'
       for (
@@ -159,14 +155,12 @@ async function loadContentAsync () {
     case 'category': {
       await loadArticlesListAsync()
 
-      const categoriesList = [...new Set(
-        articlesList.map(({ category }) => category)
-      )]
-      const articlesListByCategory = new Map(categoriesList.map(category =>
-        [category, []]
-      ))
-      articlesList.forEach(({ id, title, category }) => {
-        articlesListByCategory.get(category).push({ id, title })
+      const articlesListByCategory = new Map()
+      articlesList.forEach(article => {
+        if (!articlesListByCategory.has(article.category)) {
+          articlesListByCategory.set(article.category, [])
+        }
+        articlesListByCategory.get(article.category).push(article)
       })
 
       let htmlStr = '<ul class="post-list compact">'
@@ -174,8 +168,8 @@ async function loadContentAsync () {
         htmlStr +=
           `<li id="${category}">` +
           `<h2>${category}</h2>`
-        list.forEach(({ id, title }) => {
-          htmlStr += `<h4 data-sl="/article/${id}">${title}</h4>`
+        list.forEach(article => {
+          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
         })
         htmlStr += '</li>'
       })
@@ -189,18 +183,13 @@ async function loadContentAsync () {
     case 'tag': {
       await loadArticlesListAsync()
 
-      // const tagsList = [...new Set(articlesList.flatMap(({ tagsList }) => tagsList))]
-      const tagsListSet = new Set()
-      articlesList.forEach(({ tagsList }) => {
-        tagsList.forEach(tag => { tagsListSet.add(tag) })
-      })
-      const tagsList = [...tagsListSet]
-      const articlesListByTag = new Map(tagsList.map(tag =>
-        [tag, []]
-      ))
-      articlesList.forEach(({ id, title, tagsList }) => {
-        tagsList.forEach(tag => {
-          articlesListByTag.get(tag).push({ id, title })
+      const articlesListByTag = new Map()
+      articlesList.forEach(article => {
+        article.tagsList.forEach(tag => {
+          if (!articlesListByTag.has(tag)) {
+            articlesListByTag.set(tag, [])
+          }
+          articlesListByTag.get(tag).push(article)
         })
       })
 
@@ -209,8 +198,8 @@ async function loadContentAsync () {
         htmlStr +=
           `<li id="${tag}">` +
           `<h2>${tag}</h2>`
-        list.forEach(({ id, title }) => {
-          htmlStr += `<h4 data-sl="/article/${id}">${title}</h4>`
+        list.forEach(article => {
+          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
         })
         htmlStr += '</li>'
       })
@@ -229,13 +218,12 @@ async function loadContentAsync () {
       await loadMdPageAsync(`/src/page/${firstPath}.md`)
       break
   }
-  loadingIndicator.fadeOut()
+  fadeOutElement(loadingIndicator)
 }
 
 async function loadArticlesListAsync () {
   if (articlesList.length === 0) {
-    const response = await window.fetch('/src/json/articleslist.json')
-    articlesList = await response.json()
+    articlesList = await (await window.fetch('/src/json/articleslist.json')).json()
   }
 }
 
@@ -244,19 +232,15 @@ async function loadMdPageAsync (filePath) {
   const markdownStr = response.status === 404
     ? '<h3 style="text-align:center;font-size:7vmin">404 no found</h3><title>404 no found</title>'
     : await response.text()
-  const htmlStr = `<div class="post-body"><article class="markdown-body">${window.marked(markdownStr)}</article></div>`
-  contentBox.innerHTML = htmlStr
-  window.scrollTo(0, 0)
+  contentBox.innerHTML = `<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`
+  window.scroll(0, 0)
   afterContentLoads()
 }
 
 function afterContentLoads () {
   setTimeout(() => {
     // Fix anchor
-    const anchorElement = document.querySelector(window.location.hash || '--')
-    if (anchorElement) {
-      anchorElement.scrollIntoView()
-    }
+    try { document.querySelector(window.location.hash).scrollIntoView() } catch (e) {}
 
     // Refresh title
     const titleTag = document.querySelector('body title')
@@ -275,4 +259,12 @@ function afterContentLoads () {
 function onSpaLinkClick () {
   window.history.pushState(null, null, this.dataset.sl)
   loadContentAsync()
+}
+
+function fadeInElement (element) {
+  element.classList.add('in')
+}
+
+function fadeOutElement (element) {
+  element.classList.remove('in')
 }

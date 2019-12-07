@@ -20,8 +20,8 @@ const buildConfig = {
         passes: 2,
         unsafe: true,
         unsafe_arrows: true,
-        unsafe_Function: true,
         unsafe_comps: true,
+        unsafe_Function: true,
         unsafe_math: true,
         unsafe_methods: true,
         unsafe_proto: true,
@@ -70,15 +70,25 @@ try {
 
 const articlesList = fs.readdirSync(articleSrcDir).map(articleFile => {
   const articleStr = readFileStr(`${articleSrcDir}/${articleFile}`)
-  const dateMetaList = readMeta(articleStr, 'date')
+  const articleRawInfo = {}
+  const infoBlockStartIndex = '---\n'.length // No CRLF support !!!
+  const infoBlockEndIndex = articleStr.indexOf('\n---') - infoBlockStartIndex
+  const infoBlockStr = articleStr.substr(infoBlockStartIndex, infoBlockEndIndex)
+  const infoBlockLines = infoBlockStr.split('\n')
+  infoBlockLines.forEach(line => {
+    const infoSplitIndex = line.indexOf(':')
+    const infoName = line.substr(0, infoSplitIndex)
+    const infoList = line.substr(infoSplitIndex + 1).trim().split(' ')
+    articleRawInfo[infoName] = infoList
+  })
   const articleInfo = {
-    id: dateMetaList[0].replace(/-/g, '') + dateMetaList[1].replace(/:/g, ''),
-    title: readMeta(articleStr, 'title', '\n')[0], // No CRLF support !!!
-    date: dateMetaList[0],
-    time: dateMetaList[1],
-    category: readMeta(articleStr, 'category')[0],
-    tagsList: readMeta(articleStr, 'tags'),
-    excerpt: readMeta(articleStr, 'excerpt', '\n')[0]
+    id: articleRawInfo.date.join('').replace(/:|-/g, ''),
+    title: articleRawInfo.title.join(' '),
+    date: articleRawInfo.date[0],
+    time: articleRawInfo.date[1],
+    category: articleRawInfo.category[0],
+    tagsList: articleRawInfo.tags,
+    excerpt: articleRawInfo.excerpt.join(' ')
   }
   // Write compact markdown file
   fs.writeFile(`${articleSaveDir}/${articleInfo.id}.md`,
@@ -147,20 +157,8 @@ fs.recurse(imageSrcDir, ['*.*'], (path, relative, name) => {
 
 // ==============================
 
-function readMeta (articleStr, head, spliter = ' ', maxSearchLength = 400) {
-  articleStr = articleStr.substr(0, maxSearchLength)
-  let resultLine = ''
-  try {
-    resultLine = articleStr.match(`\\n${head}:([^\\n]*)`)[1].trim() // Whole line
-  } catch (e) {
-    console.warn(`Can not find meta [${head}]`)
-  }
-  const resultArr = resultLine.split(spliter)
-  return resultArr
-}
-
 function shouldCompress (filename) {
-  return !(buildConfig.developMode || /\.min\./.test(filename))
+  return !buildConfig.developMode && filename.indexOf('.min.') === -1
 }
 
 function readFileStr (filePath) {

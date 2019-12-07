@@ -6,18 +6,18 @@
  * Base: github-markdown-css https://github.com/sindresorhus/github-markdown-css
  */
 
-.markdown-body * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
 .markdown-body {
   color: #24292e;
   word-wrap: break-word;
   font-size: 16px;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
   line-height: 1.5;
+}
+
+.markdown-body * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 .markdown-body h1,
@@ -32,14 +32,14 @@
   line-height: 1.25;
 }
 
-.markdown-body h1 {
-  font-size: 2em;
-}
-
 .markdown-body h1,
 .markdown-body h2 {
   padding-bottom: 0.3em;
   border-bottom: 1px solid #eaecef;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
 }
 
 .markdown-body h2 {
@@ -137,7 +137,6 @@
   display: inline;
   overflow: visible;
   padding: 0;
-  border: 0;
   background: none;
   white-space: pre;
   word-wrap: normal;
