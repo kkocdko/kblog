@@ -1,7 +1,5 @@
 'use strict'
 
-// ==============================
-
 const defaultTitle = document.title
 let articlesList = []
 
@@ -10,61 +8,6 @@ const loadingIndicator = document.querySelector('#loading')
 const maskLayer = document.querySelector('#mask')
 const topBar = document.querySelector('header')
 const sideBar = document.querySelector('aside')
-
-sideBar.fadeIn = () => [sideBar, maskLayer].forEach(fadeInElement)
-sideBar.fadeOut = () => [sideBar, maskLayer].forEach(fadeOutElement)
-
-// ==============================
-
-loadContentAsync()
-
-// ==============================
-
-document.querySelector('#js-open-sidebar').addEventListener('click', sideBar.fadeIn)
-
-maskLayer.addEventListener('mousedown', sideBar.fadeOut)
-
-maskLayer.addEventListener('touchstart', sideBar.fadeOut, { passive: true })
-
-document.querySelector('aside ul').addEventListener('click', () => {
-  window.scroll(0, 0)
-  sideBar.fadeOut()
-})
-
-document.querySelector('#js-gotop').addEventListener('click', () =>
-  // window.scroll({ top: 0, behavior: 'smooth' })
-  document.lastChild.scrollIntoView({ behavior: 'smooth' })
-)
-
-document.querySelector('#js-open-palette').addEventListener('click', () => {
-  const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 137, 123)')
-  if (color) {
-    document.body.style.setProperty('--theme-color', color)
-    document.querySelector('meta[name=theme-color]').content = color
-  }
-})
-
-window.addEventListener('scroll', (() => {
-  let originScrollY = window.scrollY
-  return () => {
-    const currentScrollY = window.scrollY
-    if (originScrollY < currentScrollY) {
-      fadeOutElement(topBar)
-    } else {
-      fadeInElement(topBar)
-    }
-    originScrollY = currentScrollY
-  }
-})())
-
-window.addEventListener('popstate', loadContentAsync)
-
-// ==============================
-
-// Fix the Blink's css bug
-setTimeout(() => [sideBar, maskLayer].forEach(el => el.removeAttribute('style')), 700)
-
-// ==============================
 
 async function loadContentAsync () {
   fadeInElement(loadingIndicator)
@@ -268,3 +211,50 @@ function fadeInElement (element) {
 function fadeOutElement (element) {
   element.classList.remove('in')
 }
+
+sideBar.fadeIn = () => [sideBar, maskLayer].forEach(fadeInElement)
+sideBar.fadeOut = () => [sideBar, maskLayer].forEach(fadeOutElement)
+
+loadContentAsync()
+
+window.addEventListener('popstate', loadContentAsync)
+
+document.querySelector('#open-sidebar-btn').addEventListener('click', sideBar.fadeIn)
+
+maskLayer.addEventListener('mousedown', sideBar.fadeOut)
+
+maskLayer.addEventListener('touchstart', sideBar.fadeOut, { passive: true })
+
+document.querySelector('aside ul').addEventListener('click', () => {
+  window.scroll(0, 0)
+  sideBar.fadeOut()
+})
+
+document.querySelector('#gotop-btn').addEventListener('click', () =>
+  // window.scroll({ top: 0, behavior: 'smooth' })
+  document.lastChild.scrollIntoView({ behavior: 'smooth' })
+)
+
+document.querySelector('#open-palette-btn').addEventListener('click', () => {
+  const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 137, 123)')
+  if (color) {
+    document.body.style.setProperty('--theme-color', color)
+    document.querySelector('meta[name=theme-color]').content = color
+  }
+})
+
+window.addEventListener('scroll', (() => {
+  let originScrollY = window.scrollY
+  return () => {
+    const currentScrollY = window.scrollY
+    if (originScrollY < currentScrollY) {
+      fadeOutElement(topBar)
+    } else {
+      fadeInElement(topBar)
+    }
+    originScrollY = currentScrollY
+  }
+})())
+
+// Fix the Blink's css bug
+setTimeout(() => [sideBar, maskLayer].forEach(el => el.removeAttribute('style')), 700)
