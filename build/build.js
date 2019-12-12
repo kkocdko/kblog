@@ -140,17 +140,17 @@ fs.recurse(devDir, ['src/**/*.js'], (path, relative, name) => {
   }
 })
 
-fs.recurse(devDir, ['*.ico', '*.txt', '*.svg', '*.json', 'toy/**/*.*'], (path, relative, name) => {
+fs.recurse(devDir, ['**/*', '!*.html', '!src/**/*'], (path, relative, name) => {
   if (!name) return
   fs.copyFile(path, `${distDir}/${relative}`)
 })
 
-fs.recurse(pageSrcDir, ['*.*'], (path, relative, name) => {
+fs.recurse(pageSrcDir, ['*'], (path, relative, name) => {
   if (!name) return
   fs.copyFile(path, `${pageSaveDir}/${relative}`)
 })
 
-fs.recurse(imageSrcDir, ['*.*'], (path, relative, name) => {
+fs.recurse(imageSrcDir, ['*'], (path, relative, name) => {
   if (!name) return
   fs.copyFile(path, `${imageSaveDir}/${relative}`)
 })
