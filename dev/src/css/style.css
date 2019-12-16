@@ -19,18 +19,16 @@ body {
 
 header {
   position: fixed;
-  z-index: 5;
   top: 0;
   width: 100%;
   height: 50px;
   transition: 0.3s;
-  transform: translateY(-55px);
   background: var(--theme-color);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-header.in {
-  transform: translateY(0);
+header:not(.in) {
+  transform: translateY(-55px);
 }
 
 header i {
@@ -58,33 +56,42 @@ header svg {
   fill: #fff;
 }
 
-aside {
+#sidebar {
   position: fixed;
-  z-index: 9;
   top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
+  display: flex;
   visibility: hidden;
+  transition: 0.3s;
+}
+
+#sidebar.in {
+  visibility: visible;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#sidebar .menu {
+  position: relative;
   overflow: hidden auto;
   width: 70%;
   max-width: 260px;
   transition: 0.3s;
-  transform: translateX(-100%);
   background: #fff;
   box-shadow: 5px 0 9px rgba(0, 0, 0, 0.3);
 }
 
-aside.in {
-  visibility: visible;
-  transform: translateX(0);
+#sidebar:not(.in) .menu {
+  transform: translateX(calc(-100% - 14px));
 }
 
-aside .brand {
+#sidebar .brand {
   padding: 13% 0 9% 12.5%;
   background: var(--theme-color);
 }
 
-aside #open-palette-btn {
+#sidebar #open-palette-btn {
   position: absolute;
   top: 0;
   right: 0;
@@ -96,73 +103,54 @@ aside #open-palette-btn {
   opacity: 0;
 }
 
-aside.in #open-palette-btn {
+#sidebar.in #open-palette-btn {
   transform: rotate(360deg);
   opacity: 0.7;
 }
 
-aside #open-palette-btn svg {
+#sidebar #open-palette-btn svg {
   fill: #fff;
 }
 
-aside .avatar {
-  display: block;
-  width: 21vw;
-  max-width: 90px;
-  height: 21vw;
-  max-height: 90px;
-  border: 2px solid #fff;
-  border-radius: 50%;
-  background: url("/favicon.svg");
-}
-
-aside .name {
-  width: 21vw;
-  max-width: 90px;
-  margin-top: 13px;
+#sidebar .name {
+  width: 39%;
   text-align: center;
   color: #fff;
   font-size: 18px;
 }
 
-aside li {
+#sidebar .avatar {
+  display: block;
+  margin-bottom: 13px;
+  padding: calc(50% - 2px);
+  border: 2px solid;
+  border-radius: 50%;
+  background: url("/favicon.svg");
+}
+
+#sidebar li {
   padding-left: 11%;
   color: #333;
   line-height: 50px;
 }
 
-aside li i {
+#sidebar li i {
   display: inline-block;
   width: 1.5em;
   margin-right: 0.7em;
 }
 
-aside li svg {
+#sidebar li svg {
   vertical-align: middle;
   fill: #555;
 }
 
-#mask {
-  position: fixed;
-  z-index: 7;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  visibility: hidden;
-  transition: 0.3s;
-  opacity: 0;
-  background: #000;
-}
-
-#mask.in {
-  visibility: visible;
-  opacity: 0.5;
+#sidebar .mask {
+  flex-grow: 1;
 }
 
 #loading {
   position: fixed;
-  z-index: 3;
   top: 0;
   bottom: 0;
   visibility: hidden;
@@ -179,38 +167,33 @@ aside li svg {
   opacity: 0.7;
 }
 
-@keyframes donut-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
+@keyframes spin {
+  to {
     transform: rotate(360deg);
   }
 }
 
 #loading.in::after {
   display: inline-block;
-  width: 10vmin;
   min-width: 60px;
-  height: 10vmin;
   min-height: 60px;
   margin-top: 120px;
+  padding: 5vmin;
   content: "";
-  animation: donut-spin 0.5s linear infinite;
+  animation: spin 0.5s linear infinite;
   border: 5px solid var(--theme-color);
   border-top-color: #fff;
   border-radius: 50%;
 }
 
-#content {
+main {
   min-height: 100vh;
   margin-top: 50px;
   padding: 20px 0;
 }
 
 @media screen and (max-width: 770px) {
-  #content {
+  main {
     padding: 0;
   }
 }
