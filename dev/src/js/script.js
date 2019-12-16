@@ -3,17 +3,23 @@
 const defaultTitle = document.title
 let articlesList = []
 
-const contentBox = document.querySelector('#content')
+const mainBox = document.querySelector('main')
 const loadingIndicator = document.querySelector('#loading')
-const maskLayer = document.querySelector('#mask')
 const topBar = document.querySelector('header')
-const sideBar = document.querySelector('aside')
+const sideBar = document.querySelector('#sidebar')
+const sideBarMask = sideBar.querySelector('.mask')
 
 async function loadContentAsync () {
   fadeInElement(loadingIndicator)
   const pathName = window.location.pathname
   const firstPath = pathName.split('/')[1]
   switch (firstPath) {
+    // case 'spider': {
+    //   // 127.0.0.1:8080/spider?path=/article/20180332000000
+    //   const path = new URLSearchParams(window.location.search).get('path')
+    //   jumpToSpaLink(path)
+    //   break
+    // }
     case 'article': {
       const articleId = pathName.split(firstPath)[1].split('/')[1]
       await loadMdPageAsync(`/src/article/${articleId}.md`)
@@ -65,7 +71,7 @@ async function loadContentAsync () {
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
 
       htmlStr += `<title>Home: ${curPageNumber}</title>`
-      contentBox.innerHTML = htmlStr
+      mainBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
@@ -91,7 +97,7 @@ async function loadContentAsync () {
         '</li>' +
         '</ul>' +
         '<title>Archive</title>'
-      contentBox.innerHTML = htmlStr
+      mainBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
@@ -119,7 +125,7 @@ async function loadContentAsync () {
       htmlStr +=
         '</ul>' +
         '<title>Categories</title>'
-      contentBox.innerHTML = htmlStr
+      mainBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
@@ -149,7 +155,7 @@ async function loadContentAsync () {
       htmlStr +=
         '</ul>' +
         '<title>Tags</title>'
-      contentBox.innerHTML = htmlStr
+      mainBox.innerHTML = htmlStr
       afterContentLoads()
       break
     }
@@ -175,7 +181,7 @@ async function loadMdPageAsync (filePath) {
   const markdownStr = response.status === 404
     ? '<h3 style="text-align:center;font-size:7vmin">404 no found</h3><title>404 no found</title>'
     : await response.text()
-  contentBox.innerHTML = `<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`
+  mainBox.innerHTML = `<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`
   window.scroll(0, 0)
   afterContentLoads()
 }
@@ -199,6 +205,11 @@ function afterContentLoads () {
   })
 }
 
+// function jumpToSpaLink (spaLink) {
+//   window.history.pushState(null, null, spaLink)
+//   loadContentAsync()
+// }
+
 function onSpaLinkClick () {
   window.history.pushState(null, null, this.dataset.sl)
   loadContentAsync()
@@ -212,27 +223,28 @@ function fadeOutElement (element) {
   element.classList.remove('in')
 }
 
-sideBar.fadeIn = () => [sideBar, maskLayer].forEach(fadeInElement)
-sideBar.fadeOut = () => [sideBar, maskLayer].forEach(fadeOutElement)
+function fadeOutSideBar () {
+  fadeOutElement(sideBar)
+}
 
 loadContentAsync()
 
 window.addEventListener('popstate', loadContentAsync)
 
-document.querySelector('#open-sidebar-btn').addEventListener('click', sideBar.fadeIn)
+document.querySelector('#open-sidebar-btn').addEventListener('click', () => fadeInElement(sideBar))
 
-maskLayer.addEventListener('mousedown', sideBar.fadeOut)
+sideBarMask.addEventListener('mousedown', fadeOutSideBar)
 
-maskLayer.addEventListener('touchstart', sideBar.fadeOut, { passive: true })
+sideBarMask.addEventListener('touchstart', fadeOutSideBar, { passive: true })
 
-document.querySelector('aside ul').addEventListener('click', () => {
+sideBar.querySelector('ul').addEventListener('click', () => {
   window.scroll(0, 0)
-  sideBar.fadeOut()
+  fadeOutSideBar()
 })
 
 document.querySelector('#gotop-btn').addEventListener('click', () =>
   // window.scroll({ top: 0, behavior: 'smooth' })
-  document.lastChild.scrollIntoView({ behavior: 'smooth' })
+  document.documentElement.scrollIntoView({ behavior: 'smooth' })
 )
 
 document.querySelector('#open-palette-btn').addEventListener('click', () => {
@@ -243,18 +255,19 @@ document.querySelector('#open-palette-btn').addEventListener('click', () => {
   }
 })
 
-window.addEventListener('scroll', (() => {
-  let originScrollY = window.scrollY
-  return () => {
-    const currentScrollY = window.scrollY
+{
+  let currentScrollY = window.scrollY
+  let originScrollY = currentScrollY
+  window.addEventListener('scroll', () => {
+    currentScrollY = window.scrollY
     if (originScrollY < currentScrollY) {
       fadeOutElement(topBar)
     } else {
       fadeInElement(topBar)
     }
     originScrollY = currentScrollY
-  }
-})())
+  })
+}
 
 // Fix the Blink's css bug
-setTimeout(() => [sideBar, maskLayer].forEach(el => el.removeAttribute('style')), 700)
+setTimeout(() => sideBar.removeAttribute('style'), 700)
