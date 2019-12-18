@@ -17,6 +17,55 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
+main {
+  min-height: 100vh;
+  margin-top: 50px;
+  padding: 20px 0;
+}
+
+@media screen and (max-width: 770px) {
+  main {
+    padding: 0;
+  }
+}
+
+#loading {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  visibility: hidden;
+  width: 100%;
+  transition: 0.5s;
+  text-align: center;
+  opacity: 0;
+  background: #fff;
+}
+
+#loading.in {
+  visibility: visible;
+  transition: 0.3s;
+  opacity: 0.7;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+#loading.in::after {
+  display: inline-block;
+  min-width: 60px;
+  min-height: 60px;
+  margin-top: 120px;
+  padding: 5vmin;
+  content: "";
+  animation: spin 0.5s linear infinite;
+  border: 5px solid var(--theme-color);
+  border-top-color: #fff;
+  border-radius: 50%;
+}
+
 header {
   position: fixed;
   top: 0;
@@ -149,53 +198,16 @@ header svg {
   flex-grow: 1;
 }
 
-#loading {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  visibility: hidden;
-  width: 100%;
-  transition: 0.5s;
+footer {
   text-align: center;
-  opacity: 0;
-  background: #fff;
+  background: var(--theme-color);
+  font-size: 12px;
+  line-height: 30px;
 }
 
-#loading.in {
-  visibility: visible;
-  transition: 0.3s;
-  opacity: 0.7;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-#loading.in::after {
-  display: inline-block;
-  min-width: 60px;
-  min-height: 60px;
-  margin-top: 120px;
-  padding: 5vmin;
-  content: "";
-  animation: spin 0.5s linear infinite;
-  border: 5px solid var(--theme-color);
-  border-top-color: #fff;
-  border-radius: 50%;
-}
-
-main {
-  min-height: 100vh;
-  margin-top: 50px;
-  padding: 20px 0;
-}
-
-@media screen and (max-width: 770px) {
-  main {
-    padding: 0;
-  }
+footer * {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .post-list {
@@ -320,16 +332,4 @@ main {
   color: var(--theme-color);
   font-size: 14px;
   font-weight: 900;
-}
-
-footer {
-  text-align: center;
-  background: var(--theme-color);
-  font-size: 12px;
-  line-height: 30px;
-}
-
-footer * {
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
 }
