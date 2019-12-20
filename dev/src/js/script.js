@@ -11,24 +11,24 @@ const sideBarMask = sideBar.querySelector('.mask')
 
 async function loadContentAsync () {
   fadeInElement(loadingIndicator)
-  const pathName = window.location.pathname
-  const firstPath = pathName.split('/')[1]
+  const pathSectionsList = window.location.pathname.split('/')
+  const firstPath = pathSectionsList[1]
   switch (firstPath) {
-    // case 'spider': {
-    //   // 127.0.0.1:8080/spider?path=/article/20180332000000
-    //   const path = new URLSearchParams(window.location.search).get('path')
-    //   jumpToSpaLink(path)
-    //   break
-    // }
+    case '':
+    case '404.html': {
+      const path = new URLSearchParams(window.location.search).get('path') || '/home/1'
+      jumpToSpaLink(path)
+      break
+    }
     case 'article': {
-      const articleId = pathName.split(firstPath)[1].split('/')[1]
+      const articleId = pathSectionsList[2]
       await loadMdPageAsync(`/src/article/${articleId}.md`)
       break
     }
     case 'home': {
       await loadArticlesListAsync()
 
-      const curPageNumber = Number(pathName.split(firstPath)[1].split('/')[1])
+      const curPageNumber = Number(pathSectionsList[2])
       const countPerPage = 10
       let htmlStr = '<ul class="post-list">'
       for (
@@ -50,8 +50,8 @@ async function loadContentAsync () {
         //       <li data-sl="/category#${article.category}">${article.category}</li>
         //       ${tagsListStr}
         //     </ul>
-        // </li>
-        // `;
+        //   </li>
+        // `
         // Compact
         htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagsListStr}</ul></li>`
       }
@@ -66,13 +66,12 @@ async function loadContentAsync () {
       //     <li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li>
       //     <li data-sl="/home/${pageNumberMax}">▶〉</li>
       //   </ul>
-      // `;
+      // `
       // Compact
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
 
       htmlStr += `<title>Home: ${curPageNumber}</title>`
       mainBox.innerHTML = htmlStr
-      afterContentLoads()
       break
     }
     case 'archive': {
@@ -87,9 +86,9 @@ async function loadContentAsync () {
         // htmlStr += `
         //   <h4 data-sl="/article/${article.id}">
         //     <span class="post-date">${article.date}</span>
-        //      ${article.title}
+        //     ${article.title}
         //   </h4>
-        // `;
+        // `
         // Compact
         htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`
       })
@@ -98,7 +97,6 @@ async function loadContentAsync () {
         '</ul>' +
         '<title>Archive</title>'
       mainBox.innerHTML = htmlStr
-      afterContentLoads()
       break
     }
     case 'category': {
@@ -126,7 +124,6 @@ async function loadContentAsync () {
         '</ul>' +
         '<title>Categories</title>'
       mainBox.innerHTML = htmlStr
-      afterContentLoads()
       break
     }
     case 'tag': {
@@ -156,7 +153,6 @@ async function loadContentAsync () {
         '</ul>' +
         '<title>Tags</title>'
       mainBox.innerHTML = htmlStr
-      afterContentLoads()
       break
     }
     // case 'toy':
@@ -167,6 +163,7 @@ async function loadContentAsync () {
       await loadMdPageAsync(`/src/page/${firstPath}.md`)
       break
   }
+  afterContentLoads()
   fadeOutElement(loadingIndicator)
 }
 
@@ -183,7 +180,6 @@ async function loadMdPageAsync (filePath) {
     : await response.text()
   mainBox.innerHTML = `<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`
   window.scroll(0, 0)
-  afterContentLoads()
 }
 
 function afterContentLoads () {
@@ -205,14 +201,13 @@ function afterContentLoads () {
   })
 }
 
-// function jumpToSpaLink (spaLink) {
-//   window.history.pushState(null, null, spaLink)
-//   loadContentAsync()
-// }
+function jumpToSpaLink (spaLink) {
+  window.history.pushState(null, null, spaLink)
+  loadContentAsync()
+}
 
 function onSpaLinkClick () {
-  window.history.pushState(null, null, this.dataset.sl)
-  loadContentAsync()
+  jumpToSpaLink(this.dataset.sl)
 }
 
 function fadeInElement (element) {

@@ -32,9 +32,10 @@ main {
 #loading {
   position: fixed;
   top: 0;
+  right: 0;
   bottom: 0;
+  left: 0;
   visibility: hidden;
-  width: 100%;
   transition: 0.5s;
   text-align: center;
   opacity: 0;

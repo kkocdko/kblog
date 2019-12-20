@@ -23,13 +23,7 @@
     "terser": "^4.4.3"
   },
   "codeStyle": {
-    "js": {
-      "name": "standard",
-      "url": "https://standardjs.com"
-    },
-    "css": {
-      "name": "csscomb-preset-yandex",
-      "url": "https://github.com/csscomb/csscomb.js/blob/dev/config/yandex.json"
-    }
+    "js": "standard | https://standardjs.com",
+    "css": "csscomb-preset-yandex | https://github.com/csscomb/csscomb.js/blob/dev/config/yandex.json"
   }
 }
