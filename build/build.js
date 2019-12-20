@@ -62,9 +62,7 @@ const jsonSaveDir = `${distDir}/src/json`
 
 // ==============================
 
-try {
-  fs.rmdirSync(distDir)
-} catch {}
+try { fs.rmdirSync(distDir) } catch {}
 
 // ==============================
 
