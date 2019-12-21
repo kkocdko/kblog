@@ -20,8 +20,8 @@ const serverConfig = {
 const mimeList = {
   html: 'text/html',
   css: 'text/css',
-  js: 'application/javascript',
-  json: 'application/json',
+  js: 'text/javascript',
+  json: 'text/json',
   md: 'text/markdown',
   svg: 'image/svg+xml',
   ico: 'image/x-icon',

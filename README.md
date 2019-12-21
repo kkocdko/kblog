@@ -11,39 +11,43 @@ An unique blog solution. Lightweight, fast, beautiful and practical.
 <img src="https://img.shields.io/github/license/kkocdko/kkocdko.github.io.svg?style=flat-square&color=4caf50">
 </p>
 
-### Demo
+### Introduction
+
+This is a blog solution that can run on [Github Pages](https://pages.github.com).
+
+#### Demo
 
 My blog: <https://kkocdko.github.io>
 
-### Features
+#### Features
 
-* SPA with pure javascript, size < 15kb minify + gzip.
+* Lightweight, size < 15kb (minify + gzip).
 
-* Build quickly, few dependents.
+* Fast, [Single-Page-App](https://en.wikipedia.org/wiki/Single-page_application) with pure javascript.
 
 * Mobile & Desktop. Follow [Material Design](https://www.material.io).
 
-### Matters
+#### Matters
 
-* Navigation by 404 page, very bad for SEO.
-
-* No `CRLF` support. Must use the `LF` newline in all files.
+* Navigation by 404 page, most terrible SEO.
 
 * Only supports modern browsers. Target to `Chrome55+` and `Firefox52+`.
 
+* No `CRLF` support. Must use the `LF` newline in all files.
+
 ### Usage
 
-1. Download the `develop` branch of this repo.
+1. Download the `develop` branch of this repository.
 
-2. Enter the blog directory and run `npm install`.
-    * Need [NodeJS](https://nodejs.org).
+2. Enter the blog directory and execute `npm install`.
+    * Need [NodeJS](https://nodejs.org)
 
 3. Write posts in the format of the example to `_post` folder.
-    * You can put images into `_img` directory, using them like this in posts: `![001](/src/img/001.png)`
+    * You can put images into `_img` folder, using them in posts like this: `![001](/src/img/001.png)`
 
-4. (Optional) Run `npm run dev` and view your blog in browser.
+4. (Optional) Execute `npm run dev` and view your blog in browser.
 
-5. Run `npm run build` and put the content of `dist` directory into master branch, then push to github.
+5. Execute `npm run build` and put the content of `dist` directory into `master` branch, then push to github.
 
 ### Migrating
 
@@ -51,6 +55,12 @@ My blog: <https://kkocdko.github.io>
 
 #### From [Jekyll](https://jekyllrb.com)
 
-1. Pay attention to the header of post, you may need to replace some item names.
+1. Pay attention to the port's meta, you may need to replace some meta names.
 
 2. Need to build locally and then push the results to the cloud.
+
+### Q&A
+
+#### Why don't use build tool and framework?
+
+It's sure that modern front-end tools bring a lot of convenience, but this project is just an acrobatics, not a product. I want a lightweight solution, both front-end and development-end.
