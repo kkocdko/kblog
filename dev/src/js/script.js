@@ -1,7 +1,7 @@
 'use strict'
 
 const defaultTitle = document.title
-let articlesList = []
+let articlesList
 
 const mainBox = document.querySelector('main')
 const loadingIndicator = document.querySelector('#loading')
@@ -14,17 +14,6 @@ async function loadContentAsync () {
   const pathSectionsList = window.location.pathname.split('/')
   const firstPath = pathSectionsList[1]
   switch (firstPath) {
-    case '':
-    case '404.html': {
-      const path = new URLSearchParams(window.location.search).get('path') || '/home/1'
-      jumpToSpaLink(path)
-      break
-    }
-    case 'article': {
-      const articleId = pathSectionsList[2]
-      await loadMdPageAsync(`/src/article/${articleId}.md`)
-      break
-    }
     case 'home': {
       await loadArticlesListAsync()
 
@@ -71,7 +60,7 @@ async function loadContentAsync () {
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
 
       htmlStr += `<title>Home: ${curPageNumber}</title>`
-      mainBox.innerHTML = htmlStr
+      writeContent(htmlStr)
       break
     }
     case 'archive': {
@@ -84,19 +73,19 @@ async function loadContentAsync () {
       articlesList.forEach(article => {
         // Source
         // htmlStr += `
-        //   <h4 data-sl="/article/${article.id}">
+        //   <h3 data-sl="/article/${article.id}">
         //     <span class="post-date">${article.date}</span>
         //     ${article.title}
-        //   </h4>
+        //   </h3>
         // `
         // Compact
-        htmlStr += `<h4 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h4>`
+        htmlStr += `<h3 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h3>`
       })
       htmlStr +=
         '</li>' +
         '</ul>' +
         '<title>Archive</title>'
-      mainBox.innerHTML = htmlStr
+      writeContent(htmlStr)
       break
     }
     case 'category': {
@@ -116,14 +105,14 @@ async function loadContentAsync () {
           `<li id="${category}">` +
           `<h2>${category}</h2>`
         list.forEach(article => {
-          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
+          htmlStr += `<h3 data-sl="/article/${article.id}">${article.title}</h3>`
         })
         htmlStr += '</li>'
       })
       htmlStr +=
         '</ul>' +
         '<title>Categories</title>'
-      mainBox.innerHTML = htmlStr
+      writeContent(htmlStr)
       break
     }
     case 'tag': {
@@ -145,30 +134,35 @@ async function loadContentAsync () {
           `<li id="${tag}">` +
           `<h2>${tag}</h2>`
         list.forEach(article => {
-          htmlStr += `<h4 data-sl="/article/${article.id}">${article.title}</h4>`
+          htmlStr += `<h3 data-sl="/article/${article.id}">${article.title}</h3>`
         })
         htmlStr += '</li>'
       })
       htmlStr +=
         '</ul>' +
         '<title>Tags</title>'
-      mainBox.innerHTML = htmlStr
+      writeContent(htmlStr)
       break
     }
+    case 'article':
+      await loadMdPageAsync(`/src/article/${pathSectionsList[2]}.md`)
+      break
+    case '':
+    case '404.html':
+      jumpToSpaLink(new URLSearchParams(window.location.search).get('path') || '/home/1')
+      break
     // case 'toy':
     // case 'callingcard':
     // case 'about':
-    // case '404':
     default:
       await loadMdPageAsync(`/src/page/${firstPath}.md`)
       break
   }
-  afterContentLoads()
   fadeOutElement(loadingIndicator)
 }
 
 async function loadArticlesListAsync () {
-  if (articlesList.length === 0) {
+  if (!articlesList) {
     articlesList = await (await window.fetch('/src/json/articleslist.json')).json()
   }
 }
@@ -178,11 +172,12 @@ async function loadMdPageAsync (filePath) {
   const markdownStr = response.status === 404
     ? '<h3 style="text-align:center;font-size:7vmin">404 no found</h3><title>404 no found</title>'
     : await response.text()
-  mainBox.innerHTML = `<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`
+  writeContent(`<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`)
   window.scroll(0, 0)
 }
 
-function afterContentLoads () {
+function writeContent (htmlStr) {
+  mainBox.innerHTML = htmlStr
   setTimeout(() => {
     // Fix anchor
     try { document.querySelector(window.location.hash).scrollIntoView() } catch (e) {}
@@ -243,7 +238,7 @@ document.querySelector('#gotop-btn').addEventListener('click', () =>
 )
 
 document.querySelector('#open-palette-btn').addEventListener('click', () => {
-  const color = window.prompt('Please input color (use css grammar)', 'rgb(0, 137, 123)')
+  const color = window.prompt('Input color (in css format)', 'rgb(0, 137, 123)')
   if (color) {
     document.body.style.setProperty('--theme-color', color)
     document.querySelector('meta[name=theme-color]').content = color
@@ -251,11 +246,11 @@ document.querySelector('#open-palette-btn').addEventListener('click', () => {
 })
 
 {
-  let currentScrollY = window.scrollY
-  let originScrollY = currentScrollY
+  let originScrollY
+  let currentScrollY
   window.addEventListener('scroll', () => {
     currentScrollY = window.scrollY
-    if (originScrollY < currentScrollY) {
+    if (currentScrollY > originScrollY) {
       fadeOutElement(topBar)
     } else {
       fadeInElement(topBar)
