@@ -13,11 +13,7 @@ An unique blog solution. Lightweight, fast, beautiful and practical.
 
 ### Introduction
 
-This is a blog solution that can run on [Github Pages](https://pages.github.com).
-
-#### Demo
-
-My blog: <https://kkocdko.github.io>
+This is a blog solution that can run on [Github Pages](https://pages.github.com). See [Demo](https://kkocdko.github.io) (my blog).
 
 #### Features
 
@@ -27,7 +23,7 @@ My blog: <https://kkocdko.github.io>
 
 * Mobile & Desktop. Follow [Material Design](https://www.material.io).
 
-#### Matters
+#### Disadvantage
 
 * Navigation by 404 page, most terrible SEO.
 
@@ -51,7 +47,7 @@ My blog: <https://kkocdko.github.io>
 
 ### Migrating
 
-* Here are some tips that can help you migrating from other platform.
+* Here are some tips that can help you migrating from other platforms.
 
 #### From [Jekyll](https://jekyllrb.com)
 

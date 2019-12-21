@@ -246,7 +246,7 @@ document.querySelector('#open-palette-btn').addEventListener('click', () => {
 })
 
 {
-  let originScrollY
+  let originScrollY = 0
   let currentScrollY
   window.addEventListener('scroll', () => {
     currentScrollY = window.scrollY

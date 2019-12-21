@@ -156,7 +156,7 @@ fs.recurse(imageSrcDir, ['*'], (path, relative, name) => {
 // ==============================
 
 function shouldCompress (filename) {
-  return !buildConfig.developMode && filename.indexOf('.min.') === -1
+  return !buildConfig.developMode && !filename.includes('.min.')
 }
 
 function readFileStr (filePath) {
