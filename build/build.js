@@ -3,6 +3,7 @@
 const buildConfig = {
   developMode: process.argv.includes('--dev-mode'),
   projectDir: `${__dirname}/..`,
+  siteDomain: 'https://kkocdko.github.io',
   minifyOptions: {
     cleancss: {
       level: {
@@ -100,11 +101,36 @@ fs.writeFile(`${jsonSaveDir}/articleslist.json`, JSON.stringify(articlesList))
 
 // ==============================
 
+let siteMapStr =
+  '<?xml version="1.0" encoding="UTF-8"?>' +
+  '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+const siteMapAddItem = (relative, others = '') => {
+  siteMapStr +=
+  '<url>' +
+  `<loc>${buildConfig.siteDomain}/404.html?path=${relative}</loc>` +
+  '<changefreq>daily</changefreq>' +
+  others +
+  '</url>'
+}
+siteMapAddItem('/home/1')
+articlesList.forEach(({ id }) => siteMapAddItem(`/article/${id}`))
+siteMapStr += '</urlset>'
+fs.writeFile(`${distDir}/sitemap.xml`, siteMapStr)
+
+// ==============================
+
+fs.writeFile(`${distDir}/robots.txt`,
+  `Sitemap: ${buildConfig.siteDomain}/sitemap.xml\n` +
+  readFileStr(`${devDir}/robots.txt`).trim() + '\n'
+)
+
+// ==============================
+
 fs.recurse(devDir, ['src/**/*.html', '*.html'], (path, relative, name) => {
   if (!name) return // It's a folder, not a file
   if (shouldCompress(name)) {
     fs.writeFile(`${distDir}/${relative}`,
-      readFileStr(path).replace(/<!--(.|\n)*?-->|(?<=>)(\s|\n)+/g, '') // Inline css and js will not be compressed
+      readFileStr(path).replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
     )
   } else {
     fs.copyFile(path, `${distDir}/${relative}`)
@@ -138,7 +164,7 @@ fs.recurse(devDir, ['src/**/*.js'], (path, relative, name) => {
   }
 })
 
-fs.recurse(devDir, ['**/*', '!*.html', '!src/**/*'], (path, relative, name) => {
+fs.recurse(devDir, ['**/*', '!*.html', '!robots.txt', '!src/**/*'], (path, relative, name) => {
   if (!name) return
   fs.copyFile(path, `${distDir}/${relative}`)
 })
