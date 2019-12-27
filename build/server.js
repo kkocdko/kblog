@@ -11,7 +11,7 @@ const fs = require('fs')
 const http = require('http')
 const readline = require('readline')
 
-const serverConfig = {
+const config = {
   ip: '127.0.0.1',
   port: 8080,
   rootDir: `${__dirname}/../dist`
@@ -31,7 +31,7 @@ const mimeList = {
 
 const server = http.createServer((req, res) => {
   const url = new URL('http://' + req.headers.host + req.url)
-  const filePath = serverConfig.rootDir + url.pathname.replace(/\/$/, '')
+  const filePath = config.rootDir + url.pathname.replace(/\/$/, '')
   fs.stat(filePath, (e, stats) => {
     if (!e && stats.isFile()) {
       // Is file
@@ -53,7 +53,7 @@ const server = http.createServer((req, res) => {
     } else {
       // Error
       res.writeHead(404, { 'Content-Type': mimeList.html })
-      fs.createReadStream(serverConfig.rootDir + '/404.html').pipe(res)
+      fs.createReadStream(config.rootDir + '/404.html').pipe(res)
     }
   })
 })
@@ -61,18 +61,18 @@ const server = http.createServer((req, res) => {
 server.on('error', e => {
   if (e.code === 'EADDRINUSE') {
     server.close()
-    serverConfig.port++ // Try next port
-    server.listen(serverConfig.port, serverConfig.ip)
+    config.port++ // Try next port
+    server.listen(config.port, config.ip)
   } else {
-    console.error('Server error: ', e)
+    throw e
   }
 })
 
 server.on('listening', () => {
-  console.info(`Server is running on: ${serverConfig.ip}:${serverConfig.port}`)
+  console.info(`Server address: ${config.ip}:${config.port}`)
 })
 
-server.listen(serverConfig.port, serverConfig.ip)
+server.listen(config.port, config.ip)
 
 const readlineInterface = readline.createInterface({ input: process.stdin, output: process.stdout })
 readlineInterface.question('', () => {

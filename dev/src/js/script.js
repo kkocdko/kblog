@@ -189,10 +189,7 @@ function writeContent (htmlStr) {
       : defaultTitle
 
     // Set listeners
-    document.querySelectorAll('[data-sl]').forEach(el => {
-      el.removeEventListener('click', onSpaLinkClick)
-      el.addEventListener('click', onSpaLinkClick)
-    })
+    document.querySelectorAll('[data-sl]').forEach(el => el.addEventListener('click', onSpaLinkClick))
   })
 }
 

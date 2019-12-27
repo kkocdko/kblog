@@ -12,6 +12,87 @@ process.on('exit', () => console.timeEnd('Build time'))
 
 // ==============================
 
+function shouldCompress (filename) {
+  return !config.developMode && !filename.includes('.min.')
+}
+
+function readFileStr (filePath) {
+  return fs.readFileSync(filePath).toString()
+}
+
+function processDir ({ src, target, filter = ['*'], processor = file => null }) {
+  fs.recurse(src, filter, (path, relative, name) => {
+    if (!name) return // It's a folder, not a file
+    const file = { name, get str () { return readFileStr(path) } }
+    const processResult = processor(file)
+    if (processResult) {
+      fs.writeFile(target + '/' + relative, processResult)
+    } else {
+      fs.copyFile(path, target + '/' + relative)
+    }
+  })
+}
+
+// ==============================
+
+processDir({
+  src: config.directories.source.develop,
+  target: config.directories.dist.root,
+  filter: ['**/*', '!*.html', '!robots.txt', '!src/**/*']
+})
+
+processDir({
+  src: config.directories.source.page,
+  target: config.directories.dist.page
+})
+
+processDir({
+  src: config.directories.source.image,
+  target: config.directories.dist.image
+})
+
+processDir({
+  src: config.directories.source.develop,
+  target: config.directories.dist.root,
+  filter: ['src/**/*.html', '*.html'],
+  processor: file => {
+    if (shouldCompress(file.name)) {
+      // Inline css and js will not be compressed
+      return file.str.replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '')
+    }
+  }
+})
+
+processDir({
+  src: config.directories.source.develop,
+  target: config.directories.dist.root,
+  filter: ['src/**/*.css'],
+  processor: file => {
+    if (shouldCompress(file.name)) {
+      return new Cleancss(config.compressor.cleancss).minify(file.str).styles
+    }
+  }
+})
+
+processDir({
+  src: config.directories.source.develop,
+  target: config.directories.dist.root,
+  filter: ['src/**/*.js'],
+  processor: file => {
+    if (shouldCompress(file.name)) {
+      const transformer = new Terser.TreeTransformer(node => {
+        if (node instanceof Terser.AST_Const) {
+          return new Terser.AST_Let(node)
+        }
+      })
+      const ast = Terser.parse(file.str).transform(transformer)
+      return Terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
+    }
+  }
+})
+
+// ==============================
+
 const articlesList = fs.readdirSync(config.directories.source.article).map(articleFile => {
   const articleStr = readFileStr(`${config.directories.source.article}/${articleFile}`)
   const articleRawInfo = {}
@@ -68,68 +149,3 @@ fs.writeFile(`${config.directories.dist.root}/robots.txt`,
   `Sitemap: ${config.site.domain}/sitemap.xml\n` +
   readFileStr(`${config.directories.source.develop}/robots.txt`).trim() + '\n'
 )
-
-// ==============================
-
-fs.recurse(config.directories.source.develop, ['src/**/*.html', '*.html'], (path, relative, name) => {
-  if (!name) return // It's a folder, not a file
-  if (shouldCompress(name)) {
-    fs.writeFile(`${config.directories.dist.root}/${relative}`,
-      readFileStr(path).replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
-    )
-  } else {
-    fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
-  }
-})
-
-fs.recurse(config.directories.source.develop, ['src/**/*.css'], (path, relative, name) => {
-  if (!name) return
-  if (shouldCompress(name)) {
-    fs.writeFile(`${config.directories.dist.root}/${relative}`,
-      new Cleancss(config.compressor.cleancss).minify(readFileStr(path)).styles
-    )
-  } else {
-    fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
-  }
-})
-
-fs.recurse(config.directories.source.develop, ['src/**/*.js'], (path, relative, name) => {
-  if (!name) return
-  if (shouldCompress(name)) {
-    const transformer = new Terser.TreeTransformer(node => {
-      if (node instanceof Terser.AST_Const) {
-        return new Terser.AST_Let(node)
-      }
-    })
-    const ast = Terser.parse(readFileStr(path)).transform(transformer)
-    const minifiedJsStr = Terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
-    fs.writeFile(`${config.directories.dist.root}/${relative}`, minifiedJsStr)
-  } else {
-    fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
-  }
-})
-
-fs.recurse(config.directories.source.develop, ['**/*', '!*.html', '!robots.txt', '!src/**/*'], (path, relative, name) => {
-  if (!name) return
-  fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
-})
-
-fs.recurse(config.directories.source.page, ['*'], (path, relative, name) => {
-  if (!name) return
-  fs.copyFile(path, `${config.directories.dist.page}/${relative}`)
-})
-
-fs.recurse(config.directories.source.image, ['*'], (path, relative, name) => {
-  if (!name) return
-  fs.copyFile(path, `${config.directories.dist.image}/${relative}`)
-})
-
-// ==============================
-
-function shouldCompress (filename) {
-  return !config.developMode && !filename.includes('.min.')
-}
-
-function readFileStr (filePath) {
-  return fs.readFileSync(filePath).toString()
-}
