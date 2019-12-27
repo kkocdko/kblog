@@ -1,78 +1,23 @@
 'use strict'
 
-const buildConfig = {
-  developMode: process.argv.includes('--dev-mode'),
-  projectDir: `${__dirname}/..`,
-  siteDomain: 'https://kkocdko.github.io',
-  minifyOptions: {
-    cleancss: {
-      level: {
-        1: { specialComments: 'none' },
-        2: { all: true }
-      }
-    },
-    terser: {
-      compress: {
-        toplevel: true,
-        arguments: true,
-        booleans_as_integers: true,
-        drop_console: true,
-        hoist_funs: true,
-        passes: 2,
-        unsafe: true,
-        unsafe_arrows: true,
-        unsafe_comps: true,
-        unsafe_Function: true,
-        unsafe_math: true,
-        unsafe_methods: true,
-        unsafe_proto: true,
-        unsafe_regexp: true,
-        unsafe_undefined: true
-      },
-      mangle: { toplevel: true }
-    }
-  }
-}
-
-// ==============================
-
 const fs = require('file-system') // This is not native fs
 const Terser = require('terser')
 const Cleancss = require('clean-css')
 
-// ==============================
+const config = require(`${__dirname}/config.js`)
 
+try { fs.rmdirSync(config.directories.dist.root) } catch {}
 console.time('Build time')
 process.on('exit', () => console.timeEnd('Build time'))
 
 // ==============================
 
-const projectDir = buildConfig.projectDir
-
-const imageSrcDir = `${projectDir}/_img`
-const articleSrcDir = `${projectDir}/_post`
-const pageSrcDir = `${projectDir}/_page`
-
-const devDir = `${projectDir}/dev`
-const distDir = `${projectDir}/dist`
-
-const imageSaveDir = `${distDir}/src/img`
-const articleSaveDir = `${distDir}/src/article`
-const pageSaveDir = `${distDir}/src/page`
-const jsonSaveDir = `${distDir}/src/json`
-
-// ==============================
-
-try { fs.rmdirSync(distDir) } catch {}
-
-// ==============================
-
-const articlesList = fs.readdirSync(articleSrcDir).map(articleFile => {
-  const articleStr = readFileStr(`${articleSrcDir}/${articleFile}`)
+const articlesList = fs.readdirSync(config.directories.source.article).map(articleFile => {
+  const articleStr = readFileStr(`${config.directories.source.article}/${articleFile}`)
   const articleRawInfo = {}
   const infoBlockStartIndex = '---\n'.length // No CRLF support !!!
-  const infoBlockEndIndex = articleStr.indexOf('\n---') - infoBlockStartIndex
-  const infoBlockStr = articleStr.substr(infoBlockStartIndex, infoBlockEndIndex)
+  const infoBlockLength = articleStr.indexOf('\n---') - infoBlockStartIndex
+  const infoBlockStr = articleStr.substr(infoBlockStartIndex, infoBlockLength)
   const infoBlockLines = infoBlockStr.split('\n')
   infoBlockLines.forEach(line => {
     const infoSplitIndex = line.indexOf(':')
@@ -90,14 +35,14 @@ const articlesList = fs.readdirSync(articleSrcDir).map(articleFile => {
     excerpt: articleRawInfo.excerpt.join(' ')
   }
   // Write compact markdown file
-  fs.writeFile(`${articleSaveDir}/${articleInfo.id}.md`,
-      `<h2 class="lite">${articleInfo.title}</h2>\n\n` +
-      articleStr.replace(/^(.|\n)+?---/, '').trim() +
-      `\n\n<title>${articleInfo.title}</title>\n`
+  fs.writeFile(`${config.directories.dist.article}/${articleInfo.id}.md`,
+    `<h2 class="lite">${articleInfo.title}</h2>\n\n` +
+    articleStr.substr(2 * infoBlockStartIndex + infoBlockLength).trim() +
+    `\n\n<title>${articleInfo.title}</title>\n`
   )
   return articleInfo
 }).sort(({ id: firstId }, { id: secondId }) => firstId > secondId ? -1 : 1)
-fs.writeFile(`${jsonSaveDir}/articleslist.json`, JSON.stringify(articlesList))
+fs.writeFile(`${config.directories.dist.json}/articleslist.json`, JSON.stringify(articlesList))
 
 // ==============================
 
@@ -107,7 +52,7 @@ let siteMapStr =
 const siteMapAddItem = (relative, others = '') => {
   siteMapStr +=
   '<url>' +
-  `<loc>${buildConfig.siteDomain}/404.html?path=${relative}</loc>` +
+  `<loc>${config.site.domain}/404.html?path=${relative}</loc>` +
   '<changefreq>daily</changefreq>' +
   others +
   '</url>'
@@ -115,40 +60,40 @@ const siteMapAddItem = (relative, others = '') => {
 siteMapAddItem('/home/1')
 articlesList.forEach(({ id }) => siteMapAddItem(`/article/${id}`))
 siteMapStr += '</urlset>'
-fs.writeFile(`${distDir}/sitemap.xml`, siteMapStr)
+fs.writeFile(`${config.directories.dist.root}/sitemap.xml`, siteMapStr)
 
 // ==============================
 
-fs.writeFile(`${distDir}/robots.txt`,
-  `Sitemap: ${buildConfig.siteDomain}/sitemap.xml\n` +
-  readFileStr(`${devDir}/robots.txt`).trim() + '\n'
+fs.writeFile(`${config.directories.dist.root}/robots.txt`,
+  `Sitemap: ${config.site.domain}/sitemap.xml\n` +
+  readFileStr(`${config.directories.source.develop}/robots.txt`).trim() + '\n'
 )
 
 // ==============================
 
-fs.recurse(devDir, ['src/**/*.html', '*.html'], (path, relative, name) => {
+fs.recurse(config.directories.source.develop, ['src/**/*.html', '*.html'], (path, relative, name) => {
   if (!name) return // It's a folder, not a file
   if (shouldCompress(name)) {
-    fs.writeFile(`${distDir}/${relative}`,
+    fs.writeFile(`${config.directories.dist.root}/${relative}`,
       readFileStr(path).replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
     )
   } else {
-    fs.copyFile(path, `${distDir}/${relative}`)
+    fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
   }
 })
 
-fs.recurse(devDir, ['src/**/*.css'], (path, relative, name) => {
+fs.recurse(config.directories.source.develop, ['src/**/*.css'], (path, relative, name) => {
   if (!name) return
   if (shouldCompress(name)) {
-    fs.writeFile(`${distDir}/${relative}`,
-      new Cleancss(buildConfig.minifyOptions.cleancss).minify(readFileStr(path)).styles
+    fs.writeFile(`${config.directories.dist.root}/${relative}`,
+      new Cleancss(config.compressor.cleancss).minify(readFileStr(path)).styles
     )
   } else {
-    fs.copyFile(path, `${distDir}/${relative}`)
+    fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
   }
 })
 
-fs.recurse(devDir, ['src/**/*.js'], (path, relative, name) => {
+fs.recurse(config.directories.source.develop, ['src/**/*.js'], (path, relative, name) => {
   if (!name) return
   if (shouldCompress(name)) {
     const transformer = new Terser.TreeTransformer(node => {
@@ -157,32 +102,32 @@ fs.recurse(devDir, ['src/**/*.js'], (path, relative, name) => {
       }
     })
     const ast = Terser.parse(readFileStr(path)).transform(transformer)
-    const minifiedJsStr = Terser.minify(ast, buildConfig.minifyOptions.terser).code.replace(/;$/, '')
-    fs.writeFile(`${distDir}/${relative}`, minifiedJsStr)
+    const minifiedJsStr = Terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
+    fs.writeFile(`${config.directories.dist.root}/${relative}`, minifiedJsStr)
   } else {
-    fs.copyFile(path, `${distDir}/${relative}`)
+    fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
   }
 })
 
-fs.recurse(devDir, ['**/*', '!*.html', '!robots.txt', '!src/**/*'], (path, relative, name) => {
+fs.recurse(config.directories.source.develop, ['**/*', '!*.html', '!robots.txt', '!src/**/*'], (path, relative, name) => {
   if (!name) return
-  fs.copyFile(path, `${distDir}/${relative}`)
+  fs.copyFile(path, `${config.directories.dist.root}/${relative}`)
 })
 
-fs.recurse(pageSrcDir, ['*'], (path, relative, name) => {
+fs.recurse(config.directories.source.page, ['*'], (path, relative, name) => {
   if (!name) return
-  fs.copyFile(path, `${pageSaveDir}/${relative}`)
+  fs.copyFile(path, `${config.directories.dist.page}/${relative}`)
 })
 
-fs.recurse(imageSrcDir, ['*'], (path, relative, name) => {
+fs.recurse(config.directories.source.image, ['*'], (path, relative, name) => {
   if (!name) return
-  fs.copyFile(path, `${imageSaveDir}/${relative}`)
+  fs.copyFile(path, `${config.directories.dist.image}/${relative}`)
 })
 
 // ==============================
 
 function shouldCompress (filename) {
-  return !buildConfig.developMode && !filename.includes('.min.')
+  return !config.developMode && !filename.includes('.min.')
 }
 
 function readFileStr (filePath) {
