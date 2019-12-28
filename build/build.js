@@ -12,23 +12,29 @@ process.on('exit', () => console.timeEnd('Build time'))
 
 // ==============================
 
-function shouldCompress (filename) {
-  return !config.developMode && !filename.includes('.min.')
+function shouldNotCompress (fileName) {
+  return config.developMode || fileName.includes('.min.')
 }
 
 function readFileStr (filePath) {
   return fs.readFileSync(filePath).toString()
 }
 
-function processDir ({ src, target, filter = ['*'], processor = file => null }) {
+function processDir ({
+  src,
+  target,
+  filter = ['*'],
+  skimCondition = fileName => true,
+  processor = fileStr => null
+}) {
+  if (!config.developMode) filter.push('!**/*.debug.*')
   fs.recurse(src, filter, (path, relative, name) => {
     if (!name) return // It's a folder, not a file
-    const file = { name, get str () { return readFileStr(path) } }
-    const processResult = processor(file)
-    if (processResult) {
-      fs.writeFile(target + '/' + relative, processResult)
+    const targetPath = target + '/' + relative
+    if (skimCondition(name)) {
+      fs.copyFile(path, targetPath)
     } else {
-      fs.copyFile(path, target + '/' + relative)
+      fs.writeFile(targetPath, processor(readFileStr(path)))
     }
   })
 }
@@ -55,39 +61,31 @@ processDir({
   src: config.directories.source.develop,
   target: config.directories.dist.root,
   filter: ['src/**/*.html', '*.html'],
-  processor: file => {
-    if (shouldCompress(file.name)) {
-      // Inline css and js will not be compressed
-      return file.str.replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '')
-    }
-  }
+  skimCondition: shouldNotCompress,
+  processor: str => str.replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
 })
 
 processDir({
   src: config.directories.source.develop,
   target: config.directories.dist.root,
   filter: ['src/**/*.css'],
-  processor: file => {
-    if (shouldCompress(file.name)) {
-      return new Cleancss(config.compressor.cleancss).minify(file.str).styles
-    }
-  }
+  skimCondition: shouldNotCompress,
+  processor: str => new Cleancss(config.compressor.cleancss).minify(str).styles
 })
 
 processDir({
   src: config.directories.source.develop,
   target: config.directories.dist.root,
   filter: ['src/**/*.js'],
-  processor: file => {
-    if (shouldCompress(file.name)) {
-      const transformer = new Terser.TreeTransformer(node => {
-        if (node instanceof Terser.AST_Const) {
-          return new Terser.AST_Let(node)
-        }
-      })
-      const ast = Terser.parse(file.str).transform(transformer)
-      return Terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
-    }
+  skimCondition: shouldNotCompress,
+  processor: str => {
+    const transformer = new Terser.TreeTransformer(node => {
+      if (node instanceof Terser.AST_Const) {
+        return new Terser.AST_Let(node)
+      }
+    })
+    const ast = Terser.parse(str).transform(transformer)
+    return Terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
   }
 })
 
