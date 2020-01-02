@@ -170,7 +170,7 @@ async function loadArticlesListAsync () {
 async function loadMdPageAsync (filePath) {
   const response = await window.fetch(filePath)
   const markdownStr = response.status === 404
-    ? '<h3 style="text-align:center;font-size:7vmin">404 no found</h3><title>404 no found</title>'
+    ? '<h3 style="text-align:center;font-size:7vmin">404 not found</h3><title>404 not found</title>'
     : await response.text()
   writeContent(`<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`)
   window.scroll(0, 0)
@@ -180,7 +180,8 @@ function writeContent (htmlStr) {
   mainBox.innerHTML = htmlStr
   setTimeout(() => {
     // Fix anchor
-    try { document.querySelector(window.location.hash).scrollIntoView() } catch (e) {}
+    const anchor = document.getElementById(window.location.hash.substr(1))
+    if (anchor) anchor.scrollIntoView()
 
     // Refresh title
     const titleTag = document.querySelector('body title')
