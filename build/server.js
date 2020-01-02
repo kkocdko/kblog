@@ -7,15 +7,15 @@
  */
 'use strict'
 
-const fs = require('fs')
-const http = require('http')
-const readline = require('readline')
-
 const config = {
   ip: '127.0.0.1',
   port: 8080,
   rootDir: `${__dirname}/../dist`
 }
+
+const fs = require('fs')
+const http = require('http')
+const readline = require('readline')
 
 const mimeList = {
   html: 'text/html',
@@ -77,5 +77,6 @@ server.listen(config.port, config.ip)
 const readlineInterface = readline.createInterface({ input: process.stdin, output: process.stdout })
 readlineInterface.question('', () => {
   readlineInterface.close()
+  server.close()
   process.exit()
 })
