@@ -1,11 +1,11 @@
 {
   "name": "kblog",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An unique blog solution. Lightweight, fast, beautiful and practical.",
-  "main": "build/build.js",
+  "main": "toolkit/builder.js",
   "scripts": {
-    "dev": "node build/build.js --dev-mode && node build/server.js",
-    "build": "node build/build.js"
+    "dev": "node toolkit/builder.js --dev-mode && node toolkit/server.js",
+    "build": "node toolkit/builder.js"
   },
   "repository": {
     "type": "git",

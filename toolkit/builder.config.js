@@ -1,23 +1,28 @@
+const rp = require('path').join.bind(null, __dirname, '..')
 module.exports = {
   site: {
-    title: 'K\'s Blog',
+    title: 'kkocdko\'s blog',
     name: 'kkocdko',
     domain: 'https://kkocdko.github.io'
   },
-  directories: {
-    root: `${__dirname}/..`,
+  dir: {
+    root: rp('/'),
     source: {
-      develop: `${__dirname}/../dev`,
-      article: `${__dirname}/../_post`,
-      page: `${__dirname}/../_page`,
-      image: `${__dirname}/../_img`
+      root: rp('/source'),
+      media: rp('/source/media'),
+      pages: rp('/source/pages'),
+      posts: rp('/source/posts')
     },
-    dist: {
-      root: `${__dirname}/../dist`,
-      article: `${__dirname}/../dist/src/article`,
-      page: `${__dirname}/../dist/src/page`,
-      json: `${__dirname}/../dist/src/json`,
-      image: `${__dirname}/../dist/src/img`
+    swatch: {
+      root: rp('/swatch'),
+      res: rp('/swatch/res')
+    },
+    public: {
+      root: rp('/public'),
+      res: rp('/public/res'),
+      media: rp('/public/res/media'),
+      pages: rp('/public/res/pages'),
+      posts: rp('/public/res/posts')
     }
   },
   compressor: {

@@ -10,7 +10,7 @@
 const config = {
   ip: '127.0.0.1',
   port: 8080,
-  rootDir: `${__dirname}/../dist`
+  rootDir: `${__dirname}/../public`
 }
 
 const fs = require('fs')

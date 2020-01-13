@@ -1,7 +1,7 @@
 'use strict'
 
 const defaultTitle = document.title
-let articlesList
+let postsList
 
 const mainBox = document.querySelector('main')
 const loadingIndicator = document.querySelector('#loading')
@@ -15,38 +15,38 @@ async function loadContentAsync () {
   const firstPath = pathSectionsList[1]
   switch (firstPath) {
     case 'home': {
-      await loadArticlesListAsync()
+      await loadPostsListAsync()
 
       const curPageNumber = Number(pathSectionsList[2])
       const countPerPage = 10
       let htmlStr = '<ul class="post-list">'
       for (
-        let i = (curPageNumber - 1) * countPerPage, maxI = i + countPerPage, l = articlesList.length;
+        let i = (curPageNumber - 1) * countPerPage, maxI = i + countPerPage, l = postsList.length;
         i < maxI && i < l;
         i++
       ) {
-        const article = articlesList[i]
+        const post = postsList[i]
         let tagsListStr = ''
-        article.tagsList.forEach(tag => {
+        post.tags.forEach(tag => {
           tagsListStr += `<li data-sl="/tag#${tag}">${tag}</li>`
         })
         // Source
         // htmlStr += `
         //   <li>
-        //     <h3 data-sl="/article/${article.id}">${article.title}</h3>
-        //     <p>${article.excerpt}</p>
+        //     <h3 data-sl="/post/${post.id}">${post.title}</h3>
+        //     <p>${post.description}</p>
         //     <ul class="post-footer">
-        //       <li data-sl="/category#${article.category}">${article.category}</li>
+        //       <li data-sl="/category#${post.category}">${post.category}</li>
         //       ${tagsListStr}
         //     </ul>
         //   </li>
         // `
         // Compact
-        htmlStr += `<li><h3 data-sl="/article/${article.id}">${article.title}</h3><p>${article.excerpt}</p><ul class="post-footer"><li data-sl="/category#${article.category}">${article.category}</li>${tagsListStr}</ul></li>`
+        htmlStr += `<li><h3 data-sl="/post/${post.id}">${post.title}</h3><p>${post.description}</p><ul class="post-footer"><li data-sl="/category#${post.category}">${post.category}</li>${tagsListStr}</ul></li>`
       }
       htmlStr += '</ul>'
 
-      const pageNumberMax = Math.ceil(articlesList.length / countPerPage)
+      const pageNumberMax = Math.ceil(postsList.length / countPerPage)
       // Source
       // htmlStr += `
       //   <ul class="page-number-nav">
@@ -64,22 +64,22 @@ async function loadContentAsync () {
       break
     }
     case 'archive': {
-      await loadArticlesListAsync()
+      await loadPostsListAsync()
 
       let htmlStr =
         '<ul class="post-list compact">' +
         '<li>' +
         '<h2>Archive</h2>'
-      articlesList.forEach(article => {
+      postsList.forEach(post => {
         // Source
         // htmlStr += `
-        //   <h3 data-sl="/article/${article.id}">
-        //     <span class="post-date">${article.date}</span>
-        //     ${article.title}
+        //   <h3 data-sl="/post/${post.id}">
+        //     <span class="post-date">${post.date}</span>
+        //     ${post.title}
         //   </h3>
         // `
         // Compact
-        htmlStr += `<h3 data-sl="/article/${article.id}"><span class="post-date">${article.date}</span>${article.title}</h3>`
+        htmlStr += `<h3 data-sl="/post/${post.id}"><span class="post-date">${post.date}</span>${post.title}</h3>`
       })
       htmlStr +=
         '</li>' +
@@ -89,23 +89,23 @@ async function loadContentAsync () {
       break
     }
     case 'category': {
-      await loadArticlesListAsync()
+      await loadPostsListAsync()
 
-      const articlesListByCategory = new Map()
-      articlesList.forEach(article => {
-        if (!articlesListByCategory.has(article.category)) {
-          articlesListByCategory.set(article.category, [])
+      const postsListByCategory = new Map()
+      postsList.forEach(post => {
+        if (!postsListByCategory.has(post.category)) {
+          postsListByCategory.set(post.category, [])
         }
-        articlesListByCategory.get(article.category).push(article)
+        postsListByCategory.get(post.category).push(post)
       })
 
       let htmlStr = '<ul class="post-list compact">'
-      articlesListByCategory.forEach((list, category) => {
+      postsListByCategory.forEach((list, category) => {
         htmlStr +=
           `<li id="${category}">` +
           `<h2>${category}</h2>`
-        list.forEach(article => {
-          htmlStr += `<h3 data-sl="/article/${article.id}">${article.title}</h3>`
+        list.forEach(post => {
+          htmlStr += `<h3 data-sl="/post/${post.id}">${post.title}</h3>`
         })
         htmlStr += '</li>'
       })
@@ -116,25 +116,25 @@ async function loadContentAsync () {
       break
     }
     case 'tag': {
-      await loadArticlesListAsync()
+      await loadPostsListAsync()
 
-      const articlesListByTag = new Map()
-      articlesList.forEach(article => {
-        article.tagsList.forEach(tag => {
-          if (!articlesListByTag.has(tag)) {
-            articlesListByTag.set(tag, [])
+      const postsListByTag = new Map()
+      postsList.forEach(post => {
+        post.tags.forEach(tag => {
+          if (!postsListByTag.has(tag)) {
+            postsListByTag.set(tag, [])
           }
-          articlesListByTag.get(tag).push(article)
+          postsListByTag.get(tag).push(post)
         })
       })
 
       let htmlStr = '<ul class="post-list compact">'
-      articlesListByTag.forEach((list, tag) => {
+      postsListByTag.forEach((list, tag) => {
         htmlStr +=
           `<li id="${tag}">` +
           `<h2>${tag}</h2>`
-        list.forEach(article => {
-          htmlStr += `<h3 data-sl="/article/${article.id}">${article.title}</h3>`
+        list.forEach(post => {
+          htmlStr += `<h3 data-sl="/post/${post.id}">${post.title}</h3>`
         })
         htmlStr += '</li>'
       })
@@ -144,8 +144,8 @@ async function loadContentAsync () {
       writeContent(htmlStr)
       break
     }
-    case 'article':
-      await loadMdPageAsync(`/src/article/${pathSectionsList[2]}.md`)
+    case 'post':
+      await loadMdPageAsync(`/res/posts/${pathSectionsList[2]}.md`)
       break
     case '':
     case '404.html':
@@ -155,15 +155,15 @@ async function loadContentAsync () {
     // case 'callingcard':
     // case 'about':
     default:
-      await loadMdPageAsync(`/src/page/${firstPath}.md`)
+      await loadMdPageAsync(`/res/pages/${firstPath}.md`)
       break
   }
   fadeOutElement(loadingIndicator)
 }
 
-async function loadArticlesListAsync () {
-  if (!articlesList) {
-    articlesList = await (await window.fetch('/src/json/articleslist.json')).json()
+async function loadPostsListAsync () {
+  if (!postsList) {
+    postsList = await (await window.fetch('/res/postslist.json')).json()
   }
 }
 
