@@ -1,3 +1,5 @@
-## About
+```
+title: About
+```
 
-<title>About</title>
+This is the "About" page.

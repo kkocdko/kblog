@@ -4,22 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
-  <link rel="stylesheet" href="/res/main.css">
   <link rel="stylesheet" href="/res/markdown.css">
+  <link rel="stylesheet" href="/res/main.css">
   <!-- <script src="//cdn.jsdelivr.net/npm/vconsole@3.3.2/dist/vconsole.min.js" onload="new window.VConsole()"></script> -->
-  <script defer src="//cdn.jsdelivr.net/npm/marked@0.2.10/lib/marked.min.js"></script>
-  <!-- <script defer src="/res/marked.min.js"></script> -->
   <script defer src="/res/main.js"></script>
   <script async src="/res/browser-update.js"></script>
   <meta name="theme-color" content="rgb(63,81,181)">
   <link rel="shortcut icon" href="/favicon.ico">
   <link rel="icon" href="/favicon.svg">
-  <title>K's Blog</title>
+  <title data-default="{{title-default}}">{{title}}</title>
+  <meta name="description" content="{{description}}">
 </head>
 
 <body>
-  <main></main>
-  <div id="loading" class="in"></div>
+  <main>{{main-content}}</main>
+  <div id="loading"></div>
   <header class="in">
     <i id="open-sidebar-btn">
       <!-- Icons are from [material-design-icons](https://github.com/google/material-design-icons) -->
@@ -47,7 +46,7 @@
         </i>
         <p class="name">
           <i class="avatar"></i>
-          kkocdko
+          {{user-name}}
         </p>
       </div>
       <ul>

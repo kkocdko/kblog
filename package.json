@@ -18,9 +18,10 @@
   },
   "homepage": "https://github.com/kkocdko/kkocdko.github.io#readme",
   "dependencies": {
-    "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
-    "terser": "^4.4.3"
+    "clean-css": "^4.2.1",
+    "terser": "^4.4.3",
+    "marked": "^0.8.0"
   },
   "codeStyle": {
     "js": "standard | https://standardjs.com",
