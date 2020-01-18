@@ -1,6 +1,6 @@
 'use strict'
 
-const defaultTitle = document.title
+const defaultTitle = document.querySelector('title').dataset.default
 let postsList
 
 const mainBox = document.querySelector('main')
@@ -19,7 +19,8 @@ async function loadContentAsync () {
 
       const curPageNumber = Number(pathSectionsList[2])
       const countPerPage = 10
-      let htmlStr = '<ul class="post-list">'
+      let htmlStr =
+        '<ul class="post-list">'
       for (
         let i = (curPageNumber - 1) * countPerPage, maxI = i + countPerPage, l = postsList.length;
         i < maxI && i < l;
@@ -58,7 +59,6 @@ async function loadContentAsync () {
       // `
       // Compact
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
-
       htmlStr += `<title>Home: ${curPageNumber}</title>`
       writeContent(htmlStr)
       break
@@ -145,17 +145,16 @@ async function loadContentAsync () {
       break
     }
     case 'post':
-      await loadMdPageAsync(`/res/posts/${pathSectionsList[2]}.md`)
+      await loadMdPageAsync(`/res/posts/${pathSectionsList[2]}.md.html`)
       break
     case '':
-    case '404.html':
-      jumpToSpaLink(new URLSearchParams(window.location.search).get('path') || '/home/1')
+      jumpToSpaLink('/home/1')
       break
     // case 'toy':
     // case 'callingcard':
     // case 'about':
     default:
-      await loadMdPageAsync(`/res/pages/${firstPath}.md`)
+      await loadMdPageAsync(`/res/pages/${firstPath}.md.html`)
       break
   }
   fadeOutElement(loadingIndicator)
@@ -169,22 +168,29 @@ async function loadPostsListAsync () {
 
 async function loadMdPageAsync (filePath) {
   const response = await window.fetch(filePath)
-  const markdownStr = response.status === 404
+  const htmlStr = response.status === 404
     ? '<h3 style="text-align:center;font-size:7vmin">404 not found</h3><title>404 not found</title>'
     : await response.text()
-  writeContent(`<article class="post-body markdown-body">${window.marked(markdownStr)}</article>`)
+  writeContent(`<article class="markdown-body">${htmlStr}</article>`)
   window.scroll(0, 0)
 }
 
 function writeContent (htmlStr) {
   mainBox.innerHTML = htmlStr
+  afterContentLoaded()
+}
+
+function afterContentLoaded () {
   setTimeout(() => {
     // Fix anchor
-    const anchor = document.getElementById(window.location.hash.substr(1))
-    if (anchor) anchor.scrollIntoView()
+    const hash = window.location.hash.substr(1)
+    if (hash) {
+      const anchor = document.getElementById(hash)
+      if (anchor) anchor.scrollIntoView()
+    }
 
     // Refresh title
-    const titleTag = document.querySelector('body title')
+    const titleTag = mainBox.querySelector('title')
     document.title = titleTag
       ? titleTag.textContent + ' - ' + defaultTitle
       : defaultTitle
@@ -215,7 +221,11 @@ function fadeOutSideBar () {
   fadeOutElement(sideBar)
 }
 
-loadContentAsync()
+if (mainBox.innerHTML.length === 0) {
+  loadContentAsync()
+} else {
+  afterContentLoaded()
+}
 
 window.addEventListener('popstate', loadContentAsync)
 

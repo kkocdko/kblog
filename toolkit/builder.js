@@ -2,8 +2,9 @@
 
 const fs = require('file-system') // This is not native fs
 const path = require('path')
-const Terser = require('terser')
 const Cleancss = require('clean-css')
+const Terser = require('terser')
+const marked = require('marked')
 
 const config = require(path.join(__dirname, 'builder.config.js'))
 
@@ -19,6 +20,10 @@ function shouldNotCompress (fileName) {
 
 function readFileStr (filePath) {
   return fs.readFileSync(filePath).toString()
+}
+
+function compressHtml (htmlStr) {
+  return htmlStr.replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
 }
 
 function processDir ({
@@ -42,11 +47,6 @@ function processDir ({
 // ==============================
 
 processDir({
-  source: config.dir.source.pages,
-  target: config.dir.public.pages
-})
-
-processDir({
   source: config.dir.source.media,
   target: config.dir.public.media
 })
@@ -55,14 +55,6 @@ processDir({
   source: config.dir.swatch.root,
   target: config.dir.public.root,
   filter: ['**/*', '!*.html', '!robots.txt', '!res/**/*']
-})
-
-processDir({
-  source: config.dir.swatch.root,
-  target: config.dir.public.root,
-  filter: ['res/**/*.html', '*.html'],
-  skimCondition: shouldNotCompress,
-  processor: str => str.replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
 })
 
 processDir({
@@ -91,37 +83,103 @@ processDir({
 
 // ==============================
 
-const postsList = fs.readdirSync(config.dir.source.posts).map(fileName => {
-  const fileStr = readFileStr(path.join(config.dir.source.posts, fileName))
-  const rawInfo = {}
-  const infoBlockStartIndex = '```\n'.length // No CRLF support !!!
-  const infoBlockLength = fileStr.indexOf('\n```') - infoBlockStartIndex
-  const infoBlockStr = fileStr.substr(infoBlockStartIndex, infoBlockLength)
-  const infoBlockLines = infoBlockStr.split('\n')
-  infoBlockLines.forEach(line => {
-    const infoSplitIndex = line.indexOf(':')
-    const infoName = line.substr(0, infoSplitIndex)
-    const infoList = line.substr(infoSplitIndex + 1).trim().split(' ')
-    rawInfo[infoName] = infoList
+function parseMdFile (filePath) {
+  const fileStr = readFileStr(filePath)
+  const metaData = new Map()
+  const metaStrBracket = '```'
+  const metaStrStartIndex = metaStrBracket.length
+  const metaStrEndIndex = fileStr.indexOf('\n' + metaStrBracket) // No CRLF support !!!
+  const metaStr = fileStr.slice(metaStrStartIndex, metaStrEndIndex).trim()
+  const metaStrLines = metaStr.split('\n')
+  metaStrLines.forEach(line => {
+    const splitIndex = line.indexOf(':')
+    const key = line.substr(0, splitIndex)
+    const value = line.substr(splitIndex + 1).trim()
+    metaData.set(key, value)
   })
-  const info = {
-    id: rawInfo.date.join('').replace(/:|-/g, ''),
-    title: rawInfo.title.join(' '),
-    date: rawInfo.date[0],
-    time: rawInfo.date[1],
-    category: rawInfo.category[0],
-    tags: rawInfo.tags,
-    description: rawInfo.description.join(' ')
+  const contentMdStr = fileStr.substr(metaStrEndIndex + metaStrBracket.length + 1).trim()
+  const contentHtmlStr = marked(`# ${metaData.get('title')}\n\n${contentMdStr}\n\n<title>${metaData.get('title')}</title>\n`)
+  return { meta: metaData, content: compressHtml(contentHtmlStr) }
+}
+
+const generatePage = (() => {
+  const templateSrcStr = readFileStr(path.join(config.dir.swatch.root, 'index.html'))
+  const templateStr = compressHtml(templateSrcStr)
+  return ({
+    defaultTitle = config.site.title,
+    title = config.site.title,
+    userName = config.site.name,
+    description = '',
+    content = ''
+  }) => {
+    let result = templateStr
+    function replaceItem (key, value) {
+      const regexp = new RegExp('{{' + key + '}}', 'g')
+      result = result.replace(regexp, value)
+    }
+    replaceItem('title-default', defaultTitle)
+    replaceItem('title', title)
+    replaceItem('user-name', userName)
+    replaceItem('description', description)
+    replaceItem('main-content', content)
+    return result
   }
-  // Write compact markdown file
+})()
+
+// ==============================
+
+fs.writeFile(path.join(config.dir.public.root, '404.html'), generatePage({}))
+
+fs.writeFile(
+  path.join(config.dir.public.root, 'index.html'),
+  generatePage({
+    description: 'This is kkocdko\'s blog, welcome!',
+    content: '<article class="markdown-body" style="text-align:center"><h1>Welcome to my blog!</h1><p>Please wait ...</p><style onload="if(!this.initialized){this.initialized=true;setTimeout(()=>document.querySelector(\'header .avatar\').click(),1000)}"></style></article>'
+  })
+)
+
+const pagesList = []
+fs.readdirSync(config.dir.source.pages).forEach(fileName => {
+  const { meta, content } = parseMdFile(path.join(config.dir.source.pages, fileName))
+  const pageName = path.parse(fileName).name
+  fs.writeFile(path.join(config.dir.public.pages, fileName + '.html'), content)
   fs.writeFile(
-    path.join(config.dir.public.posts, info.id + '.md'),
-      `<h2 class="lite">${info.title}</h2>\n\n` +
-      fileStr.substr(2 * infoBlockStartIndex + infoBlockLength).trim() +
-      `\n\n<title>${info.title}</title>\n`
+    path.join(config.dir.public.root, pageName, 'index.html'),
+    generatePage({
+      title: meta.get('title'),
+      description: meta.get('description'),
+      content: `<article class="markdown-body">${content}</article>`
+    })
   )
-  return info
-}).sort(({ id: firstId }, { id: secondId }) => firstId > secondId ? -1 : 1)
+  pagesList.push({ pageName })
+})
+
+// ==============================
+
+const postsList = []
+fs.readdirSync(config.dir.source.posts).forEach(fileName => {
+  const { meta, content } = parseMdFile(path.join(config.dir.source.posts, fileName))
+  const postInfo = {
+    id: meta.get('date').replace(/:|-|\s/g, ''),
+    title: meta.get('title'),
+    date: meta.get('date').split(' ')[0],
+    time: meta.get('date').split(' ')[1],
+    category: meta.get('category'),
+    tags: meta.get('tags').split(' '),
+    description: meta.get('description')
+  }
+  fs.writeFile(path.join(config.dir.public.posts, postInfo.id + '.md.html'), content)
+  fs.writeFile(
+    path.join(config.dir.public.root, 'post', postInfo.id, 'index.html'),
+    generatePage({
+      title: postInfo.title,
+      description: postsList.description,
+      content: `<article class="markdown-body">${content}</article>`
+    })
+  )
+  postsList.push(postInfo)
+})
+postsList.sort(({ id: firstId }, { id: secondId }) => firstId > secondId ? -1 : 1)
 fs.writeFile(path.join(config.dir.public.res, 'postslist.json'), JSON.stringify(postsList))
 
 // ==============================
@@ -132,13 +190,14 @@ let siteMapStr =
 const siteMapAddItem = (relative, others = '') => {
   siteMapStr +=
   '<url>' +
-  `<loc>${config.site.domain}/404.html?path=${relative}</loc>` +
+  `<loc>${config.site.domain}${relative}</loc>` +
   '<changefreq>daily</changefreq>' +
   others +
   '</url>'
 }
-siteMapAddItem('/home/1')
-postsList.forEach(({ id }) => siteMapAddItem(`/post/${id}`))
+siteMapAddItem('/')
+pagesList.forEach(({ pageName }) => siteMapAddItem(`/${pageName}/`))
+postsList.forEach(({ id }) => siteMapAddItem(`/post/${id}/`))
 siteMapStr += '</urlset>'
 fs.writeFile(path.join(config.dir.public.root, 'sitemap.xml'), siteMapStr)
 

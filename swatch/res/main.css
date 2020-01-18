@@ -268,22 +268,6 @@ footer * {
   font-size: 12px;
 }
 
-.post-body {
-  padding: 20px;
-  background: #fff;
-  box-shadow: var(--card-shadow);
-}
-
-@media screen and (max-width: 770px) {
-  .post-body {
-    box-shadow: none;
-  }
-}
-
-.post-body h2.lite {
-  font-weight: normal;
-}
-
 .page-number-nav {
   margin: 5px 0 -15px;
   text-align: center;
@@ -303,4 +287,21 @@ footer * {
   color: var(--theme-color);
   font-size: 14px;
   font-weight: 900;
+}
+
+article {
+  padding: 20px;
+  background: #fff;
+  box-shadow: var(--card-shadow);
+}
+
+@media screen and (max-width: 770px) {
+  article {
+    box-shadow: none;
+  }
+}
+
+article>h1:first-child {
+  font-size: 24px;
+  font-weight: normal;
 }
