@@ -12,8 +12,6 @@ try { fs.rmdirSync(config.dir.public.root) } catch {}
 console.time('Build time')
 process.on('exit', () => console.timeEnd('Build time'))
 
-// ==============================
-
 function shouldNotCompress (fileName) {
   return config.developMode || fileName.includes('.min.')
 }
@@ -43,8 +41,6 @@ function processDir ({
     }
   })
 }
-
-// ==============================
 
 processDir({
   source: config.dir.source.media,
@@ -81,8 +77,6 @@ processDir({
   }
 })
 
-// ==============================
-
 function parseMdFile (filePath) {
   const fileStr = readFileStr(filePath)
   const metaData = new Map()
@@ -98,45 +92,50 @@ function parseMdFile (filePath) {
     metaData.set(key, value)
   })
   const contentMdStr = fileStr.substr(metaStrEndIndex + metaStrBracket.length + 1).trim()
-  const contentHtmlStr = marked(`# ${metaData.get('title')}\n\n${contentMdStr}\n\n<title>${metaData.get('title')}</title>\n`)
-  return { meta: metaData, content: compressHtml(contentHtmlStr) }
+  const contentHtmlStr = marked(
+    `# ${metaData.get('title')}\n\n` +
+    `${contentMdStr}\n\n` +
+    `<title>${metaData.get('title')} - ${config.site.defaultTitle}</title>\n`
+  )
+  return {
+    meta: metaData,
+    content: config.developMode ? contentHtmlStr : compressHtml(contentHtmlStr)
+  }
 }
 
 const generatePage = (() => {
-  const templateSrcStr = readFileStr(path.join(config.dir.swatch.root, 'index.html'))
-  const templateStr = compressHtml(templateSrcStr)
+  function replacePattern (sourceStr, replaceList) {
+    replaceList.forEach(({ key, value }) => {
+      const regexp = new RegExp('{{' + key + '}}', 'g')
+      sourceStr = sourceStr.replace(regexp, value)
+    })
+    return sourceStr
+  }
+  let templateSrcStr = readFileStr(path.join(config.dir.swatch.root, 'main.html'))
+  if (!config.developMode) templateSrcStr = compressHtml(templateSrcStr)
+  const templateStr = replacePattern(templateSrcStr, [
+    { key: 'title-default', value: config.site.defaultTitle },
+    { key: 'user-name', value: config.site.userName }
+  ])
   return ({
-    defaultTitle = config.site.title,
-    title = config.site.title,
-    userName = config.site.name,
+    title = '',
     description = '',
     content = ''
-  }) => {
-    let result = templateStr
-    function replaceItem (key, value) {
-      const regexp = new RegExp('{{' + key + '}}', 'g')
-      result = result.replace(regexp, value)
-    }
-    replaceItem('title-default', defaultTitle)
-    replaceItem('title', title)
-    replaceItem('user-name', userName)
-    replaceItem('description', description)
-    replaceItem('main-content', content)
-    return result
-  }
+  }) => replacePattern(templateStr, [
+    { key: 'title', value: title + ' - ' + config.site.defaultTitle },
+    { key: 'description', value: description },
+    { key: 'main-content', value: content }
+  ])
 })()
 
-// ==============================
+fs.writeFile(path.join(config.dir.public.root, '404.html'), generatePage({ title: 'Loading' }))
 
-fs.writeFile(path.join(config.dir.public.root, '404.html'), generatePage({}))
-
-fs.writeFile(
-  path.join(config.dir.public.root, 'index.html'),
-  generatePage({
-    description: 'This is kkocdko\'s blog, welcome!',
-    content: '<article class="markdown-body" style="text-align:center"><h1>Welcome to my blog!</h1><p>Please wait ...</p><style onload="if(!this.initialized){this.initialized=true;setTimeout(()=>document.querySelector(\'header .avatar\').click(),1000)}"></style></article>'
-  })
-)
+fs.writeFile(path.join(config.dir.public.root, 'index.html'), generatePage({
+  title: 'Welcome!',
+  description: 'This is kkocdko\'s blog, welcome!',
+  content: '<article style="text-align:center;line-height:3em"><h1>Welcome to my blog!</h1>Please wait ...</article>' +
+  '<style onload="if(!this.initialized){this.initialized=true;window.addEventListener(\'load\',()=>setTimeout(()=>document.querySelector(\'header .avatar\').click(),1000))}"></style>'
+}))
 
 const pagesList = []
 fs.readdirSync(config.dir.source.pages).forEach(fileName => {
@@ -153,8 +152,6 @@ fs.readdirSync(config.dir.source.pages).forEach(fileName => {
   )
   pagesList.push({ pageName })
 })
-
-// ==============================
 
 const postsList = []
 fs.readdirSync(config.dir.source.posts).forEach(fileName => {
@@ -173,7 +170,7 @@ fs.readdirSync(config.dir.source.posts).forEach(fileName => {
     path.join(config.dir.public.root, 'post', postInfo.id, 'index.html'),
     generatePage({
       title: postInfo.title,
-      description: postsList.description,
+      description: postInfo.description,
       content: `<article class="markdown-body">${content}</article>`
     })
   )
@@ -181,8 +178,6 @@ fs.readdirSync(config.dir.source.posts).forEach(fileName => {
 })
 postsList.sort(({ id: firstId }, { id: secondId }) => firstId > secondId ? -1 : 1)
 fs.writeFile(path.join(config.dir.public.res, 'postslist.json'), JSON.stringify(postsList))
-
-// ==============================
 
 let siteMapStr =
   '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -200,8 +195,6 @@ pagesList.forEach(({ pageName }) => siteMapAddItem(`/${pageName}/`))
 postsList.forEach(({ id }) => siteMapAddItem(`/post/${id}/`))
 siteMapStr += '</urlset>'
 fs.writeFile(path.join(config.dir.public.root, 'sitemap.xml'), siteMapStr)
-
-// ==============================
 
 fs.writeFile(`${config.dir.public.root}/robots.txt`,
   `Sitemap: ${config.site.domain}/sitemap.xml\n` +

@@ -1,8 +1,8 @@
 const rp = require('path').join.bind(null, __dirname, '..')
 module.exports = {
   site: {
-    title: 'kkocdko\'s blog',
-    name: 'kkocdko',
+    defaultTitle: 'kkocdko\'s blog',
+    userName: 'kkocdko',
     domain: 'https://kkocdko.github.io'
   },
   dir: {

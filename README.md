@@ -41,7 +41,7 @@ This is a blog solution that can run on [Github Pages](https://pages.github.com)
 
 4. (Optional) Execute `npm run dev` and view your blog in browser.
 
-5. Execute `npm run build` and put the content of `dist` directory into `master` branch, then push to github.
+5. Execute `npm run build` and put the content of `public` directory into `master` branch, then push to github.
 
 ### Migrating
 
@@ -51,7 +51,7 @@ This is a blog solution that can run on [Github Pages](https://pages.github.com)
 
 1. Pay attention to the port's meta, you may need to replace some meta names.
 
-2. Need to build locally and then push the results to the cloud.
+2. Need to build locally.
 
 ### Q&A
 

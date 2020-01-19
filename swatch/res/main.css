@@ -305,3 +305,7 @@ article>h1:first-child {
   font-size: 24px;
   font-weight: normal;
 }
+
+article img:not(.no-shadow) {
+  box-shadow: var(--card-shadow);
+}
