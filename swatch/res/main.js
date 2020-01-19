@@ -1,7 +1,7 @@
 'use strict'
 
-const defaultTitle = document.querySelector('title').dataset.default
 let postsList
+const defaultTitle = document.querySelector('title').dataset.default
 
 const mainBox = document.querySelector('main')
 const loadingIndicator = document.querySelector('#loading')
@@ -59,7 +59,7 @@ async function loadContentAsync () {
       // `
       // Compact
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
-      htmlStr += `<title>Home: ${curPageNumber}</title>`
+      htmlStr += `<title>Home: ${curPageNumber} - ${defaultTitle}</title>`
       writeContent(htmlStr)
       break
     }
@@ -84,7 +84,7 @@ async function loadContentAsync () {
       htmlStr +=
         '</li>' +
         '</ul>' +
-        '<title>Archive</title>'
+        `<title>Archive - ${defaultTitle}</title>`
       writeContent(htmlStr)
       break
     }
@@ -111,7 +111,7 @@ async function loadContentAsync () {
       })
       htmlStr +=
         '</ul>' +
-        '<title>Categories</title>'
+        `<title>Categories - ${defaultTitle}</title>`
       writeContent(htmlStr)
       break
     }
@@ -140,7 +140,7 @@ async function loadContentAsync () {
       })
       htmlStr +=
         '</ul>' +
-        '<title>Tags</title>'
+        `<title>Tags - ${defaultTitle}</title>`
       writeContent(htmlStr)
       break
     }
@@ -169,9 +169,9 @@ async function loadPostsListAsync () {
 async function loadMdPageAsync (filePath) {
   const response = await window.fetch(filePath)
   const htmlStr = response.status === 404
-    ? '<h3 style="text-align:center;font-size:7vmin">404 not found</h3><title>404 not found</title>'
-    : await response.text()
-  writeContent(`<article class="markdown-body">${htmlStr}</article>`)
+    ? `<article style="text-align:center;line-height:3em"><h1>404 not found</h1><title>404 not found - ${defaultTitle}</title></article>`
+    : `<article class="markdown-body">${await response.text()}</article>`
+  writeContent(htmlStr)
   window.scroll(0, 0)
 }
 
@@ -191,9 +191,7 @@ function afterContentLoaded () {
 
     // Refresh title
     const titleTag = mainBox.querySelector('title')
-    document.title = titleTag
-      ? titleTag.textContent + ' - ' + defaultTitle
-      : defaultTitle
+    document.title = titleTag ? titleTag.textContent : defaultTitle
 
     // Set listeners
     document.querySelectorAll('[data-sl]').forEach(el => el.addEventListener('click', onSpaLinkClick))
