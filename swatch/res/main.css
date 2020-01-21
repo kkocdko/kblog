@@ -191,16 +191,14 @@ header .avatar {
   flex-grow: 1;
 }
 
-footer {
+footer,
+footer * {
   text-align: center;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7);
   background: var(--theme-color);
   font-size: 12px;
   line-height: 30px;
-}
-
-footer * {
-  text-decoration: none;
-  color: rgba(255, 255, 255, 0.7);
 }
 
 .post-list>li {
@@ -306,6 +304,6 @@ article>h1:first-child {
   font-weight: normal;
 }
 
-article img:not(.no-shadow) {
+article img:not(.no-border) {
   box-shadow: var(--card-shadow);
 }
