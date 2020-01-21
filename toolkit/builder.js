@@ -2,8 +2,9 @@
 
 const fs = require('file-system') // This is not native fs
 const path = require('path')
+const htmlMinifier = require('html-minifier-terser')
 const Cleancss = require('clean-css')
-const Terser = require('terser')
+const terser = require('terser')
 const marked = require('marked')
 
 const config = require(path.join(__dirname, 'builder.config.js'))
@@ -18,10 +19,6 @@ function shouldNotCompress (fileName) {
 
 function readFileStr (filePath) {
   return fs.readFileSync(filePath).toString()
-}
-
-function compressHtml (htmlStr) {
-  return htmlStr.replace(/<!--(.|\n)*?-->|(?<=>)\s+|\s+(?=<)/g, '') // Inline css and js will not be compressed
 }
 
 function processDir ({
@@ -58,7 +55,7 @@ processDir({
   target: config.dir.public.root,
   filter: ['res/**/*.css'],
   skimCondition: shouldNotCompress,
-  processor: str => new Cleancss(config.compressor.cleancss).minify(str).styles
+  processor: str => new Cleancss(config.compressor.cleanCss).minify(str).styles
 })
 
 processDir({
@@ -67,13 +64,13 @@ processDir({
   filter: ['res/**/*.js'],
   skimCondition: shouldNotCompress,
   processor: str => {
-    const transformer = new Terser.TreeTransformer(node => {
-      if (node instanceof Terser.AST_Const) {
-        return new Terser.AST_Let(node)
+    const transformer = new terser.TreeTransformer(node => {
+      if (node instanceof terser.AST_Const) {
+        return new terser.AST_Let(node)
       }
     })
-    const ast = Terser.parse(str).transform(transformer)
-    return Terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
+    const ast = terser.parse(str).transform(transformer)
+    return terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
   }
 })
 
@@ -99,24 +96,29 @@ function parseMdFile (filePath) {
   )
   return {
     meta: metaData,
-    content: config.developMode ? contentHtmlStr : compressHtml(contentHtmlStr)
+    content: config.developMode
+      ? contentHtmlStr
+      : htmlMinifier.minify(contentHtmlStr, {
+        ...config.compressor.htmlMinifier,
+        ...config.compressor.htmlMinifierMd
+      })
   }
 }
 
 const generatePage = (() => {
   function replacePattern (sourceStr, replaceList) {
     replaceList.forEach(({ key, value }) => {
-      const regexp = new RegExp('{{' + key + '}}', 'g')
+      const regexp = new RegExp('{{ ' + key + ' }}', 'g') // Pay attention to the spaces
       sourceStr = sourceStr.replace(regexp, value)
     })
     return sourceStr
   }
-  let templateSrcStr = readFileStr(path.join(config.dir.swatch.root, 'main.html'))
-  if (!config.developMode) templateSrcStr = compressHtml(templateSrcStr)
-  const templateStr = replacePattern(templateSrcStr, [
+  const templateSrcStr = readFileStr(path.join(config.dir.swatch.root, 'main.html'))
+  let templateStr = replacePattern(templateSrcStr, [
     { key: 'title-default', value: config.site.defaultTitle },
     { key: 'user-name', value: config.site.userName }
   ])
+  if (!config.developMode) templateStr = htmlMinifier.minify(templateStr, config.compressor.htmlMinifier)
   return ({
     title = '',
     description = '',
@@ -132,9 +134,9 @@ fs.writeFile(path.join(config.dir.public.root, '404.html'), generatePage({ title
 
 fs.writeFile(path.join(config.dir.public.root, 'index.html'), generatePage({
   title: 'Welcome!',
-  description: 'This is kkocdko\'s blog, welcome!',
+  description: `This is ${config.site.userName}'s blog, welcome!`,
   content: '<article style="text-align:center;line-height:3em"><h1>Welcome to my blog!</h1>Please wait ...</article>' +
-  '<style onload="if(!this.initialized){this.initialized=true;window.addEventListener(\'load\',()=>setTimeout(()=>document.querySelector(\'header .avatar\').click(),1000))}"></style>'
+    '<style onload="if(!this.initialized){this.initialized=true;window.addEventListener(\'load\',()=>setTimeout(()=>document.querySelector(\'header .avatar\').click(),1000))}"></style>'
 }))
 
 const pagesList = []

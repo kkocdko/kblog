@@ -26,7 +26,20 @@ module.exports = {
     }
   },
   compressor: {
-    cleancss: {
+    htmlMinifier: {
+      collapseInlineTagWhitespace: true,
+      collapseBooleanAttributes: true,
+      collapseWhitespace: true,
+      continueOnParseError: true,
+      removeAttributeQuotes: true,
+      removeComments: true,
+      sortAttributes: true,
+      sortClassName: true
+    },
+    htmlMinifierMd: {
+      collapseInlineTagWhitespace: false
+    },
+    cleanCss: {
       level: {
         1: { specialComments: 'none' },
         2: { all: true }

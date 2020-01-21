@@ -20,6 +20,7 @@
   "dependencies": {
     "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
+    "html-minifier-terser": "^5.0.2",
     "marked": "^0.8.0",
     "terser": "^4.6.3"
   },
