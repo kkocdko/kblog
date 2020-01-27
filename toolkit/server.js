@@ -32,6 +32,7 @@ const mimeList = {
 const server = http.createServer((req, res) => {
   const url = new URL('http://' + req.headers.host + req.url)
   const filePath = config.rootDir + url.pathname.replace(/\/$/, '')
+  res.on('pipe', src => { src.on('end', () => { res.end() }) })
   fs.stat(filePath, (e, stats) => {
     if (!e && stats.isFile()) {
       // Is file

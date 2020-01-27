@@ -4,7 +4,7 @@
   "description": "An unique blog solution. Lightweight, fast, beautiful and practical.",
   "main": "toolkit/builder.js",
   "scripts": {
-    "dev": "node toolkit/builder.js --dev-mode && node toolkit/server.js",
+    "preview": "node toolkit/builder.js --dev-mode && node toolkit/server.js",
     "build": "node toolkit/builder.js"
   },
   "repository": {

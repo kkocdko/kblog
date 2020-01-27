@@ -9,7 +9,7 @@ const topBar = document.querySelector('header')
 const sideBar = document.querySelector('#sidebar')
 const sideBarMask = sideBar.querySelector('.mask')
 
-async function loadContentAsync () {
+const loadContentAsync = async () => {
   fadeInElement(loadingIndicator)
   const pathSectionsList = window.location.pathname.split('/')
   const firstPath = pathSectionsList[1]
@@ -20,6 +20,7 @@ async function loadContentAsync () {
       const curPageNumber = Number(pathSectionsList[2])
       const countPerPage = 10
       let htmlStr =
+        `<h1 style="display:none">Home: ${curPageNumber}</h1>` +
         '<ul class="post-list">'
       for (
         let i = (curPageNumber - 1) * countPerPage, maxI = i + countPerPage, l = postsList.length;
@@ -59,7 +60,6 @@ async function loadContentAsync () {
       // `
       // Compact
       htmlStr += `<ul class="page-number-nav"><li data-sl="/home/1">〈◀</li><li data-sl="/home/${curPageNumber > 1 ? curPageNumber - 1 : 1}">◀</li><li data-sl="/home/${curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax}">▶</li><li data-sl="/home/${pageNumberMax}">▶〉</li></ul>`
-      htmlStr += `<title>Home: ${curPageNumber} - ${defaultTitle}</title>`
       writeContent(htmlStr)
       break
     }
@@ -67,6 +67,7 @@ async function loadContentAsync () {
       await loadPostsListAsync()
 
       let htmlStr =
+        '<h1 style="display:none">Archive</h1>' +
         '<ul class="post-list compact">' +
         '<li>' +
         '<h2>Archive</h2>'
@@ -83,8 +84,7 @@ async function loadContentAsync () {
       })
       htmlStr +=
         '</li>' +
-        '</ul>' +
-        `<title>Archive - ${defaultTitle}</title>`
+        '</ul>'
       writeContent(htmlStr)
       break
     }
@@ -99,7 +99,9 @@ async function loadContentAsync () {
         postsListByCategory.get(post.category).push(post)
       })
 
-      let htmlStr = '<ul class="post-list compact">'
+      let htmlStr =
+        '<h1 style="display:none">Categories</h1>' +
+        '<ul class="post-list compact">'
       postsListByCategory.forEach((list, category) => {
         htmlStr +=
           `<li id="${category}">` +
@@ -109,9 +111,7 @@ async function loadContentAsync () {
         })
         htmlStr += '</li>'
       })
-      htmlStr +=
-        '</ul>' +
-        `<title>Categories - ${defaultTitle}</title>`
+      htmlStr += '</ul>'
       writeContent(htmlStr)
       break
     }
@@ -128,7 +128,9 @@ async function loadContentAsync () {
         })
       })
 
-      let htmlStr = '<ul class="post-list compact">'
+      let htmlStr =
+        '<h1 style="display:none">Tags</h1>' +
+        '<ul class="post-list compact">'
       postsListByTag.forEach((list, tag) => {
         htmlStr +=
           `<li id="${tag}">` +
@@ -138,17 +140,12 @@ async function loadContentAsync () {
         })
         htmlStr += '</li>'
       })
-      htmlStr +=
-        '</ul>' +
-        `<title>Tags - ${defaultTitle}</title>`
+      htmlStr += '</ul>'
       writeContent(htmlStr)
       break
     }
     case 'post':
       await loadMdPageAsync(`/res/posts/${pathSectionsList[2]}.md.html`)
-      break
-    case '':
-      jumpToSpaLink('/home/1')
       break
     // case 'toy':
     // case 'callingcard':
@@ -160,78 +157,72 @@ async function loadContentAsync () {
   fadeOutElement(loadingIndicator)
 }
 
-async function loadPostsListAsync () {
+const loadPostsListAsync = async () => {
   if (!postsList) {
     postsList = await (await window.fetch('/res/postslist.json')).json()
   }
 }
 
-async function loadMdPageAsync (filePath) {
-  const response = await window.fetch(filePath)
-  const htmlStr = response.status === 404
-    ? `<article style="text-align:center;line-height:3em"><h1>404 not found</h1><title>404 not found - ${defaultTitle}</title></article>`
-    : `<article class="markdown-body">${await response.text()}</article>`
-  writeContent(htmlStr)
+const loadMdPageAsync = async url => {
+  const response = await window.fetch(url)
+  const markdownStr = response.status === 404
+    ? '<h1 style="text-align:center;border:none">404 not found</h1>'
+    : await response.text()
+  writeContent(`<article class="markdown-body">${markdownStr}</article>`)
   window.scroll(0, 0)
 }
 
-function writeContent (htmlStr) {
+const writeContent = htmlStr => {
   mainBox.innerHTML = htmlStr
-  afterContentLoaded()
-}
-
-function afterContentLoaded () {
   setTimeout(() => {
-    // Fix anchor
+    // Fix hash anchor
     const hash = window.location.hash.substr(1)
     if (hash) {
       const anchor = document.getElementById(hash)
       if (anchor) anchor.scrollIntoView()
     }
 
-    // Refresh title
-    const titleTag = mainBox.querySelector('title')
-    document.title = titleTag ? titleTag.textContent : defaultTitle
+    // Set title
+    const titleTag = mainBox.querySelector('h1')
+    document.title = titleTag
+      ? titleTag.textContent + ' - ' + defaultTitle
+      : defaultTitle
 
     // Set listeners
-    document.querySelectorAll('[data-sl]').forEach(el => el.addEventListener('click', onSpaLinkClick))
+    listenSpaLinks()
   })
 }
 
-function jumpToSpaLink (spaLink) {
-  window.history.pushState(null, null, spaLink)
+const listenSpaLinks = () => {
+  document.querySelectorAll('[data-sl]').forEach(el =>
+    el.addEventListener('click', onSpaLinkClick)
+  )
+}
+
+const onSpaLinkClick = function () {
+  window.history.pushState(null, null, this.dataset.sl)
   loadContentAsync()
 }
 
-function onSpaLinkClick () {
-  jumpToSpaLink(this.dataset.sl)
-}
+const fadeInElement = element => element.classList.add('in')
 
-function fadeInElement (element) {
-  element.classList.add('in')
-}
+const fadeOutElement = element => element.classList.remove('in')
 
-function fadeOutElement (element) {
-  element.classList.remove('in')
-}
+const fadeOutSideBar = () => fadeOutElement(sideBar)
 
-function fadeOutSideBar () {
-  fadeOutElement(sideBar)
-}
-
-if (mainBox.innerHTML.length === 0) {
-  loadContentAsync()
+if (mainBox.innerHTML) {
+  listenSpaLinks()
 } else {
-  afterContentLoaded()
+  loadContentAsync()
 }
 
 window.addEventListener('popstate', loadContentAsync)
 
-document.querySelector('#open-sidebar-btn').addEventListener('click', () => fadeInElement(sideBar))
+document.querySelector('#show-sidebar-btn').addEventListener('click', () =>
+  fadeInElement(sideBar)
+)
 
-sideBarMask.addEventListener('mousedown', fadeOutSideBar)
-
-sideBarMask.addEventListener('touchstart', fadeOutSideBar, { passive: true })
+sideBarMask.addEventListener('pointerdown', fadeOutSideBar)
 
 sideBar.querySelector('ul').addEventListener('click', () => {
   window.scroll(0, 0)
@@ -243,7 +234,7 @@ document.querySelector('#gotop-btn').addEventListener('click', () =>
   document.documentElement.scrollIntoView({ behavior: 'smooth' })
 )
 
-document.querySelector('#open-palette-btn').addEventListener('click', () => {
+document.querySelector('#show-palette-btn').addEventListener('click', () => {
   const color = window.prompt('Input color (in css format)', 'rgb(0, 137, 123)')
   if (color) {
     document.body.style.setProperty('--theme-color', color)
@@ -266,4 +257,4 @@ document.querySelector('#open-palette-btn').addEventListener('click', () => {
 }
 
 // Fix the Blink's css bug
-setTimeout(() => sideBar.removeAttribute('style'), 700)
+setTimeout(() => { sideBar.style = '' }, 700)

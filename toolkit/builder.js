@@ -13,68 +13,46 @@ try { fs.rmdirSync(config.dir.public.root) } catch {}
 console.time('Build time')
 process.on('exit', () => console.timeEnd('Build time'))
 
-function shouldNotCompress (fileName) {
-  return config.developMode || fileName.includes('.min.')
-}
+const readFileStr = filePath => fs.readFileSync(filePath).toString()
 
-function readFileStr (filePath) {
-  return fs.readFileSync(filePath).toString()
-}
-
-function processDir ({
-  source,
-  target,
-  filter = ['*'],
-  skimCondition = fileName => true,
-  processor = fileStr => null
-}) {
-  fs.recurse(source, filter, (absolute, relative, name) => {
-    if (!name) return // It's a folder, not a file
-    const targetPath = path.join(target, relative)
-    if (skimCondition(name)) {
-      fs.copyFile(absolute, targetPath)
-    } else {
-      fs.writeFile(targetPath, processor(readFileStr(absolute)))
-    }
-  })
-}
-
-processDir({
-  source: config.dir.source.media,
-  target: config.dir.public.media
+fs.recurse(config.dir.source.media, ['*'], (absolute, relative, filename) => {
+  if (!filename) return // It's a folder, not a file
+  fs.copyFile(absolute, path.join(config.dir.public.media, relative))
 })
 
-processDir({
-  source: config.dir.swatch.root,
-  target: config.dir.public.root,
-  filter: ['**/*', '!*.html', '!robots.txt', '!res/**/*']
+fs.recurse(config.dir.swatch.root, ['**/*', '!*.html', '!robots.txt', '!res/**/*'], (absolute, relative, filename) => {
+  if (!filename) return
+  fs.copyFile(absolute, path.join(config.dir.public.root, relative))
 })
 
-processDir({
-  source: config.dir.swatch.root,
-  target: config.dir.public.root,
-  filter: ['res/**/*.css'],
-  skimCondition: shouldNotCompress,
-  processor: str => new Cleancss(config.compressor.cleanCss).minify(str).styles
-})
-
-processDir({
-  source: config.dir.swatch.root,
-  target: config.dir.public.root,
-  filter: ['res/**/*.js'],
-  skimCondition: shouldNotCompress,
-  processor: str => {
-    const transformer = new terser.TreeTransformer(node => {
-      if (node instanceof terser.AST_Const) {
-        return new terser.AST_Let(node)
-      }
-    })
-    const ast = terser.parse(str).transform(transformer)
-    return terser.minify(ast, config.compressor.terser).code.replace(/;$/, '')
+fs.recurse(config.dir.swatch.res, ['*.css'], (absolute, relative) => {
+  const targetPath = path.join(config.dir.public.res, relative)
+  if (config.developMode) {
+    fs.copyFile(absolute, targetPath)
+  } else {
+    fs.writeFile(targetPath, new Cleancss(config.compressor.cleanCss).minify(readFileStr(absolute)).styles)
   }
 })
 
-function parseMdFile (filePath) {
+fs.recurse(config.dir.swatch.res, ['*.js'], (absolute, relative) => {
+  const targetPath = path.join(config.dir.public.res, relative)
+  if (config.developMode) {
+    fs.copyFile(absolute, targetPath)
+  } else {
+    // This method will cause omitting! Why?
+    // const transformer = new terser.TreeTransformer(node => {
+    //   if (node instanceof terser.AST_Const) {
+    //     return new terser.AST_Let(node)
+    //   }
+    // })
+    // const ast = terser.parse(readFileStr(absolute)).transform(transformer)
+    // fs.writeFile(targetPath, terser.minify(ast, config.compressor.terser).code.replace(/;$/, ''))
+    const transformed = readFileStr(absolute).replace(/const\s/g, 'let ')
+    fs.writeFile(targetPath, terser.minify(transformed, config.compressor.terser).code.replace(/;$/, ''))
+  }
+})
+
+const parseMdFile = filePath => {
   const fileStr = readFileStr(filePath)
   const metaData = new Map()
   const metaStrBracket = '```'
@@ -89,11 +67,7 @@ function parseMdFile (filePath) {
     metaData.set(key, value)
   })
   const contentMdStr = fileStr.substr(metaStrEndIndex + metaStrBracket.length + 1).trim()
-  const contentHtmlStr = marked(
-    `# ${metaData.get('title')}\n\n` +
-    `${contentMdStr}\n\n` +
-    `<title>${metaData.get('title')} - ${config.site.defaultTitle}</title>\n`
-  )
+  const contentHtmlStr = marked(`# ${metaData.get('title')}\n\n${contentMdStr}\n`)
   return {
     meta: metaData,
     content: config.developMode
@@ -106,24 +80,20 @@ function parseMdFile (filePath) {
 }
 
 const generatePage = (() => {
-  function replacePattern (sourceStr, replaceList) {
+  const replacePattern = (sourceStr, replaceList) => {
     replaceList.forEach(({ key, value }) => {
       const regexp = new RegExp('{{ ' + key + ' }}', 'g') // Pay attention to the spaces
       sourceStr = sourceStr.replace(regexp, value)
     })
     return sourceStr
   }
-  const templateSrcStr = readFileStr(path.join(config.dir.swatch.root, 'main.html'))
-  let templateStr = replacePattern(templateSrcStr, [
+  let templateStr = readFileStr(path.join(config.dir.swatch.root, 'main.html'))
+  templateStr = replacePattern(templateStr, [
     { key: 'title-default', value: config.site.defaultTitle },
     { key: 'user-name', value: config.site.userName }
   ])
   if (!config.developMode) templateStr = htmlMinifier.minify(templateStr, config.compressor.htmlMinifier)
-  return ({
-    title = '',
-    description = '',
-    content = ''
-  }) => replacePattern(templateStr, [
+  return ({ title = '', description = '', content = '' }) => replacePattern(templateStr, [
     { key: 'title', value: title + ' - ' + config.site.defaultTitle },
     { key: 'description', value: description },
     { key: 'main-content', value: content }
@@ -132,32 +102,30 @@ const generatePage = (() => {
 
 fs.writeFile(path.join(config.dir.public.root, '404.html'), generatePage({ title: 'Loading' }))
 
-fs.writeFile(path.join(config.dir.public.root, 'index.html'), generatePage({
-  title: 'Welcome!',
-  description: `This is ${config.site.userName}'s blog, welcome!`,
-  content: '<article style="text-align:center;line-height:3em"><h1>Welcome to my blog!</h1>Please wait ...</article>' +
-    '<style onload="if(!this.initialized){this.initialized=true;window.addEventListener(\'load\',()=>setTimeout(()=>document.querySelector(\'header .avatar\').click(),1000))}"></style>'
-}))
-
 const pagesList = []
-fs.readdirSync(config.dir.source.pages).forEach(fileName => {
-  const { meta, content } = parseMdFile(path.join(config.dir.source.pages, fileName))
-  const pageName = path.parse(fileName).name
-  fs.writeFile(path.join(config.dir.public.pages, fileName + '.html'), content)
+fs.recurseSync(config.dir.source.pages, ['*'], absolute => {
+  const { meta, content } = parseMdFile(absolute)
+  const pageInfo = {
+    name: path.parse(absolute).name,
+    path: meta.get('path'),
+    title: meta.get('title'),
+    description: meta.get('description')
+  }
+  fs.writeFile(path.join(config.dir.public.pages, pageInfo.name + '.md.html'), content)
   fs.writeFile(
-    path.join(config.dir.public.root, pageName, 'index.html'),
+    path.join(config.dir.public.root, pageInfo.path || pageInfo.name, 'index.html'),
     generatePage({
-      title: meta.get('title'),
-      description: meta.get('description'),
+      title: pageInfo.title,
+      description: pageInfo.description,
       content: `<article class="markdown-body">${content}</article>`
     })
   )
-  pagesList.push({ pageName })
+  pagesList.push(pageInfo)
 })
 
 const postsList = []
-fs.readdirSync(config.dir.source.posts).forEach(fileName => {
-  const { meta, content } = parseMdFile(path.join(config.dir.source.posts, fileName))
+fs.recurseSync(config.dir.source.posts, ['*'], absolute => {
+  const { meta, content } = parseMdFile(absolute)
   const postInfo = {
     id: meta.get('date').replace(/:|-|\s/g, ''),
     title: meta.get('title'),
@@ -178,22 +146,17 @@ fs.readdirSync(config.dir.source.posts).forEach(fileName => {
   )
   postsList.push(postInfo)
 })
-postsList.sort(({ id: firstId }, { id: secondId }) => firstId > secondId ? -1 : 1)
+postsList.sort((post1, post2) => post1.id > post2.id ? -1 : 1)
+
 fs.writeFile(path.join(config.dir.public.res, 'postslist.json'), JSON.stringify(postsList))
 
 let siteMapStr =
   '<?xml version="1.0" encoding="UTF-8"?>' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-const siteMapAddItem = (relative, others = '') => {
-  siteMapStr +=
-  '<url>' +
-  `<loc>${config.site.domain}${relative}</loc>` +
-  '<changefreq>daily</changefreq>' +
-  others +
-  '</url>'
+const siteMapAddItem = relative => {
+  siteMapStr += `<url><loc>${config.site.domain}${relative}</loc><changefreq>daily</changefreq></url>`
 }
-siteMapAddItem('/')
-pagesList.forEach(({ pageName }) => siteMapAddItem(`/${pageName}/`))
+pagesList.forEach(({ name, path }) => siteMapAddItem(path || `/${name}/`))
 postsList.forEach(({ id }) => siteMapAddItem(`/post/${id}/`))
 siteMapStr += '</urlset>'
 fs.writeFile(path.join(config.dir.public.root, 'sitemap.xml'), siteMapStr)
