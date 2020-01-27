@@ -37,17 +37,15 @@ main {
   right: 0;
   bottom: 0;
   left: 0;
-  visibility: hidden;
-  transition: 0.5s;
+  transition: 0.3s;
   text-align: center;
-  opacity: 0;
+  opacity: 0.7;
   background: #fff;
 }
 
-#loading.in {
-  visibility: visible;
-  transition: 0.3s;
-  opacity: 0.7;
+#loading:not(.in) {
+  visibility: hidden;
+  opacity: 0;
 }
 
 @keyframes spin {
@@ -73,7 +71,6 @@ header {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 50px;
   transition: 0.3s;
   background: var(--theme-color);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
@@ -140,7 +137,7 @@ header .avatar {
   background: var(--theme-color);
 }
 
-#sidebar #open-palette-btn {
+#sidebar #show-palette-btn {
   position: absolute;
   top: 0;
   right: 0;
@@ -148,14 +145,8 @@ header .avatar {
   height: 50px;
   padding: 10px;
   cursor: pointer;
-  transition: 0.7s 0.3s;
-  opacity: 0;
-  fill: #fff;
-}
-
-#sidebar.in #open-palette-btn {
-  transform: rotate(360deg);
   opacity: 0.7;
+  fill: #fff;
 }
 
 #sidebar .name {

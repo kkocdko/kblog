@@ -25,7 +25,7 @@ This is a blog solution that can run on [Github Pages](https://pages.github.com)
 
 #### Disadvantage
 
-* Only supports modern browsers. Target to `Chrome55+` and `Firefox52+`.
+* Only supports modern browsers. Target to `Chrome55+` and `Firefox59+`.
 
 * No `CRLF` support. Must use the `LF` newline in all files.
 
@@ -36,10 +36,10 @@ This is a blog solution that can run on [Github Pages](https://pages.github.com)
 2. Enter the blog directory and execute `npm install`.
     * Need [NodeJS](https://nodejs.org)
 
-3. Write posts in the format of the example to `./data/posts` folder.
-    * You can put images into `./data/media` folder, using them in posts like this: `![001](/res/media/001.png)`
+3. Write posts to `./source/posts` in the format of the example.
+    * You can put images into `./source/media`, using them in post like this: `![001](/res/media/001.png)`
 
-4. (Optional) Execute `npm run dev` and view your blog in browser.
+4. (Optional) Execute `npm run preview` and preview the blog in your browser.
 
 5. Execute `npm run build` and put the content of `public` directory into `master` branch, then push to github.
 
