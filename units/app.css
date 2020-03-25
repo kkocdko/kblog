@@ -6,11 +6,12 @@
   padding: 0;
 }
 
-[data-sl] {
-  cursor: pointer;
+a[data-sl] {
+  color: var(--theme-color);
+  text-decoration: none;
 }
 
-body {
+html {
   --theme-color: rgb(63, 81, 181);
   --card-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   background: rgb(248, 249, 250);
@@ -37,10 +38,9 @@ main {
   right: 0;
   bottom: 0;
   left: 0;
-  transition: 0.3s;
   text-align: center;
-  opacity: 0.7;
-  background: #fff;
+  background: rgb(248, 249, 250);
+  transition: 0.3s;
 }
 
 #loading:not(.in) {
@@ -60,20 +60,21 @@ main {
   min-height: 60px;
   margin-top: 120px;
   padding: 5vmin;
-  content: "";
-  animation: spin 0.5s linear infinite;
   border: 5px solid var(--theme-color);
   border-top-color: #fff;
   border-radius: 50%;
+  animation: spin 0.5s linear infinite;
+  content: "";
 }
 
 header {
   position: fixed;
   top: 0;
   width: 100%;
-  transition: 0.3s;
+  height: 50px;
   background: var(--theme-color);
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
 }
 
 header:not(.in) {
@@ -93,13 +94,14 @@ header #gotop-btn {
   float: right;
 }
 
-header .avatar {
+header .avatar a {
+  display: block;
   width: 30px;
   height: 30px;
-  margin: 10px 0;
+  margin: 0 -10px;
+  background: url("/favicon.svg");
   border: 2px solid #fff;
   border-radius: 50%;
-  background: url("/favicon.svg");
 }
 
 #sidebar {
@@ -110,22 +112,22 @@ header .avatar {
   left: 0;
   display: flex;
   visibility: hidden;
-  transition: 0.3s;
+  transition: 0.4s;
 }
 
 #sidebar.in {
-  visibility: visible;
   background: rgba(0, 0, 0, 0.5);
+  visibility: visible;
 }
 
 #sidebar .menu {
   position: relative;
-  overflow: hidden auto;
   width: 70%;
   max-width: 260px;
-  transition: 0.3s;
+  overflow: hidden auto;
   background: #fff;
   box-shadow: 5px 0 9px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
 }
 
 #sidebar:not(.in) .menu {
@@ -151,21 +153,22 @@ header .avatar {
 
 #sidebar .name {
   width: 45%;
-  text-align: center;
   color: #fff;
   font-size: 18px;
+  text-align: center;
 }
 
 #sidebar .avatar {
   display: block;
   margin-bottom: 13px;
   padding: calc(50% - 2px);
+  background: url("/favicon.svg");
   border: 2px solid;
   border-radius: 50%;
-  background: url("/favicon.svg");
 }
 
-#sidebar li {
+#sidebar li a {
+  display: block;
   padding-left: 13%;
   color: #333;
   line-height: 50px;
@@ -184,15 +187,15 @@ header .avatar {
 
 footer,
 footer * {
-  text-align: center;
-  text-decoration: none;
   color: rgba(255, 255, 255, 0.7);
-  background: var(--theme-color);
   font-size: 12px;
   line-height: 30px;
+  text-align: center;
+  text-decoration: none;
+  background: var(--theme-color);
 }
 
-.post-list>li {
+.post-list > li {
   display: block;
   margin-top: 20px;
   padding: 14px 17px 17px;
@@ -201,49 +204,54 @@ footer * {
 }
 
 @media screen and (max-width: 770px) {
-  .post-list>li {
+  .post-list > li {
     margin-top: 0;
     border-top: 1px solid #ddd;
     box-shadow: none;
   }
 }
 
-.post-list>li:first-child {
+.post-list > li:first-child {
   margin-top: 0;
   border-top: none;
 }
 
+.post-list > li > * {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .post-list h3 {
   color: var(--theme-color);
-  font-size: 20px;
   font-weight: normal;
+  font-size: 20px;
 }
 
 .post-list p {
-  margin: 10px 0 7px;
+  margin: 8px 0 10px;
 }
 
 .post-list.compact h2 {
   display: inline-block;
   padding: 2px 6px;
   color: #fff;
-  background: var(--theme-color);
   font-size: 20px;
+  background: var(--theme-color);
 }
 
 .post-list.compact h3 {
-  margin: 8px 12px 0;
+  margin: 7px 0 0 9px;
   font-size: 16px;
 }
 
 .post-footer li {
   display: inline-block;
-  margin-top: 7px;
-  margin-right: 6px;
+  margin-right: 5px;
   padding: 2px 5px;
   color: var(--theme-color);
-  border: 1px solid var(--theme-color);
   font-size: 12px;
+  border: 1px solid var(--theme-color);
 }
 
 .post-footer li:first-child {
@@ -252,9 +260,9 @@ footer * {
 
 .post-date {
   margin-right: 6px;
-  padding: 1px 5px;
-  border: 1px solid var(--theme-color);
+  padding: 0 5px;
   font-size: 12px;
+  border: 1px solid var(--theme-color);
 }
 
 .page-number-nav {
@@ -272,10 +280,10 @@ footer * {
 .page-number-nav li {
   display: inline-block;
   padding: 9px 23px;
-  opacity: 0.7;
   color: var(--theme-color);
-  font-size: 14px;
   font-weight: 900;
+  font-size: 14px;
+  opacity: 0.7;
 }
 
 article {
@@ -290,9 +298,9 @@ article {
   }
 }
 
-article>h1:first-child {
-  font-size: 24px;
+article > h1:first-child {
   font-weight: normal;
+  font-size: 24px;
 }
 
 article img:not(.no-border) {
