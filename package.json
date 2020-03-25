@@ -1,31 +1,29 @@
 {
   "name": "kblog",
-  "version": "0.0.1",
-  "description": "An unique blog solution. Lightweight, fast, beautiful and practical.",
-  "main": "toolkit/builder.js",
+  "version": "2.3.1",
+  "description": "My own blog solution.",
+  "main": "toolkit/generator.js",
   "scripts": {
-    "preview": "node toolkit/builder.js --dev-mode && node toolkit/server.js",
-    "build": "node toolkit/builder.js"
+    "serve": "node toolkit/server.js",
+    "preview": "node toolkit/generator.js && node toolkit/server.js",
+    "generate": "node toolkit/generator.js",
+    "develop": "node toolkit/generator.js --dev-mode && node toolkit/server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kkocdko/kkocdko.github.io.git"
+    "url": "git+https://github.com/kkocdko/kblog.git"
   },
   "author": "kkocdko",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/kkocdko/kkocdko.github.io/issues"
+    "url": "https://github.com/kkocdko/kblog/issues"
   },
-  "homepage": "https://github.com/kkocdko/kkocdko.github.io#readme",
+  "homepage": "https://github.com/kkocdko/kblog#readme",
   "dependencies": {
-    "clean-css": "^4.2.1",
     "file-system": "^2.2.2",
-    "html-minifier-terser": "^5.0.2",
     "marked": "^0.8.0",
-    "terser": "^4.6.3"
-  },
-  "codeStyle": {
-    "js": "standard | https://standardjs.com",
-    "css": "csscomb-preset-yandex | https://github.com/csscomb/csscomb.js/blob/dev/config/yandex.json"
+    "html-minifier-terser": "^5.0.4",
+    "clean-css": "^4.2.3",
+    "terser": "^4.6.6"
   }
 }
