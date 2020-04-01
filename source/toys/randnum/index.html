@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
+    />
+    <link rel="stylesheet" href="../misc/matter-plus.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="icon" href="favicon.svg" />
+    <title>Random Number Generator</title>
+  </head>
+
+  <body>
+    <div class="matter-card">
+      <form id="generate-config">
+        <label class="matter-textfield-standard">
+          <input
+            name="minimum"
+            value="1"
+            type="number"
+            placeholder=" "
+            spellcheck="false"
+          />
+          <span>Minimum</span>
+        </label>
+        <br />
+        <br />
+        <label class="matter-textfield-standard">
+          <input
+            name="maximum"
+            value="100"
+            type="number"
+            placeholder=" "
+            spellcheck="false"
+          />
+          <span>Maximum</span>
+        </label>
+        <br />
+        <br />
+        <label class="matter-textfield-standard">
+          <input
+            name="quantity"
+            value="1"
+            type="number"
+            placeholder=" "
+            spellcheck="false"
+          />
+          <span>Quantity</span>
+        </label>
+      </form>
+      <div class="buttons-bar">
+        <button id="regenerate-btn" class="matter-button-outlined">
+          Regenerate
+        </button>
+        <button id="generate-btn" class="matter-button-contained">
+          Generate
+        </button>
+      </div>
+    </div>
+    <div class="matter-card">
+      <div class="numbers-list-container">
+        <table id="numbers-list" class="matter-table">
+          <thead>
+            <tr>
+              <th>Generate Time</th>
+              <th>Random Number</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="buttons-bar">
+        <button id="empty-btn" class="matter-button-contained">Empty</button>
+      </div>
+    </div>
+  </body>
+</html>

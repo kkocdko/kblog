@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
+    />
+    <link rel="stylesheet" href="../misc/matter-plus.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="icon" href="favicon.svg" />
+    <title>Image Converter</title>
+  </head>
+
+  <body>
+    <div id="inputer" class="matter-card">
+      <label id="input-img-first" class="matter-button-contained">
+        Add image file 1
+        <input type="file" />
+      </label>
+      <br />
+      <br />
+      <label id="input-img-second" class="matter-button-contained">
+        Add image file 2
+        <input type="file" />
+        <br />
+      </label>
+      <br />
+      <br />
+      <button id="compare-img" class="matter-button-contained">Compare</button>
+      <br />
+      <br />
+      <div id="displace-console">
+        <div class="all">
+          <button class="reset matter-button-outlined">Reset</button>
+          <button class="auto-align matter-button-outlined">Auto align</button>
+        </div>
+        <br />
+        <div class="first">
+          <button data-displace="-1,0,0,0" class="matter-button-outlined">
+            L
+          </button>
+          <button data-displace="1,0,0,0" class="matter-button-outlined">
+            R
+          </button>
+          <button data-displace="0,-1,0,0" class="matter-button-outlined">
+            U
+          </button>
+          <button data-displace="0,1,0,0" class="matter-button-outlined">
+            D
+          </button>
+        </div>
+        <br />
+        <div class="second">
+          <button data-displace="0,0,-1,0" class="matter-button-outlined">
+            L
+          </button>
+          <button data-displace="0,0,1,0" class="matter-button-outlined">
+            R
+          </button>
+          <button data-displace="0,0,0,-1" class="matter-button-outlined">
+            U
+          </button>
+          <button data-displace="0,0,0,1" class="matter-button-outlined">
+            D
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="viewer" class="matter-card"></div>
+  </body>
+</html>

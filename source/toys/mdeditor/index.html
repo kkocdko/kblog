@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/kkocdko/gfmstyle@1.0.0/dist/gfmstyle.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <script
+      defer
+      src="//cdn.jsdelivr.net/npm/marked@0.2.10/lib/marked.min.js"
+    ></script>
+    <script defer src="script.js"></script>
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="icon" href="favicon.svg" />
+    <title>Markdown Editor</title>
+  </head>
+
+  <body>
+    <textarea
+      id="input-box"
+      class="in"
+      spellcheck="false"
+      autocapitalize="off"
+      autocomplete="off"
+      autocorrect="off"
+    ></textarea>
+    <p id="partition">Click here to hide or show input box</p>
+    <div id="output-box" class="markdown-body"></div>
+  </body>
+</html>

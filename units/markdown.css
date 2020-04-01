@@ -1,0 +1,219 @@
+/* modified version of [gfmlite](https://github.com/kkocdko/gfmlite) */
+
+article {
+  color: #24292e;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+    sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+article * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+article h1,
+article h2,
+article h3,
+article h4,
+article h5,
+article h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+article h1,
+article h2 {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid #eaecef;
+}
+
+article h1 {
+  font-size: 2em;
+}
+
+article h2 {
+  font-size: 1.5em;
+}
+
+article h3 {
+  font-size: 1.25em;
+}
+
+article h4 {
+  font-size: 1em;
+}
+
+article h5 {
+  font-size: 0.875em;
+}
+
+article h6 {
+  color: #6a737d;
+  font-size: 0.85em;
+}
+
+article blockquote,
+article dl,
+article ol,
+article p,
+article pre,
+article table,
+article ul {
+  margin-bottom: 16px;
+}
+
+article a {
+  color: #0366d6;
+  text-decoration: none;
+  outline: none;
+}
+
+article a:hover {
+  text-decoration: underline;
+}
+
+article strong {
+  font-weight: 600;
+}
+
+article details summary {
+  cursor: pointer;
+}
+
+article hr {
+  height: 0.25em;
+  margin: 24px 0;
+  background: #e1e4e8;
+  border: 0;
+}
+
+article blockquote {
+  padding: 0 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+}
+
+article pre,
+article code,
+article kbd {
+  font-size: 12px;
+  font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier,
+    monospace;
+}
+
+article pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  word-wrap: normal;
+  background: #f6f8fa;
+  border-radius: 3px;
+}
+
+article code {
+  padding: 0.2em 0.4em;
+  font-size: 85%;
+  background: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+}
+
+article pre > code {
+  display: inline;
+  padding: 0;
+  overflow: visible;
+  font-size: 100%;
+  line-height: inherit;
+  white-space: pre;
+  word-wrap: normal;
+  word-break: normal;
+  background: none;
+}
+
+article kbd {
+  display: inline-block;
+  padding: 3px 5px;
+  color: #444d56;
+  line-height: 10px;
+  vertical-align: middle;
+  background: #fafbfc;
+  border: 1px solid #d1d5da;
+  border-bottom-color: #c6cbd1;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #c6cbd1;
+}
+
+article ol,
+article ul {
+  padding-left: 2em;
+}
+
+article li > p {
+  margin-top: 16px;
+}
+
+article li + li {
+  margin-top: 0.25em;
+}
+
+article dl dt {
+  margin-top: 16px;
+  font-weight: 600;
+  font-size: 1em;
+  font-style: italic;
+}
+
+article dl dd {
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+article table {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+article table td,
+article table th {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+}
+
+article table th {
+  font-weight: 600;
+}
+
+article table tr {
+  background: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+article table tr:nth-child(2n) {
+  background: #f6f8fa;
+}
+
+article img {
+  box-sizing: content-box;
+  max-width: 100%;
+  background: #fff;
+  border: none;
+}
+
+article > :first-child,
+article > :first-child > :first-child {
+  margin-top: 0;
+}
+
+article > :last-child,
+article > :last-child > :last-child {
+  margin-bottom: 0;
+}
