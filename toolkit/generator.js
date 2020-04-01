@@ -478,6 +478,11 @@ const postsList = [];
   const domain = "https://kkocdko.github.io";
 
   mfs.writeFile(
+    mfs.r2a("/public/robots.txt"),
+    `User-agent: *\nAllow: /\nSitemap: ${domain}/sitemap.xml`
+  );
+
+  mfs.writeFile(
     mfs.r2a("/public/sitemap.xml"),
     '<?xml version="1.0" encoding="UTF-8"?>' +
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
