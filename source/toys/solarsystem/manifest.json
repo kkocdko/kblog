@@ -1,0 +1,21 @@
+{
+  "name": "Solar System Model",
+  "short_name": "SolarSystem",
+  "description": "A Solar System model.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#000",
+  "theme_color": "#000",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "1024x1024"
+    },
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

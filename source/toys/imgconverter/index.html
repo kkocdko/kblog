@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
+    />
+    <link rel="stylesheet" href="../misc/matter-plus.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="script.js"></script>
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="icon" href="favicon.svg" />
+    <title>Image Converter</title>
+  </head>
+
+  <body>
+    <div id="console" class="matter-card">
+      <label class="matter-button-contained">
+        Add an image file
+        <input id="input-file" type="file" />
+      </label>
+      <select id="convert-config-type">
+        <option value="image/jpeg 0.75">JPEG (75%)</option>
+        <option value="image/webp 0.75">WEBP (75%)</option>
+        <option value="image/png 1">PNG（Lossless）</option>
+        <option value="image/jpeg 1" class="modify">JPEG (Modify)</option>
+        <option value="image/webp 1" class="modify">WEBP (Modify)</option>
+      </select>
+      <!-- 
+    <select id="convert-config-size">
+      <option value="1">Origin size</option>
+      <option value="preset 0.5">0.5</option>
+      <option value="1">Modify</option>
+    </select>
+    <br>
+     -->
+      <p>Please click the "Add an image file" button or drag file.</p>
+      <p>
+        Click the "Download" button, right click "Save As" or drag to save the
+        converted image.
+      </p>
+    </div>
+    <div id="viewer" class="matter-card">
+      <img />
+      <div class="buttons-bar">
+        <button id="download-btn" class="matter-button-contained">
+          Download
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

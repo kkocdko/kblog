@@ -1,0 +1,27 @@
+{
+  "name": "kblog",
+  "version": "2.3.1",
+  "description": "My own blog solution.",
+  "scripts": {
+    "serve": "node toolkit/server.js",
+    "preview": "node toolkit/generator.js && node toolkit/server.js",
+    "generate": "node toolkit/generator.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkocdko/kblog.git"
+  },
+  "author": "kkocdko",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/kkocdko/kblog/issues"
+  },
+  "homepage": "https://github.com/kkocdko/kblog#readme",
+  "dependencies": {
+    "file-system": "^2.2.2",
+    "marked": "^0.8.2",
+    "html-minifier-terser": "^5.0.5",
+    "clean-css": "^4.2.3",
+    "terser": "^4.6.9"
+  }
+}
