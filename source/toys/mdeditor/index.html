@@ -17,15 +17,11 @@
     ></script>
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Markdown Editor</title>
   </head>
-
   <body>
     <textarea
       id="input-box"
@@ -37,5 +33,8 @@
     ></textarea>
     <p id="partition">Click here to hide or show input box</p>
     <div id="output-box" class="markdown-body"></div>
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
   </body>
 </html>

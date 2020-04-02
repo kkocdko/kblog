@@ -9,15 +9,11 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Solar System Model</title>
   </head>
-
   <body class="hidden">
     <div class="solar-system">
       <div id="sun"></div>
@@ -34,5 +30,8 @@
       <div id="neptune"></div>
       <div id="pluto"></div>
     </div>
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
   </body>
 </html>

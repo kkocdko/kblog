@@ -27,6 +27,8 @@ title: About
   wormhole.onPointerDown = () => {
     console.log('wormhole_onpointerdown')
     wormhole.timer = setTimeout(() => {
+      alert("由于页面架构更新，彩蛋暂时还不可用呢。。。");
+      throw "";
       wormhole.triggerTime = Date.now()
       wormhole.entrance.classList.add('activated')
       wormhole.entrance.classList.add('in')
@@ -73,7 +75,6 @@ title: About
   wormhole.entrance.addEventListener('select', e => e.preventDefault())
 
 })()</script>
-
 <style>
   body {
     overflow: hidden auto;
@@ -89,17 +90,17 @@ title: About
     left: calc(50% - 142vmax);
     width: 284vmax;
     height: 284vmax;
-    content: "";
-    transition: 3s;
-    border-radius: 50%;
     background: #000;
+    border-radius: 50%;
+    transition: 3s;
+    content: "";
   }
 
   #wormhole-entrance:not(.in)::before {
-    visibility: hidden;
-    transition: 0s;
     transform: scale(0);
+    visibility: hidden;
     opacity: 0;
+    transition: 0s;
   }
 
   #wormhole-entrance::after {
@@ -108,19 +109,19 @@ title: About
     right: 0;
     bottom: 0;
     left: 0;
-    content: "高等的生灵啊，这话只说给你听";
-    transition: 3s 3s;
-    text-align: center;
     color: #eee;
-    background: #000;
     font-size: 5vmin;
     line-height: 100vh;
+    text-align: center;
+    background: #000;
+    transition: 3s 3s;
+    content: "高等的生灵啊，这话只说给你听";
   }
 
   #wormhole-entrance:not(.in)::after {
     visibility: hidden;
-    transition: 2s 2s;
     opacity: 0;
+    transition: 2s 2s;
   }
 
   #wormhole-entrance.activated {
@@ -134,13 +135,12 @@ title: About
 
   #wormhole-content {
     position: absolute;
-    z-index: 7;
     top: 0;
     right: 0;
     left: 0;
+    z-index: 7;
     padding: 2em;
     background: #fff;
     filter: invert(1);
   }
-
 </style>

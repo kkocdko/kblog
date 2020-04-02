@@ -10,20 +10,16 @@
       rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
     />
-    <link rel="stylesheet" href="../misc/matter-plus.css" />
+    <link rel="stylesheet" href="/toy/misc/matter-plus.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="qrcode.js"></script>
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
     <!-- [Font-Awesome](https://github.com/FortAwesome/Font-Awesome) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>QRCode Generator</title>
   </head>
-
   <body>
     <div class="matter-card">
       <div id="svg-viewer"></div>
@@ -40,5 +36,8 @@
         Download
       </button>
     </div>
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
   </body>
 </html>

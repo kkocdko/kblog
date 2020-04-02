@@ -7,11 +7,11 @@ const filesList = [
     updateDate: 1585193258101
   },
   {
-    url: "../misc/matter.min.css",
+    url: "/toy/misc/matter.min.css",
     updateDate: 1585193258101
   },
   {
-    url: "../misc/matter-plus.css",
+    url: "/toy/misc/matter-plus.css",
     updateDate: 1585193258101
   },
   {

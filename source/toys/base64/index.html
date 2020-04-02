@@ -10,38 +10,21 @@
       rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
     />
-    <link rel="stylesheet" href="../misc/matter-plus.css" />
+    <link rel="stylesheet" href="/toy/misc/matter-plus.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
-    <title>Base64 Tools</title>
+    <title>Base64 Tool</title>
   </head>
-
   <body>
-    <div class="matter-card"></div>
-    <div class="matter-card">
-      <input
-        type="file"
-        onchange="showBase64(event)"
-        spellcheck="false"
-        spellcheck="false"
-        autocapitalize="off"
-        autocomplete="off"
-        autocorrect="off"
-      />
-      <br />
-
-      <label class="matter-textfield-outlined">
-        <input id="svg-content" placeholder=" " spellcheck="false" />
-        <span>Content</span>
+    <div id="main-card" class="matter-card">
+      <label class="matter-button-contained">
+        <input id="input-file" type="file" autocomplete="off" />
+        <span>Input file</span>
       </label>
-
       <label class="matter-textfield-outlined">
         <input
           id="output-box"
@@ -54,28 +37,9 @@
         />
         <span>Output</span>
       </label>
-      <br />
-      <form>
-        <input
-          type="file"
-          spellcheck="false"
-          spellcheck="false"
-          autocapitalize="off"
-          autocomplete="off"
-          autocorrect="off"
-        />
-        <label class="matter-radio">
-          <input type="radio" name="group" />
-          <span>Radio</span>
-        </label>
-      </form>
-      <br />
-      <button id="refresh-btn" class="matter-button-outlined">Refresh</button>
-      <br />
-      <br />
-      <button id="download-btn" class="matter-button-contained">
-        Download
-      </button>
     </div>
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
   </body>
 </html>
