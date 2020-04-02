@@ -279,7 +279,7 @@ footer * {
   padding: 3px 9px;
   color: #fff;
   font-weight: normal;
-  font-size: 24px;
+  font-size: 22px;
   background: var(--theme-color);
   border-radius: 4px;
 }
@@ -313,9 +313,9 @@ footer * {
 
 article > h1:first-child {
   font-weight: normal;
-  font-size: 24px;
+  font-size: 22px;
 }
 
 article img:not(.no-border) {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }

@@ -18,42 +18,16 @@ html {
 
 body {
   display: grid;
-  grid-template-rows: auto;
-  grid-template-columns: minmax(250px, 3fr) 7fr;
-  gap: 15px;
   width: 100vw;
-  max-width: 900px;
-  height: 100vh;
-  max-height: 600px;
+  max-width: 350px;
   padding: 15px;
 }
 
-#generate-config .matter-textfield-standard {
-  width: 100%;
+#main-card {
+  display: grid;
+  gap: 15px;
 }
 
-.numbers-list-container {
-  height: 100%;
-  overflow: auto;
-  scroll-behavior: smooth;
-}
-
-#numbers-list th,
-#numbers-list td {
-  width: 1%;
-}
-
-.buttons-bar {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-}
-
-@media screen and (max-width: 550px) {
-  body {
-    grid-template-rows: 320px auto;
-    grid-template-columns: auto;
-    max-width: unset;
-    max-height: unset;
-  }
+#input-file {
+  display: none;
 }

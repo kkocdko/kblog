@@ -7,9 +7,6 @@
       content="width=device-width,initial-scale=1,user-scalable=no"
     />
     <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Dino</title>
@@ -30,12 +27,14 @@
       }
     </style>
   </head>
-
   <body>
     <div id="runner-frame"></div>
     <script src="//cdn.jsdelivr.net/gh/kkocdko/dino/dist/runner.min.js"></script>
     <script>
       const runner = new window.Runner("#runner-frame");
+    </script>
+    <script>
+      navigator.serviceWorker.register("sw.js");
     </script>
   </body>
 </html>

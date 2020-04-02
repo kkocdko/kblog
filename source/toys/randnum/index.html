@@ -10,19 +10,15 @@
       rel="stylesheet"
       href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
     />
-    <link rel="stylesheet" href="../misc/matter-plus.css" />
+    <link rel="stylesheet" href="/toy/misc/matter-plus.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Random Number Generator</title>
   </head>
-
   <body>
     <div class="matter-card">
       <form id="generate-config">
@@ -86,5 +82,8 @@
         <button id="empty-btn" class="matter-button-contained">Empty</button>
       </div>
     </div>
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
   </body>
 </html>

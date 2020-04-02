@@ -1,7 +1,7 @@
 {
-  "name": "Base64 Tools",
+  "name": "Base64 Tool",
   "short_name": "Base64",
-  "description": "Encode & decode base64.",
+  "description": "Encode base64.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f8f9fa",
