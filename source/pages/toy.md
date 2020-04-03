@@ -3,6 +3,8 @@ title: Toys
 ```
 
 > [如何安装PWA应用？](https://developer.mozilla.org/docs/Web/Progressive_web_apps/Add_to_home_screen)
+>
+> 某些页面使用了较新的Web标准功能，在标准支持较差的浏览器中可能出现功能/界面降级或缺陷。
 
 <h2></h2>
 
@@ -68,4 +70,10 @@ Google Doodle上的交互式魔方
 
 [/toy/imgcomparator](/toy/imgcomparator)
 
-图片比较器，玩“找不同”游戏的好帮手
+<h2></h2>
+
+### Base64 Tool
+
+[/toy/base64](/toy/base64)
+
+自用的小工具，将本地文件以base64进行编码。

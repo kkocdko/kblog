@@ -26,7 +26,8 @@ const listenSpaLinks = () => {
 
 const reloadAsync = async ({ toTop }) => {
   fadeInElement(loadingIndicator);
-  let response = await fetch(location.pathname);
+  const pathname = location.pathname;
+  let response = await fetch(pathname);
   if (response.status === 404) {
     response = await fetch("/404.html");
   }
@@ -40,7 +41,6 @@ const reloadAsync = async ({ toTop }) => {
     anchor.scrollIntoView();
     fadeOutElement(topBar);
   } else {
-    const pathname = location.pathname;
     if (toTop || !scrollMarks.has(pathname)) {
       scroll(0, 0);
       scrollMarks.set(pathname, 0);
@@ -53,15 +53,26 @@ const reloadAsync = async ({ toTop }) => {
   fadeOutElement(loadingIndicator);
 };
 
-history.scrollRestoration = "manual";
 listenSpaLinks();
 addEventListener("popstate", () => reloadAsync({ toTop: false }));
+
+setTimeout(() => {
+  // Delay for the hash anchor
+  history.scrollRestoration = "manual";
+  // Avoid the Blink's css bug
+  sideBar.style = "";
+}, 700);
 
 document
   .querySelector("#show-sidebar-btn")
   .addEventListener("click", () => fadeInElement(sideBar));
 
-sideBarMask.addEventListener("pointerdown", () => fadeOutElement(sideBar));
+// Use PointerEvent in the future
+sideBarMask.addEventListener("mousedown", () => fadeOutElement(sideBar));
+
+sideBarMask.addEventListener("touchstart", () => fadeOutElement(sideBar), {
+  passive: true
+});
 
 sideBar
   .querySelector("ul")
@@ -70,7 +81,7 @@ sideBar
 document.querySelector("#gotop-btn").addEventListener("click", () => {
   try {
     scroll({ top: 0, behavior: "smooth" });
-  } catch {
+  } catch (_) {
     scroll(0, 0);
   }
 });
@@ -98,8 +109,3 @@ document.querySelector("#show-palette-btn").addEventListener("click", () => {
     scrollMarks.set(location.pathname, currentScrollY);
   });
 }
-
-// Avoid the Blink's css bug
-setTimeout(() => {
-  sideBar.style = "";
-}, 700);

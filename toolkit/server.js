@@ -2,8 +2,6 @@
  * Github-Pages-Like server
  *
  * A simple static server that imitate the work of Github Pages's server
- *
- * License: Unlicense
  */
 "use strict";
 
