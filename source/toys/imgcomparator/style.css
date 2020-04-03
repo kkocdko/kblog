@@ -98,5 +98,6 @@ body {
   height: 100%;
   object-fit: contain;
   image-rendering: crisp-edges;
+  image-rendering: pixelated;
   filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.3));
 }

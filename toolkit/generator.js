@@ -469,7 +469,7 @@ const postsList = [];
     realPath: "/404.html",
     title: "404 not found",
     content:
-      '<article class="card"><h1 style=text-align:center;border:none>404 not found</h1></article>'
+      '<article class="card"><h1 style="text-align:center;border:none">404 not found</h1></article>'
   });
 }
 
@@ -502,7 +502,7 @@ const postsList = [];
       "<channel>" +
       "<title>kkocdko's blog</title>" +
       `<link>${domain}</link>` +
-      "<description>kkocdko's personal blog</description>" +
+      "<description>kkocdko's blog</description>" +
       postsList
         .map(
           ({ id, title, description }) =>
