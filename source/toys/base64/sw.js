@@ -20,7 +20,7 @@ const filesList = [
   },
   {
     url: "script.js",
-    updateDate: 1585193258101
+    updateDate: 1585924123050
   },
   {
     url: "favicon.svg",
