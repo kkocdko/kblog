@@ -26,12 +26,9 @@ const listenSpaLinks = () => {
 
 const reloadAsync = async ({ toTop }) => {
   fadeInElement(loadingIndicator);
+  fadeOutElement(sideBar);
   const pathname = location.pathname;
-  let response = await fetch(pathname);
-  if (response.status === 404) {
-    response = await fetch("/404.html");
-  }
-  const htmlStr = await response.text();
+  const htmlStr = await (await fetch(pathname)).text();
   document.title = htmlStr.match("<title>((.|\n)+?)</title>")[1];
   mainBox.innerHTML = htmlStr.match("<main>((.|\n)+?)</main>")[1];
   mainBox.classList.add("spa");
@@ -67,17 +64,6 @@ document
   .querySelector("#show-sidebar-btn")
   .addEventListener("click", () => fadeInElement(sideBar));
 
-// Use PointerEvent in the future
-sideBarMask.addEventListener("mousedown", () => fadeOutElement(sideBar));
-
-sideBarMask.addEventListener("touchstart", () => fadeOutElement(sideBar), {
-  passive: true
-});
-
-sideBar
-  .querySelector("ul")
-  .addEventListener("click", () => fadeOutElement(sideBar));
-
 document.querySelector("#gotop-btn").addEventListener("click", () => {
   try {
     scroll({ top: 0, behavior: "smooth" });
@@ -93,6 +79,13 @@ document.querySelector("#show-palette-btn").addEventListener("click", () => {
     document.body.style.setProperty("--theme-color", color);
     document.querySelector("meta[name=theme-color]").content = color;
   }
+});
+
+// Use PointerEvent in the future
+sideBarMask.addEventListener("mousedown", () => fadeOutElement(sideBar));
+
+sideBarMask.addEventListener("touchstart", () => fadeOutElement(sideBar), {
+  passive: true
 });
 
 {
