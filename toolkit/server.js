@@ -13,7 +13,7 @@ const readline = require("readline");
 const config = {
   ip: "127.0.0.1",
   port: 4000,
-  rootDir: `${__dirname}/../public`
+  rootDir: `${__dirname}/../public`,
 };
 
 const mimeList = {
@@ -25,13 +25,13 @@ const mimeList = {
   svg: "image/svg+xml",
   ico: "image/x-icon",
   png: "image/png",
-  webp: "image/webp"
+  webp: "image/webp",
 };
 
 const server = http.createServer((req, res) => {
   const url = new URL("http://" + req.headers.host + req.url);
   const localPath = path.join(config.rootDir, url.pathname.replace(/\/$/, ""));
-  res.on("pipe", src => {
+  res.on("pipe", (src) => {
     src.on("end", () => {
       res.end();
     });
@@ -66,7 +66,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.on("error", e => {
+server.on("error", (e) => {
   if (e.code === "EADDRINUSE") {
     server.close();
     config.port++; // Try next port
@@ -83,7 +83,7 @@ server.on("listening", () => {
 server.listen(config.port, config.ip);
 const readlineInterface = readline.createInterface({
   input: process.stdin,
-  output: process.stdout
+  output: process.stdout,
 });
 readlineInterface.question("", () => {
   readlineInterface.close();

@@ -3,48 +3,48 @@
 const cacheName = "imgcomparator";
 const filesList = [];
 
-self.addEventListener("install", event => {
+addEventListener("install", (event) => {
   event.waitUntil(
     (async () => {
-      const cache = await self.caches.open(cacheName);
+      const cache = await caches.open(cacheName);
       const cachedFilesList = (await cache.matchAll()).map(
         ({ url, headers }) => ({
           url,
-          updateDate: new Date(headers.get("date")).getTime()
+          updateDate: new Date(headers.get("date")).getTime(),
         })
       );
       const fullFilesList = filesList.map(({ url, updateDate }) => ({
-        url: new self.Request(url).url,
-        updateDate
+        url: new Request(url).url,
+        updateDate,
       }));
       const updateFilesList = fullFilesList.filter(
-        file =>
+        (file) =>
           !cachedFilesList.find(
             ({ url, updateDate }) =>
               url === file.url && updateDate > file.updateDate
           )
       );
       const deleteFilesList = cachedFilesList.filter(
-        file => !fullFilesList.find(({ url }) => url === file.url)
+        (file) => !fullFilesList.find(({ url }) => url === file.url)
       );
       await Promise.all([
         ...updateFilesList.map(({ url }) =>
           cache
-            .add(new self.Request(url, { mode: "cors" }))
-            .catch(e => console.warn(e))
+            .add(new Request(url, { mode: "cors" }))
+            .catch((e) => console.warn(e))
         ),
-        ...deleteFilesList.map(({ url }) => cache.delete(url))
+        ...deleteFilesList.map(({ url }) => cache.delete(url)),
       ]);
     })()
   );
 });
 
-self.addEventListener("fetch", event => {
+addEventListener("fetch", (event) => {
   event.respondWith(
     (async () => {
-      const cache = await self.caches.open(cacheName);
+      const cache = await caches.open(cacheName);
       const request = event.request;
-      return (await cache.match(request)) || (await self.fetch(request));
+      return (await cache.match(request)) || (await fetch(request));
     })()
   );
 });

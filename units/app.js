@@ -8,23 +8,23 @@ const sideBarMask = sideBar.querySelector(".mask");
 
 const scrollMarks = new Map();
 
-const fadeInElement = element => element.classList.add("in");
+const fadeInElement = (element) => element.classList.add("in");
 
-const fadeOutElement = element => element.classList.remove("in");
+const fadeOutElement = (element) => element.classList.remove("in");
 
-const onSpaLinkClick = function(event) {
+const onSpaLinkClick = function (event) {
   event.preventDefault();
   history.pushState(null, null, this.href);
-  reloadAsync({ toTop: true });
+  refreshContent({ toTop: true });
 };
 
 const listenSpaLinks = () => {
   document
     .querySelectorAll("[data-sl]")
-    .forEach(el => el.addEventListener("click", onSpaLinkClick));
+    .forEach((element) => element.addEventListener("click", onSpaLinkClick));
 };
 
-const reloadAsync = async ({ toTop }) => {
+const refreshContent = async ({ toTop }) => {
   fadeInElement(loadingIndicator);
   fadeOutElement(sideBar);
   const pathname = location.pathname;
@@ -51,7 +51,7 @@ const reloadAsync = async ({ toTop }) => {
 };
 
 listenSpaLinks();
-addEventListener("popstate", () => reloadAsync({ toTop: false }));
+addEventListener("popstate", () => refreshContent({ toTop: false }));
 
 setTimeout(() => {
   // Delay for the hash anchor
@@ -85,7 +85,7 @@ document.querySelector("#show-palette-btn").addEventListener("click", () => {
 sideBarMask.addEventListener("mousedown", () => fadeOutElement(sideBar));
 
 sideBarMask.addEventListener("touchstart", () => fadeOutElement(sideBar), {
-  passive: true
+  passive: true,
 });
 
 {

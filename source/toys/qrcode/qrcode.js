@@ -19,7 +19,7 @@
  * @param {string}   ecl           QrCode's error correction level (L|M|Q|H), default:L
  * @param {number}   maskPattern   QrCode's mask pattern version (0~7), default:auto
  */
-window.QrCode = function(content, ecl = "L", maskPattern = -1) {
+window.QrCode = function (content, ecl = "L", maskPattern = -1) {
   class QrCodeModel {
     constructor(typeNumber, errorCorrectLevel) {
       this.typeNumber = typeNumber;
@@ -366,13 +366,13 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
     MODE_NUMBER: 1 << 0,
     MODE_ALPHA_NUM: 1 << 1,
     MODE_8BIT_BYTE: 1 << 2,
-    MODE_KANJI: 1 << 3
+    MODE_KANJI: 1 << 3,
   };
   const QRErrorCorrectLevel = {
     L: 1,
     M: 0,
     Q: 3,
-    H: 2
+    H: 2,
   };
   const QRMaskPattern = {
     PATTERN000: 0,
@@ -382,7 +382,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
     PATTERN100: 4,
     PATTERN101: 5,
     PATTERN110: 6,
-    PATTERN111: 7
+    PATTERN111: 7,
   };
   const QRUtil = {
     PATTERN_POSITION_TABLE: [
@@ -425,7 +425,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       [6, 28, 54, 80, 106, 132, 158],
       [6, 32, 58, 84, 110, 136, 162],
       [6, 26, 54, 82, 110, 138, 166],
-      [6, 30, 58, 86, 114, 142, 170]
+      [6, 30, 58, 86, 114, 142, 170],
     ],
     G15:
       (1 << 10) |
@@ -445,7 +445,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       (1 << 2) |
       (1 << 0),
     G15_MASK: (1 << 14) | (1 << 12) | (1 << 10) | (1 << 4) | (1 << 1),
-    getBCHTypeInfo: data => {
+    getBCHTypeInfo: (data) => {
       let d = data << 10;
       while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
         d ^=
@@ -454,7 +454,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       }
       return ((data << 10) | d) ^ QRUtil.G15_MASK;
     },
-    getBCHTypeNumber: data => {
+    getBCHTypeNumber: (data) => {
       let d = data << 12;
       while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
         d ^=
@@ -463,7 +463,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       }
       return (data << 12) | d;
     },
-    getBCHDigit: data => {
+    getBCHDigit: (data) => {
       let digit = 0;
       while (data !== 0) {
         digit++;
@@ -471,7 +471,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       }
       return digit;
     },
-    getPatternPosition: typeNumber =>
+    getPatternPosition: (typeNumber) =>
       QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1],
     getMask: (maskPattern, i, j) => {
       switch (maskPattern) {
@@ -495,7 +495,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
           throw Error("bad maskPattern:" + maskPattern);
       }
     },
-    getErrorCorrectPolynomial: errorCorrectLength => {
+    getErrorCorrectPolynomial: (errorCorrectLength) => {
       let a = new QRPolynomial([1], 0);
       for (let i = 0; i < errorCorrectLength; i++) {
         a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0));
@@ -546,7 +546,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
         throw Error("type:" + type);
       }
     },
-    getLostPoint: qrCode => {
+    getLostPoint: (qrCode) => {
       const moduleCount = qrCode.getModuleCount();
       let lostPoint = 0;
       for (let row = 0; row < moduleCount; row++) {
@@ -636,16 +636,16 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
         Math.abs((100 * darkCount) / moduleCount / moduleCount - 50) / 5;
       lostPoint += 10 * ratio;
       return lostPoint;
-    }
+    },
   };
   const QRMath = {
-    glog: n => {
+    glog: (n) => {
       if (n < 1) {
         throw Error("glog(" + n + ")");
       }
       return QRMath.LOG_TABLE[n];
     },
-    gexp: n => {
+    gexp: (n) => {
       while (n < 0) {
         n += 255;
       }
@@ -655,7 +655,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       return QRMath.EXP_TABLE[n];
     },
     EXP_TABLE: Array(256),
-    LOG_TABLE: Array(256)
+    LOG_TABLE: Array(256),
   };
   for (let i = 0; i < 8; i++) {
     QRMath.EXP_TABLE[i] = 1 << i;
@@ -886,7 +886,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
     [19, 148, 118, 6, 149, 119],
     [18, 75, 47, 31, 76, 48],
     [34, 54, 24, 34, 55, 25],
-    [20, 45, 15, 61, 46, 16]
+    [20, 45, 15, 61, 46, 16],
   ];
   QRRSBlock.getRSBlocks = (typeNumber, errorCorrectLevel) => {
     const rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
@@ -996,7 +996,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
     [2563, 1989, 1423, 1093],
     [2699, 2099, 1499, 1139],
     [2809, 2213, 1579, 1219],
-    [2953, 2331, 1663, 1273]
+    [2953, 2331, 1663, 1273],
   ];
 
   function QR8bitByte(data) {
@@ -1030,10 +1030,10 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
       this.parsedData.unshift(187);
       this.parsedData.unshift(239);
     }
-    this.getLength = function(buffer) {
+    this.getLength = function (buffer) {
       return this.parsedData.length;
     };
-    this.write = function(buffer) {
+    this.write = function (buffer) {
       for (let i = 0, l = this.parsedData.length; i < l; i++) {
         buffer.put(this.parsedData[i], 8);
       }
@@ -1092,7 +1092,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
    * Output to ascii
    * @return {string}   Ascii string
    */
-  this.toAscii = function() {
+  this.toAscii = function () {
     const moduleArr = this.qrcode.modules;
     let asciiContent = "";
     for (const moduleArrY of moduleArr) {
@@ -1109,7 +1109,7 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
    * @param  {number}   moduleLength   Every modules' length of side
    * @return {string}   Svg content string
    */
-  this.toSvg = function(moduleLength) {
+  this.toSvg = function (moduleLength) {
     const modules = this.qrcode.modules;
     const length = modules.length;
     const viewBoxLength = length * moduleLength;
@@ -1117,8 +1117,9 @@ window.QrCode = function(content, ecl = "L", maskPattern = -1) {
     for (let y = 0; y < length; y++) {
       for (let x = 0; x < length; x++) {
         if (modules[x][y]) {
-          svgContent += `<use href="#c" x="${x * moduleLength}" y="${y *
-            moduleLength}"/>`;
+          svgContent += `<use href="#c" x="${x * moduleLength}" y="${
+            y * moduleLength
+          }"/>`;
         }
       }
     }

@@ -31,12 +31,12 @@ const mfs = {
   },
   copyDir(sourcePath, targetPath, filter = ["**/*"]) {
     fs.copySync(sourcePath, targetPath, {
-      filter
+      filter,
     });
   },
   walkDir(dirPath, filter = ["**/*"], callback) {
     fs.recurseSync(dirPath, filter, callback);
-  }
+  },
 };
 
 const minifier = {
@@ -53,7 +53,7 @@ const minifier = {
       removeComments: true,
       sortAttributes: true,
       sortClassName: true,
-      minifyURLs: true
+      minifyURLs: true,
     });
   },
   htmlMd(str) {
@@ -68,7 +68,7 @@ const minifier = {
       removeComments: true,
       sortAttributes: true,
       sortClassName: true,
-      minifyURLs: true
+      minifyURLs: true,
     });
   },
   css(str) {
@@ -78,12 +78,12 @@ const minifier = {
     return new CleanCss({
       level: {
         1: {
-          specialComments: "none"
+          specialComments: "none",
         },
         2: {
-          all: true
-        }
-      }
+          all: true,
+        },
+      },
     }).minify(str).styles;
   },
   js(str) {
@@ -108,19 +108,19 @@ const minifier = {
         unsafe_methods: true,
         unsafe_proto: true,
         unsafe_regexp: true,
-        unsafe_undefined: true
+        unsafe_undefined: true,
       },
       mangle: {
-        toplevel: true
-      }
+        toplevel: true,
+      },
     }).code;
     return minified.replace(/;$/, "");
-  }
+  },
 };
 
-const parseMdFile = filePath => {
+const parseMdFile = (filePath) => {
   const str = mfs.readFileStr(filePath);
-  const readMeta = key => {
+  const readMeta = (key) => {
     const matched = str.match(`\n${key}: ([^\n]*)`);
     return matched ? matched[1] : null;
   };
@@ -137,7 +137,7 @@ const makePage = (() => {
     path = "",
     title = "",
     description = "",
-    content = ""
+    content = "",
   }) => {
     content = minifier.htmlMd(content);
     const result = template
@@ -193,29 +193,29 @@ const makePage = (() => {
 {
   mfs.copyDir(mfs.r2a("/source/toys"), mfs.r2a("/public/toy"), [
     "**/*",
-    "!.git/**/*"
+    "!.git/**/*",
   ]);
 
   mfs.copyDir(mfs.r2a("/source/res"), mfs.r2a("/public/res"), [
     "**/*",
-    "!.git/**/*"
+    "!.git/**/*",
   ]);
 }
 
 // Pages
 const pagesList = [];
 {
-  mfs.walkDir(mfs.r2a("/source/pages"), ["*.md"], absolute => {
+  mfs.walkDir(mfs.r2a("/source/pages"), ["*.md"], (absolute) => {
     const { readMeta, content } = parseMdFile(absolute);
     const attr = {
       name: path.parse(absolute).name,
       title: readMeta("title"),
-      description: readMeta("description")
+      description: readMeta("description"),
     };
     makePage({
       ...attr,
       path: `/${attr.name}/`,
-      content: `<article class="card">${content}</article>`
+      content: `<article class="card">${content}</article>`,
     });
     pagesList.push(attr);
   });
@@ -224,7 +224,7 @@ const pagesList = [];
 // Posts
 const postsList = [];
 {
-  mfs.walkDir(mfs.r2a("/source/posts"), ["*.md"], absolute => {
+  mfs.walkDir(mfs.r2a("/source/posts"), ["*.md"], (absolute) => {
     const { readMeta, content } = parseMdFile(absolute);
     const attr = {
       id: readMeta("date").replace(/:|-|\s/g, ""),
@@ -232,12 +232,12 @@ const postsList = [];
       title: readMeta("title"),
       category: readMeta("category"),
       tags: readMeta("tags").split(" "),
-      description: readMeta("description")
+      description: readMeta("description"),
     };
     makePage({
       ...attr,
       path: `/post/${attr.id}/`,
-      content: `<article class="card">${content}</article>`
+      content: `<article class="card">${content}</article>`,
     });
     postsList.push(attr);
     if (attr.date + " " + attr.title !== path.parse(absolute).name) {
@@ -270,7 +270,7 @@ const postsList = [];
           <ul>
             ${post.tags
               .map(
-                tag => `
+                (tag) => `
             <li>
               <a data-sl href="/tag/${tag}">${tag}</a>
             </li>
@@ -304,13 +304,13 @@ const postsList = [];
     makePage({
       path: `/home/${curPageNumber}/`,
       title: `Home: ${curPageNumber}`,
-      content: htmlStr
+      content: htmlStr,
     });
     if (curPageNumber === 1) {
       makePage({
         path: "/",
         title: `Home: ${curPageNumber}`,
-        content: htmlStr
+        content: htmlStr,
       });
     }
   }
@@ -319,7 +319,7 @@ const postsList = [];
 // Archive
 {
   const listsByYear = new Map();
-  postsList.forEach(post => {
+  postsList.forEach((post) => {
     const year = post.date.slice(0, 4);
     if (!listsByYear.has(year)) {
       listsByYear.set(year, []);
@@ -340,13 +340,13 @@ const postsList = [];
   makePage({
     path: "/archive/",
     title: "Archive",
-    content: htmlStr
+    content: htmlStr,
   });
 
   listsByYear.forEach((list, year) => {
     let htmlStr = '<div class="posts-group card">';
     htmlStr += `<h1>${year}</h1>`;
-    list.forEach(post => {
+    list.forEach((post) => {
       htmlStr += `
         <h3>
           <a data-sl href="/post/${post.id}">
@@ -360,7 +360,7 @@ const postsList = [];
     makePage({
       path: `/archive/${year}`,
       title: `${year} - Archive`,
-      content: htmlStr
+      content: htmlStr,
     });
   });
 }
@@ -368,7 +368,7 @@ const postsList = [];
 // Category
 {
   const listsByCategory = new Map();
-  postsList.forEach(post => {
+  postsList.forEach((post) => {
     if (!listsByCategory.has(post.category)) {
       listsByCategory.set(post.category, []);
     }
@@ -388,13 +388,13 @@ const postsList = [];
   makePage({
     path: "/category/",
     title: "Category",
-    content: htmlStr
+    content: htmlStr,
   });
 
   listsByCategory.forEach((list, category) => {
     let htmlStr = '<div class="posts-group card">';
     htmlStr += `<h1>${category}</h1>`;
-    list.forEach(post => {
+    list.forEach((post) => {
       htmlStr += `
         <h3>
           <a data-sl href="/post/${post.id}">
@@ -408,7 +408,7 @@ const postsList = [];
     makePage({
       path: `/category/${category}`,
       title: `${category} - Category`,
-      content: htmlStr
+      content: htmlStr,
     });
   });
 }
@@ -416,8 +416,8 @@ const postsList = [];
 // Tag
 {
   const listsByTag = new Map();
-  postsList.forEach(post =>
-    post.tags.forEach(tag => {
+  postsList.forEach((post) =>
+    post.tags.forEach((tag) => {
       if (!listsByTag.has(tag)) {
         listsByTag.set(tag, []);
       }
@@ -438,13 +438,13 @@ const postsList = [];
   makePage({
     path: "/tag/",
     title: "Tag",
-    content: htmlStr
+    content: htmlStr,
   });
 
   listsByTag.forEach((list, tag) => {
     let htmlStr = '<div class="posts-group card">';
     htmlStr += `<h1>${tag}</h1>`;
-    list.forEach(post => {
+    list.forEach((post) => {
       htmlStr += `
         <h3>
           <a data-sl href="/post/${post.id}">
@@ -458,7 +458,7 @@ const postsList = [];
     makePage({
       path: `/tag/${tag}`,
       title: `${tag} - Tag`,
-      content: htmlStr
+      content: htmlStr,
     });
   });
 }
@@ -469,7 +469,7 @@ const postsList = [];
     realPath: "/404.html",
     title: "404 not found",
     content:
-      '<article class="card"><h1 style="text-align:center;border:none">404 not found</h1></article>'
+      '<article class="card"><h1 style="text-align:center;border:none">404 not found</h1></article>',
   });
 }
 
