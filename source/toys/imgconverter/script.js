@@ -11,7 +11,7 @@ const refreshImage = () => {
   const meta = selectedValueArr[0];
   const quality = Number(selectedValueArr[1]);
   const reader = new window.FileReader();
-  reader.onload = async event => {
+  reader.onload = async (event) => {
     const canvas = document.createElement("canvas");
     const img = new window.Image();
     img.onload = () => {

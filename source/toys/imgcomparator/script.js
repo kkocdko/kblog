@@ -80,7 +80,7 @@ class ImageComparator {
     );
     const diffImgData = new window.ImageData(this.width, this.height);
     let diffSum = 0;
-    const fixRange = num => Math.min(num * this.contrastMultiple, 255);
+    const fixRange = (num) => Math.min(num * this.contrastMultiple, 255);
     for (let i = 0, l = firstImgData.data.length; i < l; i += 4) {
       const firstR = firstImgData.data[i];
       const firstG = firstImgData.data[i + 1];
@@ -157,9 +157,9 @@ class ImageComparator {
     this.diffCanvasCtx.putImageData(compareResult.data, 0, 0);
   }
 
-  async loadImgAsync(firstSrc, secondSrc) {
-    const drawImgToCanvasAsync = async (src, canvas, canvasCtx) =>
-      new Promise(resolve => {
+  async loadImg(firstSrc, secondSrc) {
+    const drawImgToCanvas = async (src, canvas, canvasCtx) =>
+      new Promise((resolve) => {
         const img = document.createElement("img");
         img.onload = () => {
           canvas.width = img.width;
@@ -171,16 +171,16 @@ class ImageComparator {
         img.src = src;
       });
     return Promise.all([
-      drawImgToCanvasAsync(firstSrc, this.firstCanvas, this.firstCanvasCtx),
-      drawImgToCanvasAsync(secondSrc, this.secondCanvas, this.secondCanvasCtx)
+      drawImgToCanvas(firstSrc, this.firstCanvas, this.firstCanvasCtx),
+      drawImgToCanvas(secondSrc, this.secondCanvas, this.secondCanvasCtx),
     ]);
   }
 }
 
-async function fileToDataUrlAsync(file) {
-  return new Promise(resolve => {
+async function fileToDataUrl(file) {
+  return new Promise((resolve) => {
     const fileReader = new window.FileReader();
-    fileReader.onload = event => resolve(event.target.result);
+    fileReader.onload = (event) => resolve(event.target.result);
     fileReader.readAsDataURL(file);
   });
 }
@@ -188,7 +188,7 @@ async function fileToDataUrlAsync(file) {
 const imageComparator = new ImageComparator(document.querySelector("#viewer"));
 (async () => {
   imageComparator.setSize(50, 50);
-  await imageComparator.loadImgAsync(
+  await imageComparator.loadImg(
     "./examples/first-img.png",
     "./examples/second-img.png"
   );
@@ -199,11 +199,11 @@ document
   .querySelectorAll(
     "#displace-console .first button, #displace-console .second button"
   )
-  .forEach(el => {
-    el.addEventListener("click", function() {
+  .forEach((el) => {
+    el.addEventListener("click", function () {
       const displacement = this.dataset.displace
         .split(",")
-        .map(str => Number(str));
+        .map((str) => Number(str));
       imageComparator.displaceBy(...displacement);
       imageComparator.refresh();
     });
@@ -214,11 +214,11 @@ const secondImgFileInputer = document.querySelector("#input-img-second input");
 
 document.querySelector("#compare-img").addEventListener("click", async () => {
   if (firstImgFileInputer.files[0] && secondImgFileInputer.files[0]) {
-    const firstDataUrl = await fileToDataUrlAsync(firstImgFileInputer.files[0]);
-    const secondDataUrl = await fileToDataUrlAsync(
+    const firstDataUrl = await fileToDataUrl(firstImgFileInputer.files[0]);
+    const secondDataUrl = await fileToDataUrl(
       secondImgFileInputer.files[0]
     );
-    await imageComparator.loadImgAsync(firstDataUrl, secondDataUrl);
+    await imageComparator.loadImg(firstDataUrl, secondDataUrl);
     imageComparator.refresh();
   }
 });
