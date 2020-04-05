@@ -3,8 +3,8 @@
 console.time("generate time");
 process.on("exit", () => console.timeEnd("generate time"));
 
-const fs = require("file-system"); // This is not native fs
 const path = require("path");
+const fs = require("file-system"); // This is not native fs
 const marked = require("marked");
 const htmlMinifier = require("html-minifier-terser");
 const CleanCss = require("clean-css");
@@ -12,29 +12,27 @@ const terser = require("terser");
 
 const mfs = {
   r2a: require("path").join.bind(null, __dirname, ".."), // Relative to absolute
-  deleteDir(path) {
+  readFileStrSync(path) {
+    return fs.readFileSync(path).toString();
+  },
+  writeFile(path, data) {
+    fs.writeFile(path, data);
+  },
+  copyFile(sourcePath, targetPath) {
+    fs.copyFile(sourcePath, targetPath);
+  },
+  removeDirSync(path) {
     try {
+      // Ignore error when dir is not existent
       fs.rmdirSync(path);
     } catch {}
   },
-  writeFile(path, data) {
-    fs.writeFileSync(path, data);
-  },
-  readFile(path) {
-    return fs.readFileSync(path);
-  },
-  readFileStr(path) {
-    return fs.readFileSync(path).toString();
-  },
-  copyFile(sourcePath, targetPath) {
-    fs.copyFileSync(sourcePath, targetPath);
-  },
   copyDir(sourcePath, targetPath, filter = ["**/*"]) {
-    fs.copySync(sourcePath, targetPath, {
-      filter,
+    fs.recurse(sourcePath, filter, (absolute, relative) => {
+      fs.copyFile(absolute, path.join(targetPath, relative));
     });
   },
-  walkDir(dirPath, filter = ["**/*"], callback) {
+  walkDirSync(dirPath, filter = ["**/*"], callback) {
     fs.recurseSync(dirPath, filter, callback);
   },
 };
@@ -75,16 +73,7 @@ const minifier = {
     if (process.argv.includes("--dev-mode")) {
       return str;
     }
-    return new CleanCss({
-      level: {
-        1: {
-          specialComments: "none",
-        },
-        2: {
-          all: true,
-        },
-      },
-    }).minify(str).styles;
+    return new CleanCss({ level: 2 }).minify(str).styles;
   },
   js(str) {
     if (process.argv.includes("--dev-mode")) {
@@ -95,10 +84,7 @@ const minifier = {
     const minified = terser.minify(str, {
       compress: {
         toplevel: true,
-        arguments: true,
         booleans_as_integers: true,
-        drop_console: true,
-        hoist_funs: true,
         passes: 3,
         unsafe: true,
         unsafe_arrows: true,
@@ -119,7 +105,7 @@ const minifier = {
 };
 
 const parseMdFile = (filePath) => {
-  const str = mfs.readFileStr(filePath);
+  const str = mfs.readFileStrSync(filePath);
   const readMeta = (key) => {
     const matched = str.match(`\n${key}: ([^\n]*)`);
     return matched ? matched[1] : null;
@@ -130,7 +116,7 @@ const parseMdFile = (filePath) => {
 };
 
 const makePage = (() => {
-  let template = mfs.readFileStr(mfs.r2a("/units/page.html"));
+  let template = mfs.readFileStrSync(mfs.r2a("/units/page.html"));
   template = minifier.html(template);
   return ({
     realPath = "",
@@ -153,7 +139,7 @@ const makePage = (() => {
 
 // Initialization
 {
-  mfs.deleteDir(mfs.r2a("/public"));
+  mfs.removeDirSync(mfs.r2a("/public"));
 
   mfs.copyFile(mfs.r2a("/units/_gitignore"), mfs.r2a("/public/.gitignore"));
   mfs.copyFile(mfs.r2a("/units/_nojekyll"), mfs.r2a("/public/.nojekyll"));
@@ -162,8 +148,8 @@ const makePage = (() => {
 
   // bundle.css
   {
-    const mdCss = mfs.readFileStr(mfs.r2a("/units/markdown.css"));
-    const appCss = mfs.readFileStr(mfs.r2a("/units/app.css"));
+    const mdCss = mfs.readFileStrSync(mfs.r2a("/units/markdown.css"));
+    const appCss = mfs.readFileStrSync(mfs.r2a("/units/app.css"));
     let result = mdCss + appCss;
     result = minifier.css(result);
     mfs.writeFile(mfs.r2a("/public/bundle.css"), result);
@@ -171,19 +157,18 @@ const makePage = (() => {
 
   // bundle.js
   {
-    const extraJs = mfs.readFileStr(mfs.r2a("/units/extra.js"));
-    let extraHtml = mfs.readFileStr(mfs.r2a("/units/extra.html"));
+    const extraJs = mfs.readFileStrSync(mfs.r2a("/units/extra.js"));
+    let extraHtml = mfs.readFileStrSync(mfs.r2a("/units/extra.html"));
     extraHtml = minifier.html(extraHtml);
-    const appJs = mfs.readFileStr(mfs.r2a("/units/app.js"));
+    const appJs = mfs.readFileStrSync(mfs.r2a("/units/app.js"));
     let result = extraJs.replace("/* @ extra.html */", extraHtml) + appJs;
-    result = `(document=>{${result}})(document)`;
     result = minifier.js(result);
     mfs.writeFile(mfs.r2a("/public/bundle.js"), result);
   }
 
   // check.js
   {
-    const checkJs = mfs.readFileStr(mfs.r2a("/units/check.js"));
+    const checkJs = mfs.readFileStrSync(mfs.r2a("/units/check.js"));
     const result = minifier.js(checkJs);
     mfs.writeFile(mfs.r2a("/public/check.js"), result);
   }
@@ -205,7 +190,7 @@ const makePage = (() => {
 // Pages
 const pagesList = [];
 {
-  mfs.walkDir(mfs.r2a("/source/pages"), ["*.md"], (absolute) => {
+  mfs.walkDirSync(mfs.r2a("/source/pages"), ["*.md"], (absolute) => {
     const { readMeta, content } = parseMdFile(absolute);
     const attr = {
       name: path.parse(absolute).name,
@@ -224,7 +209,7 @@ const pagesList = [];
 // Posts
 const postsList = [];
 {
-  mfs.walkDir(mfs.r2a("/source/posts"), ["*.md"], (absolute) => {
+  mfs.walkDirSync(mfs.r2a("/source/posts"), ["*.md"], (absolute) => {
     const { readMeta, content } = parseMdFile(absolute);
     const attr = {
       id: readMeta("date").replace(/:|-|\s/g, ""),
@@ -244,7 +229,7 @@ const postsList = [];
       console.warn(`file name is not standard: ${attr.title}`);
     }
   });
-  postsList.sort((post1, post2) => (post1.id > post2.id ? -1 : 1));
+  postsList.sort((post1, post2) => post2.id - post1.id);
 }
 
 // Home

@@ -1,6 +1,6 @@
 try {
   eval("async a=>a");
-} catch (e) {
+} catch (_) {
   if (window.stop) stop();
   location = "//browser-update.org/update.html";
 }
