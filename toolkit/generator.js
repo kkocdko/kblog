@@ -108,21 +108,30 @@ const parseMdFile = (filePath) => {
     return matched ? matched[1] : null;
   };
   const mdStr = str.slice(str.indexOf("\n```") + 4);
-  const content = marked(`# ${readMeta("title")}\n\n${mdStr}\n`);
+  const content = `# ${readMeta("title")}\n\n${mdStr}\n`;
   return { readMeta, content };
 };
 
 const makePage = (() => {
-  let template = mfs.readFileStrSync(mfs.r2a("/units/page.html"));
-  template = minifier.html(template);
+  const templateFileStr = mfs.readFileStrSync(mfs.r2a("/units/page.html"));
+  const template = minifier.html(templateFileStr);
   return ({
     realPath = "",
     path = "",
     title = "",
     description = "",
     content = "",
+    type = "html", // "html" | "markdown"
   }) => {
-    content = minifier.htmlMd(content);
+    switch (type) {
+      case "html":
+        content = minifier.html(content);
+        break;
+      case "markdown":
+        content = `<article class="card">${marked(content)}</article>`;
+        content = minifier.htmlMd(content);
+        break;
+    }
     const result = template
       .replace(/{{ title }}/g, title)
       .replace(/{{ description }}/g, description)
@@ -147,19 +156,19 @@ const makePage = (() => {
   {
     const mdCss = mfs.readFileStrSync(mfs.r2a("/units/markdown.css"));
     const appCss = mfs.readFileStrSync(mfs.r2a("/units/app.css"));
-    let result = mdCss + appCss;
-    result = minifier.css(result);
+    const cssStr = mdCss + appCss;
+    const result = minifier.css(cssStr);
     mfs.writeFile(mfs.r2a("/public/bundle.css"), result);
   }
 
   // bundle.js
   {
     const extraJs = mfs.readFileStrSync(mfs.r2a("/units/extra.js"));
-    let extraHtml = mfs.readFileStrSync(mfs.r2a("/units/extra.html"));
-    extraHtml = minifier.html(extraHtml);
+    const extraHtmlFileStr = mfs.readFileStrSync(mfs.r2a("/units/extra.html"));
+    const extraHtml = minifier.html(extraHtmlFileStr);
     const appJs = mfs.readFileStrSync(mfs.r2a("/units/app.js"));
-    let result = extraJs.replace("/* @ extra.html */", extraHtml) + appJs;
-    result = minifier.js(result);
+    const jsStr = extraJs.replace("/* @ extra.html */", extraHtml) + appJs;
+    const result = minifier.js(jsStr);
     mfs.writeFile(mfs.r2a("/public/bundle.js"), result);
   }
 
@@ -197,7 +206,8 @@ const pagesList = [];
     makePage({
       ...attr,
       path: `/${attr.name}/`,
-      content: `<article class="card">${content}</article>`,
+      type: "markdown",
+      content,
     });
     pagesList.push(attr);
   });
@@ -219,7 +229,8 @@ const postsList = [];
     makePage({
       ...attr,
       path: `/post/${attr.id}/`,
-      content: `<article class="card">${content}</article>`,
+      type: "markdown",
+      content,
     });
     postsList.push(attr);
     if (attr.date + " " + attr.title !== path.parse(absolute).name) {
