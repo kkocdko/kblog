@@ -31,3 +31,16 @@ body {
 #input-file {
   display: none;
 }
+
+#output-box {
+  padding-right: 5em;
+}
+
+#copy-btn {
+  position: absolute;
+  right: 0;
+  width: 5em;
+  height: 56px;
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+}

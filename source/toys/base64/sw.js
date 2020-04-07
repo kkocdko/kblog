@@ -4,7 +4,7 @@ const cacheName = "base64";
 const filesList = [
   {
     url: "./",
-    updateDate: 1585193258101,
+    updateDate: 1586231157377,
   },
   {
     url: "//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css",
@@ -16,11 +16,11 @@ const filesList = [
   },
   {
     url: "style.css",
-    updateDate: 1585193258101,
+    updateDate: 1586231157377,
   },
   {
     url: "script.js",
-    updateDate: 1585924123050,
+    updateDate: 1586231157377,
   },
   {
     url: "favicon.svg",

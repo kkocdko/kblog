@@ -14,6 +14,8 @@ title: Toys
 
 从Chrome中抽离出的离线小恐龙游戏
 
+（暂时下线）
+
 <h2></h2>
 
 ### Rubiks Cube
@@ -21,6 +23,8 @@ title: Toys
 [/toy/rubikscube](/toy/rubikscube)
 
 Google Doodle上的交互式魔方
+
+（暂时下线）
 
 <h2></h2>
 
@@ -66,7 +70,7 @@ Google Doodle上的交互式魔方
 
 ### Image Comparator
 
-> `Developing`
+> Still Developing
 
 [/toy/imgcomparator](/toy/imgcomparator)
 
@@ -76,4 +80,4 @@ Google Doodle上的交互式魔方
 
 [/toy/base64](/toy/base64)
 
-自用的小工具，将本地文件以base64进行编码。
+自用的小工具，将本地文件以Base64进行编码

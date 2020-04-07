@@ -81,9 +81,9 @@ const minifier = {
     }
     str = str.replace(/const\s/g, "let ");
     str = str.replace(/"use strict";/g, "");
-    const minified = terser.minify(str, {
+    str = `(document=>{${str}})(document)`;
+    str = terser.minify(str, {
       compress: {
-        toplevel: true,
         booleans_as_integers: true,
         passes: 3,
         unsafe: true,
@@ -96,11 +96,8 @@ const minifier = {
         unsafe_regexp: true,
         unsafe_undefined: true,
       },
-      mangle: {
-        toplevel: true,
-      },
     }).code;
-    return minified.replace(/;$/, "");
+    return str.replace(/;$/, "");
   },
 };
 
