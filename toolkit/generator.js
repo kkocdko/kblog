@@ -302,7 +302,8 @@ const postsList = [];
     if (curPageNumber === 1) {
       makePage({
         path: "/",
-        title: `Home: ${curPageNumber}`,
+        title: "Homepage",
+        description: "Welcome to my blog!",
         content: htmlStr,
       });
     }
@@ -461,8 +462,8 @@ const postsList = [];
   makePage({
     realPath: "/404.html",
     title: "404 not found",
-    content:
-      '<article class="card"><h1 style="text-align:center;border:none">404 not found</h1></article>',
+    type: "markdown",
+    content: '<h1 style="text-align:center;border:none">404 not found</h1>',
   });
 }
 
