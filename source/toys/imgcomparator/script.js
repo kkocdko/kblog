@@ -215,9 +215,7 @@ const secondImgFileInputer = document.querySelector("#input-img-second input");
 document.querySelector("#compare-img").addEventListener("click", async () => {
   if (firstImgFileInputer.files[0] && secondImgFileInputer.files[0]) {
     const firstDataUrl = await fileToDataUrl(firstImgFileInputer.files[0]);
-    const secondDataUrl = await fileToDataUrl(
-      secondImgFileInputer.files[0]
-    );
+    const secondDataUrl = await fileToDataUrl(secondImgFileInputer.files[0]);
     await imageComparator.loadImg(firstDataUrl, secondDataUrl);
     imageComparator.refresh();
   }
