@@ -1,0 +1,54 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  padding: 0 7px 15px 7px;
+}
+
+.input-box,
+.output-box {
+  display: block;
+  width: 100%;
+}
+
+#input-box {
+  width: 100%;
+  height: 60vh;
+  margin-top: 7px;
+  margin-bottom: -5px;
+  padding: 5px;
+  font-family: Consolas, "SFMono-Regular", "Liberation Mono", Menlo, Courier,
+    monospace;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+@keyframes flicker {
+  15% {
+    background: #ff9800;
+    opacity: 1;
+  }
+
+  70% {
+    background: #ff9800;
+    opacity: 1;
+  }
+}
+
+#partition {
+  padding: 0 0.2em;
+  color: #fff;
+  font-size: 14px;
+  opacity: 0;
+  animation: flicker 5s;
+  user-select: none;
+}
+
+#output-box {
+  margin-top: -0.1em;
+}

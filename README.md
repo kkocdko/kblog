@@ -1,1 +1,1 @@
-My own blog solution.
+This is my blog.

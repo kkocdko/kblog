@@ -1,0 +1,32 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: rgb(248, 249, 250);
+}
+
+body {
+  display: grid;
+  width: 100vw;
+  max-width: 350px;
+  padding: 15px;
+}
+
+#svg-viewer {
+  margin-bottom: 10px;
+}
+
+#svg-viewer ~ * {
+  width: 100%;
+}

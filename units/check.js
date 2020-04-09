@@ -1,6 +1,6 @@
 try {
-  eval("async a=>a,onpointerup");
-} catch (e) {
+  eval("async a=>a");
+} catch (_) {
   if (window.stop) stop();
   location = "//browser-update.org/update.html";
 }
