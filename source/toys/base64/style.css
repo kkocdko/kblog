@@ -1,0 +1,46 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: rgb(248, 249, 250);
+}
+
+body {
+  display: grid;
+  width: 100vw;
+  max-width: 350px;
+  padding: 15px;
+}
+
+#main-card {
+  display: grid;
+  gap: 15px;
+}
+
+#input-file {
+  display: none;
+}
+
+#output-box {
+  padding-right: 5em;
+}
+
+#copy-btn {
+  position: absolute;
+  right: 0;
+  width: 5em;
+  height: 56px;
+  border-width: 0 0 0 1px;
+  border-radius: 0;
+}

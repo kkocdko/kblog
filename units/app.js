@@ -6,90 +6,86 @@ const topBar = document.querySelector("header");
 const sideBar = document.querySelector("#sidebar");
 const sideBarMask = sideBar.querySelector(".mask");
 
-const fadeInElement = element => element.classList.add("in");
+const scrollMarks = new Map();
 
-const fadeOutElement = element => element.classList.remove("in");
+const fadeInElement = (element) => element.classList.add("in");
 
-const onSpaLinkClick = function(event) {
+const fadeOutElement = (element) => element.classList.remove("in");
+
+const onSpaLinkClick = function (event) {
   event.preventDefault();
   history.pushState(null, null, this.href);
-  reloadAsync({ toTop: true });
+  refreshContent({ toTop: true });
 };
 
 const listenSpaLinks = () => {
   document
     .querySelectorAll("[data-sl]")
-    .forEach(el => el.addEventListener("click", onSpaLinkClick));
+    .forEach((element) => element.addEventListener("click", onSpaLinkClick));
 };
 
-const reloadAsync = async ({ toTop }) => {
-  const startTime = Date.now();
-  let showAni = false;
-  const timeoutTimer = setTimeout(() => {
-    showAni = true;
-    fadeInElement(loadingIndicator);
-  }, 50);
-  let response = await fetch(location.pathname);
-  clearTimeout(timeoutTimer);
-  if (response.status === 404) {
-    response = await fetch("/404.html");
-  }
-  const htmlStr = await response.text();
-  if (showAni) {
-    await new Promise(resolve =>
-      setTimeout(resolve, 300 - (Date.now() - startTime))
-    );
-  }
+const refreshContent = async ({ toTop }) => {
+  fadeInElement(loadingIndicator);
+  fadeOutElement(sideBar);
+  const pathname = location.pathname;
+  const htmlStr = await (await fetch(pathname)).text();
   document.title = htmlStr.match("<title>((.|\n)+?)</title>")[1];
   mainBox.innerHTML = htmlStr.match("<main>((.|\n)+?)</main>")[1];
+  mainBox.classList.add("spa");
   const hash = location.hash.substr(1);
-  if (hash) {
-    const anchor = document.getElementById(hash);
-    if (anchor) {
-      toTop = false;
-      anchor.scrollIntoView();
-      fadeOutElement(topBar);
+  let anchor;
+  if (hash && (anchor = document.getElementById(hash))) {
+    anchor.scrollIntoView();
+    fadeOutElement(topBar);
+  } else {
+    if (toTop || !scrollMarks.has(pathname)) {
+      scroll(0, 0);
+      scrollMarks.set(pathname, 0);
+      fadeInElement(topBar);
+    } else {
+      scroll(0, scrollMarks.get(pathname));
     }
   }
-  if (toTop) {
-    scroll(0, 0);
-    fadeInElement(topBar);
-  }
   listenSpaLinks();
-  if (showAni) {
-    fadeOutElement(loadingIndicator);
-  }
+  fadeOutElement(loadingIndicator);
 };
 
 listenSpaLinks();
+addEventListener("popstate", () => refreshContent({ toTop: false }));
 
-addEventListener("popstate", () => reloadAsync({ toTop: false }));
+setTimeout(() => {
+  // Delay for the hash anchor
+  history.scrollRestoration = "manual";
+  // Avoid the Blink's css bug
+  sideBar.style = "";
+}, 700);
 
 document
   .querySelector("#show-sidebar-btn")
   .addEventListener("click", () => fadeInElement(sideBar));
 
-sideBarMask.addEventListener("pointerdown", () => fadeOutElement(sideBar));
-
-sideBar.querySelector("ul").addEventListener("click", () => {
-  scroll(0, 0);
-  fadeOutElement(sideBar);
-});
-
 document.querySelector("#gotop-btn").addEventListener("click", () => {
   try {
     scroll({ top: 0, behavior: "smooth" });
-  } catch {
+  } catch (_) {
     scroll(0, 0);
   }
 });
 
 document.querySelector("#show-palette-btn").addEventListener("click", () => {
+  // Just for fun
   const color = prompt("Input color (in css format)", "rgb(0,137,123)");
   if (color) {
     document.body.style.setProperty("--theme-color", color);
     document.querySelector("meta[name=theme-color]").content = color;
   }
+});
+
+// Use PointerEvent in the future
+sideBarMask.addEventListener("mousedown", () => fadeOutElement(sideBar));
+
+sideBarMask.addEventListener("touchstart", () => fadeOutElement(sideBar), {
+  passive: true,
 });
 
 {
@@ -103,10 +99,6 @@ document.querySelector("#show-palette-btn").addEventListener("click", () => {
       fadeInElement(topBar);
     }
     originScrollY = currentScrollY;
+    scrollMarks.set(location.pathname, currentScrollY);
   });
 }
-
-// fix the Blink's css bug
-setTimeout(() => {
-  sideBar.style = "";
-}, 700);
