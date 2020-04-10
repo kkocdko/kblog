@@ -81,7 +81,6 @@ const minifier = {
     }
     str = str.replace(/const\s/g, "let ");
     str = str.replace(/"use strict";/g, "");
-    str = `(document=>{${str}})(document)`;
     str = terser.minify(str, {
       compress: {
         booleans_as_integers: true,
@@ -168,7 +167,7 @@ const makePage = (() => {
     const extraHtml = minifier.html(extraHtmlFileStr);
     const appJs = mfs.readFileStrSync(mfs.r2a("/units/app.js"));
     const jsStr = extraJs.replace("/* @ extra.html */", extraHtml) + appJs;
-    const result = minifier.js(jsStr);
+    const result = minifier.js(`(document=>{${jsStr}})(document)`);
     mfs.writeFile(mfs.r2a("/public/bundle.js"), result);
   }
 
