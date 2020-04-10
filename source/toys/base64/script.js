@@ -3,12 +3,13 @@
 const inputFile = document.querySelector("#input-file");
 const copyBtn = document.querySelector("#copy-btn");
 const outputBox = document.querySelector("#output-box");
+
 let currentBase64 = "";
 
 inputFile.addEventListener("change", () => {
   const file = inputFile.files[0];
   if (file.size > 1024 ** 2 * 1) {
-    alert("Input file must small than 1 MB");
+    alert("Input file must small than 1 MB"); // todo: bigger file
     return;
   }
   const fileReader = new FileReader();
@@ -22,9 +23,9 @@ inputFile.addEventListener("change", () => {
 });
 
 copyBtn.addEventListener("click", () => {
-  const input = document.createElement("input");
-  input.value = currentBase64;
-  input.select();
+  if (!currentBase64) {
+    return;
+  }
+  outputBox.select();
   document.execCommand("copy");
-  input.remove();
 });

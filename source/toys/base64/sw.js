@@ -4,35 +4,41 @@ const cacheName = "base64";
 const filesList = [
   {
     url: "./",
-    updateDate: 1586231157377,
+    updateDate: 1586545603983,
   },
   {
-    url: "//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css",
-    updateDate: 1585193258101,
+    url:
+      "//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css",
+    updateDate: 1586545603983,
   },
   {
-    url: "/toy/misc/matter-plus.css",
-    updateDate: 1585193258101,
+    url:
+      "//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js",
+    updateDate: 1586545603983,
+  },
+  {
+    url: "/toy/misc/material-components-web-kmod.css",
+    updateDate: 1586545603983,
   },
   {
     url: "style.css",
-    updateDate: 1586231157377,
+    updateDate: 1586545603983,
   },
   {
     url: "script.js",
-    updateDate: 1586231157377,
+    updateDate: 1586545603983,
   },
   {
     url: "favicon.svg",
-    updateDate: 1585193258101,
+    updateDate: 1586545603983,
   },
   {
     url: "favicon.png",
-    updateDate: 1585193258101,
+    updateDate: 1586545603983,
   },
   {
     url: "manifest.json",
-    updateDate: 1585193258101,
+    updateDate: 1586545603983,
   },
 ];
 

@@ -1,57 +1,36 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-html {
-  display: grid;
-  align-items: center;
-  justify-items: center;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: rgb(248, 249, 250);
-}
-
 body {
-  display: grid;
-  grid-template-rows: auto;
-  grid-template-columns: minmax(250px, 3fr) 7fr;
-  gap: 15px;
-  width: 100vw;
+  grid-template-columns: auto 1fr;
   max-width: 900px;
-  height: 100vh;
   max-height: 600px;
-  padding: 15px;
 }
 
-#generate-config .matter-textfield-standard {
-  width: 100%;
+#console-panel,
+#output-panel {
+  justify-content: space-between;
 }
 
-.numbers-list-container {
-  height: 100%;
+#console-panel .mdc-card__action-buttons,
+#output-panel .mdc-card__action-buttons {
+  margin-top: 20px;
+}
+
+#console-panel #generate-config {
+  display: grid;
+  gap: 20px;
+}
+
+#numbers-list {
   overflow: auto;
   scroll-behavior: smooth;
 }
 
-#numbers-list th,
-#numbers-list td {
-  width: 1%;
-}
-
-.buttons-bar {
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
+#numbers-list tbody tr:first-child {
+  display: none;
 }
 
 @media screen and (max-width: 550px) {
   body {
-    grid-template-rows: 320px auto;
+    grid-template-rows: auto 1fr;
     grid-template-columns: auto;
     max-width: unset;
     max-height: unset;

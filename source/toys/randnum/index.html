@@ -5,67 +5,132 @@
     <base href="/toy/randnum/" />
     <link
       rel="stylesheet"
-      href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
+      href="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css"
     />
-    <link rel="stylesheet" href="/toy/misc/matter-plus.css" />
+    <script
+      defer
+      src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
+      onload="mdc.autoInit();"
+    ></script>
+    <link rel="stylesheet" href="/toy/misc/material-components-web-kmod.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <meta name="theme-color" content="rgb(63,81,181)" />
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Random Number Generator</title>
   </head>
   <body>
-    <div class="matter-card">
-      <form id="generate-config">
-        <label class="matter-textfield-standard">
-          <input
-            name="minimum"
-            value="1"
-            type="number"
-            placeholder=" "
-            spellcheck="false"
-          />
-          <span>Minimum</span>
-        </label>
-        <br />
-        <br />
-        <label class="matter-textfield-standard">
-          <input
-            name="maximum"
-            value="100"
-            type="number"
-            placeholder=" "
-            spellcheck="false"
-          />
-          <span>Maximum</span>
-        </label>
-        <br />
-        <br />
-        <label class="matter-textfield-standard">
-          <input
-            name="quantity"
-            value="1"
-            type="number"
-            placeholder=" "
-            spellcheck="false"
-          />
-          <span>Quantity</span>
-        </label>
-      </form>
-      <div class="buttons-bar">
-        <button id="regenerate-btn" class="matter-button-outlined">
+    <div id="console-panel" class="mdc-card">
+      <div>
+        <form id="generate-config">
+          <div
+            class="mdc-text-field mdc-text-field--outlined"
+            data-mdc-auto-init="MDCTextField"
+          >
+            <input
+              name="minimum"
+              value="1"
+              type="number"
+              class="mdc-text-field__input"
+              id="text-field-hero-input"
+            />
+            <div class="mdc-notched-outline">
+              <div class="mdc-notched-outline__leading"></div>
+              <div class="mdc-notched-outline__notch">
+                <label for="text-field-hero-input" class="mdc-floating-label">
+                  Minimum
+                </label>
+              </div>
+              <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+          <div
+            class="mdc-text-field mdc-text-field--outlined"
+            data-mdc-auto-init="MDCTextField"
+          >
+            <input
+              name="maximum"
+              value="100"
+              type="number"
+              class="mdc-text-field__input"
+              id="text-field-hero-input"
+            />
+            <div class="mdc-notched-outline">
+              <div class="mdc-notched-outline__leading"></div>
+              <div class="mdc-notched-outline__notch">
+                <label for="text-field-hero-input" class="mdc-floating-label">
+                  Maximum
+                </label>
+              </div>
+              <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+          <div
+            class="mdc-text-field mdc-text-field--outlined"
+            data-mdc-auto-init="MDCTextField"
+          >
+            <input
+              name="quantity"
+              value="1"
+              type="number"
+              class="mdc-text-field__input"
+              id="text-field-hero-input"
+            />
+            <div class="mdc-notched-outline">
+              <div class="mdc-notched-outline__leading"></div>
+              <div class="mdc-notched-outline__notch">
+                <label for="text-field-hero-input" class="mdc-floating-label">
+                  Quantity
+                </label>
+              </div>
+              <div class="mdc-notched-outline__trailing"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="mdc-card__action-buttons">
+        <button
+          id="regenerate-btn"
+          class="mdc-button mdc-card__action--button"
+          data-mdc-auto-init="MDCRipple"
+        >
+          <span class="mdc-button__ripple"></span>
           Regenerate
         </button>
-        <button id="generate-btn" class="matter-button-contained">
+        <button
+          id="generate-btn"
+          class="mdc-button mdc-button--unelevated mdc-card__action--button"
+          data-mdc-auto-init="MDCRipple"
+        >
+          <span class="mdc-button__ripple"></span>
           Generate
         </button>
       </div>
     </div>
-    <div class="matter-card">
-      <div class="numbers-list-container">
-        <table id="numbers-list" class="matter-table">
+    <div id="output-panel" class="mdc-card">
+      <div id="numbers-list" class="mdc-data-table">
+        <table class="mdc-data-table__table" aria-label="Dessert calories">
+          <thead>
+            <tr class="mdc-data-table__header-row">
+              <th class="mdc-data-table__header-cell">Generate Time</th>
+              <th class="mdc-data-table__header-cell">Random Number</th>
+            </tr>
+          </thead>
+          <tbody class="mdc-data-table__content">
+            <tr class="mdc-data-table__row">
+              <td class="mdc-data-table__cell"></td>
+              <td class="mdc-data-table__cell"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- <table id="numbers-list" class="mdc-data-table__table">
           <thead>
             <tr>
               <th>Generate Time</th>
@@ -73,14 +138,17 @@
             </tr>
           </thead>
           <tbody></tbody>
-        </table>
-      </div>
-      <div class="buttons-bar">
-        <button id="empty-btn" class="matter-button-contained">Empty</button>
+        </table> -->
+      <div class="mdc-card__action-buttons">
+        <button
+          id="empty-btn"
+          class="mdc-button"
+          data-mdc-auto-init="MDCRipple"
+        >
+          <span class="mdc-button__ripple"></span>
+          Empty
+        </button>
       </div>
     </div>
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
   </body>
 </html>
