@@ -10,7 +10,7 @@ const randomInRange = (min, max) =>
   Math.round(Math.random() * (max - min)) + min;
 
 const getTimeStr = () => {
-  const zeroPad = (num, len = 3) => ("000" + num).slice(-len);
+  const zeroPad = (num, len = 3) => ("000000000" + num).slice(-len);
   const date = new Date();
   const timeStr = `${date.toTimeString().slice(0, 8)}.${zeroPad(
     date.getMilliseconds()
@@ -18,24 +18,30 @@ const getTimeStr = () => {
   return timeStr;
 };
 
-const emptyList = () => {
-  numbersList.innerHTML = "";
-};
-
 const generateNumber = () => {
-  const configData = new window.FormData(configForm);
+  const configData = new FormData(configForm);
   const minimum = Number(configData.get("minimum"));
   const maximum = Number(configData.get("maximum"));
   const quantity = Number(configData.get("quantity"));
   const creatTime = getTimeStr();
-  let htmlStr = "";
+  const rows = [];
   for (let i = 0; i < quantity; i++) {
     const randomNumber = randomInRange(minimum, maximum);
-    htmlStr += `<tr><td>${creatTime}</td><td>${randomNumber}</td></tr>`;
+    const row = numbersList.querySelector("tr:first-child").cloneNode(true);
+    const cells = row.querySelectorAll("td");
+    cells[0].textContent = creatTime;
+    cells[1].textContent = randomNumber;
+    rows.push(row);
   }
-  numbersList.insertAdjacentHTML("beforeend", htmlStr);
+  numbersList.append(...rows);
   setTimeout(() => {
     numbersList.lastElementChild.scrollIntoView();
+  });
+};
+
+const emptyList = () => {
+  [...numbersList.childNodes].slice(2).forEach((element) => {
+    element.remove();
   });
 };
 

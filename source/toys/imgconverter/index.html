@@ -5,19 +5,28 @@
     <base href="/toy/imgconverter/" />
     <link
       rel="stylesheet"
-      href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
+      href="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css"
     />
-    <link rel="stylesheet" href="/toy/misc/matter-plus.css" />
+    <script
+      defer
+      src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
+      onload="mdc.autoInit();"
+    ></script>
+    <link rel="stylesheet" href="/toy/misc/material-components-web-kmod.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <meta name="theme-color" content="rgb(63,81,181)" />
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Image Converter</title>
   </head>
   <body>
-    <div id="console" class="matter-card">
+    <div id="console-panel" class="mdc-card">
       <label class="matter-button-contained">
         Add an image file
         <input id="input-file" type="file" />
@@ -43,7 +52,7 @@
         converted image.
       </p>
     </div>
-    <div id="viewer" class="matter-card">
+    <div id="viewer-panel" class="mdc-card">
       <img />
       <div class="buttons-bar">
         <button id="download-btn" class="matter-button-contained">
@@ -51,8 +60,5 @@
         </button>
       </div>
     </div>
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
   </body>
 </html>

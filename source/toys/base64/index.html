@@ -5,24 +5,42 @@
     <base href="/toy/base64/" />
     <link
       rel="stylesheet"
-      href="//cdn.jsdelivr.net/gh/finnhvman/matter@0.2.2/dist/matter.min.css"
+      href="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css"
     />
-    <link rel="stylesheet" href="/toy/misc/matter-plus.css" />
+    <script
+      defer
+      src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
+      onload="mdc.autoInit();"
+    ></script>
+    <link rel="stylesheet" href="/toy/misc/material-components-web-kmod.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <meta name="theme-color" content="rgb(63,81,181)" />
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
     <title>Base64 Tool</title>
   </head>
   <body>
-    <div id="main-card" class="matter-card">
-      <label class="matter-button-contained">
-        <input id="input-file" type="file" autocomplete="off" />
-        <span>Input file</span>
+    <input id="input-file" type="file" autocomplete="off" />
+    <div id="main-panel" class="mdc-card">
+      <label
+        id="select-file-btn"
+        for="input-file"
+        class="mdc-button mdc-button--raised"
+        data-mdc-auto-init="MDCRipple"
+      >
+        <span class="mdc-button__ripple"></span>
+        Select File
       </label>
-      <label class="matter-textfield-outlined">
+      <div
+        class="mdc-text-field mdc-text-field--outlined"
+        data-mdc-auto-init="MDCTextField"
+      >
         <input
           id="output-box"
           readonly
@@ -31,13 +49,23 @@
           autocapitalize="off"
           autocomplete="off"
           autocorrect="off"
+          class="mdc-text-field__input"
+          id="text-field-hero-input"
         />
-        <span>Output</span>
-        <button id="copy-btn" class="matter-button-outlined">Copy</button>
-      </label>
+        <div class="mdc-notched-outline">
+          <div class="mdc-notched-outline__leading"></div>
+          <div class="mdc-notched-outline__notch">
+            <label for="text-field-hero-input" class="mdc-floating-label">
+              Base64 Output
+            </label>
+          </div>
+          <div class="mdc-notched-outline__trailing"></div>
+        </div>
+        <button id="copy-btn" class="mdc-button" data-mdc-auto-init="MDCRipple">
+          <span class="mdc-button__ripple"></span>
+          Copy
+        </button>
+      </div>
     </div>
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
   </body>
 </html>
