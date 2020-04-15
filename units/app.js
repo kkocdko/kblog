@@ -1,9 +1,9 @@
 "use strict";
 
 const mainBox = document.querySelector("main");
-const loadingIndicator = document.querySelector("#loading");
+const loadingIndicator = document.querySelector("progress");
 const topBar = document.querySelector("header");
-const sideBar = document.querySelector("#sidebar");
+const sideBar = document.querySelector("aside");
 const sideBarMask = sideBar.querySelector(".mask");
 
 const scrollMarks = new Map();
