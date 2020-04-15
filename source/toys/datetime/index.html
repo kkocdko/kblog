@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width" />
-    <base href="/toy/base64/" />
+    <base href="/toy/datetime/" />
     <link
       rel="stylesheet"
       href="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css"
@@ -12,7 +12,7 @@
       src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
       onload="mdc.autoInit();"
     ></script>
-    <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
+    <link rel="stylesheet" href="/toy/misc/material-components-web-kmod.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
@@ -23,16 +23,17 @@
     <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
     <link rel="shortcut icon" href="favicon.png" />
     <link rel="icon" href="favicon.svg" />
-    <title>Base64 Tool</title>
+    <title>Date Time</title>
   </head>
   <body>
+    <input id="input-file" type="file" autocomplete="off" />
     <div id="main-panel" class="mdc-card">
       <label
         id="select-file-btn"
+        for="input-file"
         class="mdc-button mdc-button--raised"
         data-mdc-auto-init="MDCRipple"
       >
-        <input id="input-file" type="file" autocomplete="off" />
         <span class="mdc-button__ripple"></span>
         Select File
       </label>
@@ -42,13 +43,14 @@
       >
         <input
           id="output-box"
-          class="mdc-text-field__input"
           readonly
           spellcheck="false"
           spellcheck="false"
           autocapitalize="off"
           autocomplete="off"
           autocorrect="off"
+          class="mdc-text-field__input"
+          id="text-field-hero-input"
         />
         <div class="mdc-notched-outline">
           <div class="mdc-notched-outline__leading"></div>

@@ -1,0 +1,21 @@
+{
+  "name": "Date Time",
+  "short_name": "DateTime",
+  "description": "Clock + timer + calendar.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "rgb(248,249,250)",
+  "theme_color": "rgb(63,81,181)",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "1024x1024"
+    },
+    {
+      "src": "favicon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

@@ -1,48 +1,44 @@
 "use strict";
 
-const cacheName = "qrcode";
+const cacheName = "base64";
 const filesList = [
   {
     url: "./",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
     url:
       "//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
     url:
       "//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
-    url: "../misc/material-components-web-kmod.css",
-    updateDate: 1586884042956,
+    url: "/toy/misc/material-components-web-kmod.css",
+    updateDate: 1586545603983,
   },
   {
     url: "style.css",
-    updateDate: 1586884042956,
-  },
-  {
-    url: "qrcode.js",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
     url: "script.js",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
     url: "favicon.svg",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
     url: "favicon.png",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
   {
     url: "manifest.json",
-    updateDate: 1586884042956,
+    updateDate: 1586545603983,
   },
 ];
 
