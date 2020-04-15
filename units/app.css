@@ -31,10 +31,6 @@ main {
   }
 }
 
-main.spa > * {
-  animation: fadein 0.3s;
-}
-
 @keyframes fadein {
   0% {
     transform: translateY(10px);
@@ -42,7 +38,22 @@ main.spa > * {
   }
 }
 
-#loading {
+main.spa > * {
+  animation: fadein 0.3s;
+}
+
+progress {
+  position: fixed;
+  height: 0;
+  transition: 0.3s;
+}
+
+progress:not(.in) {
+  visibility: hidden;
+  opacity: 0;
+}
+
+progress::before {
   position: fixed;
   top: 0;
   right: 0;
@@ -50,12 +61,7 @@ main.spa > * {
   left: 0;
   text-align: center;
   background: rgba(248, 249, 250, 0.5);
-  transition: 0.3s;
-}
-
-#loading:not(.in) {
-  visibility: hidden;
-  opacity: 0;
+  content: "";
 }
 
 @keyframes spin {
@@ -64,12 +70,12 @@ main.spa > * {
   }
 }
 
-#loading.in::after {
+progress.in::after {
+  position: fixed;
+  top: calc(15% + 50px);
+  left: calc(50% - 30px);
   display: inline-block;
-  min-width: 60px;
-  min-height: 60px;
-  margin-top: 120px;
-  padding: 5vmin;
+  padding: 25px;
   border: 5px solid var(--theme-color);
   border-top-color: rgba(0, 0, 0, 0);
   border-radius: 50%;
@@ -114,7 +120,7 @@ header .avatar a {
   border-radius: 50%;
 }
 
-#sidebar {
+aside {
   position: fixed;
   top: 0;
   right: 0;
@@ -122,34 +128,34 @@ header .avatar a {
   left: 0;
   display: flex;
   visibility: hidden;
-  transition: 0.4s;
+  transition: 0.3s;
 }
 
-#sidebar.in {
+aside.in {
   background: rgba(0, 0, 0, 0.5);
   visibility: visible;
 }
 
-#sidebar .menu {
+aside .menu {
   position: relative;
   width: 70%;
   max-width: 260px;
   overflow: auto;
   background: #fff;
-  box-shadow: 5px 0 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   transition: 0.3s;
 }
 
-#sidebar:not(.in) .menu {
-  transform: translateX(calc(-100% - 14px));
+aside:not(.in) .menu {
+  transform: translateX(calc(-100% - 20px));
 }
 
-#sidebar .brand {
+aside .brand {
   padding: 13% 13% 9%;
   background: var(--theme-color);
 }
 
-#sidebar #show-palette-btn {
+aside #show-palette-btn {
   position: absolute;
   top: 0;
   right: 0;
@@ -161,14 +167,14 @@ header .avatar a {
   fill: #fff;
 }
 
-#sidebar .name {
+aside .name {
   width: 45%;
   color: #fff;
   font-size: 18px;
   text-align: center;
 }
 
-#sidebar .avatar {
+aside .avatar {
   display: block;
   margin-bottom: 13px;
   padding: calc(50% - 2px);
@@ -177,21 +183,21 @@ header .avatar a {
   border-radius: 50%;
 }
 
-#sidebar li a {
+aside .menu nav a {
   display: block;
   padding-left: 13%;
   color: #333;
   line-height: 50px;
 }
 
-#sidebar li svg {
+aside nav svg {
   width: 24px;
   margin: 13px 9px 0 0;
   vertical-align: top;
   fill: #555;
 }
 
-#sidebar .mask {
+aside .mask {
   flex-grow: 1;
 }
 
@@ -222,6 +228,27 @@ footer * {
   }
 }
 
+.chip {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 2px 6px;
+  font-size: 13px;
+  border: solid 1px #ccc;
+  border-radius: 4px;
+}
+
+.pagination {
+  text-align: center;
+}
+
+.pagination a {
+  display: inline-block;
+  padding: 12px 22px;
+  font-weight: 900;
+  font-size: 13px;
+  opacity: 0.7;
+}
+
 .post-intro {
   margin-bottom: 20px;
 }
@@ -239,45 +266,17 @@ footer * {
 }
 
 .post-intro h3 {
-  margin-top: -3px;
+  margin: -3px 0;
   font-weight: normal;
   font-size: 20px;
 }
 
 .post-intro p {
-  margin: 9px 0 13px;
+  margin-top: 13px;
 }
 
-.post-intro li {
-  display: inline-block;
-}
-
-.post-intro li a {
-  display: inline-block;
-  margin-right: 10px;
-  padding: 2px 6px;
-  font-size: 13px;
-  border: solid 1px #ccc;
-  border-radius: 4px;
-}
-
-.pagination-nav {
-  text-align: center;
-}
-
-.pagination-nav li {
-  display: inline-block;
-}
-
-.pagination-nav li a {
-  display: inline-block;
-  padding: 12px 22px;
-  font-weight: 900;
-  font-size: 13px;
-  opacity: 0.7;
-}
-
-.posts-group h1 {
+.posts-group h1,
+.chips-group h1 {
   display: inline-block;
   margin: 0 100% 5px 0;
   padding: 3px 9px;
@@ -288,31 +287,16 @@ footer * {
   border-radius: 4px;
 }
 
-.posts-group h3 {
+.posts-group a {
+  display: block;
   margin-top: 10px;
   overflow: hidden;
-  font-weight: normal;
-  font-size: 16px;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.posts-group span {
-  display: inline-block;
-  margin-right: 10px;
-  padding: 2px 6px;
-  font-size: 13px;
-  border: solid 1px #ccc;
-  border-radius: 4px;
-}
-
-.tags-group span {
-  margin: 10px 10px 0 0;
-  padding: 0;
-}
-
-.tags-group span a {
-  display: inline-block;
+.chips-group a {
+  margin-top: 10px;
   padding: 5px 10px;
 }
 

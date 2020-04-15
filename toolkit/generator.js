@@ -167,7 +167,7 @@ const makePage = (() => {
     const extraHtml = minifier.html(extraHtmlFileStr);
     const appJs = mfs.readFileStrSync(mfs.r2a("/units/app.js"));
     const jsStr = extraJs.replace("/* @ extra.html */", extraHtml) + appJs;
-    const result = minifier.js(`(document=>{${jsStr}})(document)`);
+    const result = minifier.js(`(()=>{${jsStr}})()`);
     mfs.writeFile(mfs.r2a("/public/bundle.js"), result);
   }
 
@@ -242,11 +242,11 @@ const postsList = [];
 // Home
 {
   const countPerPage = 10;
-  const pageNumberMax = Math.ceil(postsList.length / countPerPage);
-  for (let curPageNumber = 1; curPageNumber <= pageNumberMax; curPageNumber++) {
+  const lastPage = Math.ceil(postsList.length / countPerPage);
+  for (let curPage = 1; curPage <= lastPage; curPage++) {
     let htmlStr = "";
     for (
-      let i = (curPageNumber - 1) * countPerPage,
+      let i = (curPage - 1) * countPerPage,
         maxI = i + countPerPage,
         l = postsList.length;
       i < maxI && i < l;
@@ -256,49 +256,35 @@ const postsList = [];
       htmlStr += `
         <div class="post-intro card">
           <h3>
-            <a data-sl href="/post/${post.id}">${post.title}</a>
+            <a href="/post/${post.id}" data-sl>${post.title}</a>
           </h3>
           <p>${post.description}</p>
-          <ul>
+          <p>
             ${post.tags
               .map(
-                (tag) => `
-            <li>
-              <a data-sl href="/tag/${tag}">${tag}</a>
-            </li>
-                `
+                (tag) => `<a href="/tag/${tag}" data-sl class="chip">${tag}</a>`
               )
               .join("")}
-          </ul>
+          </p>
         </div>
       `;
     }
     htmlStr += `
-      <ul class="pagination-nav">
-        <li>
-          <a data-sl href="/home/1">〈◀</a>
-        </li>
-        <li>
-          <a data-sl href="/home/${
-            curPageNumber > 1 ? curPageNumber - 1 : 1
-          }">◀</a>
-        </li>
-        <li>
-          <a data-sl href="/home/${
-            curPageNumber < pageNumberMax ? curPageNumber + 1 : pageNumberMax
-          }">▶</a>
-        </li>
-        <li>
-          <a data-sl href="/home/${pageNumberMax}">▶〉</a>
-        </li>
+      <nav class="pagination">
+        <a href="/home/1" data-sl>〈◀</a>
+        <a href="/home/${curPage > 1 ? curPage - 1 : 1}" data-sl>◀</a>
+        <a href="/home/${
+          curPage < lastPage ? curPage + 1 : lastPage
+        }" data-sl>▶</a>
+        <a href="/home/${lastPage}" data-sl>▶〉</a>
       </ul>
     `;
     makePage({
-      path: `/home/${curPageNumber}/`,
-      title: `Home: ${curPageNumber}`,
+      path: `/home/${curPage}/`,
+      title: `Home: ${curPage}`,
       content: htmlStr,
     });
-    if (curPageNumber === 1) {
+    if (curPage === 1) {
       makePage({
         path: "/",
         title: "Homepage",
@@ -320,14 +306,10 @@ const postsList = [];
     listsByYear.get(year).push(post);
   });
 
-  let htmlStr = '<div class="tags-group posts-group card">';
+  let htmlStr = '<div class="chips-group card">';
   htmlStr += "<h1>Archive</h1>";
   listsByYear.forEach((_, year) => {
-    htmlStr += `
-      <span>
-        <a data-sl href="/archive/${year}">${year}</a>
-      </span>
-    `;
+    htmlStr += `<a href="/archive/${year}" data-sl class="chip">${year}</a>`;
   });
   htmlStr += "</div>";
   makePage({
@@ -341,12 +323,10 @@ const postsList = [];
     htmlStr += `<h1>${year}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <h3>
-          <a data-sl href="/post/${post.id}">
-            <span>${post.date}</span>
-            ${post.title}
-          </a>
-        </h3>
+        <a href="/post/${post.id}" data-sl>
+          <span class="chip">${post.date}</span>
+          ${post.title}
+        </a>
       `;
     });
     htmlStr += "</div>";
@@ -368,14 +348,10 @@ const postsList = [];
     listsByCategory.get(post.category).push(post);
   });
 
-  let htmlStr = '<div class="tags-group posts-group card">';
+  let htmlStr = '<div class="chips-group card">';
   htmlStr += "<h1>Category</h1>";
   listsByCategory.forEach((_, category) => {
-    htmlStr += `
-      <span>
-        <a data-sl href="/category/${category}">${category}</a>
-      </span>
-    `;
+    htmlStr += `<a href="/category/${category}" data-sl class="chip">${category}</a>`;
   });
   htmlStr += "</div>";
   makePage({
@@ -389,12 +365,10 @@ const postsList = [];
     htmlStr += `<h1>${category}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <h3>
-          <a data-sl href="/post/${post.id}">
-            <span>${post.date}</span>
-            ${post.title}
-          </a>
-        </h3>
+        <a href="/post/${post.id}" data-sl>
+          <span class="chip">${post.date}</span>
+          ${post.title}
+        </a>
       `;
     });
     htmlStr += "</div>";
@@ -418,14 +392,10 @@ const postsList = [];
     })
   );
 
-  let htmlStr = '<div class="tags-group posts-group card">';
+  let htmlStr = '<div class="chips-group card">';
   htmlStr += "<h1>Tag</h1>";
   listsByTag.forEach((_, tag) => {
-    htmlStr += `
-      <span>
-        <a data-sl href="/tag/${tag}">${tag}</a>
-      </span>
-    `;
+    htmlStr += `<a href="/tag/${tag}" data-sl class="chip">${tag}</a>`;
   });
   htmlStr += "</div>";
   makePage({
@@ -439,12 +409,10 @@ const postsList = [];
     htmlStr += `<h1>${tag}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <h3>
-          <a data-sl href="/post/${post.id}">
-            <span>${post.date}</span>
-            ${post.title}
-          </a>
-        </h3>
+        <a href="/post/${post.id}" data-sl>
+          <span class="chip">${post.date}</span>
+          ${post.title}
+        </a>
       `;
     });
     htmlStr += "</div>";
