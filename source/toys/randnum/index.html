@@ -12,7 +12,7 @@
       src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
       onload="mdc.autoInit();"
     ></script>
-    <link rel="stylesheet" href="/toy/misc/material-components-web-kmod.css" />
+    <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
     <link rel="stylesheet" href="style.css" />
     <script defer src="script.js"></script>
     <link rel="manifest" href="manifest.json" />
@@ -27,73 +27,71 @@
   </head>
   <body>
     <div id="console-panel" class="mdc-card">
-      <div>
-        <form id="generate-config">
-          <div
-            class="mdc-text-field mdc-text-field--outlined"
-            data-mdc-auto-init="MDCTextField"
-          >
-            <input
-              name="minimum"
-              value="1"
-              type="number"
-              class="mdc-text-field__input"
-              id="text-field-hero-input"
-            />
-            <div class="mdc-notched-outline">
-              <div class="mdc-notched-outline__leading"></div>
-              <div class="mdc-notched-outline__notch">
-                <label for="text-field-hero-input" class="mdc-floating-label">
-                  Minimum
-                </label>
-              </div>
-              <div class="mdc-notched-outline__trailing"></div>
+      <form id="generate-config">
+        <div
+          class="mdc-text-field mdc-text-field--outlined"
+          data-mdc-auto-init="MDCTextField"
+        >
+          <input
+            name="minimum"
+            value="1"
+            type="number"
+            class="mdc-text-field__input"
+            id="text-field-hero-input"
+          />
+          <div class="mdc-notched-outline">
+            <div class="mdc-notched-outline__leading"></div>
+            <div class="mdc-notched-outline__notch">
+              <label for="text-field-hero-input" class="mdc-floating-label">
+                Minimum
+              </label>
             </div>
+            <div class="mdc-notched-outline__trailing"></div>
           </div>
-          <div
-            class="mdc-text-field mdc-text-field--outlined"
-            data-mdc-auto-init="MDCTextField"
-          >
-            <input
-              name="maximum"
-              value="100"
-              type="number"
-              class="mdc-text-field__input"
-              id="text-field-hero-input"
-            />
-            <div class="mdc-notched-outline">
-              <div class="mdc-notched-outline__leading"></div>
-              <div class="mdc-notched-outline__notch">
-                <label for="text-field-hero-input" class="mdc-floating-label">
-                  Maximum
-                </label>
-              </div>
-              <div class="mdc-notched-outline__trailing"></div>
+        </div>
+        <div
+          class="mdc-text-field mdc-text-field--outlined"
+          data-mdc-auto-init="MDCTextField"
+        >
+          <input
+            name="maximum"
+            value="100"
+            type="number"
+            class="mdc-text-field__input"
+            id="text-field-hero-input"
+          />
+          <div class="mdc-notched-outline">
+            <div class="mdc-notched-outline__leading"></div>
+            <div class="mdc-notched-outline__notch">
+              <label for="text-field-hero-input" class="mdc-floating-label">
+                Maximum
+              </label>
             </div>
+            <div class="mdc-notched-outline__trailing"></div>
           </div>
-          <div
-            class="mdc-text-field mdc-text-field--outlined"
-            data-mdc-auto-init="MDCTextField"
-          >
-            <input
-              name="quantity"
-              value="1"
-              type="number"
-              class="mdc-text-field__input"
-              id="text-field-hero-input"
-            />
-            <div class="mdc-notched-outline">
-              <div class="mdc-notched-outline__leading"></div>
-              <div class="mdc-notched-outline__notch">
-                <label for="text-field-hero-input" class="mdc-floating-label">
-                  Quantity
-                </label>
-              </div>
-              <div class="mdc-notched-outline__trailing"></div>
+        </div>
+        <div
+          class="mdc-text-field mdc-text-field--outlined"
+          data-mdc-auto-init="MDCTextField"
+        >
+          <input
+            name="quantity"
+            value="1"
+            type="number"
+            class="mdc-text-field__input"
+            id="text-field-hero-input"
+          />
+          <div class="mdc-notched-outline">
+            <div class="mdc-notched-outline__leading"></div>
+            <div class="mdc-notched-outline__notch">
+              <label for="text-field-hero-input" class="mdc-floating-label">
+                Quantity
+              </label>
             </div>
+            <div class="mdc-notched-outline__trailing"></div>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
       <div class="mdc-card__action-buttons">
         <button
           id="regenerate-btn"
@@ -130,15 +128,6 @@
           </tbody>
         </table>
       </div>
-      <!-- <table id="numbers-list" class="mdc-data-table__table">
-          <thead>
-            <tr>
-              <th>Generate Time</th>
-              <th>Random Number</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table> -->
       <div class="mdc-card__action-buttons">
         <button
           id="empty-btn"

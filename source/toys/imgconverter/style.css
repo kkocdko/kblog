@@ -1,4 +1,29 @@
-*,
+body {
+  grid-template-rows: auto;
+  grid-template-columns: minmax(250px, 3fr) 7fr;
+  max-width: 900px;
+  max-height: 600px;
+}
+
+#input-file {
+  display: none;
+}
+
+#console-panel {
+  display: grid;
+  grid-template-rows: auto auto auto auto 1fr;
+  gap: 20px;
+}
+
+#console-panel .mdc-select__anchor {
+  width: 100%;
+}
+
+#viewer-panel {
+  justify-content: space-between;
+}
+
+/* *,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -16,17 +41,6 @@ html {
   background: rgb(248, 249, 250);
 }
 
-body {
-  display: grid;
-  grid-template-rows: auto;
-  grid-template-columns: minmax(250px, 3fr) 7fr;
-  gap: 15px;
-  width: 100vw;
-  max-width: 900px;
-  height: 100vh;
-  max-height: 600px;
-  padding: 15px;
-}
 
 #console {
   display: grid;
@@ -76,4 +90,4 @@ body {
     max-width: unset;
     max-height: unset;
   }
-}
+} */
