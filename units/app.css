@@ -21,7 +21,7 @@ main {
   width: 700px;
   min-height: 100vh;
   margin: 50px auto 0;
-  padding: 25px 0;
+  padding: 5px 0 25px;
 }
 
 @media screen and (max-width: 768px) {
@@ -203,7 +203,6 @@ aside .mask {
 
 footer,
 footer * {
-  position: relative; /* Override the last card's box-shadow */
   color: rgba(255, 255, 255, 0.7);
   font-size: 13px;
   line-height: 3em;
@@ -212,7 +211,8 @@ footer * {
   background: var(--theme-color);
 }
 
-.card {
+main > * {
+  margin-top: 20px;
   padding: 20px;
   overflow: hidden;
   background: #fff;
@@ -222,7 +222,8 @@ footer * {
 }
 
 @media screen and (max-width: 768px) {
-  .card {
+  main > * {
+    margin-top: 1px;
     border-radius: 0;
     box-shadow: 0 0 0 1px #ddd;
   }
@@ -232,12 +233,13 @@ footer * {
   display: inline-block;
   margin-right: 10px;
   padding: 2px 6px;
-  font-size: 13px;
+  font-size: 0.8rem;
   border: solid 1px #ccc;
   border-radius: 4px;
 }
 
 .pagination {
+  padding: 0;
   text-align: center;
 }
 
@@ -245,18 +247,8 @@ footer * {
   display: inline-block;
   padding: 12px 22px;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 0.8rem;
   opacity: 0.7;
-}
-
-.post-intro {
-  margin-bottom: 20px;
-}
-
-@media screen and (max-width: 768px) {
-  .post-intro {
-    margin-bottom: 1px;
-  }
 }
 
 .post-intro > * {
@@ -268,7 +260,6 @@ footer * {
 .post-intro h3 {
   margin: -3px 0;
   font-weight: normal;
-  font-size: 20px;
 }
 
 .post-intro p {

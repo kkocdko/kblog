@@ -56,8 +56,6 @@ addEventListener("popstate", () => refreshContent({ toTop: false }));
 setTimeout(() => {
   // Delay for the hash anchor
   history.scrollRestoration = "manual";
-  // Avoid the Blink's css bug
-  sideBar.style = "";
 }, 700);
 
 document

@@ -254,7 +254,7 @@ const postsList = [];
     ) {
       const post = postsList[i];
       htmlStr += `
-        <div class="post-intro card">
+        <div class="post-intro">
           <h3>
             <a href="/post/${post.id}" data-sl>${post.title}</a>
           </h3>
@@ -271,7 +271,7 @@ const postsList = [];
     }
     htmlStr += `
       <nav class="pagination">
-        <a href="/home/1" data-sl>〈◀</a>
+        <a href="/" data-sl>〈◀</a>
         <a href="/home/${curPage > 1 ? curPage - 1 : 1}" data-sl>◀</a>
         <a href="/home/${
           curPage < lastPage ? curPage + 1 : lastPage
@@ -279,16 +279,17 @@ const postsList = [];
         <a href="/home/${lastPage}" data-sl>▶〉</a>
       </ul>
     `;
-    makePage({
-      path: `/home/${curPage}/`,
-      title: `Home: ${curPage}`,
-      content: htmlStr,
-    });
     if (curPage === 1) {
       makePage({
         path: "/",
         title: "Homepage",
         description: "Welcome to my blog!",
+        content: htmlStr,
+      });
+    } else {
+      makePage({
+        path: `/home/${curPage}/`,
+        title: `Home: ${curPage}`,
         content: htmlStr,
       });
     }
@@ -306,7 +307,7 @@ const postsList = [];
     listsByYear.get(year).push(post);
   });
 
-  let htmlStr = '<div class="chips-group card">';
+  let htmlStr = '<div class="chips-group">';
   htmlStr += "<h1>Archive</h1>";
   listsByYear.forEach((_, year) => {
     htmlStr += `<a href="/archive/${year}" data-sl class="chip">${year}</a>`;
@@ -319,7 +320,7 @@ const postsList = [];
   });
 
   listsByYear.forEach((list, year) => {
-    let htmlStr = '<div class="posts-group card">';
+    let htmlStr = '<div class="posts-group">';
     htmlStr += `<h1>${year}</h1>`;
     list.forEach((post) => {
       htmlStr += `
@@ -348,7 +349,7 @@ const postsList = [];
     listsByCategory.get(post.category).push(post);
   });
 
-  let htmlStr = '<div class="chips-group card">';
+  let htmlStr = '<div class="chips-group">';
   htmlStr += "<h1>Category</h1>";
   listsByCategory.forEach((_, category) => {
     htmlStr += `<a href="/category/${category}" data-sl class="chip">${category}</a>`;
@@ -361,7 +362,7 @@ const postsList = [];
   });
 
   listsByCategory.forEach((list, category) => {
-    let htmlStr = '<div class="posts-group card">';
+    let htmlStr = '<div class="posts-group">';
     htmlStr += `<h1>${category}</h1>`;
     list.forEach((post) => {
       htmlStr += `
@@ -392,7 +393,7 @@ const postsList = [];
     })
   );
 
-  let htmlStr = '<div class="chips-group card">';
+  let htmlStr = '<div class="chips-group">';
   htmlStr += "<h1>Tag</h1>";
   listsByTag.forEach((_, tag) => {
     htmlStr += `<a href="/tag/${tag}" data-sl class="chip">${tag}</a>`;
@@ -405,7 +406,7 @@ const postsList = [];
   });
 
   listsByTag.forEach((list, tag) => {
-    let htmlStr = '<div class="posts-group card">';
+    let htmlStr = '<div class="posts-group">';
     htmlStr += `<h1>${tag}</h1>`;
     list.forEach((post) => {
       htmlStr += `
