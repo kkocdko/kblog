@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <base href="/toy/stresstest/" />
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.css"
+  />
+  <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
+  <script src="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.js"></script>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="rgb(98, 0, 238)" />
+  <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
+  <link rel="icon" href="favicon.svg" />
+  <title>Stress Test</title>
+</head>
+<style>
+  body {
+    min-width: 310px;
+    max-width: 350px;
+    height: auto;
+  }
+
+  #master-switch-container {
+    justify-content: center;
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  #master-switch-container > label {
+    margin-right: 0;
+    margin-left: 10px;
+  }
+
+  #circular-progress {
+    position: absolute;
+    right: 20px;
+  }
+
+  #circular-progress .mdc-circular-progress__circle-right {
+    position: absolute;
+  }
+</style>
+<body>
+  <div class="mdc-card">
+    <div class="mdc-form-field" data-mdc-auto-init="MDCFormField">
+      <div class="mdc-checkbox" data-mdc-auto-init="MDCCheckbox">
+        <input
+          id="enable-cpu"
+          checked
+          type="checkbox"
+          class="mdc-checkbox__native-control"
+        />
+        <div class="mdc-checkbox__background">
+          <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+            <path
+              class="mdc-checkbox__checkmark-path"
+              fill="none"
+              d="M1.73,12.91 8.1,19.28 22.79,4.59"
+            ></path>
+          </svg>
+          <div class="mdc-checkbox__mixedmark"></div>
+        </div>
+        <div class="mdc-checkbox__ripple"></div>
+      </div>
+      <label for="enable-cpu">CPU Stress Test</label>
+    </div>
+    <div class="mdc-form-field" data-mdc-auto-init="MDCFormField">
+      <div class="mdc-checkbox" data-mdc-auto-init="MDCCheckbox">
+        <input
+          id="enable-gpu"
+          checked
+          type="checkbox"
+          class="mdc-checkbox__native-control"
+        />
+        <div class="mdc-checkbox__background">
+          <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+            <path
+              class="mdc-checkbox__checkmark-path"
+              fill="none"
+              d="M1.73,12.91 8.1,19.28 22.79,4.59"
+            ></path>
+          </svg>
+          <div class="mdc-checkbox__mixedmark"></div>
+        </div>
+        <div class="mdc-checkbox__ripple"></div>
+      </div>
+      <label for="enable-gpu">GPU Stress Test</label>
+    </div>
+    <div
+      id="master-switch-container"
+      class="mdc-form-field"
+      data-mdc-auto-init="MDCFormField"
+    >
+      <div class="mdc-switch" data-mdc-auto-init="MDCSwitch">
+        <div class="mdc-switch__track"></div>
+        <div class="mdc-switch__thumb-underlay">
+          <div class="mdc-switch__thumb"></div>
+          <input
+            type="checkbox"
+            id="master-switch"
+            class="mdc-switch__native-control"
+            role="switch"
+            aria-checked="false"
+          />
+        </div>
+      </div>
+      <label for="master-switch">Off / On</label>
+      <div
+        id="circular-progress"
+        class="mdc-circular-progress mdc-circular-progress--large"
+        data-mdc-auto-init="MDCCircularProgress"
+      >
+        <div class="mdc-circular-progress__determinate-container">
+          <svg
+            class="mdc-circular-progress__determinate-circle-graphic"
+            viewBox="0 0 48 48"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              class="mdc-circular-progress__determinate-circle"
+              cx="24"
+              cy="24"
+              r="18"
+              stroke-dasharray="113.097"
+              stroke-dashoffset="113.097"
+            />
+          </svg>
+        </div>
+        <div class="mdc-circular-progress__indeterminate-container">
+          <div class="mdc-circular-progress__spinner-layer">
+            <div
+              class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-left"
+            >
+              <svg
+                class="mdc-circular-progress__indeterminate-circle-graphic"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="18"
+                  stroke-dasharray="113.097"
+                  stroke-dashoffset="56.549"
+                />
+              </svg>
+            </div>
+            <div class="mdc-circular-progress__gap-patch">
+              <svg
+                class="mdc-circular-progress__indeterminate-circle-graphic"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="18"
+                  stroke-dasharray="113.097"
+                  stroke-dashoffset="56.549"
+                />
+              </svg>
+            </div>
+            <div
+              class="mdc-circular-progress__circle-clipper mdc-circular-progress__circle-right"
+            >
+              <svg
+                class="mdc-circular-progress__indeterminate-circle-graphic"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle
+                  cx="24"
+                  cy="24"
+                  r="18"
+                  stroke-dasharray="113.097"
+                  stroke-dashoffset="56.549"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  "use strict";
+
+  mdc.autoInit();
+  navigator.serviceWorker.register("sw.js");
+
+  const masterSwitch = document.querySelector("#master-switch");
+  const circularProgress = document.querySelector("#circular-progress");
+  const cpuCheckbox = document.querySelector("#enable-cpu");
+  const gpuCheckbox = document.querySelector("#enable-gpu");
+
+  const cpuCount = navigator.hardwareConcurrency;
+  const workersList = [];
+
+  const makeWorker = (workerFn) => {
+    const fnStr = `(${workerFn.toString()})()`;
+    const fnBolb = new Blob([fnStr]);
+    const fnUrl = URL.createObjectURL(fnBolb);
+    const worker = new Worker(fnUrl);
+    return worker;
+  };
+
+  const cpuWorker = () => {
+    while (true);
+  };
+
+  const addCpuWorker = () => {
+    workersList.push(makeWorker(cpuWorker));
+  };
+
+  const gpuWorker = () => {
+    onmessage = (e) => {
+      console.log(e);
+    };
+  };
+
+  const addGpuWorker = () => {
+    alert("GPU Stress Test is still developing...");
+    // const worker = makeWorker(gpuWorker)
+    // workersList.push(makeWorker(gpuWorker));
+  };
+
+  const startStressTest = () => {
+    if (cpuCheckbox.checked) {
+      for (let i = 0; i < cpuCount; i++) {
+        addCpuWorker();
+      }
+    }
+    if (gpuCheckbox.checked) {
+      addGpuWorker();
+    }
+  };
+
+  const stopStressTest = () => {
+    workersList.forEach((worker) => {
+      worker.terminate();
+    });
+    workersList.length = 0;
+  };
+
+  circularProgress.show = () => {
+    circularProgress.MDCCircularProgress.determinate = false;
+  };
+
+  circularProgress.hide = () => {
+    circularProgress.style.opacity = 0;
+    setTimeout(() => {
+      circularProgress.MDCCircularProgress.determinate = true;
+      circularProgress.style.opacity = 1;
+    }, 250);
+  };
+
+  masterSwitch.addEventListener("change", () => {
+    if (masterSwitch.checked) {
+      circularProgress.show();
+      startStressTest();
+    } else {
+      circularProgress.hide();
+      stopStressTest();
+    }
+  });
+</script>

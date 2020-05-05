@@ -1,9 +1,23 @@
 "use strict";
 
-const cacheName = "solarsystem";
+const cacheName = "stresstest";
 const filesList = [
   {
     url: "./",
+    updateDate: 1588525108016,
+  },
+  {
+    url:
+      "//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.css",
+    updateDate: 1588525108016,
+  },
+  {
+    url: "../misc/material-components-web-kmod.css",
+    updateDate: 1588525108016,
+  },
+  {
+    url:
+      "//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.js",
     updateDate: 1588525108016,
   },
   {

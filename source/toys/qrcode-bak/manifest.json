@@ -1,11 +1,11 @@
 {
-  "name": "Markdown Editor",
-  "short_name": "MDEditor",
-  "description": "A simple markdown editor",
+  "name": "QRCode Generator",
+  "short_name": "QR Generator",
+  "description": "Generate QRCode from string.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#fff",
-  "theme_color": "#fff",
+  "background_color": "#f8f9fa",
+  "theme_color": "#0078d7",
   "icons": [
     {
       "src": "favicon.svg",

@@ -10,7 +10,7 @@ title: Toys
 
 ### Chrome Dino
 
-[/toy/dino](/toy/dino)
+<!-- [/toy/dino](/toy/dino) -->
 
 从Chrome中抽离出的离线小恐龙游戏
 
@@ -20,7 +20,7 @@ title: Toys
 
 ### Rubiks Cube
 
-[/toy/rubikscube](/toy/rubikscube)
+<!-- [/toy/rubikscube](/toy/rubikscube) -->
 
 Google Doodle上的交互式魔方
 
@@ -30,9 +30,11 @@ Google Doodle上的交互式魔方
 
 ### Markdown Editor
 
-[/toy/mdeditor](/toy/mdeditor)
+<!-- [/toy/mdeditor](/toy/mdeditor) -->
 
 简易Markdown编辑器
+
+（暂时下线）
 
 <h2></h2>
 
@@ -46,9 +48,11 @@ Google Doodle上的交互式魔方
 
 ### QRCode Generator
 
-[/toy/qrcode](/toy/qrcode)
+<!-- [/toy/qrcode](/toy/qrcode) -->
 
 二维码生成器（生成SVG矢量图）
+
+（暂时下线）
 
 <h2></h2>
 
@@ -62,7 +66,7 @@ Google Doodle上的交互式魔方
 
 ### Image Converter
 
-[/toy/imgconverter](/toy/imgconverter)
+<!-- [/toy/imgconverter](/toy/imgconverter) -->
 
 图片格式转换器（基于Canvas，可读取浏览器支持的所有图片格式）
 
@@ -72,7 +76,7 @@ Google Doodle上的交互式魔方
 
 > Still Developing
 
-[/toy/imgcomparator](/toy/imgcomparator)
+<!-- [/toy/imgcomparator](/toy/imgcomparator) -->
 
 <h2></h2>
 
@@ -81,3 +85,9 @@ Google Doodle上的交互式魔方
 [/toy/base64](/toy/base64)
 
 自用的小工具，将本地文件以Base64进行编码
+
+### Stress Test
+
+[/toy/stresstest](/toy/stresstest)
+
+CPU和GPU压力测试，可以用来烤机

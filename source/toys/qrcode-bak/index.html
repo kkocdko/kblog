@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <base href="/toy/qrcode/" />
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css"
+    />
+    <script
+      defer
+      src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
+      onload="mdc.autoInit();"
+    ></script>
+    <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="qrcode.js"></script>
+    <script defer src="script.js"></script>
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      navigator.serviceWorker.register("sw.js");
+    </script>
+    <meta name="theme-color" content="rgb(63,81,181)" />
+    <!-- [Font-Awesome](https://github.com/FortAwesome/Font-Awesome) -->
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="icon" href="favicon.svg" />
+    <title>QRCode Generator</title>
+  </head>
+  <body>
+    <div id="main-panel" class="mdc-card">
+      <div id="svg-viewer"></div>
+      <div
+        class="mdc-text-field mdc-text-field--outlined"
+        data-mdc-auto-init="MDCTextField"
+      >
+        <input
+          id="svg-content"
+          class="mdc-text-field__input"
+          spellcheck="false"
+          spellcheck="false"
+          autocapitalize="off"
+          autocomplete="off"
+          autocorrect="off"
+        />
+        <div class="mdc-notched-outline">
+          <div class="mdc-notched-outline__leading"></div>
+          <div class="mdc-notched-outline__notch">
+            <label for="text-field-hero-input" class="mdc-floating-label">
+              Content
+            </label>
+          </div>
+          <div class="mdc-notched-outline__trailing"></div>
+        </div>
+      </div>
+      <div class="mdc-card__action-buttons">
+        <button
+          id="refresh-btn"
+          class="mdc-button mdc-button--outlined"
+          data-mdc-auto-init="MDCRipple"
+        >
+          <span class="mdc-button__ripple"></span>
+          Refresh
+        </button>
+        <button
+          id="download-btn"
+          class="mdc-button mdc-button--raised"
+          data-mdc-auto-init="MDCRipple"
+        >
+          <span class="mdc-button__ripple"></span>
+          Download
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

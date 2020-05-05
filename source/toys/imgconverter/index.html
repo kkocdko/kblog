@@ -1,164 +1,324 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width" />
-    <base href="/toy/imgconverter/" />
-    <link
-      rel="stylesheet"
-      href="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css"
-    />
-    <script
-      defer
-      src="//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js"
-      onload="mdc.autoInit();"
-    ></script>
-    <link rel="stylesheet" href="/toy/misc/material-components-web-kmod.css" />
-    <link rel="stylesheet" href="style.css" />
-    <script defer src="script.js"></script>
-    <link rel="manifest" href="manifest.json" />
-    <script>
-      navigator.serviceWorker.register("sw.js");
-    </script>
-    <meta name="theme-color" content="rgb(63,81,181)" />
-    <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
-    <link rel="shortcut icon" href="favicon.png" />
-    <link rel="icon" href="favicon.svg" />
-    <title>Image Converter</title>
-  </head>
-  <body>
-    <input id="input-file" type="file" autocomplete="off" />
-    <div id="console-panel" class="mdc-card">
-      <label
-        id="select-file-btn"
-        for="input-file"
-        class="mdc-button mdc-button--raised"
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <base href="/toy/imgconverter/" />
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.css"
+  />
+  <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
+  <script src="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.js"></script>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="rgb(98, 0, 238)" />
+  <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
+  <link rel="icon" href="favicon.svg" />
+  <title>Image Converter</title>
+</head>
+<style>
+  body {
+    grid-template-rows: auto;
+    grid-template-columns: minmax(250px, 3fr) 7fr;
+    max-width: 900px;
+    max-height: 600px;
+  }
+
+  #input-file {
+    display: none;
+  }
+
+  #console-panel {
+    display: grid;
+    grid-template-rows: auto auto auto auto 1fr;
+    gap: 20px;
+  }
+
+  #console-panel .mdc-select__anchor {
+    width: 100%;
+  }
+
+  #viewer-panel {
+    justify-content: space-between;
+  }
+
+  /* *,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: rgb(248, 249, 250);
+}
+
+
+#console {
+  display: grid;
+  grid-template-rows: 50px 40px auto auto;
+  grid-template-columns: auto;
+  gap: 15px;
+  align-content: start;
+}
+
+#console > label {
+  height: 50px;
+  font-size: 16px;
+  line-height: 50px;
+}
+
+#console > select {
+  padding: 0 5px;
+}
+
+#input-file {
+  display: none;
+}
+
+#viewer {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+
+#viewer > img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.2));
+}
+
+.buttons-bar {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}
+
+@media screen and (max-width: 550px) {
+  body {
+    grid-template-rows: auto 1fr;
+    grid-template-columns: auto;
+    max-width: unset;
+    max-height: unset;
+  }
+} */
+</style>
+<body>
+  <input id="input-file" type="file" autocomplete="off" />
+  <div id="console-panel" class="mdc-card">
+    <label
+      id="select-file-btn"
+      for="input-file"
+      class="mdc-button mdc-button--raised"
+      data-mdc-auto-init="MDCRipple"
+    >
+      <span class="mdc-button__ripple"></span>
+      Select File
+    </label>
+    <div
+      id="convert-type-selector"
+      class="mdc-select mdc-select--outlined"
+      data-mdc-auto-init="MDCSelect"
+    >
+      <div class="mdc-select__anchor">
+        <i class="mdc-select__dropdown-icon"></i>
+        <div
+          class="mdc-select__selected-text"
+          aria-labelledby="outlined-select-label"
+        ></div>
+        <span class="mdc-notched-outline">
+          <span class="mdc-notched-outline__leading"></span>
+          <span class="mdc-notched-outline__notch">
+            <span class="mdc-floating-label">
+              Type
+            </span>
+          </span>
+          <span class="mdc-notched-outline__trailing"></span>
+        </span>
+      </div>
+      <div class="mdc-select__menu mdc-menu mdc-menu-surface" role="listbox">
+        <ul class="mdc-list">
+          <li
+            class="mdc-list-item mdc-list-item--selected"
+            aria-selected="true"
+            data-value="jpeg"
+            role="option"
+          >
+            <span class="mdc-list-item__text">
+              JPEG
+            </span>
+          </li>
+          <li class="mdc-list-item" data-value="webp" role="option">
+            <span class="mdc-list-item__text">
+              WEBP
+            </span>
+          </li>
+          <li class="mdc-list-item" data-value="png" role="option">
+            <span class="mdc-list-item__text">
+              PNG
+            </span>
+          </li>
+          <li class="mdc-list-item" data-value="gif" role="option">
+            <span class="mdc-list-item__text">
+              GIF
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div
+      id="convert-quality-selector"
+      class="mdc-select mdc-select--outlined"
+      data-mdc-auto-init="MDCSelect"
+    >
+      <div class="mdc-select__anchor">
+        <i class="mdc-select__dropdown-icon"></i>
+        <div
+          class="mdc-select__selected-text"
+          aria-labelledby="outlined-select-label"
+        ></div>
+        <span class="mdc-notched-outline">
+          <span class="mdc-notched-outline__leading"></span>
+          <span class="mdc-notched-outline__notch">
+            <span class="mdc-floating-label">
+              Quality
+            </span>
+          </span>
+          <span class="mdc-notched-outline__trailing"></span>
+        </span>
+      </div>
+      <div class="mdc-select__menu mdc-menu mdc-menu-surface" role="listbox">
+        <ul class="mdc-list">
+          <li
+            class="mdc-list-item mdc-list-item--selected"
+            aria-selected="true"
+            data-value="0.75"
+            role="option"
+          >
+            <span class="mdc-list-item__text">
+              75%
+            </span>
+          </li>
+          <li class="mdc-list-item" data-value="0.9" role="option">
+            <span class="mdc-list-item__text">
+              90%
+            </span>
+          </li>
+          <li class="mdc-list-item" data-value="1" role="option">
+            <span class="mdc-list-item__text">
+              Lossless
+            </span>
+          </li>
+          <li class="mdc-list-item" data-value="0" role="option">
+            <span class="mdc-list-item__text">
+              Modify
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <p>
+      Please click the "SELECT FILE" button or drag file.
+    </p>
+    <p>
+      Click the "DOWNLOAD" button, right click "Save As" or drag to save the
+      converted image.
+    </p>
+  </div>
+  <div id="viewer-panel" class="mdc-card">
+    <img />
+    <div class="mdc-card__action-buttons">
+      <button
+        id="download-btn"
+        class="mdc-button"
         data-mdc-auto-init="MDCRipple"
       >
         <span class="mdc-button__ripple"></span>
-        Select File
-      </label>
-      <div
-        id="convert-type-selector"
-        class="mdc-select mdc-select--outlined"
-        data-mdc-auto-init="MDCSelect"
-      >
-        <div class="mdc-select__anchor">
-          <i class="mdc-select__dropdown-icon"></i>
-          <div
-            class="mdc-select__selected-text"
-            aria-labelledby="outlined-select-label"
-          ></div>
-          <span class="mdc-notched-outline">
-            <span class="mdc-notched-outline__leading"></span>
-            <span class="mdc-notched-outline__notch">
-              <span class="mdc-floating-label">
-                Type
-              </span>
-            </span>
-            <span class="mdc-notched-outline__trailing"></span>
-          </span>
-        </div>
-        <div class="mdc-select__menu mdc-menu mdc-menu-surface" role="listbox">
-          <ul class="mdc-list">
-            <li
-              class="mdc-list-item mdc-list-item--selected"
-              aria-selected="true"
-              data-value="jpeg"
-              role="option"
-            >
-              <span class="mdc-list-item__text">
-                JPEG
-              </span>
-            </li>
-            <li class="mdc-list-item" data-value="webp" role="option">
-              <span class="mdc-list-item__text">
-                WEBP
-              </span>
-            </li>
-            <li class="mdc-list-item" data-value="png" role="option">
-              <span class="mdc-list-item__text">
-                PNG
-              </span>
-            </li>
-            <li class="mdc-list-item" data-value="gif" role="option">
-              <span class="mdc-list-item__text">
-                GIF
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div
-        id="convert-quality-selector"
-        class="mdc-select mdc-select--outlined"
-        data-mdc-auto-init="MDCSelect"
-      >
-        <div class="mdc-select__anchor">
-          <i class="mdc-select__dropdown-icon"></i>
-          <div
-            class="mdc-select__selected-text"
-            aria-labelledby="outlined-select-label"
-          ></div>
-          <span class="mdc-notched-outline">
-            <span class="mdc-notched-outline__leading"></span>
-            <span class="mdc-notched-outline__notch">
-              <span class="mdc-floating-label">
-                Quality
-              </span>
-            </span>
-            <span class="mdc-notched-outline__trailing"></span>
-          </span>
-        </div>
-        <div class="mdc-select__menu mdc-menu mdc-menu-surface" role="listbox">
-          <ul class="mdc-list">
-            <li
-              class="mdc-list-item mdc-list-item--selected"
-              aria-selected="true"
-              data-value="0.75"
-              role="option"
-            >
-              <span class="mdc-list-item__text">
-                75%
-              </span>
-            </li>
-            <li class="mdc-list-item" data-value="0.9" role="option">
-              <span class="mdc-list-item__text">
-                90%
-              </span>
-            </li>
-            <li class="mdc-list-item" data-value="1" role="option">
-              <span class="mdc-list-item__text">
-                Lossless
-              </span>
-            </li>
-            <li class="mdc-list-item" data-value="0" role="option">
-              <span class="mdc-list-item__text">
-                Modify
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <p>
-        Please click the "SELECT FILE" button or drag file.
-      </p>
-      <p>
-        Click the "DOWNLOAD" button, right click "Save As" or drag to save the
-        converted image.
-      </p>
+        Download
+      </button>
     </div>
-    <div id="viewer-panel" class="mdc-card">
-      <img />
-      <div class="mdc-card__action-buttons">
-        <button
-          id="download-btn"
-          class="mdc-button"
-          data-mdc-auto-init="MDCRipple"
-        >
-          <span class="mdc-button__ripple"></span>
-          Download
-        </button>
-      </div>
-    </div>
-  </body>
-</html>
+  </div>
+</body>
+<script>
+  "use strict";
+
+  mdc.autoInit();
+  navigator.serviceWorker.register("sw.js");
+
+  const inputFile = document.querySelector("#input-file");
+  const outputImg = document.querySelector("#viewer>img");
+  const typeSwitch = document.querySelector("#convert-config-type");
+  // const sizeSwitch = document.querySelector('#convert-config-size')
+  const downloadBth = document.querySelector("#download-btn");
+
+  const refreshImage = () => {
+    const selectedValueArr = typeSwitch.value.split(" ");
+    const meta = selectedValueArr[0];
+    const quality = Number(selectedValueArr[1]);
+    const reader = new window.FileReader();
+    reader.onload = async (event) => {
+      const canvas = document.createElement("canvas");
+      const img = new window.Image();
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas
+          .getContext("2d")
+          .drawImage(img, 0, 0, canvas.width, canvas.height);
+        outputImg.src = canvas.toDataURL(meta, quality);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(inputFile.files[0]);
+  };
+
+  const downloadImg = (img, fileName = "download") => {
+    const aTag = document.createElement("a");
+    aTag.download = fileName;
+    aTag.href = img.src;
+    aTag.click();
+  };
+
+  inputFile.addEventListener("change", refreshImage);
+
+  typeSwitch.addEventListener("change", () => {
+    const selectedOption = typeSwitch.selectedOptions[0];
+    if (selectedOption.classList.contains("modify")) {
+      const qualityPercent = window.prompt(
+        "Image compress quality (0 ~ 100)",
+        75
+      );
+      const quality = (qualityPercent / 100).toFixed(2);
+      selectedOption.value = selectedOption.value.split(" ")[0] + " " + quality;
+      selectedOption.textContent =
+        selectedOption.textContent.split("(")[0] +
+        "(" +
+        qualityPercent +
+        "%) (Modify)";
+    }
+    refreshImage();
+  });
+
+  // sizeSwitchEl.addEventListener('change', () => {
+  //   const selectedOption = sizeSwitchEl.selectedOptions[0]
+  //   if (selectedOption.classList.contains('modify-size')) {
+  //     const size = window.prompt('图片宽高', '800x600')
+  //     selectedOption.value = size
+  //     selectedOption.textContent = selectedOption.textContent.split('(')[0] + '(' + qualityPercent + '%质量) (自定义)'
+  //   }
+  // })
+
+  downloadBth.addEventListener("click", () => {
+    if (outputImg.src) {
+      downloadImg(outputImg);
+    } else {
+      window.alert("Nothing to download!");
+    }
+  });
+</script>
