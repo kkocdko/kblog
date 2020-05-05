@@ -6,10 +6,6 @@
   padding: 0;
 }
 
-:root {
-  --mdc-theme-primary: rgb(63, 81, 181);
-}
-
 html {
   display: grid;
   align-items: center;

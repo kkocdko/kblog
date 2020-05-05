@@ -1,7 +1,7 @@
 {
-  "name": "Random Number Generator",
-  "short_name": "Rand Num",
-  "description": "A simple random number generator.",
+  "name": "Stress Test",
+  "short_name": "Stress Test",
+  "description": "CPU and GPU stress test.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "rgb(248, 249, 250)",

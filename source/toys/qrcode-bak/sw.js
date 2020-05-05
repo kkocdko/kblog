@@ -1,38 +1,48 @@
 "use strict";
 
-const cacheName = "mdeditor";
+const cacheName = "qrcode";
 const filesList = [
   {
     url: "./",
-    updateDate: 1585193258101,
+    updateDate: 1586884042956,
   },
   {
-    url: "//cdn.jsdelivr.net/gh/kkocdko/gfmstyle@1.0.1/dist/gfmstyle.min.css",
-    updateDate: 1585193258101,
+    url:
+      "//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.css",
+    updateDate: 1586884042956,
   },
   {
-    url: "//cdn.jsdelivr.net/npm/marked@0.2.10/lib/marked.min.js",
-    updateDate: 1585193258101,
+    url:
+      "//cdn.jsdelivr.net/npm/material-components-web@5.1.0/dist/material-components-web.min.js",
+    updateDate: 1586884042956,
+  },
+  {
+    url: "../misc/material-components-web-kmod.css",
+    updateDate: 1586884042956,
   },
   {
     url: "style.css",
-    updateDate: 1585193258101,
+    updateDate: 1586884042956,
+  },
+  {
+    url: "qrcode.js",
+    updateDate: 1586884042956,
   },
   {
     url: "script.js",
-    updateDate: 1585193258101,
+    updateDate: 1586884042956,
   },
   {
     url: "favicon.svg",
-    updateDate: 1585193258101,
+    updateDate: 1586884042956,
   },
   {
     url: "favicon.png",
-    updateDate: 1585193258101,
+    updateDate: 1586884042956,
   },
   {
     url: "manifest.json",
-    updateDate: 1585193258101,
+    updateDate: 1586884042956,
   },
 ];
 
