@@ -32,7 +32,7 @@ If Terser convert `const` to `let`:
 let a=1,b=2,c=3; // 16 chars
 ```
 
-But Terser's major contributors [refuse to implement this feature](https://github.com/terser-js/terser/issues/172). Certainly, is unsafe, but who will try to change a constant?
+But Terser's major contributors [refuse to implement this feature](https://github.com/terser-js/terser/issues/172). Certainly, it's unsafe, but who will try to change a constant?
 
 ### Solution
 
