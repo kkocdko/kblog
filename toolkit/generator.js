@@ -6,9 +6,6 @@ process.on("exit", () => console.timeEnd("generate time"));
 const path = require("path");
 const fs = require("file-system"); // This is not native fs
 const marked = require("marked");
-const htmlMinifier = require("html-minifier-terser");
-const CleanCss = require("clean-css");
-const terser = require("terser");
 
 const mfs = {
   r2a: require("path").join.bind(null, __dirname, ".."), // Relative to absolute
@@ -37,68 +34,65 @@ const mfs = {
   },
 };
 
-const minifier = {
-  html(str) {
-    if (process.argv.includes("--dev-mode")) {
-      return str;
-    }
-    return htmlMinifier.minify(str, {
-      collapseInlineTagWhitespace: true,
-      collapseBooleanAttributes: true,
-      collapseWhitespace: true,
-      continueOnParseError: true,
-      removeAttributeQuotes: true,
-      removeComments: true,
-      sortAttributes: true,
-      sortClassName: true,
-      minifyURLs: true,
-    });
-  },
-  htmlMd(str) {
-    if (process.argv.includes("--dev-mode")) {
-      return str;
-    }
-    return htmlMinifier.minify(str, {
-      collapseBooleanAttributes: true,
-      collapseWhitespace: true,
-      continueOnParseError: true,
-      removeAttributeQuotes: true,
-      removeComments: true,
-      sortAttributes: true,
-      sortClassName: true,
-      minifyURLs: true,
-    });
-  },
-  css(str) {
-    if (process.argv.includes("--dev-mode")) {
-      return str;
-    }
-    return new CleanCss({ level: 2 }).minify(str).styles;
-  },
-  js(str) {
-    if (process.argv.includes("--dev-mode")) {
-      return str;
-    }
-    str = str.replace(/const\s/g, "let ");
-    str = str.replace(/"use strict";/g, "");
-    str = terser.minify(str, {
-      compress: {
-        booleans_as_integers: true,
-        passes: 3,
-        unsafe: true,
-        unsafe_arrows: true,
-        unsafe_comps: true,
-        unsafe_Function: true,
-        unsafe_math: true,
-        unsafe_methods: true,
-        unsafe_proto: true,
-        unsafe_regexp: true,
-        unsafe_undefined: true,
-      },
-    }).code;
-    return str.replace(/;$/, "");
-  },
-};
+const minifier = (() => {
+  if (process.argv.includes("--dev-mode")) {
+    return {
+      html: (s) => s,
+      htmlMd: (s) => s,
+      css: (s) => s,
+      js: (s) => s,
+    };
+  } else {
+    const htmlMinifier = require("html-minifier-terser");
+    const CleanCss = require("clean-css");
+    const terser = require("terser");
+    return {
+      html: (s) =>
+        htmlMinifier.minify(s, {
+          collapseInlineTagWhitespace: true,
+          collapseBooleanAttributes: true,
+          collapseWhitespace: true,
+          continueOnParseError: true,
+          removeAttributeQuotes: true,
+          removeComments: true,
+          sortAttributes: true,
+          sortClassName: true,
+          minifyURLs: true,
+        }),
+      htmlMd: (s) =>
+        htmlMinifier.minify(s, {
+          collapseBooleanAttributes: true,
+          collapseWhitespace: true,
+          continueOnParseError: true,
+          removeAttributeQuotes: true,
+          removeComments: true,
+          sortAttributes: true,
+          sortClassName: true,
+          minifyURLs: true,
+        }),
+      css: (s) => new CleanCss({ level: 2 }).minify(s).styles,
+      js: (s) =>
+        terser
+          .minify(s.replace(/const\s/g, "let "), {
+            compress: {
+              booleans_as_integers: true,
+              passes: 3,
+              unsafe: true,
+              unsafe_arrows: true,
+              unsafe_comps: true,
+              unsafe_Function: true,
+              unsafe_math: true,
+              unsafe_methods: true,
+              unsafe_proto: true,
+              unsafe_regexp: true,
+              unsafe_undefined: true,
+            },
+          })
+          .code.replace(/"use strict";/g, "")
+          .replace(/;$/, ""),
+    };
+  }
+})();
 
 const parseMdFile = (filePath) => {
   const str = mfs.readFileStrSync(filePath);
@@ -272,12 +266,12 @@ const postsList = [];
     htmlStr += `
       <nav class="pagination">
         <a href="/" data-sl>〈◀</a>
-        <a href="/home/${curPage > 1 ? curPage - 1 : 1}" data-sl>◀</a>
+        <a href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}" data-sl>◀</a>
         <a href="/home/${
           curPage < lastPage ? curPage + 1 : lastPage
         }" data-sl>▶</a>
         <a href="/home/${lastPage}" data-sl>▶〉</a>
-      </ul>
+      </nav>
     `;
     if (curPage === 1) {
       makePage({

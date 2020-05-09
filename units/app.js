@@ -6,6 +6,8 @@ const topBar = document.querySelector("header");
 const sideBar = document.querySelector("aside");
 const sideBarMask = sideBar.querySelector(".mask");
 
+let originScrollY = 0;
+let currentScrollY;
 const scrollMarks = new Map();
 
 const fadeInElement = (element) => element.classList.add("in");
@@ -15,16 +17,15 @@ const fadeOutElement = (element) => element.classList.remove("in");
 const onSpaLinkClick = function (event) {
   event.preventDefault();
   history.pushState(null, null, this.href);
-  refreshContent({ toTop: true });
+  refreshContent(true);
 };
 
-const listenSpaLinks = () => {
+const listenSpaLinks = () =>
   document
     .querySelectorAll("[data-sl]")
     .forEach((element) => element.addEventListener("click", onSpaLinkClick));
-};
 
-const refreshContent = async ({ toTop }) => {
+const refreshContent = async (toTop) => {
   fadeInElement(loadingIndicator);
   fadeOutElement(sideBar);
   const pathname = location.pathname;
@@ -50,13 +51,16 @@ const refreshContent = async ({ toTop }) => {
   fadeOutElement(loadingIndicator);
 };
 
-listenSpaLinks();
-addEventListener("popstate", () => refreshContent({ toTop: false }));
-
-setTimeout(() => {
-  // Delay for the hash anchor
-  history.scrollRestoration = "manual";
-}, 700);
+addEventListener("scroll", () => {
+  currentScrollY = scrollY;
+  if (currentScrollY > originScrollY) {
+    fadeOutElement(topBar);
+  } else {
+    fadeInElement(topBar);
+  }
+  originScrollY = currentScrollY;
+  scrollMarks.set(location.pathname, currentScrollY);
+});
 
 document
   .querySelector("#show-sidebar-btn")
@@ -79,24 +83,18 @@ document.querySelector("#show-palette-btn").addEventListener("click", () => {
   }
 });
 
-// Use PointerEvent in the future
 sideBarMask.addEventListener("mousedown", () => fadeOutElement(sideBar));
 
 sideBarMask.addEventListener("touchstart", () => fadeOutElement(sideBar), {
   passive: true,
 });
 
-{
-  let originScrollY = 0;
-  let currentScrollY;
-  addEventListener("scroll", () => {
-    currentScrollY = scrollY;
-    if (currentScrollY > originScrollY) {
-      fadeOutElement(topBar);
-    } else {
-      fadeInElement(topBar);
-    }
-    originScrollY = currentScrollY;
-    scrollMarks.set(location.pathname, currentScrollY);
-  });
-}
+listenSpaLinks();
+addEventListener("popstate", () => refreshContent(false));
+
+setTimeout(() => {
+  // Avoid the blink's css bug
+  sideBar.style.display = "";
+  // Delay for the hash anchor
+  history.scrollRestoration = "manual";
+}, 700);
