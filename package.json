@@ -1,11 +1,10 @@
 {
   "name": "kblog",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "This is my blog.",
   "scripts": {
-    "preview": "node toolkit/generator.js && node toolkit/server.js",
-    "generate": "node toolkit/generator.js",
-    "develop": "node toolkit/watcher.js"
+    "preview": "node toolkit/generator.js --debug && node toolkit/server.js",
+    "generate": "node toolkit/generator.js"
   },
   "repository": {
     "type": "git",
@@ -19,9 +18,8 @@
   "homepage": "https://github.com/kkocdko/kblog#readme",
   "dependencies": {
     "clean-css": "^4.2.3",
-    "file-system": "^2.2.2",
     "html-minifier-terser": "^5.1.1",
-    "marked": "^1.1.0",
-    "terser": "^4.7.0"
+    "marked": "^1.1.1",
+    "terser": "^4.8.0"
   }
 }
