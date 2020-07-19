@@ -3,8 +3,9 @@
   "version": "3.0.2",
   "description": "This is my blog.",
   "scripts": {
-    "preview": "node toolkit/generator.js --debug && node toolkit/server.js",
-    "generate": "node toolkit/generator.js"
+    "generate": "node toolkit/generator.js",
+    "serve": "node toolkit/generator.js && node toolkit/server.js",
+    "dev-generate": "node toolkit/generator.js --dev-mode"
   },
   "repository": {
     "type": "git",

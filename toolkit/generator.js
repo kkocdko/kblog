@@ -92,7 +92,7 @@ const fsex = (() => {
 })();
 
 const minifier = (() => {
-  if (process.argv.includes("--debug")) {
+  if (process.argv.includes("--dev-mode")) {
     return {
       html: (s) => s,
       htmlMd: (s) => s,
