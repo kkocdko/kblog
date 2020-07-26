@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <link
+    rel="stylesheet"
+    href="//fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900"
+  />
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/npm/@mdi/font@5.3.45/css/materialdesignicons.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="//fonts.googleapis.com/css?family=Material+Icons"
+  />
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/npm/vuetify@2.3.3/dist/vuetify.min.css"
+  />
+  <script src="//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.js"></script>
+  <!-- <script src="//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js"></script> -->
+  <script src="//cdn.jsdelivr.net/npm/vuetify@2.3.3/dist/vuetify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+</head>
+
+<v-app>
+  <v-app-bar app>
+    <v-app-bar-nav-icon @click.stop="showNav = !showNav"></v-app-bar-nav-icon>
+    <v-toolbar-title>高考倒计时</v-toolbar-title>
+    <v-spacer></v-spacer>
+  </v-app-bar>
+
+  <v-navigation-drawer v-model="showNav" color="grey lighten-4" app temporary>
+    <v-list>
+      <nav-item icon-name="settings">设置</nav-item>
+      <nav-item icon-name="info">关于</nav-item>
+      <!-- <v-list-item link @click.stop="precise = !precise">
+        <v-list-item-action> </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
+            精确到毫秒
+            <v-checkbox @click.prevent v-model="precise"></v-checkbox>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item> -->
+    </v-list>
+  </v-navigation-drawer>
+
+  <v-main>
+    <v-card id="main-card" flat color="grey lighten-4">
+      <v-col>
+        距离 2021 年高考还有：
+        <ncee-countdown id="date-diff" :ncee-date="nceeDate"></ncee-countdown>
+      </v-col>
+    </v-card>
+  </v-main>
+</v-app>
+
+<style>
+  #main-card {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    font-size: 6vmin;
+  }
+
+  #date-diff .v-card {
+    margin: 0.4em 0.3em;
+    padding: 0.1em 0.3em;
+  }
+</style>
+
+<script>
+  Vue.component("nav-item", {
+    props: {
+      iconName: String,
+    },
+    template: `
+      <v-list-item link>
+        <v-list-item-action>
+          <v-icon>{{ iconName }}</v-icon>
+        </v-list-item-action>
+        <v-list-item-content>
+          <v-list-item-title>
+            <slot></slot>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    `,
+  });
+
+  Vue.component("ncee-countdown", {
+    props: {
+      nceeDate: String,
+      precise: Boolean,
+    },
+    data: () => ({
+      dateDiff: {
+        day: 0,
+        hour: 0,
+        minute: 0,
+        seconds: 0,
+        milliseconds: 0,
+      },
+    }),
+    computed: {
+      nceeMoment() {
+        return moment(this.nceeDate);
+      },
+    },
+    template: `
+      <v-row justify="center" align="center">
+        <v-card>{{ dateDiff.day }}</v-card>
+        天
+        <v-card>{{ dateDiff.hour | zeroPad(2) }}</v-card>
+        时
+        <v-card>{{ dateDiff.minute | zeroPad(2) }}</v-card>
+        分
+        <template v-if="precise">
+          <v-card>{{ dateDiff.seconds | zeroPad(2) }}.{{ dateDiff.milliseconds | zeroPad(3) }}</v-card>
+          秒
+        </template>
+        <template v-else>
+          <v-card>{{ dateDiff.seconds | zeroPad(2) }}</v-card>
+          秒
+        </template>
+      </v-row>
+    `,
+    filters: {
+      zeroPad: (num, len) => ("000000000" + num).slice(-len),
+    },
+    methods: {
+      updateDateDiff() {
+        const diff = this.nceeMoment.diff.bind(this.nceeMoment, moment());
+        this.dateDiff.day = diff("day");
+        this.dateDiff.hour = diff("hour") % 24;
+        this.dateDiff.minute = diff("minute") % 60;
+        this.dateDiff.seconds = diff("seconds") % 60;
+        this.dateDiff.milliseconds = diff("milliseconds") % 1000;
+      },
+    },
+    created() {
+      this.updateTimer = setInterval(this.updateDateDiff, 73);
+    },
+    beforeDestroy() {
+      clearInterval(this.updateTimer);
+    },
+  });
+
+  const vm = new Vue({
+    vuetify: new Vuetify(),
+    el: "v-app",
+    data: {
+      tab: "",
+      showNav: false,
+      precise: false,
+      nceeDate: "2021-06-07 09:00:00",
+    },
+    methods: {},
+    created() {},
+    beforeDestroy() {},
+  });
+</script>

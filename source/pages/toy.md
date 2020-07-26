@@ -8,6 +8,12 @@ title: Toys
 
 <h2></h2>
 
+### NCEE Countdown
+
+[/toy/ncee-countdown](/toy/ncee-countdown)
+
+赶时间做出来的高考倒计时页面。敏捷开发，敏捷开发。
+
 ### Chrome Dino
 
 <!-- [/toy/dino](/toy/dino) -->
