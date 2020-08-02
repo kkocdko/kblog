@@ -1,5 +1,3 @@
 "use strict";
 
-document.querySelector("#extra").outerHTML = `
-/* @ extra.html */
-`;
+document.querySelector("header").outerHTML = `/* @ extra.html */`;
