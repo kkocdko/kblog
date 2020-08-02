@@ -6,15 +6,62 @@
   padding: 0;
 }
 
-[data-sl] {
-  color: var(--theme-color);
-  text-decoration: none;
+html {
+  font-family: Microsoft YaHei, Arial, sans-serif;
+  background: rgb(248, 249, 250);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-html {
-  --theme-color: rgb(63, 81, 181);
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
-  background: rgb(248, 249, 250);
+body::before,
+body::after {
+  position: fixed;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s;
+  content: "";
+}
+
+body.loading::before,
+body.loading::after {
+  visibility: visible;
+  opacity: 1;
+}
+
+body::before {
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+body.loading::after {
+  top: 50%;
+  left: 50%;
+  margin: -20px;
+  padding: 17px;
+  border: 3px solid #3f51b5;
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  transform: rotate(3600deg);
+  transition: opacity 0.3s 0.1s, transform 6s linear;
+}
+
+@keyframes fadein {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+}
+
+body.loaded > main > *,
+body.loaded > footer {
+  -webkit-animation: fadein 0.3s;
+  animation: fadein 0.3s;
+}
+
+[data-sl] {
+  color: #3f51b5;
+  text-decoration: none;
 }
 
 main {
@@ -31,64 +78,12 @@ main {
   }
 }
 
-@keyframes fadein {
-  0% {
-    transform: translateY(10px);
-    opacity: 0;
-  }
-}
-
-main.spa > * {
-  animation: fadein 0.3s;
-}
-
-progress {
-  position: fixed;
-  height: 0;
-  transition: 0.3s;
-}
-
-progress:not(.in) {
-  visibility: hidden;
-  opacity: 0;
-}
-
-progress::before {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  text-align: center;
-  background: rgba(248, 249, 250, 0.5);
-  content: "";
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-progress.in::after {
-  position: fixed;
-  top: calc(15% + 50px);
-  left: calc(50% - 30px);
-  display: inline-block;
-  padding: 25px;
-  border: 5px solid var(--theme-color);
-  border-top-color: rgba(0, 0, 0, 0);
-  border-radius: 50%;
-  animation: spin 0.5s linear infinite;
-  content: "";
-}
-
 header {
   position: fixed;
   top: 0;
   width: 100%;
   height: 50px;
-  background: var(--theme-color);
+  background: #3f51b5;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   transition: 0.3s;
 }
@@ -97,108 +92,66 @@ header:not(.in) {
   transform: translateY(-55px);
 }
 
-header i {
+header > * {
   float: left;
   width: 50px;
   height: 50px;
-  padding: 10px;
+  padding: 11px;
   cursor: pointer;
   fill: #fff;
 }
 
-header #gotop-btn {
+header > :last-child {
   float: right;
 }
 
-header .avatar a {
-  display: block;
-  width: 30px;
-  height: 30px;
-  margin: 0 -10px;
-  background: url("/favicon.svg");
+header img {
+  width: 28px;
+  height: 28px;
+  margin-left: -11px;
   border: 2px solid #fff;
   border-radius: 50%;
 }
 
-aside {
+#sidebar-switch {
+  display: none;
+}
+
+#sidebar-switch + * {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  display: flex;
   visibility: hidden;
   transition: 0.3s;
 }
 
-aside.in {
+#sidebar-switch:checked + * {
   background: rgba(0, 0, 0, 0.5);
   visibility: visible;
 }
 
-aside .menu {
-  position: relative;
+#sidebar-switch + * nav {
   width: 70%;
-  max-width: 260px;
+  max-width: 230px;
+  height: 100vh;
+  padding-top: 50px;
   overflow: auto;
   background: #fff;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   transition: 0.3s;
 }
 
-aside:not(.in) .menu {
-  transform: translateX(calc(-100% - 20px));
+#sidebar-switch:not(:checked) + * nav {
+  transform: translateX(-120%);
 }
 
-aside .brand {
-  padding: 13% 13% 9%;
-  background: var(--theme-color);
-}
-
-aside #show-palette-btn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 50px;
-  height: 50px;
-  padding: 10px;
-  cursor: pointer;
-  opacity: 0.7;
-  fill: #fff;
-}
-
-aside .name {
-  width: 45%;
-  color: #fff;
-  font-size: 18px;
-  text-align: center;
-}
-
-aside .avatar {
+#sidebar-switch + * a {
   display: block;
-  margin-bottom: 13px;
-  padding: calc(50% - 2px);
-  background: url("/favicon.svg");
-  border: 2px solid;
-  border-radius: 50%;
-}
-
-aside .menu nav a {
-  display: block;
-  padding-left: 13%;
+  padding-left: 15%;
   color: #333;
   line-height: 50px;
-}
-
-aside nav svg {
-  width: 24px;
-  margin: 13px 9px 0 0;
-  vertical-align: top;
-  fill: #555;
-}
-
-aside .mask {
-  flex-grow: 1;
 }
 
 footer,
@@ -208,7 +161,7 @@ footer * {
   line-height: 3em;
   text-align: center;
   text-decoration: none;
-  background: var(--theme-color);
+  background: #3f51b5;
 }
 
 main > * {
@@ -274,7 +227,7 @@ main > * {
   color: #fff;
   font-weight: normal;
   font-size: 22px;
-  background: var(--theme-color);
+  background: #3f51b5;
   border-radius: 4px;
 }
 

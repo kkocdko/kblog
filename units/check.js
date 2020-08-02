@@ -1,6 +1,4 @@
-try {
-  eval("async a=>a");
-} catch (_) {
+if (!(window.history && history.scrollRestoration)) {
   if (window.stop) stop();
   location = "//browser-update.org/update.html";
 }

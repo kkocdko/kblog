@@ -1,14 +1,15 @@
 "use strict";
 
-console.time("generate time");
-process.on("exit", () => console.timeEnd("generate time"));
-// setTimeout(() => process.exit(), 900);
-
-const path = require("path");
-const fs = require("fs");
-const marked = require("marked");
+// Timer
+{
+  console.time("generate time");
+  process.on("exit", () => console.timeEnd("generate time"));
+}
 
 const fsex = (() => {
+  const path = require("path");
+  const fs = require("fs");
+
   const r2a = (relativePath) =>
     path.isAbsolute(relativePath)
       ? relativePath
@@ -21,9 +22,11 @@ const fsex = (() => {
       if (error.code === "ENOENT") {
         madeDirPath = makeDir(path.dirname(dirPath), madeDirPath);
         makeDir(dirPath, madeDirPath);
-      } else if (!fs.statSync(dirPath).isDirectory()) {
-        throw error;
       }
+      // Dangerous?
+      // else if (!fs.statSync(dirPath).isDirectory()) {
+      //   throw error;
+      // }
     }
     return madeDirPath;
   };
@@ -42,7 +45,10 @@ const fsex = (() => {
   };
   const readFile = (filePath) => fs.readFileSync(filePath).toString();
   const readDir = (dirPath) =>
-    fs.readdirSync(dirPath).map((item) => path.join(dirPath, item));
+    fs.readdirSync(dirPath).map((filename) => ({
+      path: path.join(dirPath, filename),
+      mainName: path.parse(filename).name,
+    }));
   const writeFile = (filePath, data) => {
     makeDir(path.parse(filePath).dir);
     fs.writeFileSync(filePath, data);
@@ -130,7 +136,7 @@ const minifier = (() => {
       css: (s) => new CleanCss({ level: 2 }).minify(s).styles,
       js: (s) =>
         terser
-          .minify(s.replace(/const\s/g, "let "), {
+          .minify(s, {
             compress: {
               booleans_as_integers: true,
               passes: 3,
@@ -151,18 +157,9 @@ const minifier = (() => {
   }
 })();
 
-const parseMdFile = (filePath) => {
-  const str = fsex.readFile(filePath);
-  const readMeta = (key) => {
-    const matched = str.match(`\n${key}: ([^\n]*)`);
-    return matched ? matched[1] : null;
-  };
-  const mdStr = str.slice(str.indexOf("\n```") + 4);
-  const content = `# ${readMeta("title")}\n\n${mdStr}\n`;
-  return { readMeta, content };
-};
-
 const makePage = (() => {
+  const marked = require("marked");
+
   const template = minifier.html(fsex.readFile("./units/page.html"));
   return ({
     realPath = "",
@@ -194,7 +191,18 @@ const makePage = (() => {
   };
 })();
 
-// Initialization
+const parseMdFile = (filePath) => {
+  const str = fsex.readFile(filePath);
+  const readMeta = (key) => {
+    const matched = str.match(`\n${key}: ([^\n]*)`);
+    return matched ? matched[1] : null;
+  };
+  const mdStr = str.slice(str.indexOf("\n```") + 4);
+  const content = `# ${readMeta("title")}\n\n${mdStr}\n`;
+  return { readMeta, content };
+};
+
+// Init
 {
   fsex.removeDir("./public");
 
@@ -237,31 +245,11 @@ const makePage = (() => {
   fsex.copyDir("./source/res", "./public/res");
 }
 
-// Pages
-const pagesList = [];
-{
-  fsex.readDir("./source/pages").forEach((filePath) => {
-    const { readMeta, content } = parseMdFile(filePath);
-    const attr = {
-      name: path.parse(filePath).name,
-      title: readMeta("title"),
-      description: readMeta("description"),
-    };
-    makePage({
-      ...attr,
-      path: `/${attr.name}/`,
-      type: "markdown",
-      content,
-    });
-    pagesList.push(attr);
-  });
-}
-
 // Posts
 const postsList = [];
 {
-  fsex.readDir("./source/posts").forEach((filePath) => {
-    const { readMeta, content } = parseMdFile(filePath);
+  fsex.readDir("./source/posts").forEach((fileInfo) => {
+    const { readMeta, content } = parseMdFile(fileInfo.path);
     const attr = {
       id: readMeta("date").replace(/:|-|\s/g, ""),
       date: readMeta("date").split(" ")[0],
@@ -279,15 +267,37 @@ const postsList = [];
     postsList.push(attr);
     if (
       `${attr.id.slice(0, 8)}-${attr.id.slice(8, 12)} ${attr.title}` !==
-      path.parse(filePath).name
+      fileInfo.mainName
     ) {
-      console.warn(`filename is not standard: ${attr.title}`);
+      console.warn(
+        `filename is not standard: [${attr.title}] or [${fileInfo.mainName}]`
+      );
     }
   });
   postsList.sort((post1, post2) => post2.id - post1.id);
 }
 
-// Home
+// Custom Pages
+const pagesList = [];
+{
+  fsex.readDir("./source/pages").forEach((fileInfo) => {
+    const { readMeta, content } = parseMdFile(fileInfo.path);
+    const attr = {
+      name: fileInfo.mainName,
+      title: readMeta("title"),
+      description: readMeta("description"),
+    };
+    makePage({
+      ...attr,
+      path: `/${attr.name}/`,
+      type: "markdown",
+      content,
+    });
+    pagesList.push(attr);
+  });
+}
+
+// Pages - Home
 {
   const countPerPage = 10;
   const lastPage = Math.ceil(postsList.length / countPerPage);
@@ -304,13 +314,13 @@ const postsList = [];
       htmlStr += `
         <div class="post-intro">
           <h3>
-            <a href="/post/${post.id}" data-sl>${post.title}</a>
+            <a data-sl href="/post/${post.id}">${post.title}</a>
           </h3>
           <p>${post.description}</p>
           <p>
             ${post.tags
               .map(
-                (tag) => `<a href="/tag/${tag}" data-sl class="chip">${tag}</a>`
+                (tag) => `<a data-sl href="/tag/${tag}" class="chip">${tag}</a>`
               )
               .join("")}
           </p>
@@ -319,12 +329,12 @@ const postsList = [];
     }
     htmlStr += `
       <nav class="pagination">
-        <a href="/" data-sl>〈◀</a>
-        <a href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}" data-sl>◀</a>
-        <a href="/home/${
+        <a data-sl href="/">〈◀</a>
+        <a data-sl href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}">◀</a>
+        <a data-sl href="/home/${
           curPage < lastPage ? curPage + 1 : lastPage
-        }" data-sl>▶</a>
-        <a href="/home/${lastPage}" data-sl>▶〉</a>
+        }">▶</a>
+        <a data-sl href="/home/${lastPage}">▶〉</a>
       </nav>
     `;
     if (curPage === 1) {
@@ -346,7 +356,7 @@ const postsList = [];
   }
 }
 
-// Archive
+// Pages - Archive
 {
   const listsByYear = new Map();
   postsList.forEach((post) => {
@@ -360,7 +370,7 @@ const postsList = [];
   let htmlStr = '<div class="chips-group">';
   htmlStr += "<h1>Archive</h1>";
   listsByYear.forEach((_, year) => {
-    htmlStr += `<a href="/archive/${year}" data-sl class="chip">${year}</a>`;
+    htmlStr += `<a data-sl href="/archive/${year}" class="chip">${year}</a>`;
   });
   htmlStr += "</div>";
   makePage({
@@ -375,7 +385,7 @@ const postsList = [];
     htmlStr += `<h1>${year}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <a href="/post/${post.id}" data-sl>
+        <a data-sl href="/post/${post.id}">
           <span class="chip">${post.date}</span>
           ${post.title}
         </a>
@@ -391,7 +401,7 @@ const postsList = [];
   });
 }
 
-// Category
+// Pages - Category
 {
   const listsByCategory = new Map();
   postsList.forEach((post) => {
@@ -404,7 +414,7 @@ const postsList = [];
   let htmlStr = '<div class="chips-group">';
   htmlStr += "<h1>Category</h1>";
   listsByCategory.forEach((_, category) => {
-    htmlStr += `<a href="/category/${category}" data-sl class="chip">${category}</a>`;
+    htmlStr += `<a data-sl href="/category/${category}" class="chip">${category}</a>`;
   });
   htmlStr += "</div>";
   makePage({
@@ -419,7 +429,7 @@ const postsList = [];
     htmlStr += `<h1>${category}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <a href="/post/${post.id}" data-sl>
+        <a data-sl href="/post/${post.id}">
           <span class="chip">${post.date}</span>
           ${post.title}
         </a>
@@ -435,7 +445,7 @@ const postsList = [];
   });
 }
 
-// Tag
+// Pages - Tag
 {
   const listsByTag = new Map();
   postsList.forEach((post) =>
@@ -450,7 +460,7 @@ const postsList = [];
   let htmlStr = '<div class="chips-group">';
   htmlStr += "<h1>Tag</h1>";
   listsByTag.forEach((_, tag) => {
-    htmlStr += `<a href="/tag/${tag}" data-sl class="chip">${tag}</a>`;
+    htmlStr += `<a data-sl href="/tag/${tag}" class="chip">${tag}</a>`;
   });
   htmlStr += "</div>";
   makePage({
@@ -465,7 +475,7 @@ const postsList = [];
     htmlStr += `<h1>${tag}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <a href="/post/${post.id}" data-sl>
+        <a data-sl href="/post/${post.id}">
           <span class="chip">${post.date}</span>
           ${post.title}
         </a>
@@ -481,7 +491,7 @@ const postsList = [];
   });
 }
 
-// 404 Error
+// Pages - 404 Error
 {
   makePage({
     realPath: "/404.html",
