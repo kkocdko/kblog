@@ -23,7 +23,7 @@ var listenSpaLinks = () => {
 };
 
 onscroll = () => {
-  if (scrollY > lastScrollY) {
+  if (scrollY > lastScrollY && scrollY > 55) {
     topBar.classList.remove("in");
   } else {
     topBar.classList.add("in");
@@ -63,5 +63,9 @@ onpopstate = (_, toTop) => {
 
 listenSpaLinks();
 
-// Delay for the hash anchor
-setTimeout(() => (history.scrollRestoration = "manual"), 700);
+setTimeout(() => {
+  // Fix css bug
+  document.querySelector("body>label").style.display = "unset";
+  // Delay for the hash anchor
+  history.scrollRestoration = "manual";
+}, 700);
