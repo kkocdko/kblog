@@ -8,7 +8,7 @@
 
 html {
   font-family: Microsoft YaHei, Arial, sans-serif;
-  background: rgb(248, 249, 250);
+  background: rgba(250, 251, 252, 0.9);
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
@@ -31,7 +31,7 @@ body::before {
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(250, 251, 252, 0.9);
 }
 
 body.loading::after {
@@ -40,7 +40,7 @@ body.loading::after {
   margin: -20px;
   padding: 17px;
   border: 3px solid #3f51b5;
-  border-top-color: rgba(255, 255, 255, 0.9);
+  border-top-color: rgba(250, 251, 252, 0.9);
   border-radius: 50%;
   transform: rotate(3600deg);
   transition: opacity 0.3s 0.1s, transform 6s linear;
@@ -123,6 +123,7 @@ header img {
   right: 0;
   bottom: 0;
   left: 0;
+  display: none;
   visibility: hidden;
   transition: 0.3s;
 }
@@ -199,9 +200,9 @@ main > * {
 .pagination a {
   display: inline-block;
   padding: 12px 22px;
+  color: rgba(63, 81, 181, 0.7);
   font-weight: 900;
   font-size: 0.8rem;
-  opacity: 0.7;
 }
 
 .post-intro > * {
