@@ -6,257 +6,155 @@
   process.on("exit", () => console.timeEnd("generate time"));
 }
 
-const fsex = (() => {
-  const path = require("path");
-  const fs = require("fs");
+const fs = require("fs");
+const path = require("path");
 
-  const r2a = (relativePath) =>
-    path.isAbsolute(relativePath)
-      ? relativePath
-      : path.join(__dirname, "..", relativePath);
-  const makeDir = (dirPath, madeDirPath) => {
-    try {
-      fs.mkdirSync(dirPath);
-      madeDirPath = madeDirPath || dirPath;
-    } catch (error) {
-      if (error.code === "ENOENT") {
-        madeDirPath = makeDir(path.dirname(dirPath), madeDirPath);
-        makeDir(dirPath, madeDirPath);
-      }
-      // Dangerous?
-      // else if (!fs.statSync(dirPath).isDirectory()) {
-      //   throw error;
-      // }
-    }
-    return madeDirPath;
-  };
-  const removeDir = (dirPath) => {
-    if (fs.existsSync(dirPath)) {
-      fs.readdirSync(dirPath).forEach((item) => {
-        const itemPath = path.join(dirPath, item);
-        if (fs.statSync(itemPath).isDirectory()) {
-          removeDir(itemPath);
-        } else {
-          fs.unlinkSync(itemPath);
-        }
-      });
-      fs.rmdirSync(dirPath);
-    }
-  };
-  const readFile = (filePath) => fs.readFileSync(filePath).toString();
-  const readDir = (dirPath) =>
-    fs.readdirSync(dirPath).map((filename) => ({
-      path: path.join(dirPath, filename),
-      mainName: path.parse(filename).name,
-    }));
-  const writeFile = (filePath, data) => {
-    makeDir(path.parse(filePath).dir);
-    fs.writeFileSync(filePath, data);
-  };
-  const copyFile = (sourceFilePath, targetFilePath) => {
-    makeDir(path.parse(targetFilePath).dir);
-    fs.copyFileSync(sourceFilePath, targetFilePath);
-  };
-  const copyDir = (sourceDirPath, targetDirPath) => {
-    if (!fs.existsSync(targetDirPath)) {
-      makeDir(targetDirPath);
-    }
-    fs.readdirSync(sourceDirPath).forEach((item) => {
-      const sourceItemPath = path.join(sourceDirPath, item);
-      const targetItemPath = path.join(targetDirPath, item);
-      if (fs.statSync(sourceItemPath).isDirectory()) {
-        copyDir(sourceItemPath, targetItemPath);
-      } else {
-        fs.copyFileSync(sourceItemPath, targetItemPath);
-      }
-    });
-  };
-  return {
-    makeDir(dirPath) {
-      makeDir(r2a(dirPath));
-    },
-    removeDir(dirPath) {
-      removeDir(r2a(dirPath));
-    },
-    readFile(filePath) {
-      return readFile(r2a(filePath));
-    },
-    readDir(dirPath) {
-      return readDir(r2a(dirPath));
-    },
-    writeFile(filePath, data) {
-      writeFile(r2a(filePath), data);
-    },
-    copyFile(sourceFilePath, targetFilePath) {
-      copyFile(r2a(sourceFilePath), r2a(targetFilePath));
-    },
-    copyDir(sourceDirPath, targetDirPath) {
-      copyDir(r2a(sourceDirPath), r2a(targetDirPath));
-    },
-    joinPath: path.join,
-  };
-})();
+const isDevMode = process.argv.includes("--dev-mode");
+const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr); // Relative path to absolute
 
-const minifier = (() => {
-  if (process.argv.includes("--dev-mode")) {
-    return {
-      html: (s) => s,
-      htmlMd: (s) => s,
-      css: (s) => s,
-      js: (s) => s,
-    };
-  } else {
-    const htmlMinifier = require("html-minifier-terser");
-    const CleanCss = require("clean-css");
-    const terser = require("terser");
-    return {
-      html: (s) =>
-        htmlMinifier.minify(s, {
-          collapseInlineTagWhitespace: true,
-          collapseBooleanAttributes: true,
-          collapseWhitespace: true,
-          continueOnParseError: true,
-          removeAttributeQuotes: true,
-          removeComments: true,
-          sortAttributes: true,
-          sortClassName: true,
-          minifyURLs: true,
-        }),
-      htmlMd: (s) =>
-        htmlMinifier.minify(s, {
-          collapseBooleanAttributes: true,
-          collapseWhitespace: true,
-          continueOnParseError: true,
-          removeAttributeQuotes: true,
-          removeComments: true,
-          sortAttributes: true,
-          sortClassName: true,
-          minifyURLs: true,
-        }),
-      css: (s) => new CleanCss({ level: 2 }).minify(s).styles,
-      js: (s) =>
-        terser
-          .minify(s, {
-            compress: {
-              booleans_as_integers: true,
-              passes: 3,
-              unsafe: true,
-              unsafe_arrows: true,
-              unsafe_comps: true,
-              unsafe_Function: true,
-              unsafe_math: true,
-              unsafe_methods: true,
-              unsafe_proto: true,
-              unsafe_regexp: true,
-              unsafe_undefined: true,
-            },
-          })
-          .code.replace(/"use strict";/g, "")
-          .replace(/;$/, ""),
-    };
+const minify = (() => {
+  const htmlStrip = (s) => s.replace(/\/?>(\s|\n)*/g, ">");
+  if (isDevMode) {
+    const f = (s) => s;
+    return { html: htmlStrip, htmlMd: f, css: f, js: f };
   }
+  const htmlclean = require("htmlclean");
+  const CleanCss = require("clean-css");
+  const terser = require("terser");
+  return {
+    html: (s) => htmlclean(htmlStrip(s)),
+    htmlMd: (s) => htmlclean(s),
+    css: (s) => new CleanCss().minify(s).styles,
+    js: (s) => {
+      const output = terser.minify(s, {
+        compress: {
+          booleans_as_integers: true,
+          passes: 3,
+          unsafe: true,
+          unsafe_arrows: true,
+          unsafe_comps: true,
+          unsafe_Function: true,
+          unsafe_math: true,
+          unsafe_methods: true,
+          unsafe_proto: true,
+          unsafe_regexp: true,
+          unsafe_undefined: true,
+        },
+      });
+      if (output.error) {
+        throw output.error;
+      }
+      return output.code.replace(/;$/, "");
+    },
+  };
 })();
 
 const makePage = (() => {
   const marked = require("marked");
-
-  const template = minifier.html(fsex.readFile("./units/page.html"));
+  const getPathDir = (p) => path.parse(p).dir;
+  const template = minify.html(
+    fs.readFileSync(p`./units/template.html`).toString()
+  );
   return ({
+    type, // "html" | "markdown"
     realPath = "",
     path = "",
     title = "",
     description = "",
     content = "",
-    type, // "html" | "markdown"
   }) => {
-    switch (type) {
-      case "html":
-        content = minifier.html(content);
-        break;
-      case "markdown":
-        content = `<article class="card">${marked(content)}</article>`;
-        content = minifier.htmlMd(content);
-        break;
-      default:
-        throw "page type is not defined";
-    }
+    const pageContent =
+      type === "markdown"
+        ? minify.htmlMd(`<article>${marked(content)}</article>`)
+        : minify.html(content);
     const result = template
-      .replace(/{{ title }}/g, title)
-      .replace(/{{ description }}/g, description)
-      .replace(/{{ content }}/g, content);
-    const targetPath = realPath
-      ? fsex.joinPath("./public", realPath)
-      : fsex.joinPath("./public", path, "/index.html");
-    fsex.writeFile(targetPath, result);
+      .replace("{{ title }}", title)
+      .replace("{{ description }}", description)
+      .replace("{{ content }}", pageContent);
+    const targetFilePath = realPath
+      ? p`./public/${realPath}`
+      : p`./public/${path}/${"index.html"}`;
+    fs.mkdirSync(getPathDir(targetFilePath), { recursive: true });
+    fs.writeFileSync(targetFilePath, result);
   };
 })();
 
 const parseMdFile = (filePath) => {
-  const str = fsex.readFile(filePath);
-  const readMeta = (key) => {
-    const matched = str.match(`\n${key}: ([^\n]*)`);
-    return matched ? matched[1] : null;
-  };
-  const mdStr = str.slice(str.indexOf("\n```") + 4);
-  const content = `# ${readMeta("title")}\n\n${mdStr}\n`;
-  return { readMeta, content };
+  const str = fs.readFileSync(filePath).toString();
+  const meta = {};
+  str
+    .slice("```\n".length, str.indexOf("\n```"))
+    .split("\n")
+    .forEach((line) => {
+      const pos = line.indexOf(":");
+      meta[line.slice(0, pos)] = line.slice(pos + 1).trim();
+    });
+  const body = str.slice(str.indexOf("\n```") + 4);
+  const content = `<h1>${meta.title}</h1>\n\n${body}\n`;
+  return { meta, content };
 };
+
+// Clear Dir
+{
+  fs.rmSync(p`./public`, { recursive: true, force: true });
+  fs.mkdirSync(p`./public`);
+}
 
 // Init
 {
-  fsex.removeDir("./public");
+  fs.copyFileSync(p`./units/_gitignore`, p`./public/.gitignore`);
+  fs.copyFileSync(p`./units/_nojekyll`, p`./public/.nojekyll`);
+  fs.copyFileSync(p`./units/favicon.ico`, p`./public/favicon.ico`);
+  fs.copyFileSync(p`./units/favicon.svg`, p`./public/favicon.svg`);
 
-  fsex.copyFile("./units/_gitignore", "./public/.gitignore");
-  fsex.copyFile("./units/_nojekyll", "./public/.nojekyll");
-  fsex.copyFile("./units/favicon.ico", "./public/favicon.ico");
-  fsex.copyFile("./units/favicon.svg", "./public/favicon.svg");
+  const copyDirSync = (sourceDir, targetDir) => {
+    fs.mkdirSync(targetDir, { recursive: true });
+    fs.readdirSync(sourceDir).forEach((item) => {
+      const source = path.join(sourceDir, item);
+      const target = path.join(targetDir, item);
+      if (fs.statSync(source).isFile()) {
+        fs.copyFileSync(source, target);
+      } else {
+        copyDirSync(source, target);
+      }
+    });
+  };
+  copyDirSync(p`./source/toys`, p`./public/toy`);
+  copyDirSync(p`./source/res`, p`./public/res`);
 
-  // bundle.css
-  {
-    const mdCss = fsex.readFile("./units/markdown.css");
-    const appCss = fsex.readFile("./units/app.css");
-    const cssStr = mdCss + appCss;
-    const result = minifier.css(cssStr);
-    fsex.writeFile("./public/bundle.css", result);
-  }
+  const htmlStr = fs.readFileSync(p`./units/extra.html`).toString();
+  const cssStr =
+    fs.readFileSync(p`./units/app.css`).toString() +
+    fs.readFileSync(p`./units/markdown.css`).toString();
+  const jsStr = fs.readFileSync(p`./units/app.js`).toString();
+  const bundleJsStr = fs
+    .readFileSync(p`./units/bundle.js`)
+    .toString()
+    .replace("/*@ htmlStr */", minify.html(htmlStr))
+    .replace("/*@ cssStr */", minify.css(cssStr))
+    .replace("/*@ jsStr */", jsStr);
+  fs.writeFileSync(p`./public/bundle.js`, minify.js(bundleJsStr));
 
-  // bundle.js
-  {
-    const extraJs = fsex.readFile("./units/extra.js");
-    const extraHtmlFileStr = fsex.readFile("./units/extra.html");
-    const extraHtml = minifier.html(extraHtmlFileStr);
-    const appJs = fsex.readFile("./units/app.js");
-    const jsStr = extraJs.replace("/* @ extra.html */", extraHtml) + appJs;
-    const result = minifier.js(`(()=>{${jsStr}})()`);
-    fsex.writeFile("./public/bundle.js", result);
-  }
-
-  // check.js
-  {
-    const checkJs = fsex.readFile("./units/check.js");
-    const result = minifier.js(checkJs);
-    fsex.writeFile("./public/check.js", result);
-  }
-}
-
-// Misc
-{
-  fsex.copyDir("./source/toys", "./public/toy");
-  fsex.copyDir("./source/res", "./public/res");
+  const checkJsStr = fs.readFileSync(p`./units/check.js`).toString();
+  fs.writeFileSync(p`./public/check.js`, minify.js(checkJsStr));
 }
 
 // Posts
 const postsList = [];
 {
-  fsex.readDir("./source/posts").forEach((fileInfo) => {
-    const { readMeta, content } = parseMdFile(fileInfo.path);
+  let filesList = fs.readdirSync(p`./source/posts`).reverse();
+  if (isDevMode) {
+    filesList = filesList.slice(0, 15);
+  }
+  filesList.forEach((fileName) => {
+    const { meta, content } = parseMdFile(p`./source/posts/${fileName}`);
     const attr = {
-      id: readMeta("date").replace(/:|-|\s/g, ""),
-      date: readMeta("date").split(" ")[0],
-      title: readMeta("title"),
-      category: readMeta("category"),
-      tags: readMeta("tags").split(" "),
-      description: readMeta("description"),
+      id: meta.date.replace(/:|-|\s/g, ""),
+      date: meta.date.split(" ")[0],
+      title: meta.title,
+      category: meta.category,
+      tags: meta.tags.split(" "),
+      description: meta.description,
     };
     makePage({
       ...attr,
@@ -266,12 +164,9 @@ const postsList = [];
     });
     postsList.push(attr);
     if (
-      `${attr.id.slice(0, 8)}-${attr.id.slice(8, 12)} ${attr.title}` !==
-      fileInfo.mainName
+      `${attr.id.slice(0, 8)}-${attr.id.slice(8)} ${attr.title}.md` !== fileName
     ) {
-      console.warn(
-        `filename is not standard: [${attr.title}] or [${fileInfo.mainName}]`
-      );
+      console.warn(`post file [${fileName}] has not standard name`);
     }
   });
   postsList.sort((post1, post2) => post2.id - post1.id);
@@ -280,12 +175,13 @@ const postsList = [];
 // Custom Pages
 const pagesList = [];
 {
-  fsex.readDir("./source/pages").forEach((fileInfo) => {
-    const { readMeta, content } = parseMdFile(fileInfo.path);
+  const filesList = fs.readdirSync(p`./source/pages`);
+  filesList.forEach((fileName) => {
+    const { meta, content } = parseMdFile(p`./source/pages/${fileName}`);
     const attr = {
-      name: fileInfo.mainName,
-      title: readMeta("title"),
-      description: readMeta("description"),
+      name: path.parse(fileName).name,
+      title: meta.title,
+      description: meta.description,
     };
     makePage({
       ...attr,
@@ -329,12 +225,10 @@ const pagesList = [];
     }
     htmlStr += `
       <nav class="pagination">
-        <a data-sl href="/">〈◀</a>
-        <a data-sl href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}">◀</a>
-        <a data-sl href="/home/${
-          curPage < lastPage ? curPage + 1 : lastPage
-        }">▶</a>
-        <a data-sl href="/home/${lastPage}">▶〉</a>
+        <a data-sl href="/">◁◁</a>
+        <a data-sl href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}">◁</a>
+        <a data-sl href="/home/${curPage < lastPage ? curPage + 1 : ""}">▷</a>
+        <a data-sl href="/home/${lastPage}">▷▷</a>
       </nav>
     `;
     if (curPage === 1) {
@@ -497,9 +391,7 @@ const pagesList = [];
     realPath: "/404.html",
     title: "404 not found",
     type: "markdown",
-    content:
-      '<h1 style="text-align:center;border:none">404 not found</h1>' +
-      '<script>if(location.pathname.match(/post\\/\\d{14}/)){alert("旧的14位博文ID已经弃用，将跳转到新地址。\\nOld 14-dight post id is deprecate, will jump to new address.");location.pathname=location.pathname.slice(0,18)}</script>',
+    content: '<h1 style="text-align:center;border:none">404 not found</h1>',
   });
 }
 
@@ -507,13 +399,13 @@ const pagesList = [];
 {
   const domain = "https://kkocdko.github.io";
 
-  fsex.writeFile(
-    "./public/robots.txt",
+  fs.writeFileSync(
+    p`./public/robots.txt`,
     `User-agent: *\nAllow: /\nSitemap: ${domain}/sitemap.xml`
   );
 
-  fsex.writeFile(
-    "./public/sitemap.xml",
+  fs.writeFileSync(
+    p`./public/sitemap.xml`,
     '<?xml version="1.0" encoding="UTF-8"?>' +
       '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
       pagesList
@@ -525,8 +417,8 @@ const pagesList = [];
       "</urlset>"
   );
 
-  fsex.writeFile(
-    "./public/feed.xml",
+  fs.writeFileSync(
+    p`./public/feed.xml`,
     '<?xml version="1.0" encoding="UTF-8"?>' +
       '<rss version="2.0">' +
       "<channel>" +

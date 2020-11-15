@@ -1,26 +1,13 @@
 {
-  "name": "kblog",
-  "version": "3.0.2",
-  "description": "This is my blog.",
   "scripts": {
-    "generate": "node toolkit/generator.js",
-    "serve": "node toolkit/generator.js && node toolkit/server.js",
-    "dev-generate": "node toolkit/generator.js --dev-mode"
+    "generate": "node toolkit/generate.js",
+    "serve": "node toolkit/generate.js && node toolkit/serve.js",
+    "develop": "node toolkit/develop.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/kkocdko/kblog.git"
-  },
-  "author": "kkocdko",
-  "license": "Unlicense",
-  "bugs": {
-    "url": "https://github.com/kkocdko/kblog/issues"
-  },
-  "homepage": "https://github.com/kkocdko/kblog#readme",
   "dependencies": {
     "clean-css": "^4.2.3",
-    "html-minifier-terser": "^5.1.1",
-    "marked": "^1.1.1",
+    "htmlclean": "^3.0.8",
+    "marked": "^1.2.2",
     "terser": "^4.8.0"
   }
 }
