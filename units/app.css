@@ -2,64 +2,61 @@
 *::before,
 *::after {
   box-sizing: border-box;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 html {
-  font-family: Microsoft YaHei, Arial, sans-serif;
-  background: rgba(248, 249, 250, 0.9);
+  /* font-family: Microsoft YaHei, Arial, sans-serif; */
+  background: rgb(248, 249, 250);
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-body::before,
 body::after {
   position: fixed;
   visibility: hidden;
+  content: "";
   opacity: 0;
   transition: 0.3s;
-  content: "";
-}
-
-body.loading::before,
-body.loading::after {
-  visibility: visible;
-  opacity: 1;
-}
-
-body::before {
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(248, 249, 250, 0.9);
 }
 
 body.loading::after {
   top: 50%;
   left: 50%;
-  margin: -20px;
   padding: 17px;
+  margin: -20px;
+  visibility: visible;
   border: 3px solid #3f51b5;
-  border-top-color: rgba(250, 251, 252, 0.9);
+  border-top-color: rgba(0, 0, 0, 0);
   border-radius: 50%;
-  transform: rotate(3600deg);
+  opacity: 1;
   transition: opacity 0.3s 0.1s, transform 6s linear;
+  transform: rotate(3600deg);
 }
 
-@keyframes fadein {
+main,
+footer {
+  transition: opacity 0.2s;
+}
+
+body.loading main,
+body.loading footer {
+  opacity: 0.2;
+}
+
+@keyframes loaded {
   0% {
+    opacity: 0.2;
     transform: translateY(10px);
-    opacity: 0;
   }
 }
 
-body.loaded > main > *,
-body.loaded > footer {
-  -webkit-animation: fadein 0.3s;
-  animation: fadein 0.3s;
+body.loaded main,
+body.loaded footer {
+  animation: loaded 0.2s;
 }
 
-[data-sl] {
+a {
   color: #3f51b5;
   text-decoration: none;
 }
@@ -67,11 +64,11 @@ body.loaded > footer {
 main {
   width: 700px;
   min-height: 100vh;
-  margin: 50px auto 0;
   padding: 5px 0 25px;
+  margin: 50px auto 0;
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 750px) {
   main {
     width: 100%;
     padding: 0;
@@ -82,19 +79,17 @@ header {
   position: fixed;
   top: 0;
   width: 100%;
-  height: 50px;
   background: #3f51b5;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   transition: 0.3s;
 }
 
-header:not(.in) {
+header.hidden {
   transform: translateY(-55px);
 }
 
 header > * {
   float: left;
-  width: 50px;
   height: 50px;
   padding: 11px;
   cursor: pointer;
@@ -108,32 +103,27 @@ header > :last-child {
 header img {
   width: 28px;
   height: 28px;
-  margin-left: -11px;
+  margin: 0 -10px;
   border: 2px solid #fff;
   border-radius: 50%;
 }
 
-#sidebar-switch {
-  display: none;
-}
-
-#sidebar-switch + * {
+body > nav {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-  display: none;
-  visibility: hidden;
+  background: rgba(0, 0, 0, 0.5);
   transition: 0.3s;
 }
 
-#sidebar-switch:checked + * {
-  background: rgba(0, 0, 0, 0.5);
-  visibility: visible;
+body > nav.hidden {
+  visibility: hidden;
+  background: rgba(0, 0, 0, 0);
 }
 
-#sidebar-switch + * nav {
+body > nav > * {
   width: 70%;
   max-width: 230px;
   height: 100vh;
@@ -144,38 +134,37 @@ header img {
   transition: 0.3s;
 }
 
-#sidebar-switch:not(:checked) + * nav {
+body > nav.hidden > * {
   transform: translateX(-120%);
 }
 
-#sidebar-switch + * a {
+body > nav a {
   display: block;
   padding-left: 15%;
-  color: #333;
   line-height: 50px;
+  color: #333;
 }
 
 footer,
 footer * {
-  color: rgba(255, 255, 255, 0.7);
   font-size: 13px;
   line-height: 3em;
+  color: rgba(255, 255, 255, 0.7);
   text-align: center;
   text-decoration: none;
   background: #3f51b5;
 }
 
 main > * {
-  margin-top: 20px;
   padding: 20px;
+  margin-top: 20px;
   overflow: hidden;
   background: #fff;
   border-radius: 4px;
-  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3),
-    0 1px 3px 1px rgba(60, 64, 67, 0.15);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 750px) {
   main > * {
     margin-top: 1px;
     border-radius: 0;
@@ -185,9 +174,9 @@ main > * {
 
 .chip {
   display: inline-block;
-  margin-right: 10px;
   padding: 2px 6px;
-  font-size: 0.8rem;
+  margin-right: 10px;
+  font-size: 13px;
   border: solid 1px #ccc;
   border-radius: 4px;
 }
@@ -199,16 +188,14 @@ main > * {
 
 .pagination a {
   display: inline-block;
-  padding: 12px 22px;
-  color: rgba(63, 81, 181, 0.7);
-  font-weight: 900;
-  font-size: 0.8rem;
+  padding: 10px 22px 12px;
+  font-size: 14px;
 }
 
 .post-intro > * {
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .post-intro h3 {
@@ -223,11 +210,11 @@ main > * {
 .posts-group h1,
 .chips-group h1 {
   display: inline-block;
-  margin: 0 100% 5px 0;
   padding: 3px 9px;
-  color: #fff;
-  font-weight: normal;
+  margin: 0 100% 5px 0;
   font-size: 22px;
+  font-weight: normal;
+  color: #fff;
   background: #3f51b5;
   border-radius: 4px;
 }
@@ -236,20 +223,11 @@ main > * {
   display: block;
   margin-top: 10px;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chips-group a {
-  margin-top: 10px;
   padding: 5px 10px;
-}
-
-article > h1:first-child {
-  font-weight: normal;
-  font-size: 24px;
-}
-
-article img:not(.no-border) {
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 10px;
 }
