@@ -1,8 +1,6 @@
 /* *, *::before, *::after { box-sizing: border-box; padding: 0; margin: 0; } */
 
 article {
-  padding: 20px;
-  font-size: 16px;
   line-height: 1.8;
   word-break: break-word;
 }
@@ -28,7 +26,10 @@ article h4 {
   font-size: 17px;
 }
 
-article p {
+article p,
+article pre,
+article table,
+article details {
   margin: 7px 0 0;
 }
 
@@ -41,7 +42,7 @@ article details summary {
 }
 
 article blockquote {
-  padding-left: 15px;
+  padding: 0 15px;
   border-left: 4px solid #ddd;
 }
 
@@ -82,7 +83,7 @@ article table th {
 }
 
 article table tr:nth-child(2n) {
-  background: #f4f4f4;
+  background: #f7f7f7;
 }
 
 article img {
@@ -90,5 +91,5 @@ article img {
 }
 
 article img:not(.no-shadow) {
-  filter: drop-shadow(0 0 3px #ccc);
+  filter: drop-shadow(0 0 3px #ccc); /* For irregular pictures */
 }
