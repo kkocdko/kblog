@@ -28,8 +28,8 @@ article h4 {
   font-size: 17px;
 }
 
-article > * {
-  margin: 7px 0;
+article p {
+  margin: 7px 0 0;
 }
 
 article a {
@@ -37,11 +37,11 @@ article a {
 }
 
 article details summary {
-  padding-left: 5px;
+  padding: 0 5px;
 }
 
 article blockquote {
-  padding: 1px 15px;
+  padding-left: 15px;
   border-left: 4px solid #ddd;
 }
 
@@ -53,7 +53,7 @@ article pre {
   background: #f4f4f4;
 }
 
-article :not(pre) code,
+article :not(pre) > code,
 article kbd {
   padding: 2px 5px;
   margin: 0 2px;
