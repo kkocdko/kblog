@@ -7,6 +7,7 @@
 }
 
 html {
+  font-family: sans-serif;
   background: rgb(248, 249, 250);
 }
 
@@ -30,13 +31,13 @@ circular-meter {
 
 .loading main,
 .loading footer {
-  opacity: 0.2;
+  filter: opacity(0.2); /* Hardware Acceleration */
   transition: 0.2s;
 }
 
 @keyframes loaded {
   0% {
-    opacity: 0.2;
+    filter: opacity(0.2);
     transform: translateY(10px);
   }
 }
@@ -71,7 +72,7 @@ header {
   width: 100%;
   background: #3f51b5;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-  transition: 0.3s;
+  transition: 0.2s;
 }
 
 header.hidden {
@@ -138,7 +139,7 @@ nav a {
 footer,
 footer * {
   font-size: 13px;
-  line-height: 3em;
+  line-height: 40px;
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
   text-decoration: none;
@@ -150,14 +151,12 @@ main > * {
   margin-top: 20px;
   overflow: hidden;
   background: #fff;
-  border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 @media screen and (max-width: 750px) {
   main > * {
     margin-top: 1px;
-    border-radius: 0;
     box-shadow: 0 1px #ddd;
   }
 }
@@ -168,7 +167,6 @@ main > * {
   margin-right: 10px;
   font-size: 13px;
   border: solid 1px #ccc;
-  border-radius: 4px;
 }
 
 .pagination {
@@ -178,7 +176,7 @@ main > * {
 
 .pagination a {
   display: inline-block;
-  padding: 10px 22px 12px;
+  padding: 12px 22px;
   font-size: 14px;
 }
 
@@ -189,7 +187,7 @@ main > * {
 }
 
 .post-intro h3 {
-  margin: -3px 0;
+  margin: -4px 0;
   font-weight: normal;
 }
 
@@ -206,7 +204,6 @@ main > * {
   font-weight: normal;
   color: #fff;
   background: #3f51b5;
-  border-radius: 4px;
 }
 
 .posts-group a {
