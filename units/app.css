@@ -7,25 +7,19 @@
 }
 
 html {
-  /* font-family: Microsoft YaHei, Arial, sans-serif; */
   background: rgb(248, 249, 250);
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
 }
 
-body::after {
+circular-meter {
   position: fixed;
-  visibility: hidden;
-  content: "";
   opacity: 0;
-  transition: 0.3s;
 }
 
-body.loading::after {
+.loading circular-meter {
   top: 50%;
   left: 50%;
   padding: 17px;
   margin: -20px;
-  visibility: visible;
   border: 3px solid #3f51b5;
   border-top-color: rgba(0, 0, 0, 0);
   border-radius: 50%;
@@ -34,14 +28,10 @@ body.loading::after {
   transform: rotate(3600deg);
 }
 
-main,
-footer {
-  transition: opacity 0.2s;
-}
-
-body.loading main,
-body.loading footer {
+.loading main,
+.loading footer {
   opacity: 0.2;
+  transition: 0.2s;
 }
 
 @keyframes loaded {
@@ -51,9 +41,9 @@ body.loading footer {
   }
 }
 
-body.loaded main,
-body.loaded footer {
-  animation: loaded 0.2s;
+.loaded main,
+.loaded footer {
+  animation: 0.2s loaded;
 }
 
 a {
@@ -108,7 +98,7 @@ header img {
   border-radius: 50%;
 }
 
-body > nav {
+nav {
   position: fixed;
   top: 0;
   right: 0;
@@ -118,12 +108,12 @@ body > nav {
   transition: 0.3s;
 }
 
-body > nav.hidden {
+nav.hidden {
   visibility: hidden;
   background: rgba(0, 0, 0, 0);
 }
 
-body > nav > * {
+nav > * {
   width: 70%;
   max-width: 230px;
   height: 100vh;
@@ -134,11 +124,11 @@ body > nav > * {
   transition: 0.3s;
 }
 
-body > nav.hidden > * {
+nav.hidden > * {
   transform: translateX(-120%);
 }
 
-body > nav a {
+nav a {
   display: block;
   padding-left: 15%;
   line-height: 50px;
@@ -168,7 +158,7 @@ main > * {
   main > * {
     margin-top: 1px;
     border-radius: 0;
-    box-shadow: 0 0 0 1px #ddd;
+    box-shadow: 0 1px #ddd;
   }
 }
 

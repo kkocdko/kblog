@@ -13,7 +13,8 @@ const isDevMode = process.argv.includes("--dev-mode");
 const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr); // Relative path to absolute
 
 const minify = (() => {
-  const htmlStrip = (s) => s.replace(/\/?>(\s|\n)*/g, ">");
+  const htmlStrip = (s) =>
+    s.replace(/\/?>(\s|\n)*/g, ">").replace(/(\s|\n)+</g, "<");
   if (isDevMode) {
     const f = (s) => s;
     return { html: htmlStrip, htmlMd: f, css: f, js: f };
@@ -224,12 +225,12 @@ const pagesList = [];
       `;
     }
     htmlStr += `
-      <nav class="pagination">
+      <div class="pagination">
         <a data-sl href="/">◁◁</a>
         <a data-sl href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}">◁</a>
         <a data-sl href="/home/${curPage < lastPage ? curPage + 1 : ""}">▷</a>
         <a data-sl href="/home/${lastPage}">▷▷</a>
-      </nav>
+      </div>
     `;
     if (curPage === 1) {
       makePage({
@@ -389,9 +390,10 @@ const pagesList = [];
 {
   makePage({
     realPath: "/404.html",
-    title: "404 not found",
+    title: "404 Not Found",
     type: "markdown",
-    content: '<h1 style="text-align:center;border:none">404 not found</h1>',
+    content:
+      '<h1 style="margin:0;text-align:center;border:0">404 Not Found</h1>',
   });
 }
 

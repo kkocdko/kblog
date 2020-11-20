@@ -13,10 +13,11 @@ const readline = require("readline");
 const config = {
   ip: "127.0.0.1",
   port: 4000,
-  rootDir: path.join(__dirname, "..", "public"),
+  delay: 0,
+  dir: path.join(__dirname, "..", "public"),
 };
 
-const mimeList = {
+const mime = {
   html: "text/html; charset=UTF-8",
   css: "text/css",
   js: "application/javascript",
@@ -30,27 +31,26 @@ const mimeList = {
 
 const server = http.createServer((req, res) => {
   const url = new URL("http://" + req.headers.host + req.url);
-  const localPath = path.join(config.rootDir, url.pathname.replace(/\/$/, ""));
-  res.on("pipe", (src) => {
-    src.on("end", () => {
-      res.end();
-    });
-  });
+  const localPath = path.join(config.dir, url.pathname.replace(/\/$/, ""));
+  res.on("pipe", (src) => src.on("end", () => res.end()));
   fs.stat(localPath, (e, stats) => {
     if (!e && stats.isFile()) {
       // Is file
       const extension = path.parse(localPath).ext.slice(1);
-      const contentType = mimeList[extension] || "";
+      const contentType = mime[extension] || "";
       res.writeHead(200, { "Content-Type": contentType });
-      fs.createReadStream(localPath).pipe(res);
+      setTimeout(() => fs.createReadStream(localPath).pipe(res), config.delay);
     } else {
       const pageFilePath = path.join(localPath, "index.html");
       fs.stat(pageFilePath, (e, stats) => {
         if (!e && stats.isFile()) {
           // Is folder with index.html
           if (url.pathname.endsWith("/")) {
-            res.writeHead(200, { "Content-Type": mimeList.html });
-            fs.createReadStream(pageFilePath).pipe(res);
+            res.writeHead(200, { "Content-Type": mime.html });
+            setTimeout(
+              () => fs.createReadStream(pageFilePath).pipe(res),
+              config.delay
+            );
           } else {
             // Url should ended with "/"
             url.pathname += "/";
@@ -59,8 +59,8 @@ const server = http.createServer((req, res) => {
           }
         } else {
           // Error
-          res.writeHead(404, { "Content-Type": mimeList.html });
-          const pageFilePath = path.join(config.rootDir, "404.html");
+          res.writeHead(404, { "Content-Type": mime.html });
+          const pageFilePath = path.join(config.dir, "404.html");
           fs.stat(pageFilePath, (e, stats) => {
             if (!e && stats.isFile()) {
               fs.createReadStream(pageFilePath).pipe(res);

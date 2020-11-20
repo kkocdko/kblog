@@ -8,7 +8,3 @@
 * Address: <https://kkocdko.github.io>
 
 * Mirror: <https://kkocdko.now.sh>
-
-### Todo
-
-* The font-family and font-size
