@@ -5,10 +5,9 @@
  */
 "use strict";
 
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 const http = require("http");
-const readline = require("readline");
 
 const config = {
   ip: "127.0.0.1",
@@ -30,71 +29,43 @@ const mime = {
 };
 
 const server = http.createServer((req, res) => {
-  const url = new URL("http://" + req.headers.host + req.url);
-  const localPath = path.join(config.dir, url.pathname.replace(/\/$/, ""));
-  res.on("pipe", (src) => src.on("end", () => res.end()));
-  fs.stat(localPath, (e, stats) => {
-    if (!e && stats.isFile()) {
-      // Is file
+  let localPath = path.join(config.dir, req.url.split("?")[0]);
+  let statusCode;
+  try {
+    if (fs.statSync(localPath).isDirectory()) {
+      const pageFilePath = path.join(localPath, "index.html");
+      if (fs.statSync(pageFilePath).isFile()) {
+        localPath = pageFilePath;
+      } else {
+        throw 1;
+      }
+    }
+    statusCode = 200;
+  } catch {
+    const pageFilePath = path.join(config.dir, "404.html");
+    if (fs.existsSync(pageFilePath)) {
+      localPath = pageFilePath;
+    } else {
+      localPath = "";
+    }
+    statusCode = 404;
+  }
+  setTimeout(() => {
+    if (localPath) {
       const extension = path.parse(localPath).ext.slice(1);
       const contentType = mime[extension] || "";
-      res.writeHead(200, { "Content-Type": contentType });
-      setTimeout(() => fs.createReadStream(localPath).pipe(res), config.delay);
+      res.writeHead(statusCode, { "Content-Type": contentType });
+      const stream = fs.createReadStream(localPath);
+      stream.pipe(res).on("end", () => res.end());
     } else {
-      const pageFilePath = path.join(localPath, "index.html");
-      fs.stat(pageFilePath, (e, stats) => {
-        if (!e && stats.isFile()) {
-          // Is folder with index.html
-          if (url.pathname.endsWith("/")) {
-            res.writeHead(200, { "Content-Type": mime.html });
-            setTimeout(
-              () => fs.createReadStream(pageFilePath).pipe(res),
-              config.delay
-            );
-          } else {
-            // Url should ended with "/"
-            url.pathname += "/";
-            res.writeHead(302, { Location: url.href });
-            res.end();
-          }
-        } else {
-          // Error
-          res.writeHead(404, { "Content-Type": mime.html });
-          const pageFilePath = path.join(config.dir, "404.html");
-          fs.stat(pageFilePath, (e, stats) => {
-            if (!e && stats.isFile()) {
-              fs.createReadStream(pageFilePath).pipe(res);
-            } else {
-              res.end("404 not found");
-            }
-          });
-        }
-      });
+      res.writeHead(statusCode).end(statusCode);
     }
-  });
+  }, config.delay);
 });
 
-server.on("error", (e) => {
-  if (e.code === "EADDRINUSE") {
-    server.close();
-    config.port++; // Try next port
-    server.listen(config.port, config.ip);
-  } else {
-    throw e;
-  }
-});
-
+server.listen(config.port, config.ip);
 server.on("listening", () => {
   console.info(`server address: ${config.ip}:${config.port}`);
 });
 
-server.listen(config.port, config.ip);
-const readlineInterface = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-readlineInterface.question("", () => {
-  readlineInterface.close();
-  server.close();
-  process.exit();
-});
+process.stdin.on("data", () => process.exit());

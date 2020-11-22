@@ -194,45 +194,43 @@ const pagesList = [];
   });
 }
 
-// Pages - Home
+// Blog Pages - Home
 {
-  const countPerPage = 10;
-  const lastPage = Math.ceil(postsList.length / countPerPage);
-  for (let curPage = 1; curPage <= lastPage; curPage++) {
+  const volume = 10;
+  const group = [];
+  for (let i = 0; i < postsList.length; i += volume) {
+    group.push(postsList.slice(i, i + volume));
+  }
+  group.forEach((list, i) => {
     let htmlStr = "";
-    for (
-      let i = (curPage - 1) * countPerPage,
-        maxI = i + countPerPage,
-        l = postsList.length;
-      i < maxI && i < l;
-      i++
-    ) {
-      const post = postsList[i];
+    list.forEach((post) => {
       htmlStr += `
-        <div class="post-intro">
+        <section>
           <h3>
-            <a data-sl href="/post/${post.id}">${post.title}</a>
+            <a _ href="/post/${post.id}">${post.title}</a>
           </h3>
           <p>${post.description}</p>
-          <p>
-            ${post.tags
-              .map(
-                (tag) => `<a data-sl href="/tag/${tag}" class="chip">${tag}</a>`
-              )
-              .join("")}
+          <p>`;
+      post.tags.forEach((tag) => {
+        htmlStr += `<a _ href="/tag/${tag}">${tag}</a>`;
+      });
+      htmlStr += `
           </p>
-        </div>
+        </section>
       `;
-    }
+    });
+    const cur = i + 1;
+    const last = group.length;
     htmlStr += `
-      <div class="pagination">
-        <a data-sl href="/">◁◁</a>
-        <a data-sl href="${curPage > 2 ? "/home/" + (curPage - 1) : "/"}">◁</a>
-        <a data-sl href="/home/${curPage < lastPage ? curPage + 1 : ""}">▷</a>
-        <a data-sl href="/home/${lastPage}">▷▷</a>
-      </div>
+      <nav>
+        <a _ href="/">◁◁</a>
+        <a _ href="/${cur > 2 ? `home/${cur - 1}` : ""}">◁</a>
+        <a>${cur} / ${last}</a>
+        <a _ href="/home/${cur < last ? cur + 1 : last}">▷</a>
+        <a _ href="/home/${last}">▷▷</a>
+      </nav>
     `;
-    if (curPage === 1) {
+    if (cur === 1) {
       makePage({
         path: "/",
         type: "html",
@@ -242,32 +240,36 @@ const pagesList = [];
       });
     } else {
       makePage({
-        path: `/home/${curPage}/`,
+        path: `/home/${cur}/`,
         type: "html",
-        title: `Home: ${curPage}`,
+        title: `Home: ${cur}`,
         content: htmlStr,
       });
     }
-  }
+  });
 }
 
-// Pages - Archive
+// Blog Pages - Archive
 {
-  const listsByYear = new Map();
+  const map = new Map();
   postsList.forEach((post) => {
     const year = post.date.slice(0, 4);
-    if (!listsByYear.has(year)) {
-      listsByYear.set(year, []);
+    if (!map.has(year)) {
+      map.set(year, []);
     }
-    listsByYear.get(year).push(post);
+    map.get(year).push(post);
   });
 
-  let htmlStr = '<div class="chips-group">';
+  let htmlStr = "<section>";
   htmlStr += "<h1>Archive</h1>";
-  listsByYear.forEach((_, year) => {
-    htmlStr += `<a data-sl href="/archive/${year}" class="chip">${year}</a>`;
+  map.forEach((_, year) => {
+    htmlStr += `
+      <span>
+        <a _ href="/archive/${year}">${year}</a>
+      </span>
+    `;
   });
-  htmlStr += "</div>";
+  htmlStr += "</section>";
   makePage({
     path: "/archive/",
     type: "html",
@@ -275,18 +277,18 @@ const pagesList = [];
     content: htmlStr,
   });
 
-  listsByYear.forEach((list, year) => {
-    let htmlStr = '<div class="posts-group">';
+  map.forEach((list, year) => {
+    let htmlStr = "<section>";
     htmlStr += `<h1>${year}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <a data-sl href="/post/${post.id}">
-          <span class="chip">${post.date}</span>
+        <a _ href="/post/${post.id}">
+          <span>${post.date}</span>
           ${post.title}
         </a>
       `;
     });
-    htmlStr += "</div>";
+    htmlStr += "</section>";
     makePage({
       path: `/archive/${year}`,
       type: "html",
@@ -296,22 +298,26 @@ const pagesList = [];
   });
 }
 
-// Pages - Category
+// Blog Pages - Category
 {
-  const listsByCategory = new Map();
+  const map = new Map();
   postsList.forEach((post) => {
-    if (!listsByCategory.has(post.category)) {
-      listsByCategory.set(post.category, []);
+    if (!map.has(post.category)) {
+      map.set(post.category, []);
     }
-    listsByCategory.get(post.category).push(post);
+    map.get(post.category).push(post);
   });
 
-  let htmlStr = '<div class="chips-group">';
+  let htmlStr = "<section>";
   htmlStr += "<h1>Category</h1>";
-  listsByCategory.forEach((_, category) => {
-    htmlStr += `<a data-sl href="/category/${category}" class="chip">${category}</a>`;
+  map.forEach((_, category) => {
+    htmlStr += `
+      <span>
+        <a _ href="/category/${category}">${category}</a>
+      </span>
+    `;
   });
-  htmlStr += "</div>";
+  htmlStr += "</section>";
   makePage({
     path: "/category/",
     type: "html",
@@ -319,18 +325,18 @@ const pagesList = [];
     content: htmlStr,
   });
 
-  listsByCategory.forEach((list, category) => {
-    let htmlStr = '<div class="posts-group">';
+  map.forEach((list, category) => {
+    let htmlStr = "<section>";
     htmlStr += `<h1>${category}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <a data-sl href="/post/${post.id}">
-          <span class="chip">${post.date}</span>
+        <a _ href="/post/${post.id}">
+          <span>${post.date}</span>
           ${post.title}
         </a>
       `;
     });
-    htmlStr += "</div>";
+    htmlStr += "</section>";
     makePage({
       path: `/category/${category}`,
       type: "html",
@@ -340,24 +346,28 @@ const pagesList = [];
   });
 }
 
-// Pages - Tag
+// Blog Pages - Tag
 {
-  const listsByTag = new Map();
+  const map = new Map();
   postsList.forEach((post) =>
     post.tags.forEach((tag) => {
-      if (!listsByTag.has(tag)) {
-        listsByTag.set(tag, []);
+      if (!map.has(tag)) {
+        map.set(tag, []);
       }
-      listsByTag.get(tag).push(post);
+      map.get(tag).push(post);
     })
   );
 
-  let htmlStr = '<div class="chips-group">';
+  let htmlStr = "<section>";
   htmlStr += "<h1>Tag</h1>";
-  listsByTag.forEach((_, tag) => {
-    htmlStr += `<a data-sl href="/tag/${tag}" class="chip">${tag}</a>`;
+  map.forEach((_, tag) => {
+    htmlStr += `
+      <span>
+        <a _ href="/tag/${tag}">${tag}</a>
+      </span>
+    `;
   });
-  htmlStr += "</div>";
+  htmlStr += "</section>";
   makePage({
     path: "/tag/",
     type: "html",
@@ -365,18 +375,18 @@ const pagesList = [];
     content: htmlStr,
   });
 
-  listsByTag.forEach((list, tag) => {
-    let htmlStr = '<div class="posts-group">';
+  map.forEach((list, tag) => {
+    let htmlStr = "<section>";
     htmlStr += `<h1>${tag}</h1>`;
     list.forEach((post) => {
       htmlStr += `
-        <a data-sl href="/post/${post.id}">
-          <span class="chip">${post.date}</span>
+        <a _ href="/post/${post.id}">
+          <span>${post.date}</span>
           ${post.title}
         </a>
       `;
     });
-    htmlStr += "</div>";
+    htmlStr += "</section>";
     makePage({
       path: `/tag/${tag}`,
       type: "html",
@@ -386,7 +396,7 @@ const pagesList = [];
   });
 }
 
-// Pages - 404 Error
+// Blog Pages - 404 Error
 {
   makePage({
     realPath: "/404.html",
