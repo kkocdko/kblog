@@ -11,7 +11,7 @@ var onSpaLinkClick = function (event) {
 
 var listenSpaLinks = () =>
   document
-    .querySelectorAll("[data-sl]")
+    .querySelectorAll("[_]")
     .forEach((el) => (el.onclick = onSpaLinkClick));
 
 onscroll = () => {

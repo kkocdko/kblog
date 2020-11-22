@@ -43,7 +43,7 @@ article details summary {
 
 article blockquote {
   padding: 0 15px;
-  border-left: 4px solid #ddd;
+  border-left: 3px solid #ddd;
 }
 
 article pre {
@@ -90,6 +90,6 @@ article img {
   max-width: 100%;
 }
 
-article img:not(.no-shadow) {
+article img:not(.no-border) {
   filter: drop-shadow(0 0 3px #ccc); /* For irregular pictures */
 }
