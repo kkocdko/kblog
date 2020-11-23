@@ -123,18 +123,45 @@ const parseMdFile = (filePath) => {
   copyDirSync(p`./source/toys`, p`./public/toy`);
   copyDirSync(p`./source/res`, p`./public/res`);
 
-  const htmlStr = fs.readFileSync(p`./units/extra.html`).toString();
-  const cssStr =
-    fs.readFileSync(p`./units/app.css`).toString() +
-    fs.readFileSync(p`./units/markdown.css`).toString();
-  const jsStr = fs.readFileSync(p`./units/app.js`).toString();
-  const bundleJsStr = fs
-    .readFileSync(p`./units/bundle.js`)
-    .toString()
-    .replace("/*@ htmlStr */", minify.html(htmlStr))
-    .replace("/*@ cssStr */", minify.css(cssStr))
-    .replace("/*@ jsStr */", jsStr);
-  fs.writeFileSync(p`./public/bundle.js`, minify.js(bundleJsStr));
+  let cssStr = "";
+  cssStr += fs.readFileSync(p`./units/app.css`).toString();
+  cssStr += fs.readFileSync(p`./units/markdown.css`).toString();
+  cssStr = minify.css(cssStr);
+
+  let insertHeadHtml = "";
+  insertHeadHtml += fs.readFileSync(p`./units/head.html`).toString();
+  insertHeadHtml = minify.html(insertHeadHtml);
+  insertHeadHtml = insertHeadHtml.replace("/*[style]*/", cssStr);
+
+  let insertBodyHtml = "";
+  insertBodyHtml += fs.readFileSync(p`./units/extra.html`).toString();
+  insertBodyHtml = minify.html(insertBodyHtml);
+
+  fs.writeFileSync(
+    p`./public/bundle.js`,
+    minify.js(
+      fs
+        .readFileSync(p`./units/bundle.js`)
+        .toString()
+        .replace(
+          "/*[head]*/",
+          minify
+            .html(fs.readFileSync(p`./units/head.html`).toString())
+            .replace(
+              "/*[style]*/",
+              minify.css(
+                fs.readFileSync(p`./units/app.css`).toString() +
+                  fs.readFileSync(p`./units/markdown.css`).toString()
+              )
+            )
+        )
+        .replace(
+          "/*[extra]*/",
+          minify.html(fs.readFileSync(p`./units/extra.html`).toString())
+        )
+        .replace("/*[script]*/", fs.readFileSync(p`./units/app.js`).toString())
+    )
+  );
 
   const checkJsStr = fs.readFileSync(p`./units/check.js`).toString();
   fs.writeFileSync(p`./public/check.js`, minify.js(checkJsStr));
