@@ -124,12 +124,12 @@ const parseMdFile = (filePath) => {
   copyDirSync(p`./source/res`, p`./public/res`);
 
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file string
-  const style = minify.css(f`app.css` + f`markdown.css`);
+  const style = minify.css(f`main.css` + f`markdown.css`);
   const head = minify.html(f`head.html`).replace("/*[style]*/", style);
   const bundle = f`bundle.js`
     .replace("/*[head]*/", head)
     .replace("/*[extra]*/", minify.html(f`extra.html`))
-    .replace("/*[script]*/", f`app.js`);
+    .replace("/*[script]*/", f`main.js`);
   fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
   fs.writeFileSync(p`./public/check.js`, minify.js(f`check.js`));
 }
