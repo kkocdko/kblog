@@ -4,7 +4,7 @@ title: Callingcard
 
 |Class|Account|
 |-|-|
-|My Blog|[kkocdko](https://kkocdko.github.io)|
+|My Blog|<a _ href="/">kkocdko</a>|
 |Bilibili|[kkocdko](https://space.bilibili.com/22587059)|
 |Baidu|[kkocdko](https://baidu.com/p/kkocdko)|
 |Zhihu|[kkocdko](https://zhihu.com/people/kkocdko)|

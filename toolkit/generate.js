@@ -69,9 +69,9 @@ const makePage = (() => {
         ? minify.htmlMd(`<article>${marked(content)}</article>`)
         : minify.html(content);
     const result = template
-      .replace("{{ title }}", title)
-      .replace("{{ description }}", description)
-      .replace("{{ content }}", pageContent);
+      .replace("/*[title]*/", title)
+      .replace("/*[description]*/", description)
+      .replace("/*[content]*/", pageContent);
     const targetFilePath = realPath
       ? p`./public/${realPath}`
       : p`./public/${path}/${"index.html"}`;
@@ -123,48 +123,15 @@ const parseMdFile = (filePath) => {
   copyDirSync(p`./source/toys`, p`./public/toy`);
   copyDirSync(p`./source/res`, p`./public/res`);
 
-  let cssStr = "";
-  cssStr += fs.readFileSync(p`./units/app.css`).toString();
-  cssStr += fs.readFileSync(p`./units/markdown.css`).toString();
-  cssStr = minify.css(cssStr);
-
-  let insertHeadHtml = "";
-  insertHeadHtml += fs.readFileSync(p`./units/head.html`).toString();
-  insertHeadHtml = minify.html(insertHeadHtml);
-  insertHeadHtml = insertHeadHtml.replace("/*[style]*/", cssStr);
-
-  let insertBodyHtml = "";
-  insertBodyHtml += fs.readFileSync(p`./units/extra.html`).toString();
-  insertBodyHtml = minify.html(insertBodyHtml);
-
-  fs.writeFileSync(
-    p`./public/bundle.js`,
-    minify.js(
-      fs
-        .readFileSync(p`./units/bundle.js`)
-        .toString()
-        .replace(
-          "/*[head]*/",
-          minify
-            .html(fs.readFileSync(p`./units/head.html`).toString())
-            .replace(
-              "/*[style]*/",
-              minify.css(
-                fs.readFileSync(p`./units/app.css`).toString() +
-                  fs.readFileSync(p`./units/markdown.css`).toString()
-              )
-            )
-        )
-        .replace(
-          "/*[extra]*/",
-          minify.html(fs.readFileSync(p`./units/extra.html`).toString())
-        )
-        .replace("/*[script]*/", fs.readFileSync(p`./units/app.js`).toString())
-    )
-  );
-
-  const checkJsStr = fs.readFileSync(p`./units/check.js`).toString();
-  fs.writeFileSync(p`./public/check.js`, minify.js(checkJsStr));
+  const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file string
+  const style = minify.css(f`app.css` + f`markdown.css`);
+  const head = minify.html(f`head.html`).replace("/*[style]*/", style);
+  const bundle = f`bundle.js`
+    .replace("/*[head]*/", head)
+    .replace("/*[extra]*/", minify.html(f`extra.html`))
+    .replace("/*[script]*/", f`app.js`);
+  fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
+  fs.writeFileSync(p`./public/check.js`, minify.js(f`check.js`));
 }
 
 // Posts
