@@ -8,7 +8,7 @@ article {
 article h1,
 article h3,
 article h4 {
-  margin: 13px 0 7px;
+  margin: 11px 0 7px;
   font-weight: normal;
 }
 
@@ -30,7 +30,7 @@ article p,
 article pre,
 article table,
 article details {
-  margin: 7px 0 0;
+  margin: 7px 0;
 }
 
 article a {
