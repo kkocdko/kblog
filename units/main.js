@@ -35,7 +35,7 @@ onpopstate = (noToTop) => {
       );
       listenSpaLinks();
       document.body.className = "loaded"; // Also replace the "loading"
-      setTimeout(() => (document.body.className = ""), 300);
+      setTimeout(() => (document.body.className = ""), 350);
     });
 };
 

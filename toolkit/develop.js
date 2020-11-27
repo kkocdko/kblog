@@ -12,7 +12,7 @@ const exec = (fileName, args) =>
 
 (async () => {
   while (true) {
-    console.log("refresh time: " + new Date().toTimeString());
+    console.log("refresh at: " + new Date().toTimeString());
     await exec("generate.js", ["--dev-mode"]);
     await exec("serve.js");
   }

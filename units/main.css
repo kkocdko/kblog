@@ -82,7 +82,7 @@ aside > * {
   position: fixed;
   width: 70%;
   max-width: 230px;
-  height: 100vh;
+  height: 100%;
   padding-top: 50px;
   overflow: auto;
   background: #fff;
@@ -132,47 +132,41 @@ section > * {
 }
 
 section h3 {
-  margin: -4px 0;
+  margin: -4px 0 11px;
   font-weight: normal;
-}
-
-section p {
-  margin-top: 12px;
 }
 
 section h1 {
   display: table;
   padding: 3px 9px;
-  margin: 0 0 6px;
+  margin: 0 0 7px 0;
   font-size: 20px;
   font-weight: normal;
-  color: #fff;
-  background: #3f51b5;
+  color: #3f51b5;
+  border: 1px solid;
 }
 
-section p a,
+section div {
+  margin-top: 11px;
+}
+
+section div a,
+section > a,
 section span {
   display: inline-block;
-  padding: 0 6px;
+  padding: 2px 6px;
   margin-right: 9px;
   font-size: 13px;
-  line-height: 18px;
   border: solid 1px #ccc;
 }
 
+section div a,
 section > a {
-  display: block;
-  margin-top: 10px;
+  margin-top: 5px;
 }
 
-section > span {
-  padding: 0;
-  margin-top: 6px;
-  line-height: 22px;
-}
-
-section > span a {
-  padding: 6px;
+section h1 ~ p {
+  margin-top: 7px;
 }
 
 nav {
@@ -186,37 +180,22 @@ nav a {
   font-size: 14px;
 }
 
-load-mask {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  visibility: hidden;
-  background: rgb(248, 249, 250);
-  opacity: 0;
-  transform: 0.2;
-}
-
-.loading load-mask {
-  opacity: 0.8;
-}
-
 aside::before {
   position: fixed;
-  content: "";
-  opacity: 0;
-}
-
-.loading aside::before {
   top: 50%;
   left: 50%;
   padding: 17px;
   margin: -20px;
-  visibility: visible;
+  visibility: hidden;
+  content: "";
   border: 3px solid #3f51b5;
   border-top-color: rgba(0, 0, 0, 0);
   border-radius: 50%;
+  opacity: 0;
+}
+
+.loading aside::before {
+  visibility: visible;
   opacity: 1;
   transition: opacity 0.3s 0.1s, transform 6s linear;
   transform: rotate(3600deg);
@@ -225,7 +204,7 @@ aside::before {
 .loading main,
 .loading footer {
   filter: opacity(0.2); /* Force Hardware Acceleration */
-  transition: 0.2s;
+  transition: 0.3s;
 }
 
 @keyframes loaded {
@@ -237,5 +216,5 @@ aside::before {
 
 .loaded main,
 .loaded footer {
-  animation: 0.2s loaded;
+  animation: 0.3s loaded;
 }
