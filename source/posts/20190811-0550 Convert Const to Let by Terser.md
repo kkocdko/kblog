@@ -1,8 +1,7 @@
 ```
 title: Convert Const to Let by Terser
 date: 2019-08-11 05:50
-category: Tutorial
-tags: Terser Javascript NodeJS Compress
+tags: Tutorial Javascript
 description: Using TreeTransformer
 ```
 

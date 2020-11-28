@@ -1,8 +1,7 @@
 ```
 title: 在MBR+Legacy下用Bootmgr引导Ubuntu
 date: 2018-08-11 11:17
-category: Note
-tags: Ubuntu Linux Boot Windows
+tags: Ubuntu Linux
 description: 标题已经说得够清楚了
 ```
 

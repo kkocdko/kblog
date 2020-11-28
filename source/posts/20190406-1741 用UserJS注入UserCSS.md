@@ -1,8 +1,7 @@
 ```
 title: 用UserJS注入UserCSS
 date: 2019-04-06 17:41
-category: Code
-tags: Javascript UserJS CSS UserCSS
+tags: Code Javascript CSS
 description: 避免安装太多拓展
 ```
 
