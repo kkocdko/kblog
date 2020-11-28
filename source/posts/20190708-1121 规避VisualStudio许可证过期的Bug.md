@@ -1,8 +1,7 @@
 ```
 title: 规避VisualStudio许可证过期的Bug
 date: 2019-07-08 11:21
-category: Tutorial
-tags: VisualStudio License Bug IDE
+tags: Tutorial VisualStudio Code
 description: 许可证过期后，更新许可证会出错。
 ```
 

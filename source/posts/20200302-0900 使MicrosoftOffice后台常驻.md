@@ -1,8 +1,7 @@
 ```
 title: 使MicrosoftOffice后台常驻
 date: 2020-03-02 09:00
-category: Code
-tags: Office C Background Windows WinAPI
+tags: Code Office C
 description: 加快启动速度
 ```
 
