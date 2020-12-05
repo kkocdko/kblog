@@ -1,8 +1,3 @@
-/*!
- * Github-Pages-Like server
- *
- * A simple static server that imitate the work of Github Pages's server
- */
 "use strict";
 
 const fs = require("fs");
@@ -17,7 +12,7 @@ const config = {
 };
 
 const mime = {
-  html: "text/html; charset=UTF-8",
+  html: "text/html;charset=utf-8",
   css: "text/css",
   js: "application/javascript",
   json: "application/json",
@@ -29,43 +24,33 @@ const mime = {
 };
 
 const server = http.createServer((req, res) => {
-  let localPath = path.join(config.dir, req.url.split("?")[0]);
-  let statusCode;
-  try {
-    if (fs.statSync(localPath).isDirectory()) {
-      const pageFilePath = path.join(localPath, "index.html");
-      if (fs.statSync(pageFilePath).isFile()) {
-        localPath = pageFilePath;
-      } else {
-        throw 1;
-      }
-    }
-    statusCode = 200;
-  } catch {
-    const pageFilePath = path.join(config.dir, "404.html");
-    if (fs.existsSync(pageFilePath)) {
-      localPath = pageFilePath;
-    } else {
-      localPath = "";
-    }
-    statusCode = 404;
-  }
+  const pathname = path.join(config.dir, req.url.split("?")[0]);
+  const chain = [
+    () => [200, pathname],
+    () => [200, pathname + ".html"],
+    () => [200, path.join(pathname, "index.html")],
+    () => [404, path.join(config.dir, "404.html")],
+  ];
+  const respond = (statusCode, targetPath) => {
+    if (!fs.statSync(targetPath).isFile()) throw 1;
+    const extension = path.extname(targetPath).slice(1);
+    const contentType = mime[extension] || "";
+    res.writeHead(statusCode, { "Content-Type": contentType });
+    const stream = fs.createReadStream(targetPath);
+    stream.pipe(res).on("end", () => res.end());
+  };
   setTimeout(() => {
-    if (localPath) {
-      const extension = path.parse(localPath).ext.slice(1);
-      const contentType = mime[extension] || "";
-      res.writeHead(statusCode, { "Content-Type": contentType });
-      const stream = fs.createReadStream(localPath);
-      stream.pipe(res).on("end", () => res.end());
-    } else {
-      res.writeHead(statusCode).end(statusCode);
+    for (const pair of chain) {
+      try {
+        respond(...pair());
+        return;
+      } catch {}
     }
+    res.writeHead(404).end("404 Not Found");
   }, config.delay);
 });
-
 server.listen(config.port, config.ip);
 server.on("listening", () => {
   console.info(`server address: ${config.ip}:${config.port}`);
 });
-
 process.stdin.on("data", () => process.exit());

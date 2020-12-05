@@ -1,7 +1,7 @@
 /* *, *::before, *::after { box-sizing: border-box; padding: 0; margin: 0; } */
 
 article {
-  line-height: 1.8;
+  /* line-height: 1.8; */
   word-break: break-word;
 }
 
@@ -91,5 +91,5 @@ article img {
 }
 
 article img:not(.no-border) {
-  filter: drop-shadow(0 0 3px #ccc); /* For irregular pictures */
+  filter: drop-shadow(0 0 3px #ccc); /* Fit irregular pictures */
 }
