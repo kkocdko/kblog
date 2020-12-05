@@ -10,7 +10,7 @@ const fs = require("fs");
 const path = require("path");
 
 const isDevMode = process.argv.includes("--dev-mode");
-const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr); // Relative to absolute
+const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr); // Relative path to absolute
 
 const minify = (() => {
   const htmlStrip = (s) =>
@@ -142,9 +142,9 @@ const parseMdFile = (filePath) => {
 // Posts
 const postsList = [];
 {
-  let filesList = fs.readdirSync(p`./source/posts`);
+  let filesList = fs.readdirSync(p`./source/posts`).reverse();
   if (isDevMode) {
-    filesList = filesList.reverse().slice(0, 15);
+    filesList = filesList.slice(0, 15);
   }
   filesList.forEach((fileName) => {
     const { meta, content } = parseMdFile(p`./source/posts/${fileName}`);
@@ -167,7 +167,7 @@ const postsList = [];
       const prefix = meta.date.replace(/:|-/g, "").replace(" ", "-");
       const expectant = `${prefix} ${meta.title}.md`;
       if (expectant !== fileName) {
-        console.warn(`post file [ ${fileName} ] has not standard name`);
+        console.warn(`post file [ ${fileName} ] has nonstandard name`);
       }
     }
   });

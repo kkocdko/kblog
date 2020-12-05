@@ -1,6 +1,4 @@
-*,
-*::before,
-*::after {
+* /* , *::before, *::after */ {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -8,7 +6,8 @@
 
 html {
   font-family: sans-serif;
-  background: rgb(248, 249, 250);
+  line-height: 1.8;
+  background: #f8f9fa;
 }
 
 a {
@@ -35,7 +34,7 @@ header {
   top: 0;
   width: 100%;
   background: #3f51b5;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 5px #0000004d;
   transition: 0.2s;
 }
 
@@ -51,7 +50,7 @@ header > * {
   fill: #fff;
 }
 
-header > :last-child {
+header a ~ * {
   float: right;
 }
 
@@ -69,24 +68,23 @@ aside {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: #00000080;
   transition: 0.3s;
 }
 
 aside.hidden {
   visibility: hidden;
-  background: rgba(0, 0, 0, 0);
+  background: #00000000;
 }
 
 aside > * {
-  position: fixed;
   width: 70%;
   max-width: 230px;
   height: 100%;
   padding-top: 50px;
   overflow: auto;
   background: #fff;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 20px #0000004d;
   transition: 0.3s;
 }
 
@@ -97,17 +95,16 @@ aside.hidden > * {
 aside a {
   display: block;
   padding-left: 15%;
-  line-height: 50px;
+  line-height: 4;
   color: #333;
 }
 
 footer,
 footer a {
   font-size: 13px;
-  line-height: 40px;
-  color: #ddd;
+  line-height: 3;
+  color: #ccc;
   text-align: center;
-  text-decoration: none;
   background: #3f51b5;
 }
 
@@ -115,7 +112,7 @@ main > * {
   padding: 20px;
   margin-top: 20px;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px #0000004d;
 }
 
 @media screen and (max-width: 750px) {
@@ -132,41 +129,36 @@ section > * {
 }
 
 section h3 {
-  margin: -4px 0 11px;
+  margin: -8px 0 5px;
   font-weight: normal;
 }
 
 section h1 {
-  display: table;
-  padding: 3px 9px;
-  margin: 0 0 7px 0;
-  font-size: 20px;
+  margin: -9px 0 11px;
   font-weight: normal;
   color: #3f51b5;
-  border: 1px solid;
+  border-bottom: 1px solid #ddd;
 }
 
 section div {
-  margin-top: 11px;
+  margin: 10px 0 -2px;
 }
 
 section div a,
 section > a,
 section span {
-  display: inline-block;
-  padding: 2px 6px;
-  margin-right: 9px;
+  padding: 2px 7px;
+  margin: 5px 9px 4px 0;
   font-size: 13px;
-  border: solid 1px #ccc;
+  border: 1px solid #ccc;
 }
 
-section div a,
 section > a {
-  margin-top: 5px;
+  display: inline-table;
 }
 
-section h1 ~ p {
-  margin-top: 7px;
+section p {
+  margin-top: 3px;
 }
 
 nav {
@@ -176,26 +168,23 @@ nav {
 
 nav a {
   display: inline-block;
-  padding: 12px 5%;
+  padding: 10px 5%;
   font-size: 14px;
 }
 
-aside::before {
+load-circle {
+  opacity: 0;
+}
+
+.loading load-circle {
   position: fixed;
   top: 50%;
   left: 50%;
   padding: 17px;
   margin: -20px;
-  visibility: hidden;
-  content: "";
   border: 3px solid #3f51b5;
-  border-top-color: rgba(0, 0, 0, 0);
+  border-top-color: #00000000;
   border-radius: 50%;
-  opacity: 0;
-}
-
-.loading aside::before {
-  visibility: visible;
   opacity: 1;
   transition: opacity 0.3s 0.1s, transform 6s linear;
   transform: rotate(3600deg);
@@ -203,7 +192,7 @@ aside::before {
 
 .loading main,
 .loading footer {
-  filter: opacity(0.2); /* Force Hardware Acceleration */
+  filter: opacity(0.2); /* Force GPU Aacceleration */
   transition: 0.3s;
 }
 
@@ -216,5 +205,6 @@ aside::before {
 
 .loaded main,
 .loaded footer {
-  animation: 0.3s loaded;
+  transition: none; /* Avoid loaded flicker */
+  animation: 0.2s ease-out loaded;
 }
