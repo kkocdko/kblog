@@ -3,6 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 const http = require("http");
+const zlib = require("zlib");
 
 const config = {
   ip: "127.0.0.1",
@@ -16,41 +17,31 @@ const mime = {
   css: "text/css",
   js: "application/javascript",
   json: "application/json",
-  md: "text/markdown",
   svg: "image/svg+xml",
   ico: "image/x-icon",
   png: "image/png",
   webp: "image/webp",
 };
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
+  if (config.delay) await new Promise((r) => setTimeout(r, config.delay));
   const pathname = path.join(config.dir, req.url.split("?")[0]);
-  const chain = [
-    () => [200, pathname],
-    () => [200, pathname + ".html"],
-    () => [200, path.join(pathname, "index.html")],
-    () => [404, path.join(config.dir, "404.html")],
+  const queryChain = [
+    [200, pathname],
+    [200, path.join(pathname, "index.html")],
+    [404, path.join(config.dir, "404.html")],
   ];
-  const respond = (statusCode, targetPath) => {
-    if (!fs.statSync(targetPath).isFile()) throw 1;
-    const extension = path.extname(targetPath).slice(1);
-    const contentType = mime[extension] || "";
-    res.writeHead(statusCode, { "Content-Type": contentType });
-    const stream = fs.createReadStream(targetPath);
-    stream.pipe(res).on("end", () => res.end());
-  };
-  setTimeout(() => {
-    for (const pair of chain) {
-      try {
-        respond(...pair());
-        return;
-      } catch {}
-    }
-    res.writeHead(404).end("404 Not Found");
-  }, config.delay);
+  for (const [statusCode, filePath] of queryChain) {
+    if (!(fs.existsSync(filePath) && fs.statSync(filePath).isFile())) continue;
+    res.writeHead(statusCode, {
+      "Content-Type": mime[path.extname(filePath).slice(1)] || "",
+      "Content-Encoding": "br",
+    });
+    res.end(zlib.brotliCompressSync(fs.readFileSync(filePath)));
+    return;
+  }
+  res.writeHead(404).end("404 Not Found");
 });
 server.listen(config.port, config.ip);
-server.on("listening", () => {
-  console.info(`server address: ${config.ip}:${config.port}`);
-});
+console.info(`server address: ${config.ip}:${config.port}`);
 process.stdin.on("data", () => process.exit());

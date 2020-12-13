@@ -1,43 +1,39 @@
-var mainBox = document.querySelector("main");
-var topBar = document.querySelector("header");
-var scrollRecords = {};
-var scrollPos;
+let [mainBox /* main */, topBar /* header */] = document.body.children;
+let scrollRecords = {};
+let scrollPos = 0;
 
-var onSpaLinkClick = function (event) {
+let onLinkClick = function (event) {
   event.preventDefault();
   history.pushState(null, null, this.href);
-  onpopstate(0); // Because "pushState" will not trigger "popstate" event
+  onpopstate(); // Because "pushState" will not trigger "popstate" event
 };
 
-var listenSpaLinks = () =>
+let onPageLoad = (a /* isPopState */) => {
+  scroll(0, a ? scrollRecords[location] || 0 : 0);
+  a /* anchor */ = document.getElementById(location.hash.slice(1));
+  if (a) a.scrollIntoView();
   document
-    .querySelectorAll("[_]")
-    .forEach((element) => (element.onclick = onSpaLinkClick));
+    .querySelectorAll('a[href^="/."],a[href^="#"]')
+    .forEach((element) => (element.onclick = onLinkClick));
+};
 
 onscroll = () =>
   (topBar.className =
     scrollPos < (scrollRecords[location] = scrollPos = scrollY) &&
-    scrollPos > 55
+    scrollPos /* Was set to "scrollY" */ > 55
       ? "hidden"
       : "");
 
-onpopstate = (noToTop) => {
+onpopstate = (isPopState) => {
   document.body.className = "loading";
   fetch(location)
     .then((response) => response.text())
-    .then((a /* htmlStr */) => {
-      document.title = a.match("<title>((.|\n)+?)</title>")[1];
-      mainBox.innerHTML = a.match("<main>((.|\n)+?)</main>")[1];
-      scroll(
-        0,
-        (a /* anchor */ = document.getElementById(location.hash.slice(1))
-          ? a.offsetTop - 70
-          : (noToTop && scrollRecords[location]) || 0)
-      );
-      listenSpaLinks();
+    .then((s) => {
+      [, document.title, , mainBox.innerHTML] = s.split(/<\/?title>|<\/?main>/);
+      onPageLoad(isPopState);
       document.body.className = "loaded"; // Also replace the "loading"
       setTimeout(() => (document.body.className = ""), 250);
     });
 };
 
-listenSpaLinks();
+onPageLoad();
