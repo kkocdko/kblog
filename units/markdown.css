@@ -27,17 +27,16 @@ article h4 {
 }
 
 article p,
-article pre,
-article table,
-article details {
-  margin: 7px 0;
+article > *,
+article details > * {
+  margin: 7px 0 0;
 }
 
 article a {
   color: #0366d6;
 }
 
-article details summary {
+article summary {
   padding: 0 5px;
 }
 
@@ -54,8 +53,7 @@ article pre {
   background: #f4f4f4;
 }
 
-article :not(pre) > code,
-article kbd {
+article :not(pre) > code {
   padding: 2px 5px;
   margin: 0 2px;
   font-size: 14px;
@@ -72,17 +70,17 @@ article table {
   border-collapse: collapse;
 }
 
-article table td,
-article table th {
+article td,
+article th {
   padding: 5px 13px;
   border: 1px solid #ddd;
 }
 
-article table th {
+article th {
   font-weight: normal;
 }
 
-article table tr:nth-child(2n) {
+article tr:nth-child(2n) {
   background: #f7f7f7;
 }
 
@@ -91,5 +89,5 @@ article img {
 }
 
 article img:not(.no-border) {
-  filter: drop-shadow(0 0 3px #ccc); /* Fit irregular pictures */
+  filter: drop-shadow(0 0 3px #ccc); /* Fit irregular images */
 }

@@ -13,38 +13,25 @@ const isDevMode = process.argv.includes("--dev-mode");
 const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr); // Relative path to absolute
 
 const minify = (() => {
-  const htmlStrip = (s) =>
-    s.replace(/\/?>(\s|\n)*/g, ">").replace(/(\s|\n)+</g, "<");
+  const htmlPretreat = (s) =>
+    s // Strip spaces and restone "/>" in <svg>
+      .replace(/\/?>\s*/g, ">")
+      .replace(/\s+</g, "<")
+      .replace(/; >/g, "/>");
   if (isDevMode) {
     const f = (s) => s;
-    return { html: htmlStrip, htmlMd: f, css: f, js: f };
+    return { html: htmlPretreat, htmlMd: f, css: f, js: f };
   }
   const htmlclean = require("htmlclean");
   const CleanCss = require("clean-css");
   const terser = require("terser");
   return {
-    html: (s) => htmlclean(htmlStrip(s)),
+    html: (s) => htmlclean(htmlPretreat(s)),
     htmlMd: (s) => htmlclean(s),
     css: (s) => new CleanCss().minify(s).styles,
     js: (s) => {
-      const output = terser.minify(s, {
-        compress: {
-          booleans_as_integers: true,
-          passes: 3,
-          unsafe: true,
-          unsafe_arrows: true,
-          unsafe_comps: true,
-          unsafe_Function: true,
-          unsafe_math: true,
-          unsafe_methods: true,
-          unsafe_proto: true,
-          unsafe_regexp: true,
-          unsafe_undefined: true,
-        },
-      });
-      if (output.error) {
-        throw output.error;
-      }
+      const output = terser.minify(s, { toplevel: true });
+      if (output.error) throw output.error;
       return output.code.replace(/;$/, "");
     },
   };
@@ -52,36 +39,32 @@ const minify = (() => {
 
 const makePage = (() => {
   const marked = require("marked");
-  const getPathDir = (p) => path.parse(p).dir;
-  const template = minify.html(
-    fs.readFileSync(p`./units/template.html`).toString()
-  );
+  const pathModule = path;
+  const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
+  const template = minify.html(templateRaw);
   return ({
-    type, // "html" | "markdown"
     realPath,
     path,
+    type, // "html" | "markdown"
     title = "",
     description = "",
     content = "",
   }) => {
     if (type === "markdown") {
-      content = `
-        <article>
-          <h1>${title}</h1>
-          ${marked(content)}
-        </article>
-      `;
+      content = `<article><h1>${title}</h1>${marked(content)}</article>`;
+      content = minify.htmlMd(content);
+    } else {
+      content = minify.html(content);
     }
-    content = minify[type === "html" ? "html" : "htmlMd"](content);
     const result = template
-      .replace("/*[title]*/", title)
-      .replace("/*[description]*/", description)
-      .replace("/*[content]*/", content);
-    const targetFilePath = realPath
+      .replace("/*{title}*/", title)
+      .replace("/*{description}*/", description)
+      .replace("/*{content}*/", content);
+    const targetPath = realPath
       ? p`./public/${realPath}`
       : p`./public/${path}/${"index.html"}`;
-    fs.mkdirSync(getPathDir(targetFilePath), { recursive: true });
-    fs.writeFileSync(targetFilePath, result);
+    fs.mkdirSync(pathModule.dirname(targetPath), { recursive: true });
+    fs.writeFileSync(targetPath, result);
   };
 })();
 
@@ -95,8 +78,8 @@ const parseMdFile = (filePath) => {
     const value = line.slice(pos + 1).trim();
     meta[key] = value;
   });
-  const content = str.slice(str.indexOf("\n```") + 4);
-  return { meta, content };
+  const body = str.slice(str.indexOf("\n```") + "\n```".length);
+  return { meta, body };
 };
 
 // Clear Dir
@@ -107,10 +90,10 @@ const parseMdFile = (filePath) => {
 
 // Init
 {
-  fs.copyFileSync(p`./units/_gitignore`, p`./public/.gitignore`);
-  fs.copyFileSync(p`./units/_nojekyll`, p`./public/.nojekyll`);
-  fs.copyFileSync(p`./units/favicon.ico`, p`./public/favicon.ico`);
-  fs.copyFileSync(p`./units/favicon.svg`, p`./public/favicon.svg`);
+  fs.writeFileSync(p`./public/.nojekyll`, "");
+  fs.writeFileSync(p`./public/favicon.ico`, "");
+  fs.mkdirSync(p`./public/u`);
+  fs.copyFileSync(p`./units/update.html`, p`./public/u/index.html`);
 
   const copyDirSync = (sourceDir, targetDir) => {
     fs.mkdirSync(targetDir, { recursive: true });
@@ -129,14 +112,14 @@ const parseMdFile = (filePath) => {
 
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file string
   const style = minify.css(f`main.css` + f`markdown.css`);
-  const head = minify.html(f`head.html`).replace("/*[style]*/", style);
-  const extra = minify.html(f`extra.html`);
+  const head = minify.html(f`head.html`).replace("/*{style}*/", style);
+  const avater = f`avatar.svg`.replaceAll("#", "%23"); // Or encodeURIComponent()
   const bundle = f`bundle.js`
-    .replace("/*[head]*/", head)
-    .replace("/*[extra]*/", extra)
-    .replace("/*[script]*/", f`main.js`);
+    .replace("/*{avatar}*/", "data:image/svg+xml," + avater)
+    .replace("/*{head}*/", head)
+    .replace("/*{extra}*/", minify.html(f`extra.html`))
+    .replace("/*{script}*/", f`main.js`);
   fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
-  fs.writeFileSync(p`./public/check.js`, minify.js(f`check.js`));
 }
 
 // Posts
@@ -147,7 +130,7 @@ const postsList = [];
     filesList = filesList.slice(0, 15);
   }
   filesList.forEach((fileName) => {
-    const { meta, content } = parseMdFile(p`./source/posts/${fileName}`);
+    const { meta, body } = parseMdFile(p`./source/posts/${fileName}`);
     const attr = {
       id: meta.date.replace(/:|-|\s/g, ""),
       date: meta.date.split(" ")[0],
@@ -159,10 +142,10 @@ const postsList = [];
       ...attr,
       path: `/post/${attr.id}/`,
       type: "markdown",
-      content,
+      content: body,
     });
     postsList.push(attr);
-    // File name check
+    // Check filename
     {
       const prefix = meta.date.replace(/:|-/g, "").replace(" ", "-");
       const expectant = `${prefix} ${meta.title}.md`;
@@ -179,7 +162,7 @@ const pagesList = [];
 {
   const filesList = fs.readdirSync(p`./source/pages`);
   filesList.forEach((fileName) => {
-    const { meta, content } = parseMdFile(p`./source/pages/${fileName}`);
+    const { meta, body } = parseMdFile(p`./source/pages/${fileName}`);
     const attr = {
       name: path.parse(fileName).name,
       title: meta.title,
@@ -189,7 +172,7 @@ const pagesList = [];
       ...attr,
       path: `/${attr.name}/`,
       type: "markdown",
-      content,
+      content: body,
     });
     pagesList.push(attr);
   });
@@ -208,14 +191,13 @@ const pagesList = [];
       htmlStr += `
         <section>
           <h3>
-            <a _ href="/post/${post.id}">${post.title}</a>
+            <a href="/./post/${post.id}">${post.title}</a>
           </h3>
           <p>${post.description}</p>
-          <div>`;
-      post.tags.forEach((tag) => {
-        htmlStr += `<a _ href="/tag/${tag}">${tag}</a>`;
-      });
-      htmlStr += `
+          <div>
+            ${post.tags
+              .map((tag) => `<a href="/./tag/${tag}">${tag}</a>`)
+              .join("")}
           </div>
         </section>
       `;
@@ -224,11 +206,11 @@ const pagesList = [];
     const last = group.length;
     htmlStr += `
       <nav>
-        <a _ href="/">◁◁</a>
-        <a _ href="/${cur > 2 ? `home/${cur - 1}` : ""}">◁</a>
+        <a href="/.">◁◁</a>
+        <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}">◁</a>
         <a>${cur} / ${last}</a>
-        <a _ href="/home/${cur < last ? cur + 1 : last}">▷</a>
-        <a _ href="/home/${last}">▷▷</a>
+        <a href="/./home/${cur < last ? cur + 1 : last}">▷</a>
+        <a href="/./home/${last}">▷▷</a>
       </nav>
     `;
     if (cur === 1) {
@@ -264,7 +246,7 @@ const pagesList = [];
   let htmlStr = "<section>";
   htmlStr += "<h1>Archive</h1>";
   map.forEach((_, year) => {
-    htmlStr += `<a _ href="/archive/${year}">${year}</a>`;
+    htmlStr += `<a href="/./archive/${year}">${year}</a>`;
   });
   htmlStr += "</section>";
   makePage({
@@ -280,7 +262,7 @@ const pagesList = [];
     list.forEach((post) => {
       htmlStr += `
         <p>
-          <a _ href="/post/${post.id}">
+          <a href="/./post/${post.id}">
             <span>${post.date.slice(5).replace("-", ".")}</span>
             ${post.title}
           </a>
@@ -289,7 +271,7 @@ const pagesList = [];
     });
     htmlStr += "</section>";
     makePage({
-      path: `/archive/${year}`,
+      path: `/archive/${year}/`,
       type: "html",
       title: `${year} - Archive`,
       content: htmlStr,
@@ -312,7 +294,7 @@ const pagesList = [];
   let htmlStr = "<section>";
   htmlStr += "<h1>Tag</h1>";
   map.forEach((_, tag) => {
-    htmlStr += `<a _ href="/tag/${tag}">${tag}</a>`;
+    htmlStr += `<a href="/./tag/${tag}">${tag}</a>`;
   });
   htmlStr += "</section>";
   makePage({
@@ -328,13 +310,13 @@ const pagesList = [];
     list.forEach((post) => {
       htmlStr += `
         <p>
-          <a _ href="/post/${post.id}">${post.title}</a>
+          <a href="/./post/${post.id}">${post.title}</a>
         </p>
       `;
     });
     htmlStr += "</section>";
     makePage({
-      path: `/tag/${tag}`,
+      path: `/tag/${tag}/`,
       type: "html",
       title: `${tag} - Tag`,
       content: htmlStr,
@@ -346,8 +328,8 @@ const pagesList = [];
 {
   makePage({
     realPath: "/404.html",
-    title: "404 Not Found",
     type: "markdown",
+    title: "404 Not Found",
     content: "The requested path could not be found.",
   });
 }

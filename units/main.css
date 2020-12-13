@@ -22,13 +22,6 @@ main {
   margin: 50px auto 0;
 }
 
-@media screen and (max-width: 750px) {
-  main {
-    width: 100%;
-    padding: 0;
-  }
-}
-
 header {
   position: fixed;
   top: 0;
@@ -56,7 +49,6 @@ header a ~ * {
 
 header img {
   width: 28px;
-  height: 28px;
   margin: 0 -10px;
   border: 2px solid #fff;
   border-radius: 50%;
@@ -77,7 +69,7 @@ aside.hidden {
   background: #00000000;
 }
 
-aside > * {
+aside div {
   width: 70%;
   max-width: 230px;
   height: 100%;
@@ -88,7 +80,7 @@ aside > * {
   transition: 0.3s;
 }
 
-aside.hidden > * {
+aside.hidden div {
   transform: translateX(-120%);
 }
 
@@ -113,13 +105,6 @@ main > * {
   margin-top: 20px;
   background: #fff;
   box-shadow: 0 1px 4px #0000004d;
-}
-
-@media screen and (max-width: 750px) {
-  main > * {
-    margin-top: 1px;
-    box-shadow: 0 1px #ddd;
-  }
 }
 
 section > * {
@@ -148,13 +133,13 @@ section div a,
 section > a,
 section span {
   padding: 2px 7px;
-  margin: 5px 9px 4px 0;
+  margin: 5px 9px -4px 0;
   font-size: 13px;
   border: 1px solid #ccc;
 }
 
 section > a {
-  display: inline-table;
+  display: inline-block;
 }
 
 section p {
@@ -163,20 +148,32 @@ section p {
 
 nav {
   padding: 0;
+  font-size: 14px;
+  line-height: 3;
   text-align: center;
 }
 
 nav a {
-  display: inline-block;
-  padding: 10px 5%;
-  font-size: 14px;
+  padding: 1em 5%;
 }
 
-load-circle {
+@media screen and (max-width: 750px) {
+  main {
+    width: 100%;
+    padding: 0;
+  }
+
+  main > * {
+    margin-top: 1px;
+    box-shadow: 0 1px #ddd;
+  }
+}
+
+spin-circle {
   opacity: 0;
 }
 
-.loading load-circle {
+.loading spin-circle {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -192,19 +189,19 @@ load-circle {
 
 .loading main,
 .loading footer {
-  filter: opacity(0.2); /* Force GPU Aacceleration */
+  filter: opacity(0.2); /* Force GPU render */
   transition: 0.3s;
 }
 
 @keyframes loaded {
   0% {
-    filter: opacity(0.2);
-    transform: translateY(10px);
+    filter: opacity(0.1);
+    transform: translateY(9px);
   }
 }
 
 .loaded main,
 .loaded footer {
-  transition: none; /* Avoid loaded flicker */
+  transition: none; /* Avoid flicker */
   animation: 0.2s ease-out loaded;
 }
