@@ -9,7 +9,7 @@ description: 加快启动速度
 
 <https://github.com/kkocdko/mobp>
 
-### Instruction
+### Intro
 
 > `mobp`是`Microsoft Office Background Process`的缩写。
 
