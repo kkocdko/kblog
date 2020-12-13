@@ -4,17 +4,13 @@ title: Toys
 
 > [如何安装PWA应用？](https://developer.mozilla.org/docs/Web/Progressive_web_apps/Add_to_home_screen)
 >
-> 某些页面使用了较新的Web标准功能，在标准支持较差的浏览器中可能出现功能/界面降级或缺陷。
-
-<h2></h2>
+> 使用了较新的Web标准功能，在旧版浏览器中可能出现缺陷。
 
 ### NCEE Countdown
 
 [/toy/ncee-countdown](/toy/ncee-countdown)
 
 赶时间做出来的高考倒计时页面。敏捷开发，敏捷开发。
-
-<h2></h2>
 
 ### Chrome Dino
 
@@ -24,8 +20,6 @@ title: Toys
 
 （暂时下线）
 
-<h2></h2>
-
 ### Rubiks Cube
 
 <!-- [/toy/rubikscube](/toy/rubikscube) -->
@@ -33,8 +27,6 @@ title: Toys
 Google Doodle上的交互式魔方
 
 （暂时下线）
-
-<h2></h2>
 
 ### Markdown Editor
 
@@ -44,15 +36,11 @@ Google Doodle上的交互式魔方
 
 （暂时下线）
 
-<h2></h2>
-
 ### Random Number Generator
 
 [/toy/randnum](/toy/randnum)
 
 随机数生成器
-
-<h2></h2>
 
 ### QRCode Generator
 
@@ -62,15 +50,11 @@ Google Doodle上的交互式魔方
 
 （暂时下线）
 
-<h2></h2>
-
 ### Solar System
 
 [/toy/solarsystem](/toy/solarsystem)
 
 太阳系模型，拥有精确的周期
-
-<h2></h2>
 
 ### Image Converter
 
@@ -78,23 +62,17 @@ Google Doodle上的交互式魔方
 
 图片格式转换器（基于Canvas，可读取浏览器支持的所有图片格式）
 
-<h2></h2>
-
 ### Image Comparator
 
 > Still Developing
 
 <!-- [/toy/imgcomparator](/toy/imgcomparator) -->
 
-<h2></h2>
-
 ### Base64 Tool
 
 [/toy/base64](/toy/base64)
 
 自用的小工具，将本地文件以Base64进行编码
-
-<h2></h2>
 
 ### Stress Test
 
