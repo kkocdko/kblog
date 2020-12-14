@@ -10,7 +10,25 @@ const fs = require("fs");
 const path = require("path");
 
 const isDevMode = process.argv.includes("--dev-mode");
-const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr); // Relative path to absolute
+
+// Convert relative path to absolute
+const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr);
+
+// htmlx`<a> Hi ${ [ [ 22, 33 ], i => i ] } </a>` == "<a> Hi 2233 </a>"
+const htmlx = (parts, ...values) => {
+  let str = parts[0];
+  parts.slice(1).forEach((part) => {
+    const value = values.shift();
+    if (Array.isArray(value)) {
+      const [arr, fn] = value;
+      str += arr.map(fn).join("");
+    } else {
+      str += value;
+    }
+    str += part;
+  });
+  return str;
+};
 
 const minify = (() => {
   const htmlPretreat = (s) =>
@@ -43,9 +61,9 @@ const makePage = (() => {
   const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
   const template = minify.html(templateRaw);
   return ({
+    type, // "html" | "markdown"
     realPath,
     path,
-    type, // "html" | "markdown"
     title = "",
     description = "",
     content = "",
@@ -111,11 +129,11 @@ const parseMdFile = (filePath) => {
   copyDirSync(p`./source/res`, p`./public/res`);
 
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file string
+  const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
   const head = minify.html(f`head.html`).replace("/*{style}*/", style);
-  const avater = f`avatar.svg`.replaceAll("#", "%23"); // Or encodeURIComponent()
   const bundle = f`bundle.js`
-    .replace("/*{avatar}*/", "data:image/svg+xml," + avater)
+    .replace("/*{avatar}*/", avatar)
     .replace("/*{head}*/", head)
     .replace("/*{extra}*/", minify.html(f`extra.html`))
     .replace("/*{script}*/", f`main.js`);
@@ -139,9 +157,9 @@ const postsList = [];
       description: meta.description,
     };
     makePage({
+      type: "markdown",
       ...attr,
       path: `/post/${attr.id}/`,
-      type: "markdown",
       content: body,
     });
     postsList.push(attr);
@@ -169,9 +187,9 @@ const pagesList = [];
       description: meta.description,
     };
     makePage({
+      type: "markdown",
       ...attr,
       path: `/${attr.name}/`,
-      type: "markdown",
       content: body,
     });
     pagesList.push(attr);
@@ -186,140 +204,128 @@ const pagesList = [];
     group.push(postsList.slice(i, i + volume));
   }
   group.forEach((list, i) => {
-    let htmlStr = "";
-    list.forEach((post) => {
-      htmlStr += `
-        <section>
-          <h3>
-            <a href="/./post/${post.id}">${post.title}</a>
-          </h3>
-          <p>${post.description}</p>
-          <div>
-            ${post.tags
-              .map((tag) => `<a href="/./tag/${tag}">${tag}</a>`)
-              .join("")}
-          </div>
-        </section>
-      `;
-    });
     const cur = i + 1;
     const last = group.length;
-    htmlStr += `
-      <nav>
-        <a href="/.">◁◁</a>
-        <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}">◁</a>
-        <a>${cur} / ${last}</a>
-        <a href="/./home/${cur < last ? cur + 1 : last}">▷</a>
-        <a href="/./home/${last}">▷▷</a>
-      </nav>
-    `;
-    if (cur === 1) {
-      makePage({
-        path: "/",
-        type: "html",
-        title: "Homepage",
-        description: "Welcome to my blog!",
-        content: htmlStr,
-      });
-    } else {
-      makePage({
-        path: `/home/${cur}/`,
-        type: "html",
-        title: `Home: ${cur}`,
-        content: htmlStr,
-      });
-    }
+    makePage({
+      type: "html",
+      path: cur === 1 ? "/" : `/home/${cur}/`,
+      title: cur === 1 ? "Homepage" : `Home: ${cur}`,
+      description: cur === 1 ? "Welcome to my blog!" : "",
+      content: htmlx`
+        ${[
+          list,
+          ({ id, title, description, tags }) => htmlx`
+            <section>
+              <h3>
+                <a href="/./post/${id}">${title}</a>
+              </h3>
+              <p>${description}</p>
+              <div>
+                ${[tags, (tag) => `<a href="/./tag/${tag}">${tag}</a>`]}
+              </div>
+            </section>
+          `,
+        ]}
+        <nav>
+          <a href="/.">◁◁</a>
+          <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}">◁</a>
+          <a>${cur} / ${last}</a>
+          <a href="/./home/${cur < last ? cur + 1 : last}">▷</a>
+          <a href="/./home/${last}">▷▷</a>
+        </nav>
+      `,
+    });
   });
 }
 
 // Blog Pages - Archive
 {
-  const map = new Map();
+  const dict = {};
   postsList.forEach((post) => {
     const year = post.date.slice(0, 4);
-    if (!map.has(year)) {
-      map.set(year, []);
-    }
-    map.get(year).push(post);
+    if (!dict[year]) dict[year] = [];
+    dict[year].push(post);
   });
+  const group = Object.entries(dict);
 
-  let htmlStr = "<section>";
-  htmlStr += "<h1>Archive</h1>";
-  map.forEach((_, year) => {
-    htmlStr += `<a href="/./archive/${year}">${year}</a>`;
-  });
-  htmlStr += "</section>";
   makePage({
-    path: "/archive/",
     type: "html",
+    path: "/archive/",
     title: "Archive",
-    content: htmlStr,
+    content: htmlx`
+      <section>
+        <h1>Archive</h1>
+        ${[group, ([year]) => `<a href="/./archive/${year}">${year}</a>`]}
+      </section>
+    `,
   });
 
-  map.forEach((list, year) => {
-    let htmlStr = "<section>";
-    htmlStr += `<h1>${year}</h1>`;
-    list.forEach((post) => {
-      htmlStr += `
-        <p>
-          <a href="/./post/${post.id}">
-            <span>${post.date.slice(5).replace("-", ".")}</span>
-            ${post.title}
-          </a>
-        </p>
-      `;
-    });
-    htmlStr += "</section>";
+  group.forEach(([year, list]) => {
     makePage({
-      path: `/archive/${year}/`,
       type: "html",
+      path: `/archive/${year}/`,
       title: `${year} - Archive`,
-      content: htmlStr,
+      content: htmlx`
+        <section>
+          <h1>${year}</h1>
+          ${[
+            list,
+            ({ id, date, title }) => `
+              <p>
+                <a href="/./post/${id}">
+                  <span>${date.slice(5).replace("-", ".")}</span>
+                  ${title}
+                </a>
+              </p>
+            `,
+          ]}
+        </section>
+      `,
     });
   });
 }
 
 // Blog Pages - Tag
 {
-  const map = new Map();
-  postsList.forEach((post) =>
+  const dict = {};
+  postsList.forEach((post) => {
     post.tags.forEach((tag) => {
-      if (!map.has(tag)) {
-        map.set(tag, []);
-      }
-      map.get(tag).push(post);
-    })
-  );
-
-  let htmlStr = "<section>";
-  htmlStr += "<h1>Tag</h1>";
-  map.forEach((_, tag) => {
-    htmlStr += `<a href="/./tag/${tag}">${tag}</a>`;
-  });
-  htmlStr += "</section>";
-  makePage({
-    path: "/tag/",
-    type: "html",
-    title: "Tag",
-    content: htmlStr,
-  });
-
-  map.forEach((list, tag) => {
-    let htmlStr = "<section>";
-    htmlStr += `<h1>${tag}</h1>`;
-    list.forEach((post) => {
-      htmlStr += `
-        <p>
-          <a href="/./post/${post.id}">${post.title}</a>
-        </p>
-      `;
+      if (!dict[tag]) dict[tag] = [];
+      dict[tag].push(post);
     });
-    htmlStr += "</section>";
+  });
+  const group = Object.entries(dict);
+
+  makePage({
+    type: "html",
+    path: "/tag/",
+    title: "Tag",
+    content: htmlx`
+      <section>
+        <h1>Tag</h1>
+        ${[group, ([tag]) => `<a href="/./tag/${tag}">${tag}</a>`]}
+      </section>
+    `,
+  });
+
+  group.forEach(([tag, list]) => {
     makePage({
-      path: `/tag/${tag}/`,
       type: "html",
+      path: `/tag/${tag}/`,
       title: `${tag} - Tag`,
-      content: htmlStr,
+      content: htmlx`
+        <section>
+          <h1>${tag}</h1>
+          ${[
+            list,
+            ({ id, title }) => `
+              <p>
+                <a href="/./post/${id}">${title}</a>
+              </p>
+            `,
+          ]}
+        </section>
+      `,
     });
   });
 }
@@ -327,8 +333,8 @@ const pagesList = [];
 // Blog Pages - 404 Error
 {
   makePage({
-    realPath: "/404.html",
     type: "markdown",
+    realPath: "/404.html",
     title: "404 Not Found",
     content: "The requested path could not be found.",
   });
@@ -345,36 +351,36 @@ const pagesList = [];
 
   fs.writeFileSync(
     p`./public/sitemap.xml`,
-    '<?xml version="1.0" encoding="UTF-8"?>' +
-      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
-      pagesList
-        .map(({ name }) => `<url><loc>${domain}/${name}/</loc></url>`)
-        .join("") +
-      postsList
-        .map(({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`)
-        .join("") +
-      "</urlset>"
+    htmlx`
+      <?xml version="1.0" encoding="UTF-8"?>
+      <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      ${[pagesList, ({ name }) => `<url><loc>${domain}/${name}/</loc></url>`]}
+      ${[postsList, ({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`]}
+      </urlset>
+    `
   );
 
   fs.writeFileSync(
     p`./public/feed.xml`,
-    '<?xml version="1.0" encoding="UTF-8"?>' +
-      '<rss version="2.0">' +
-      "<channel>" +
-      "<title>kkocdko's blog</title>" +
-      `<link>${domain}</link>` +
-      "<description>kkocdko's blog</description>" +
-      postsList
-        .map(
-          ({ id, title, description }) =>
-            "<item>" +
-            `<title>${title}</title>` +
-            `<link>${domain}/post/${id}/</link>` +
-            `<description>${description}</description>` +
-            "</item>"
-        )
-        .join("") +
-      "</channel>" +
-      "</rss>"
+    htmlx`
+      <?xml version="1.0" encoding="UTF-8"?>
+      <rss version="2.0">
+        <channel>
+        <title>kkocdko's blog</title>
+        <link>${domain}</link>
+        <description>kkocdko's blog</description>
+        ${[
+          postsList,
+          ({ id, title, description }) => `
+            <item>
+              <title>${title}</title>
+              <link>${domain}/post/${id}/</link>
+              <description>${description}</description>
+            </item>
+          `,
+        ]}
+        </channel>
+      </rss>
+    `
   );
 }
