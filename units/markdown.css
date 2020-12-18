@@ -1,9 +1,5 @@
-/* *, *::before, *::after { box-sizing: border-box; padding: 0; margin: 0; } */
-
-article {
-  /* line-height: 1.8; */
-  word-break: break-word;
-}
+/* article { font-family: sans-serif; line-height: 1.8; overflow-wrap: break-word; } */
+/* article * { box-sizing: border-box; padding: 0; margin: 0; } */
 
 article h1,
 article h3,
@@ -66,7 +62,8 @@ article ul {
 }
 
 article table {
-  overflow: auto;
+  /* display: block; */
+  /* overflow: auto; */
   border-collapse: collapse;
 }
 
