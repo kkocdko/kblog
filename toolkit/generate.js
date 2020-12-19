@@ -14,7 +14,7 @@ const isDevMode = process.argv.includes("--dev-mode");
 // Convert relative path to absolute
 const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr);
 
-// htmlx`<a> Hi ${ [ [ 22, 33 ], i => i ] } </a>` == "<a> Hi 2233 </a>"
+// htmlx`<p>Hi ${[ [ 22, 33 ], i => i ]}</p>` == "<p>Hi 2233</p>"
 const htmlx = (parts, ...values) => {
   let str = parts[0];
   parts.slice(1).forEach((part) => {
@@ -57,18 +57,10 @@ const minify = (() => {
 
 const makePage = (() => {
   const marked = require("marked");
-  const pathModule = path;
-  const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
-  const template = minify.html(templateRaw);
-  return ({
-    type, // "html" | "markdown"
-    realPath,
-    path,
-    title = "",
-    description = "",
-    content = "",
-  }) => {
-    if (type === "markdown") {
+  const templatePath = p`./units/template.html`;
+  const template = minify.html(fs.readFileSync(templatePath).toString());
+  return ({ isMarkdown, path: pathname, title, description = "", content }) => {
+    if (isMarkdown) {
       content = `<article><h1>${title}</h1>${marked(content)}</article>`;
       content = minify.htmlMd(content);
     } else {
@@ -78,10 +70,9 @@ const makePage = (() => {
       .replace("/*{title}*/", title)
       .replace("/*{description}*/", description)
       .replace("/*{content}*/", content);
-    const targetPath = realPath
-      ? p`./public/${realPath}`
-      : p`./public/${path}/${"index.html"}`;
-    fs.mkdirSync(pathModule.dirname(targetPath), { recursive: true });
+    if (pathname.endsWith("/")) pathname += "index.html";
+    const targetPath = p`./public/${pathname}`;
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
     fs.writeFileSync(targetPath, result);
   };
 })();
@@ -100,14 +91,11 @@ const parseMdFile = (filePath) => {
   return { meta, body };
 };
 
-// Clear Dir
+// Init
 {
   fs.rmSync(p`./public`, { recursive: true, force: true });
   fs.mkdirSync(p`./public`);
-}
 
-// Init
-{
   fs.writeFileSync(p`./public/.nojekyll`, "");
   fs.writeFileSync(p`./public/favicon.ico`, "");
   fs.mkdirSync(p`./public/u`);
@@ -144,21 +132,17 @@ const parseMdFile = (filePath) => {
 const postsList = [];
 {
   let filesList = fs.readdirSync(p`./source/posts`).reverse();
-  if (isDevMode) {
-    filesList = filesList.slice(0, 15);
-  }
+  if (isDevMode) filesList = filesList.slice(0, 12);
   filesList.forEach((fileName) => {
     const { meta, body } = parseMdFile(p`./source/posts/${fileName}`);
     const attr = {
+      ...meta,
       id: meta.date.replace(/:|-|\s/g, ""),
-      date: meta.date.split(" ")[0],
-      title: meta.title,
       tags: meta.tags.split(" "),
-      description: meta.description,
     };
     makePage({
-      type: "markdown",
-      ...attr,
+      ...meta,
+      isMarkdown: true,
       path: `/post/${attr.id}/`,
       content: body,
     });
@@ -167,8 +151,8 @@ const postsList = [];
     {
       const prefix = meta.date.replace(/:|-/g, "").replace(" ", "-");
       const expectant = `${prefix} ${meta.title}.md`;
-      if (expectant !== fileName) {
-        console.warn(`post file [ ${fileName} ] has nonstandard name`);
+      if (fileName !== expectant) {
+        console.warn(`post file [ ${fileName} ] has incorrect name`);
       }
     }
   });
@@ -181,18 +165,13 @@ const pagesList = [];
   const filesList = fs.readdirSync(p`./source/pages`);
   filesList.forEach((fileName) => {
     const { meta, body } = parseMdFile(p`./source/pages/${fileName}`);
-    const attr = {
-      name: path.parse(fileName).name,
-      title: meta.title,
-      description: meta.description,
-    };
     makePage({
-      type: "markdown",
-      ...attr,
-      path: `/${attr.name}/`,
+      ...meta,
+      isMarkdown: true,
+      path: `/${meta.name}/`,
       content: body,
     });
-    pagesList.push(attr);
+    pagesList.push(meta);
   });
 }
 
@@ -207,7 +186,6 @@ const pagesList = [];
     const cur = i + 1;
     const last = group.length;
     makePage({
-      type: "html",
       path: cur === 1 ? "/" : `/home/${cur}/`,
       title: cur === 1 ? "Homepage" : `Home: ${cur}`,
       description: cur === 1 ? "Welcome to my blog!" : "",
@@ -247,9 +225,7 @@ const pagesList = [];
     dict[year].push(post);
   });
   const group = Object.entries(dict);
-
   makePage({
-    type: "html",
     path: "/archive/",
     title: "Archive",
     content: htmlx`
@@ -259,10 +235,8 @@ const pagesList = [];
       </section>
     `,
   });
-
   group.forEach(([year, list]) => {
     makePage({
-      type: "html",
       path: `/archive/${year}/`,
       title: `${year} - Archive`,
       content: htmlx`
@@ -273,7 +247,7 @@ const pagesList = [];
             ({ id, date, title }) => `
               <p>
                 <a href="/./post/${id}">
-                  <span>${date.slice(5).replace("-", ".")}</span>
+                  <span>${date.slice(5, 10).replace("-", ".")}</span>
                   ${title}
                 </a>
               </p>
@@ -295,9 +269,7 @@ const pagesList = [];
     });
   });
   const group = Object.entries(dict);
-
   makePage({
-    type: "html",
     path: "/tag/",
     title: "Tag",
     content: htmlx`
@@ -307,10 +279,8 @@ const pagesList = [];
       </section>
     `,
   });
-
   group.forEach(([tag, list]) => {
     makePage({
-      type: "html",
       path: `/tag/${tag}/`,
       title: `${tag} - Tag`,
       content: htmlx`
@@ -333,8 +303,8 @@ const pagesList = [];
 // Blog Pages - 404 Error
 {
   makePage({
-    type: "markdown",
-    realPath: "/404.html",
+    isMarkdown: true,
+    path: "/404.html",
     title: "404 Not Found",
     content: "The requested path could not be found.",
   });
