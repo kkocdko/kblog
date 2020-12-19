@@ -1,4 +1,5 @@
 ```
+name: about
 title: About
 ```
 

@@ -1,4 +1,5 @@
 ```
+name: contact
 title: Contact
 ```
 

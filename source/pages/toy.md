@@ -1,4 +1,5 @@
 ```
+name: toy
 title: Toys
 ```
 
