@@ -218,13 +218,13 @@ const pagesList = [];
 
 // Blog Pages - Archive
 {
-  const dict = {};
+  const dict = new Map(); // Because Objcet's prop order is unspecified
   postsList.forEach((post) => {
     const year = post.date.slice(0, 4);
-    if (!dict[year]) dict[year] = [];
-    dict[year].push(post);
+    if (!dict.has(year)) dict.set(year, []);
+    dict.get(year).push(post);
   });
-  const group = Object.entries(dict);
+  const group = [...dict.entries()];
   makePage({
     path: "/archive/",
     title: "Archive",
@@ -261,14 +261,14 @@ const pagesList = [];
 
 // Blog Pages - Tag
 {
-  const dict = {};
+  const dict = new Map();
   postsList.forEach((post) => {
     post.tags.forEach((tag) => {
-      if (!dict[tag]) dict[tag] = [];
-      dict[tag].push(post);
+      if (!dict.has(tag)) dict.set(tag, []);
+      dict.get(tag).push(post);
     });
   });
-  const group = Object.entries(dict);
+  const group = [...dict.entries()];
   makePage({
     path: "/tag/",
     title: "Tag",
