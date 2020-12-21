@@ -195,21 +195,21 @@ const pagesList = [];
           ({ id, title, description, tags }) => htmlx`
             <section>
               <h3>
-                <a href="/./post/${id}">${title}</a>
+                <a href="/./post/${id}/">${title}</a>
               </h3>
               <p>${description}</p>
               <div>
-                ${[tags, (tag) => `<a href="/./tag/${tag}">${tag}</a>`]}
+                ${[tags, (tag) => `<a href="/./tag/${tag}/">${tag}</a>`]}
               </div>
             </section>
           `,
         ]}
         <nav>
-          <a href="/.">◁◁</a>
-          <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}">◁</a>
+          <a href="/./">◁◁</a>
+          <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}/">◁</a>
           <a>${cur} / ${last}</a>
-          <a href="/./home/${cur < last ? cur + 1 : last}">▷</a>
-          <a href="/./home/${last}">▷▷</a>
+          <a href="/./home/${cur < last ? cur + 1 : last}/">▷</a>
+          <a href="/./home/${last}/">▷▷</a>
         </nav>
       `,
     });
@@ -231,7 +231,7 @@ const pagesList = [];
     content: htmlx`
       <section>
         <h1>Archive</h1>
-        ${[group, ([year]) => `<a href="/./archive/${year}">${year}</a>`]}
+        ${[group, ([year]) => `<a href="/./archive/${year}/">${year}</a>`]}
       </section>
     `,
   });
@@ -246,7 +246,7 @@ const pagesList = [];
             list,
             ({ id, date, title }) => `
               <p>
-                <a href="/./post/${id}">
+                <a href="/./post/${id}/">
                   <span>${date.slice(5, 10).replace("-", ".")}</span>
                   ${title}
                 </a>
@@ -275,7 +275,7 @@ const pagesList = [];
     content: htmlx`
       <section>
         <h1>Tag</h1>
-        ${[group, ([tag]) => `<a href="/./tag/${tag}">${tag}</a>`]}
+        ${[group, ([tag]) => `<a href="/./tag/${tag}/">${tag}</a>`]}
       </section>
     `,
   });
@@ -290,7 +290,7 @@ const pagesList = [];
             list,
             ({ id, title }) => `
               <p>
-                <a href="/./post/${id}">${title}</a>
+                <a href="/./post/${id}/">${title}</a>
               </p>
             `,
           ]}
