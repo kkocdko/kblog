@@ -327,7 +327,7 @@ const pagesList = [];
       ${[pagesList, ({ name }) => `<url><loc>${domain}/${name}/</loc></url>`]}
       ${[postsList, ({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`]}
       </urlset>
-    `
+    `.trimStart()
   );
 
   fs.writeFileSync(
@@ -351,6 +351,6 @@ const pagesList = [];
         ]}
         </channel>
       </rss>
-    `
+    `.trimStart()
   );
 }
