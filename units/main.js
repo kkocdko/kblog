@@ -10,6 +10,7 @@ let onLinkClick = function (event) {
 
 let onPageLoad = (a /* isPopState */) => {
   scroll(0, a ? scrollRecords[location] || 0 : 0);
+  // Also ensure anchor makes down-scroll to hide topbar
   a /* anchor */ = document.getElementById(location.hash.slice(1));
   if (a) a.scrollIntoView();
   document
