@@ -9,13 +9,13 @@
 const fs = require("fs");
 const path = require("path");
 
-const isDevMode = process.argv.includes("--dev-mode");
+const isDev = process.argv.includes("--dev");
 
 // Convert relative path to absolute
 const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr);
 
-// htmlx`<p>Hi ${[ [ 22, 33 ], i => i ]}</p>` == "<p>Hi 2233</p>"
-const htmlx = (parts, ...values) => {
+// mapstr`<p>Hi ${[ [ 22, 33 ], i => i ]}</p>` == "<p>Hi 2233</p>"
+const mapstr = (parts, ...values) => {
   let str = parts[0];
   parts.slice(1).forEach((part) => {
     const value = values.shift();
@@ -36,7 +36,7 @@ const minify = (() => {
       .replace(/\/?>\s*/g, ">")
       .replace(/\s+</g, "<")
       .replace(/; >/g, "/>");
-  if (isDevMode) {
+  if (isDev) {
     const f = (s) => s;
     return { html: htmlPretreat, htmlMd: f, css: f, js: f };
   }
@@ -129,11 +129,11 @@ const parseMdFile = (filePath) => {
 }
 
 // Posts
-const postsList = [];
+const posts = [];
 {
-  let filesList = fs.readdirSync(p`./source/posts`).reverse();
-  if (isDevMode) filesList = filesList.slice(0, 12);
-  filesList.forEach((fileName) => {
+  let files = fs.readdirSync(p`./source/posts`).reverse();
+  if (isDev) files = files.slice(0, 12);
+  files.forEach((fileName) => {
     const { meta, body } = parseMdFile(p`./source/posts/${fileName}`);
     const attr = {
       ...meta,
@@ -146,24 +146,23 @@ const postsList = [];
       path: `/post/${attr.id}/`,
       content: body,
     });
-    postsList.push(attr);
+    posts.push(attr);
     // Check filename
     {
       const prefix = meta.date.replace(/:|-/g, "").replace(" ", "-");
-      const expectant = `${prefix} ${meta.title}.md`;
-      if (fileName !== expectant) {
+      if (fileName !== `${prefix} ${meta.title}.md`) {
         console.warn(`post file [ ${fileName} ] has incorrect name`);
       }
     }
   });
-  postsList.sort((post1, post2) => post2.id - post1.id);
+  posts.sort((post1, post2) => post2.id - post1.id);
 }
 
 // Custom Pages
-const pagesList = [];
+const pages = [];
 {
-  const filesList = fs.readdirSync(p`./source/pages`);
-  filesList.forEach((fileName) => {
+  const files = fs.readdirSync(p`./source/pages`);
+  files.forEach((fileName) => {
     const { meta, body } = parseMdFile(p`./source/pages/${fileName}`);
     makePage({
       ...meta,
@@ -171,7 +170,7 @@ const pagesList = [];
       path: `/${meta.name}/`,
       content: body,
     });
-    pagesList.push(meta);
+    pages.push(meta);
   });
 }
 
@@ -179,8 +178,8 @@ const pagesList = [];
 {
   const volume = 10;
   const group = [];
-  for (let i = 0; i < postsList.length; i += volume) {
-    group.push(postsList.slice(i, i + volume));
+  for (let i = 0; i < posts.length; i += volume) {
+    group.push(posts.slice(i, i + volume));
   }
   group.forEach((list, i) => {
     const cur = i + 1;
@@ -189,10 +188,10 @@ const pagesList = [];
       path: cur === 1 ? "/" : `/home/${cur}/`,
       title: cur === 1 ? "Homepage" : `Home: ${cur}`,
       description: cur === 1 ? "Welcome to my blog!" : "",
-      content: htmlx`
+      content: mapstr`
         ${[
           list,
-          ({ id, title, description, tags }) => htmlx`
+          ({ id, title, description, tags }) => mapstr`
             <section>
               <h3>
                 <a href="/./post/${id}/">${title}</a>
@@ -218,17 +217,17 @@ const pagesList = [];
 
 // Blog Pages - Archive
 {
-  const dict = new Map(); // Because Objcet's prop order is unspecified
-  postsList.forEach((post) => {
+  const map = new Map(); // Because Objcet's prop order is unspecified
+  posts.forEach((post) => {
     const year = post.date.slice(0, 4);
-    if (!dict.has(year)) dict.set(year, []);
-    dict.get(year).push(post);
+    if (!map.has(year)) map.set(year, []);
+    map.get(year).push(post);
   });
-  const group = [...dict.entries()];
+  const group = [...map.entries()];
   makePage({
     path: "/archive/",
     title: "Archive",
-    content: htmlx`
+    content: mapstr`
       <section>
         <h1>Archive</h1>
         ${[group, ([year]) => `<a href="/./archive/${year}/">${year}</a>`]}
@@ -239,7 +238,7 @@ const pagesList = [];
     makePage({
       path: `/archive/${year}/`,
       title: `${year} - Archive`,
-      content: htmlx`
+      content: mapstr`
         <section>
           <h1>${year}</h1>
           ${[
@@ -261,18 +260,18 @@ const pagesList = [];
 
 // Blog Pages - Tag
 {
-  const dict = new Map();
-  postsList.forEach((post) => {
+  const map = new Map();
+  posts.forEach((post) => {
     post.tags.forEach((tag) => {
-      if (!dict.has(tag)) dict.set(tag, []);
-      dict.get(tag).push(post);
+      if (!map.has(tag)) map.set(tag, []);
+      map.get(tag).push(post);
     });
   });
-  const group = [...dict.entries()];
+  const group = [...map.entries()];
   makePage({
     path: "/tag/",
     title: "Tag",
-    content: htmlx`
+    content: mapstr`
       <section>
         <h1>Tag</h1>
         ${[group, ([tag]) => `<a href="/./tag/${tag}/">${tag}</a>`]}
@@ -283,7 +282,7 @@ const pagesList = [];
     makePage({
       path: `/tag/${tag}/`,
       title: `${tag} - Tag`,
-      content: htmlx`
+      content: mapstr`
         <section>
           <h1>${tag}</h1>
           ${[
@@ -321,18 +320,18 @@ const pagesList = [];
 
   fs.writeFileSync(
     p`./public/sitemap.xml`,
-    htmlx`
+    mapstr`
       <?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${[pagesList, ({ name }) => `<url><loc>${domain}/${name}/</loc></url>`]}
-      ${[postsList, ({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`]}
+        ${[pages, ({ name }) => `<url><loc>${domain}/${name}/</loc></url>`]}
+        ${[posts, ({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`]}
       </urlset>
     `.trimStart()
   );
 
   fs.writeFileSync(
     p`./public/feed.xml`,
-    htmlx`
+    mapstr`
       <?xml version="1.0" encoding="UTF-8"?>
       <rss version="2.0">
         <channel>
@@ -340,12 +339,12 @@ const pagesList = [];
         <link>${domain}</link>
         <description>kkocdko's blog</description>
         ${[
-          postsList,
+          posts,
           ({ id, title, description }) => `
             <item>
               <title>${title}</title>
-              <link>${domain}/post/${id}/</link>
               <description>${description}</description>
+              <link>${domain}/post/${id}/</link>
             </item>
           `,
         ]}
