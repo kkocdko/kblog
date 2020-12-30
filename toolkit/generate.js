@@ -20,8 +20,8 @@ const mapstr = (parts, ...values) => {
   parts.slice(1).forEach((part) => {
     const value = values.shift();
     if (Array.isArray(value)) {
-      const [arr, fn] = value;
-      str += arr.map(fn).join("");
+      const [iter, fn] = value;
+      for (const entry of iter) str += fn(entry);
     } else {
       str += value;
     }
@@ -48,17 +48,17 @@ const minify = (() => {
     htmlMd: (s) => htmlclean(s),
     css: (s) => new CleanCss().minify(s).styles,
     js: (s) => {
-      const output = terser.minify(s, { toplevel: true });
-      if (output.error) throw output.error;
-      return output.code.replace(/;$/, "");
+      const { code, error } = terser.minify(s, { toplevel: true });
+      if (error) throw error;
+      return code.endsWith(";") ? code.slice(0, -1) : code;
     },
   };
 })();
 
 const makePage = (() => {
   const marked = require("marked");
-  const templatePath = p`./units/template.html`;
-  const template = minify.html(fs.readFileSync(templatePath).toString());
+  const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
+  const template = minify.html(templateRaw);
   return ({ isMarkdown, path: pathname, title, description = "", content }) => {
     if (isMarkdown) {
       content = `<article><h1>${title}</h1>${marked(content)}</article>`;
@@ -97,7 +97,6 @@ const parseMdFile = (filePath) => {
   fs.mkdirSync(p`./public`);
 
   fs.writeFileSync(p`./public/.nojekyll`, "");
-  fs.writeFileSync(p`./public/favicon.ico`, "");
   fs.mkdirSync(p`./public/u`);
   fs.copyFileSync(p`./units/update.html`, p`./public/u/index.html`);
 
@@ -116,7 +115,7 @@ const parseMdFile = (filePath) => {
   copyDirSync(p`./source/toys`, p`./public/toy`);
   copyDirSync(p`./source/res`, p`./public/res`);
 
-  const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file string
+  const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
   const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
   const head = minify.html(f`head.html`).replace("/*{style}*/", style);
@@ -223,21 +222,20 @@ const pages = [];
     if (!map.has(year)) map.set(year, []);
     map.get(year).push(post);
   });
-  const group = [...map.entries()];
   makePage({
     path: "/archive/",
     title: "Archive",
     content: mapstr`
       <section>
         <h1>Archive</h1>
-        ${[group, ([year]) => `<a href="/./archive/${year}/">${year}</a>`]}
+        ${[map.keys(), (year) => `<a href="/./archive/${year}/">${year}</a>`]}
       </section>
     `,
   });
-  group.forEach(([year, list]) => {
+  map.forEach((list, year) => {
     makePage({
       path: `/archive/${year}/`,
-      title: `${year} - Archive`,
+      title: `Archive: ${year}`,
       content: mapstr`
         <section>
           <h1>${year}</h1>
@@ -267,21 +265,20 @@ const pages = [];
       map.get(tag).push(post);
     });
   });
-  const group = [...map.entries()];
   makePage({
     path: "/tag/",
     title: "Tag",
     content: mapstr`
       <section>
         <h1>Tag</h1>
-        ${[group, ([tag]) => `<a href="/./tag/${tag}/">${tag}</a>`]}
+        ${[map.keys(), (tag) => `<a href="/./tag/${tag}/">${tag}</a>`]}
       </section>
     `,
   });
-  group.forEach(([tag, list]) => {
+  map.forEach((list, tag) => {
     makePage({
       path: `/tag/${tag}/`,
-      title: `${tag} - Tag`,
+      title: `Tag: ${tag}`,
       content: mapstr`
         <section>
           <h1>${tag}</h1>

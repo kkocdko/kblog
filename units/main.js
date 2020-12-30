@@ -18,12 +18,13 @@ let onPageLoad = (a /* isPopState */) => {
     .forEach((element) => (element.onclick = onLinkClick));
 };
 
-onscroll = () =>
-  (topBar.className =
+onscroll = () => {
+  topBar.className =
     scrollPos < (scrollRecords[location] = scrollPos = scrollY) &&
     scrollPos /* Was set to "scrollY" */ > 55
       ? "hidden"
-      : "");
+      : "";
+};
 
 onpopstate = (isPopState) => {
   document.body.className = "loading";

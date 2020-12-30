@@ -110,24 +110,23 @@ main > * {
 
 section > * {
   overflow: hidden;
+  font-weight: normal;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-section h3 {
-  margin: -8px 0 5px;
-  font-weight: normal;
-}
-
 section h1 {
   margin: -9px 0 11px;
-  font-weight: normal;
   color: #3f51b5;
-  border-bottom: 1px solid #ddd;
+  box-shadow: 0 1px #ddd;
+}
+
+section h3 {
+  margin: -8px 0 5px;
 }
 
 section div {
-  margin: 10px 0 -2px;
+  margin: 9px 0 -2px;
 }
 
 section div a,
@@ -171,11 +170,11 @@ nav a {
 }
 
 spin-circle {
+  position: fixed;
   opacity: 0;
 }
 
 .loading spin-circle {
-  position: fixed;
   top: 50%;
   left: 50%;
   padding: 17px;

@@ -4,8 +4,8 @@ const path = require("path");
 const childProcess = require("child_process");
 
 const exec = (filename, args) => {
-  const process = childProcess.fork(path.join(__dirname, filename), args);
-  return new Promise((resolve) => process.on("exit", resolve));
+  const child = childProcess.fork(path.join(__dirname, filename), args);
+  return new Promise((resolve) => child.on("exit", resolve));
 };
 
 (async () => {

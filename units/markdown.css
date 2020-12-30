@@ -10,16 +10,7 @@ article h4 {
 
 article h1 {
   margin: -9px 0 13px;
-  font-size: 24px;
-  border-bottom: 1px solid #ddd;
-}
-
-article h3 {
-  font-size: 20px;
-}
-
-article h4 {
-  font-size: 17px;
+  box-shadow: 0 1px #ddd;
 }
 
 article p,
@@ -62,8 +53,8 @@ article ul {
 }
 
 article table {
-  /* display: block; */
-  /* overflow: auto; */
+  display: block;
+  overflow: auto;
   border-collapse: collapse;
 }
 
