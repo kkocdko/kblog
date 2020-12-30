@@ -1,22 +1,13 @@
-/* article { font-family: sans-serif; line-height: 1.8; overflow-wrap: break-word; } */
-/* article * { box-sizing: border-box; padding: 0; margin: 0; } */
-
-article h1,
 article h3,
 article h4 {
-  margin: 11px 0 7px;
+  margin-top: 11px;
   font-weight: normal;
-}
-
-article h1 {
-  margin: -9px 0 13px;
-  box-shadow: 0 1px #ddd;
 }
 
 article p,
 article > *,
 article details > * {
-  margin: 7px 0 0;
+  margin-top: 7px;
 }
 
 article a {
@@ -49,7 +40,7 @@ article :not(pre) > code {
 
 article ol,
 article ul {
-  margin-left: 24px;
+  padding-left: 22px;
 }
 
 article table {
