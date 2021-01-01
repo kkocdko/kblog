@@ -1,13 +1,13 @@
+article > *,
+article details > *,
+article p {
+  margin-top: 7px;
+}
+
 article h3,
 article h4 {
   margin-top: 11px;
   font-weight: normal;
-}
-
-article p,
-article > *,
-article details > * {
-  margin-top: 7px;
 }
 
 article a {
@@ -52,11 +52,8 @@ article table {
 article td,
 article th {
   padding: 5px 13px;
-  border: 1px solid #ddd;
-}
-
-article th {
   font-weight: normal;
+  border: 1px solid #ddd;
 }
 
 article tr:nth-child(2n) {

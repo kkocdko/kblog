@@ -1,4 +1,4 @@
-* /* , *::before, *::after */ {
+* {
   max-height: 100%; /* Disable Font Boosting */
   margin: 0;
 }
@@ -21,6 +21,80 @@ main {
   min-height: 100vh;
   padding: 5px 0 25px;
   margin: 50px auto 0;
+}
+
+main > * {
+  padding: 20px;
+  margin-top: 20px;
+  background: #fff;
+  box-shadow: 0 1px 4px #aaa;
+}
+
+@media screen and (max-width: 750px) {
+  main {
+    width: 100%;
+    padding: 0;
+  }
+
+  main > * {
+    margin-top: 1px;
+    box-shadow: 0 1px #ddd;
+  }
+}
+
+main h1 {
+  padding-bottom: 7px;
+  margin: -5px 0 11px;
+  font-weight: normal;
+  line-height: 1.5;
+  box-shadow: 0 1px #ddd;
+}
+
+section > * {
+  overflow: hidden;
+  font-weight: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+section h1 {
+  color: #3f51b5;
+}
+
+section h3 {
+  margin: -8px 0 5px;
+}
+
+section div {
+  margin: 9px 0 -2px;
+}
+
+section div a,
+section > a,
+section span {
+  padding: 2px 7px;
+  margin: 5px 9px -4px 0;
+  font-size: 13px;
+  border: 1px solid #ccc;
+}
+
+section > a {
+  display: inline-block;
+}
+
+section p {
+  margin-top: 3px;
+}
+
+nav {
+  padding: 0;
+  font-size: 14px;
+  line-height: 3;
+  text-align: center;
+}
+
+nav a {
+  padding: 1em 6%;
 }
 
 header {
@@ -53,6 +127,15 @@ header img {
   margin-left: -10px;
   border: 2px solid #fff;
   border-radius: 50%;
+}
+
+footer,
+footer a {
+  font-size: 13px;
+  line-height: 3;
+  color: #ccc;
+  text-align: center;
+  background: #3f51b5;
 }
 
 aside {
@@ -88,89 +171,6 @@ aside a {
   padding-left: 15%;
   line-height: 4;
   color: #333;
-}
-
-footer,
-footer a {
-  font-size: 13px;
-  line-height: 3;
-  color: #ccc;
-  text-align: center;
-  background: #3f51b5;
-}
-
-main > * {
-  padding: 20px;
-  margin-top: 20px;
-  background: #fff;
-  box-shadow: 0 1px 4px #aaa;
-}
-
-main h1 {
-  padding-bottom: 7px;
-  margin: -5px 0 11px;
-  font-weight: normal;
-  line-height: 1.5;
-  box-shadow: 0 1px #ddd;
-}
-
-section > * {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-section h1 {
-  color: #3f51b5;
-}
-
-section h3 {
-  margin: -8px 0 5px;
-  font-weight: normal;
-}
-
-section div {
-  margin: 9px 0 -2px;
-}
-
-section div a,
-section > a,
-section span {
-  padding: 2px 7px;
-  margin: 5px 9px -4px 0;
-  font-size: 13px;
-  border: 1px solid #ccc;
-}
-
-section > a {
-  display: inline-block;
-}
-
-section p {
-  margin-top: 3px;
-}
-
-nav {
-  padding: 0;
-  font-size: 14px;
-  line-height: 3;
-  text-align: center;
-}
-
-nav a {
-  padding: 1em 6%;
-}
-
-@media screen and (max-width: 750px) {
-  main {
-    width: 100%;
-    padding: 0;
-  }
-
-  main > * {
-    margin-top: 1px;
-    box-shadow: 0 1px #ddd;
-  }
 }
 
 spin-circle {

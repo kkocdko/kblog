@@ -97,8 +97,8 @@ const parseMdFile = (filePath) => {
   fs.mkdirSync(p`./public`);
 
   fs.writeFileSync(p`./public/.nojekyll`, "");
-  fs.mkdirSync(p`./public/u`);
-  fs.copyFileSync(p`./units/update.html`, p`./public/u/index.html`);
+  fs.mkdirSync(p`./public/update`);
+  fs.copyFileSync(p`./units/update.html`, p`./public/update/index.html`);
 
   const copyDirSync = (sourceDir, targetDir) => {
     fs.mkdirSync(targetDir, { recursive: true });
