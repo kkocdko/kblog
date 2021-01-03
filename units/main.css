@@ -187,7 +187,7 @@ spin-circle {
   border-top-color: #0000;
   border-radius: 50%;
   opacity: 1;
-  transition: opacity 0.3s 0.05s, transform 6s linear;
+  transition: opacity 0.3s 0.1s, transform 6s linear;
   transform: rotate(3600deg);
 }
 
