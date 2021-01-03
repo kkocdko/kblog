@@ -47,11 +47,7 @@ const minify = (() => {
     html: (s) => htmlclean(htmlPretreat(s)),
     htmlMd: (s) => htmlclean(s),
     css: (s) => new CleanCss().minify(s).styles,
-    js: (s) => {
-      const { code, error } = terser.minify(s, { toplevel: true });
-      if (error) throw error;
-      return code.endsWith(";") ? code.slice(0, -1) : code;
-    },
+    js: (s) => terser.minify(s, { toplevel: true }).code,
   };
 })();
 
@@ -84,8 +80,7 @@ const parseMdFile = (filePath) => {
   head.split("\n").forEach((line) => {
     const pos = line.indexOf(":");
     const key = line.slice(0, pos);
-    const value = line.slice(pos + 1).trim();
-    meta[key] = value;
+    meta[key] = line.slice(pos + 1).trim();
   });
   const body = str.slice(str.indexOf("\n```") + "\n```".length);
   return { meta, body };
@@ -173,7 +168,7 @@ const pages = [];
   });
 }
 
-// Blog Pages - Home
+// Pages - Home
 {
   const volume = 10;
   const group = [];
@@ -214,7 +209,7 @@ const pages = [];
   });
 }
 
-// Blog Pages - Archive
+// Pages - Archive
 {
   const map = new Map(); // Because Objcet's prop order is unspecified
   posts.forEach((post) => {
@@ -256,7 +251,7 @@ const pages = [];
   });
 }
 
-// Blog Pages - Tag
+// Pages - Tag
 {
   const map = new Map();
   posts.forEach((post) => {
@@ -296,7 +291,7 @@ const pages = [];
   });
 }
 
-// Blog Pages - 404 Error
+// Pages - 404 Error
 {
   makePage({
     isMarkdown: true,
