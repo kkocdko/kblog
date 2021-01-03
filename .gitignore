@@ -1,4 +1,5 @@
 /node_modules
 /public
 /.vscode
+/toolkit/cert
 *.code-workspace
