@@ -131,7 +131,7 @@ const posts = [];
     const { meta, body } = parseMdFile(p`./source/posts/${fileName}`);
     const attr = {
       ...meta,
-      id: meta.date.replace(/:|-|\s/g, ""),
+      id: meta.date.replace(/:|\.| /g, ""),
       tags: meta.tags.split(" "),
     };
     makePage({
@@ -143,7 +143,7 @@ const posts = [];
     posts.push(attr);
     // Check filename
     {
-      const prefix = meta.date.replace(/:|-/g, "").replace(" ", "-");
+      const prefix = meta.date.replace(/:|\./g, "").replace(" ", "_");
       if (fileName !== `${prefix} ${meta.title}.md`) {
         console.warn(`post file [ ${fileName} ] has incorrect name`);
       }
@@ -239,7 +239,7 @@ const pages = [];
             ({ id, date, title }) => `
               <p>
                 <a href="/./post/${id}/">
-                  <span>${date.slice(5, 10).replace("-", ".")}</span>
+                  <span>${date.slice(5, 10)}</span>
                   ${title}
                 </a>
               </p>
