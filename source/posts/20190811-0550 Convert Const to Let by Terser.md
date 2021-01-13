@@ -1,6 +1,6 @@
 ```
 title: Convert Const to Let by Terser
-date: 2019-08-11 05:50
+date: 2019.08.11 05:50
 tags: Tutorial Javascript
 description: Using TreeTransformer
 ```

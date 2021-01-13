@@ -1,6 +1,6 @@
 ```
 title: 用UserJS注入UserCSS
-date: 2019-04-06 17:41
+date: 2019.04.06 17:41
 tags: Code Javascript CSS
 description: 避免安装太多拓展
 ```
