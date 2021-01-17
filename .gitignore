@@ -1,5 +1,5 @@
 /node_modules
 /public
+/toolkit/*.pem
 /.vscode
-/toolkit/cert
 *.code-workspace

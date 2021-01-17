@@ -95,6 +95,17 @@ const parseMdFile = (filePath) => {
   fs.mkdirSync(p`./public/update`);
   fs.copyFileSync(p`./units/update.html`, p`./public/update/index.html`);
 
+  const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
+  const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
+  const style = minify.css(f`main.css` + f`markdown.css`);
+  const head = minify.html(f`head.html`).replace("/*{style}*/", style);
+  const bundle = f`bundle.js`
+    .replace("/*{avatar}*/", avatar)
+    .replace("/*{head}*/", head)
+    .replace("/*{extra}*/", minify.html(f`extra.html`))
+    .replace("/*{script}*/", f`main.js`);
+  fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
+
   const copyDirSync = (sourceDir, targetDir) => {
     fs.mkdirSync(targetDir, { recursive: true });
     fs.readdirSync(sourceDir).forEach((item) => {
@@ -109,17 +120,6 @@ const parseMdFile = (filePath) => {
   };
   copyDirSync(p`./source/toys`, p`./public/toy`);
   copyDirSync(p`./source/res`, p`./public/res`);
-
-  const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
-  const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
-  const style = minify.css(f`main.css` + f`markdown.css`);
-  const head = minify.html(f`head.html`).replace("/*{style}*/", style);
-  const bundle = f`bundle.js`
-    .replace("/*{avatar}*/", avatar)
-    .replace("/*{head}*/", head)
-    .replace("/*{extra}*/", minify.html(f`extra.html`))
-    .replace("/*{script}*/", f`main.js`);
-  fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
 }
 
 // Posts
@@ -143,7 +143,7 @@ const posts = [];
     posts.push(attr);
     // Check filename
     {
-      const prefix = meta.date.replace(/:|\./g, "").replace(" ", "_");
+      const prefix = meta.date.replace(/:|\./g, "").replace(" ", "-");
       if (fileName !== `${prefix} ${meta.title}.md`) {
         console.warn(`post file [ ${fileName} ] has incorrect name`);
       }
@@ -223,7 +223,7 @@ const pages = [];
     content: mapstr`
       <section>
         <h1>Archive</h1>
-        ${[map.keys(), (year) => `<a href="/./archive/${year}/">${year}</a>`]}
+        ${[map, ([year]) => `<a href="/./archive/${year}/">${year}</a>`]}
       </section>
     `,
   });
@@ -266,7 +266,7 @@ const pages = [];
     content: mapstr`
       <section>
         <h1>Tag</h1>
-        ${[map.keys(), (tag) => `<a href="/./tag/${tag}/">${tag}</a>`]}
+        ${[map, ([tag]) => `<a href="/./tag/${tag}/">${tag}</a>`]}
       </section>
     `,
   });
