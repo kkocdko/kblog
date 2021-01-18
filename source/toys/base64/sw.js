@@ -1,77 +1,24 @@
-"use strict";
-
-const cacheName = "base64";
-const filesList = [
-  {
-    url: "./",
-    updateDate: 1588525108016,
-  },
-  {
-    url:
-      "//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.css",
-    updateDate: 1588525108016,
-  },
-  {
-    url: "../misc/material-components-web-kmod.css",
-    updateDate: 1588525108016,
-  },
-  {
-    url:
-      "//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.js",
-    updateDate: 1588525108016,
-  },
-  {
-    url: "manifest.json",
-    updateDate: 1588525108016,
-  },
-  {
-    url: "favicon.svg",
-    updateDate: 1588525108016,
-  },
+const list = [
+  "1610918896274 | ./",
+  "1610918896274 | ./manifest.json",
+  "1610918896274 | ./favicon.svg",
+  // "1610918896274 | /toy/misc/example.css",
 ];
 
-addEventListener("install", (event) => {
-  event.waitUntil(
-    (async () => {
-      const cache = await caches.open(cacheName);
-      const cachedFilesList = (await cache.matchAll()).map(
-        ({ url, headers }) => ({
-          url,
-          updateDate: new Date(headers.get("date")).getTime(),
-        })
-      );
-      const fullFilesList = filesList.map(({ url, updateDate }) => ({
-        url: new Request(url).url,
-        updateDate,
-      }));
-      const updateFilesList = fullFilesList.filter(
-        (file) =>
-          !cachedFilesList.find(
-            ({ url, updateDate }) =>
-              url === file.url && updateDate > file.updateDate
-          )
-      );
-      const deleteFilesList = cachedFilesList.filter(
-        (file) => !fullFilesList.find(({ url }) => url === file.url)
-      );
-      await Promise.all([
-        ...updateFilesList.map(({ url }) =>
-          cache
-            .add(new Request(url, { mode: "cors" }))
-            .catch((e) => console.warn(e))
-        ),
-        ...deleteFilesList.map(({ url }) => cache.delete(url)),
-      ]);
-    })()
-  );
-});
-
-addEventListener("fetch", (event) => {
-  event.respondWith(
-    (async () => {
-      const cache = await caches.open(cacheName);
-      const request = event.request;
-      return (await cache.match(request)) || (await fetch(request));
-    })()
-  );
-});
+// 20210119-0229
+const inInstall = async () => {
+  const [tasks, prev, cache] = [[], {}, await caches.open(location)];
+  for (const { url, headers } of await cache.matchAll())
+    prev[url] = Date.parse(headers.get("date"));
+  for (const [date, url] of list.map((line) => line.split(" | "))) {
+    const req = new Request(url, { mode: "cors" });
+    if (date > (prev[req.url] || 0)) tasks.push(cache.add(req));
+    delete prev[req.url];
+  }
+  for (const url in prev) tasks.push(cache.delete(url));
+  await Promise.allSettled(tasks);
+};
+const inFetch = async (req) =>
+  (await (await caches.open(location)).match(req)) || fetch(req);
+oninstall = (e) => e.waitUntil(inInstall());
+onfetch = (e) => e.respondWith(inFetch(e.request));
