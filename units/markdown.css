@@ -62,6 +62,7 @@ article tr:nth-child(2n) {
 
 article img {
   max-width: 100%;
+  height: auto; /* Override the height attr from HTML (about aspect-ratio) */
 }
 
 article img:not(.no-border) {
