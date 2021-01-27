@@ -1,5 +1,4 @@
 /node_modules
 /public
-/toolkit/*.pem
 /.vscode
 *.code-workspace

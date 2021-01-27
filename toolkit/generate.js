@@ -12,7 +12,7 @@ const path = require("path");
 const isDev = process.argv.includes("--dev");
 
 // Convert relative path to absolute
-const p = ([r], ...arr) => path.join(__dirname, "..", r, ...arr);
+const p = ([r], ...s) => path.join(__dirname, "..", r, ...s);
 
 // mapstr`<p>Hi ${[ [ 22, 33 ], i => i ]}</p>` == "<p>Hi 2233</p>"
 const mapstr = (parts, ...values) => {
@@ -36,10 +36,8 @@ const minify = (() => {
       .replace(/\/?>\s*/g, ">")
       .replace(/\s+</g, "<")
       .replace(/; >/g, "/>");
-  if (isDev) {
-    const f = (s) => s;
-    return { html: htmlPretreat, htmlMd: f, css: f, js: f };
-  }
+  const f = (s) => s;
+  if (isDev) return { html: htmlPretreat, htmlMd: f, css: f, js: f };
   const htmlclean = require("htmlclean");
   const CleanCss = require("clean-css");
   const terser = require("terser");
@@ -143,7 +141,7 @@ const posts = [];
     posts.push(attr);
     // Check filename
     {
-      const prefix = meta.date.replace(/:|\./g, "").replace(" ", "-");
+      const prefix = attr.id.slice(0, 8) + "-" + attr.id.slice(8);
       if (fileName !== `${prefix} ${meta.title}.md`) {
         console.warn(`post file [ ${fileName} ] has incorrect name`);
       }
@@ -155,8 +153,7 @@ const posts = [];
 // Custom Pages
 const pages = [];
 {
-  const files = fs.readdirSync(p`./source/pages`);
-  files.forEach((fileName) => {
+  fs.readdirSync(p`./source/pages`).forEach((fileName) => {
     const { meta, body } = parseMdFile(p`./source/pages/${fileName}`);
     makePage({
       ...meta,
