@@ -1,17 +1,16 @@
 "use strict";
 
-const path = require("path");
-const childProcess = require("child_process");
-
-const exec = (filename, args) => {
-  const child = childProcess.fork(path.join(__dirname, filename), args);
-  return new Promise((resolve) => child.on("exit", resolve));
+const fork = require("child_process").fork;
+const r2a = require("path").join.bind(null, __dirname);
+const childs = [];
+const exec = (name, args) => childs.push(fork(r2a(name), args));
+const kill = () => childs.forEach(() => childs.pop().kill());
+let i = 0;
+const spawn = () => {
+  console.log("#", ++i);
+  kill();
+  exec("generate.js", ["--dev"]);
+  exec("serve.js");
 };
-
-(async () => {
-  for (let i = 1; ; i++) {
-    console.log("#", i);
-    await exec("generate.js", ["--dev"]);
-    await exec("serve.js");
-  }
-})();
+spawn();
+process.stdin.on("data", spawn);
