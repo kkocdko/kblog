@@ -1,3 +1,5 @@
+"use strict";
+
 let [mainBox /* main */, topBar /* header */] = document.body.children;
 let scrollRecords = {};
 let scrollPos = 0;
