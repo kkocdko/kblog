@@ -1,16 +1,7 @@
 "use strict";
 
 const host = "127.0.0.1:4000";
-const mime = {
-  html: "text/html;charset=utf-8",
-  css: "text/css",
-  js: "application/javascript",
-  json: "application/json",
-  svg: "image/svg+xml",
-  png: "image/png",
-  jpeg: "image/jpeg",
-  webp: "image/webp",
-};
+const mime = { html: "text/html;charset=utf-8", js: "text/javascript" };
 const fs = require("fs");
 const r2a = require("path").join.bind(null, __dirname, "../public");
 const createServer = require("http").createServer;

@@ -31,11 +31,8 @@ const mapstr = (parts, ...values) => {
 };
 
 const minify = (() => {
-  const htmlPretreat = (s) =>
-    s // Strip spaces and restone "/>" in <svg>
-      .replace(/\/?>\s*/g, ">")
-      .replace(/\s+</g, "<")
-      .replace(/; >/g, "/>");
+  const htmlPretreat /* Strip useless chars, restone "/>" in <svg> */ = (s) =>
+    s.replace(/\/(?=>)|(?<=>)\s+|\s+(?=<)/g, "").replaceAll("; >", "/>");
   const f = (s) => s;
   if (isDev) return { html: htmlPretreat, htmlMd: f, css: f, js: f };
   const htmlclean = require("htmlclean");
@@ -44,7 +41,7 @@ const minify = (() => {
   return {
     html: (s) => htmlclean(htmlPretreat(s)),
     htmlMd: (s) => htmlclean(s),
-    css: (s) => new CleanCss().minify(s).styles,
+    css: (s) => new CleanCss().minify(s).styles, // "level-2" goes against gzip
     js: (s) => terser.minify(s, { toplevel: true }).code,
   };
 })();
@@ -71,7 +68,7 @@ const makePage = (() => {
   };
 })();
 
-const parseMdFile = (filePath) => {
+const loadMdFile = (filePath) => {
   const meta = {};
   const str = fs.readFileSync(filePath).toString();
   const head = str.slice("```\n".length, str.indexOf("\n```"));
@@ -126,22 +123,19 @@ const posts = [];
   let files = fs.readdirSync(p`./source/posts`).reverse();
   if (isDev) files = files.slice(0, 12);
   files.forEach((fileName) => {
-    const { meta, body } = parseMdFile(p`./source/posts/${fileName}`);
-    const attr = {
-      ...meta,
-      id: meta.date.replace(/:|\.| /g, ""),
-      tags: meta.tags.split(" "),
-    };
+    const { meta, body } = loadMdFile(p`./source/posts/${fileName}`);
+    meta.id = meta.date.replace(/:|\.| /g, "");
+    meta.tags = meta.tags.split(" ");
+    posts.push(meta);
     makePage({
       ...meta,
       isMarkdown: true,
-      path: `/post/${attr.id}/`,
+      path: `/post/${meta.id}/`,
       content: body,
     });
-    posts.push(attr);
     // Check filename
     {
-      const prefix = attr.id.slice(0, 8) + "-" + attr.id.slice(8);
+      const prefix = meta.id.slice(0, 8) + "-" + meta.id.slice(8);
       if (fileName !== `${prefix} ${meta.title}.md`) {
         console.warn(`post file [ ${fileName} ] has incorrect name`);
       }
@@ -154,21 +148,21 @@ const posts = [];
 const pages = [];
 {
   fs.readdirSync(p`./source/pages`).forEach((fileName) => {
-    const { meta, body } = parseMdFile(p`./source/pages/${fileName}`);
+    const { meta, body } = loadMdFile(p`./source/pages/${fileName}`);
+    pages.push(meta);
     makePage({
       ...meta,
       isMarkdown: true,
       path: `/${meta.name}/`,
       content: body,
     });
-    pages.push(meta);
   });
 }
 
 // Pages - Home
 {
-  const volume = 10;
   const group = [];
+  const volume = 10;
   for (let i = 0; i < posts.length; i += volume) {
     group.push(posts.slice(i, i + volume));
   }
@@ -315,7 +309,7 @@ const pages = [];
         ${[pages, ({ name }) => `<url><loc>${domain}/${name}/</loc></url>`]}
         ${[posts, ({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`]}
       </urlset>
-    `.trimStart()
+    `.trim()
   );
 
   fs.writeFileSync(
@@ -339,6 +333,6 @@ const pages = [];
         ]}
         </channel>
       </rss>
-    `.trimStart()
+    `.trim()
   );
 }
