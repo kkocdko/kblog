@@ -1,82 +1,39 @@
 ```
 name: toy
-title: Toys
+title: Toy
 ```
 
-> [如何安装PWA应用？](https://developer.mozilla.org/docs/Web/Progressive_web_apps/Add_to_home_screen)
->
 > 使用了较新的Web标准功能，在旧版浏览器中可能出现缺陷。
 
-### NCEE Countdown
-
-[/toy/ncee-countdown](/toy/ncee-countdown)
-
+### [NCEE Countdown](/toy/ncee-countdown/)
 赶时间做出来的高考倒计时页面。敏捷开发，敏捷开发。
 
-### Chrome Dino
+### [Chrome Dino](/toy/dino/)
+（暂时下线）从Chrome中抽离出的离线小恐龙游戏
 
-<!-- [/toy/dino](/toy/dino) -->
+### [Rubiks Cube](/toy/rubikscube/)
+（暂时下线）Google Doodle上的交互式魔方
 
-从Chrome中抽离出的离线小恐龙游戏
+### [Markdown Editor](/toy/mdeditor/)
+（暂时下线）简易Markdown编辑器
 
-（暂时下线）
-
-### Rubiks Cube
-
-<!-- [/toy/rubikscube](/toy/rubikscube) -->
-
-Google Doodle上的交互式魔方
-
-（暂时下线）
-
-### Markdown Editor
-
-<!-- [/toy/mdeditor](/toy/mdeditor) -->
-
-简易Markdown编辑器
-
-（暂时下线）
-
-### Random Number Generator
-
-[/toy/randnum](/toy/randnum)
-
+### [Random Number Generator](/toy/randnum/)
 随机数生成器
 
-### QRCode Generator
+### [QRCode Generator](/toy/qrcode/)
+（暂时下线）二维码生成器（生成SVG矢量图）
 
-<!-- [/toy/qrcode](/toy/qrcode) -->
-
-二维码生成器（生成SVG矢量图）
-
-（暂时下线）
-
-### Solar System
-
-[/toy/solarsystem](/toy/solarsystem)
-
+### [Solar System](/toy/solarsystem/)
 太阳系模型，拥有精确的周期
 
-### Image Converter
+### [Image Converter](/toy/imgconverter/)
+（暂时下线）图片格式转换器，基于Canvas，格式支持依赖于浏览器
 
-<!-- [/toy/imgconverter](/toy/imgconverter) -->
+### [Image Comparator](/toy/imgcomparator/)
+（暂时下线）进行图片比对，玩“找不同”游戏的好帮手
 
-图片格式转换器（基于Canvas，可读取浏览器支持的所有图片格式）
-
-### Image Comparator
-
-> Still Developing
-
-<!-- [/toy/imgcomparator](/toy/imgcomparator) -->
-
-### Base64 Tool
-
-[/toy/base64](/toy/base64)
-
+### [Base64 Tool](/toy/base64/)
 自用的小工具，将本地文件以Base64进行编码
 
-### Stress Test
-
-[/toy/stresstest](/toy/stresstest)
-
+### [Stress Test](/toy/stresstest/)
 CPU和GPU压力测试，可以用来烤机
