@@ -5,9 +5,9 @@
     "develop": "node toolkit/develop.js"
   },
   "dependencies": {
-    "clean-css": "^4.2.3",
+    "clean-css": "^5.1.0",
     "htmlclean": "^3.0.8",
-    "marked": "^1.2.7",
+    "marked": "0.7.0",
     "terser": "^4.8.0"
   }
 }
