@@ -1,6 +1,6 @@
 "use strict";
 
-const host = "127.0.0.1:4000";
+const address = "127.0.0.1:4000";
 const mime = { html: "text/html;charset=utf-8", js: "text/javascript" };
 const fs = require("fs");
 const r2a = require("path").join.bind(null, __dirname, "../public");
@@ -15,5 +15,5 @@ createServer(({ url }, res) => {
   const [status, filePath] = pair;
   res.setHeader("content-type", mime[filePath.split(".").pop()] || "");
   res.writeHead(status).end(fs.readFileSync(filePath));
-}).listen(...host.split(":").reverse());
-console.info("server address: " + host);
+}).listen(...address.split(":").reverse());
+console.info("server address: " + address);

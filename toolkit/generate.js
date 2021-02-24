@@ -77,8 +77,8 @@ const loadMdFile = (filePath) => {
     const key = line.slice(0, pos);
     meta[key] = line.slice(pos + 1).trim();
   });
-  const body = str.slice(str.indexOf("\n```") + "\n```".length);
-  return { meta, body };
+  const content = str.slice(str.indexOf("\n```") + "\n```".length);
+  return { meta, content };
 };
 
 // Init
@@ -123,7 +123,7 @@ const posts = [];
   let files = fs.readdirSync(p`./source/posts`).reverse();
   if (isDev) files = files.slice(0, 12);
   files.forEach((fileName) => {
-    const { meta, body } = loadMdFile(p`./source/posts/${fileName}`);
+    const { meta, content } = loadMdFile(p`./source/posts/${fileName}`);
     meta.id = meta.date.replace(/:|\.| /g, "");
     meta.tags = meta.tags.split(" ");
     posts.push(meta);
@@ -131,7 +131,7 @@ const posts = [];
       ...meta,
       isMarkdown: true,
       path: `/post/${meta.id}/`,
-      content: body,
+      content,
     });
     // Check filename
     {
@@ -148,13 +148,13 @@ const posts = [];
 const pages = [];
 {
   fs.readdirSync(p`./source/pages`).forEach((fileName) => {
-    const { meta, body } = loadMdFile(p`./source/pages/${fileName}`);
+    const { meta, content } = loadMdFile(p`./source/pages/${fileName}`);
     pages.push(meta);
     makePage({
       ...meta,
       isMarkdown: true,
       path: `/${meta.name}/`,
-      content: body,
+      content,
     });
   });
 }
