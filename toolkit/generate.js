@@ -36,12 +36,16 @@ const minify = (() => {
   const f = (s) => s;
   if (isDev) return { html: htmlPretreat, htmlMd: f, css: f, js: f };
   const htmlclean = require("htmlclean");
-  const CleanCss = require("clean-css");
   const terser = require("terser");
   return {
     html: (s) => htmlclean(htmlPretreat(s)),
     htmlMd: (s) => htmlclean(s),
-    css: (s) => new CleanCss().minify(s).styles, // "level-2" goes against gzip
+    css: (s) => {
+      s = s.replace(/\/\*.+?\*\/|\n|  /g, "");
+      for (const c of "{}+>,;:") s = s.replaceAll(c + " ", c);
+      for (const c of "{}+>") s = s.replaceAll(" " + c, c);
+      return s.replaceAll(";}", "}").replaceAll("0.", ".");
+    },
     js: (s) => terser.minify(s, { toplevel: true }).code,
   };
 })();
@@ -86,10 +90,6 @@ const loadMdFile = (filePath) => {
   fs.rmSync(p`./public`, { recursive: true, force: true });
   fs.mkdirSync(p`./public`);
 
-  fs.writeFileSync(p`./public/.nojekyll`, "");
-  fs.mkdirSync(p`./public/update`);
-  fs.copyFileSync(p`./units/update.html`, p`./public/update/index.html`);
-
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
   const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
@@ -100,6 +100,8 @@ const loadMdFile = (filePath) => {
     .replace("/*{extra}*/", minify.html(f`extra.html`))
     .replace("/*{script}*/", f`main.js`);
   fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
+  fs.writeFileSync(p`./public/update.html`, f`update.html`);
+  fs.writeFileSync(p`./public/.nojekyll`, "");
 
   const copyDirSync = (sourceDir, targetDir) => {
     fs.mkdirSync(targetDir, { recursive: true });
