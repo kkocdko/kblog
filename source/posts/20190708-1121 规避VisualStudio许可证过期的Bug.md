@@ -2,7 +2,7 @@
 title: 规避VisualStudio许可证过期的Bug
 date: 2019.07.08 11:21
 tags: Tutorial VisualStudio Code
-description: 许可证过期后，更新许可证会出错。
+description: 许可证过期后，更新许可证会出错
 ```
 
 > 仅在`Visual Studio for Windows`上尝试成功，Mac版未知。
@@ -13,17 +13,17 @@ description: 许可证过期后，更新许可证会出错。
 
 ### Introduction
 
-![001](/res/20190708-1121-001.webp)
+<img src="/res/20190708-1121-001.webp" width="655" height="435">
 
 通常，由于长时间未使用、断网等原因，VS会提示用户“许可证过期”，这很正常。
 
-但是在点击了“检查更新的许可证”后，会显示“我们无法下载许可证，请检查你的网络链接或代理设置”。然而事实上网络连接是没有任何问题的，微软的服务器也没有被墙。这是一个VS的Bug。
+但是在点击了“检查更新的许可证”后，会显示“我们无法下载许可证，请检查你的网络链接或代理设置”。然而事实上网络连接是没有任何问题的，微软的服务器也没有被墙。这是VS的一个Bug。
 
 ### Solution
 
-1. 关闭 Visual Studio 。
+1. 关闭VisualStudio。
 
-2. 打开`开始菜单>Visual Studio Installer`。
+2. 从开始菜单打开`Visual Studio Installer`。
 
 3. 点击`[你安装的VS版本]>更多>修改`。
 
