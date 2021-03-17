@@ -23,19 +23,17 @@ article blockquote {
   border-left: 3px solid #ddd;
 }
 
-article pre {
-  padding: 16px;
-  overflow: auto;
+article code {
+  padding: 2px 5px;
   font-size: 14px;
-  line-height: 1.3;
   background: #f4f4f4;
 }
 
-article :not(pre) > code {
-  padding: 2px 5px;
-  margin: 0 2px;
-  font-size: 14px;
-  background: #f4f4f4;
+article pre code {
+  display: block;
+  padding: 16px;
+  overflow: auto;
+  line-height: 1.3;
 }
 
 article ol,
@@ -62,7 +60,7 @@ article tr:nth-child(2n) {
 
 article img {
   max-width: 100%;
-  height: auto; /* Override the height attr from HTML (about aspect-ratio) */
+  height: auto; /* Override the HTML height attr (about aspect-ratio) */
 }
 
 article img:not(.no-border) {
