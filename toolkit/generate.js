@@ -14,18 +14,13 @@ const isDev = process.argv.includes("--dev");
 // Convert relative path to absolute
 const p = ([r], ...s) => path.join(__dirname, "..", r, ...s);
 
-// mapstr`<p>Hi ${[ [ 22, 33 ], i => i ]}</p>` == "<p>Hi 2233</p>"
-const mapstr = (parts, ...values) => {
-  let str = parts[0];
-  parts.slice(1).forEach((part) => {
-    const value = values.shift();
-    if (Array.isArray(value)) {
-      const [iter, fn] = value;
-      for (const entry of iter) str += fn(entry);
-    } else {
-      str += value;
-    }
-    str += part;
+// mapstr`<p>Hi ${[22,33]}${i=>i}</p>` === "<p>Hi 2233</p>"
+const mapstr = (parts, ...inserts) => {
+  let str = "";
+  parts.forEach((part, i) => {
+    const insert = inserts[i];
+    if (part) str += (insert ?? []).keys ? part : part + insert;
+    else inserts[i - 1].forEach((v, k) => (str += insert(v, k)));
   });
   return str;
 };
@@ -54,7 +49,7 @@ const makePage = (() => {
   const marked = require("marked");
   const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
   const template = minify.html(templateRaw);
-  return ({ isMarkdown, path: pathname, title, description = "", content }) => {
+  return ({ isMarkdown, path: rpath, title, description = "", content }) => {
     if (isMarkdown) {
       content = `<article><h1>${title}</h1>${marked(content)}</article>`;
       content = minify.htmlMd(content);
@@ -65,8 +60,8 @@ const makePage = (() => {
       .replace("/*{title}*/", title)
       .replace("/*{description}*/", description)
       .replace("/*{content}*/", content);
-    if (pathname.endsWith("/")) pathname += "index.html";
-    const targetPath = p`./public/${pathname}`;
+    if (rpath.endsWith("/")) rpath += "index.html";
+    const targetPath = p`./public/${rpath}`;
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
     fs.writeFileSync(targetPath, result);
   };
@@ -75,14 +70,12 @@ const makePage = (() => {
 const loadMdFile = (filePath) => {
   const meta = {};
   const str = fs.readFileSync(filePath).toString();
-  const head = str.slice("```\n".length, str.indexOf("\n```"));
-  head.split("\n").forEach((line) => {
-    const pos = line.indexOf(":");
-    const key = line.slice(0, pos);
-    meta[key] = line.slice(pos + 1).trim();
-  });
-  const content = str.slice(str.indexOf("\n```") + "\n```".length);
-  return { meta, content };
+  const head = str.slice(0, str.indexOf("\n```"));
+  for (const line of head.split("\n").slice(1)) {
+    const key = line.slice(0, line.indexOf(":"));
+    meta[key] = line.slice(key.length + 1).trim();
+  }
+  return { meta, content: str.slice(head.length + "\n```".length) };
 };
 
 // Init
@@ -176,20 +169,13 @@ const pages = [];
       title: cur === 1 ? "Homepage" : `Home: ${cur}`,
       description: cur === 1 ? "Welcome to my blog!" : "",
       content: mapstr`
-        ${[
-          list,
-          ({ id, title, description, tags }) => mapstr`
-            <section>
-              <h3>
-                <a href="/./post/${id}/">${title}</a>
-              </h3>
-              <p>${description}</p>
-              <div>
-                ${[tags, (tag) => `<a href="/./tag/${tag}/">${tag}</a>`]}
-              </div>
-            </section>
-          `,
-        ]}
+        ${list}${({ id, title, description, tags }) => mapstr`
+        <section>
+          <h3><a href="/./post/${id}/">${title}</a></h3>
+          <p>${description}</p>
+          <div>${tags}${(tag) => `<a href="/./tag/${tag}/">${tag}</a>`}</div>
+        </section>
+        `}
         <nav>
           <a href="/./">◁◁</a>
           <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}/">◁</a>
@@ -215,8 +201,8 @@ const pages = [];
     title: "Archive",
     content: mapstr`
       <section>
-        <h1>Archive</h1>
-        ${[map, ([year]) => `<a href="/./archive/${year}/">${year}</a>`]}
+        <h1><a href="/./archive/">Archive</a></h1>
+        ${map}${(_, year) => `<a href="/./archive/${year}/">${year}</a>`}
       </section>
     `,
   });
@@ -226,18 +212,15 @@ const pages = [];
       title: `Archive: ${year}`,
       content: mapstr`
         <section>
-          <h1>${year}</h1>
-          ${[
-            list,
-            ({ id, date, title }) => `
-              <p>
-                <a href="/./post/${id}/">
-                  <span>${date.slice(5, 10)}</span>
-                  ${title}
-                </a>
-              </p>
-            `,
-          ]}
+          <h1><a href="/./archive/${year}/">${year}</a></h1>
+          ${list}${({ id, date, title }) => `
+          <p>
+            <a href="/./post/${id}/">
+              <span>${date.slice(5, 10)}</span>
+              ${title}
+            </a>
+          </p>
+          `}
         </section>
       `,
     });
@@ -258,8 +241,8 @@ const pages = [];
     title: "Tag",
     content: mapstr`
       <section>
-        <h1>Tag</h1>
-        ${[map, ([tag]) => `<a href="/./tag/${tag}/">${tag}</a>`]}
+        <h1><a href="/./tag/">Tag</a></h1>
+        ${map}${(_, tag) => `<a href="/./tag/${tag}/">${tag}</a>`}
       </section>
     `,
   });
@@ -269,15 +252,8 @@ const pages = [];
       title: `Tag: ${tag}`,
       content: mapstr`
         <section>
-          <h1>${tag}</h1>
-          ${[
-            list,
-            ({ id, title }) => `
-              <p>
-                <a href="/./post/${id}/">${title}</a>
-              </p>
-            `,
-          ]}
+          <h1><a href="/./tag/${tag}/">${tag}</a></h1>
+          ${list}${(p) => `<p><a href="/./post/${p.id}/">${p.title}</a></p>`}
         </section>
       `,
     });
@@ -308,8 +284,8 @@ const pages = [];
     mapstr`
       <?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${[pages, ({ name }) => `<url><loc>${domain}/${name}/</loc></url>`]}
-        ${[posts, ({ id }) => `<url><loc>${domain}/post/${id}/</loc></url>`]}
+        ${pages}${(p) => `<url><loc>${domain}/${p.name}/</loc></url>`}
+        ${posts}${(p) => `<url><loc>${domain}/post/${p.id}/</loc></url>`}
       </urlset>
     `.trim()
   );
@@ -320,19 +296,16 @@ const pages = [];
       <?xml version="1.0" encoding="UTF-8"?>
       <rss version="2.0">
         <channel>
-        <title>kkocdko's blog</title>
-        <link>${domain}</link>
-        <description>kkocdko's blog</description>
-        ${[
-          posts,
-          ({ id, title, description }) => `
-            <item>
-              <title>${title}</title>
-              <description>${description}</description>
-              <link>${domain}/post/${id}/</link>
-            </item>
-          `,
-        ]}
+          <title>kkocdko's blog</title>
+          <link>${domain}</link>
+          <description>kkocdko's blog</description>
+          ${posts}${({ id, title, description }) => `
+          <item>
+            <title>${title}</title>
+            <description>${description}</description>
+            <link>${domain}/post/${id}/</link>
+          </item>
+          `}
         </channel>
       </rss>
     `.trim()

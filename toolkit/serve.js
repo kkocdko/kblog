@@ -12,8 +12,8 @@ createServer(({ url }, res) => {
     [404, r2a("404.html")],
   ].find(([_, p]) => fs.existsSync(p) && fs.statSync(p).isFile());
   if (!pair) return res.writeHead(404).end("404 Not Found");
-  const [status, filePath] = pair;
-  res.setHeader("content-type", mime[filePath.split(".").pop()] || "");
-  res.writeHead(status).end(fs.readFileSync(filePath));
+  const [status, local] = pair;
+  res.setHeader("content-type", mime[local.split(".").pop()] || "");
+  res.writeHead(status).end(fs.readFileSync(local));
 }).listen(...address.split(":").reverse());
 console.info("server address: " + address);
