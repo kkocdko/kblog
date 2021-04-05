@@ -10,11 +10,8 @@ let onLinkClick = function (event) {
   onpopstate(); // Because "pushState" will not trigger "popstate" event
 };
 
-let onPageLoad = (a /* isPopState */) => {
-  scroll(0, a ? scrollRecords[location] || 0 : 0);
-  // Also ensure anchor makes down-scroll to hide topbar
-  a /* anchor */ = document.getElementById(location.hash.slice(1));
-  if (a) a.scrollIntoView();
+let onPageLoad = () => {
+  (document.getElementById(location.hash.slice(1)) || topBar).scrollIntoView();
   document
     .querySelectorAll('a[href^="/."],a[href^="#"]')
     .forEach((element) => (element.onclick = onLinkClick));
@@ -34,10 +31,13 @@ onpopstate = (isPopState) => {
     .then((response) => response.text())
     .then((s) => {
       [, document.title, , mainBox.innerHTML] = s.split(/<\/?title>|<\/?main>/);
-      onPageLoad(isPopState);
+      scroll(0, isPopState ? scrollRecords[location] || 0 : 0);
+      // Ensure anchor makes down-scroll to hide topbar
+      onPageLoad();
       document.body.className = "loaded"; // Also replace the "loading"
       setTimeout(() => (document.body.className = ""), 250);
     });
+  history.scrollRestoration = "manual"; // Futile in fetch.then, Chrome's bug?
 };
 
 onPageLoad();

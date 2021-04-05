@@ -1,6 +1,6 @@
 "use strict";
 
-history.scrollRestoration = "manual";
+history.scrollRestoration = "auto";
 let avatar = `/*{avatar}*/`;
 document.head.insertAdjacentHTML("beforeend", `/*{head}*/`);
 document.addEventListener("DOMContentLoaded", () => {
