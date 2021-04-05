@@ -97,11 +97,11 @@ const loadMdFile = (filePath) => {
   fs.writeFileSync(p`./public/.nojekyll`, "");
 
   const copyDirSync = (sourceDir, targetDir) => {
-    fs.mkdirSync(targetDir, { recursive: true });
     fs.readdirSync(sourceDir).forEach((item) => {
       const source = path.join(sourceDir, item);
       const target = path.join(targetDir, item);
       if (fs.statSync(source).isFile()) {
+        fs.mkdirSync(targetDir, { recursive: true });
         fs.copyFileSync(source, target);
       } else {
         copyDirSync(source, target);
@@ -115,9 +115,8 @@ const loadMdFile = (filePath) => {
 // Posts
 const posts = [];
 {
-  let files = fs.readdirSync(p`./source/posts`).reverse();
-  if (isDev) files = files.slice(0, 12);
-  files.forEach((fileName) => {
+  const files = fs.readdirSync(p`./source/posts`);
+  files.slice(isDev ? -12 : 0).forEach((fileName) => {
     const { meta, content } = loadMdFile(p`./source/posts/${fileName}`);
     meta.id = meta.date.replace(/:|\.| /g, "");
     meta.tags = meta.tags.split(" ");
@@ -129,11 +128,9 @@ const posts = [];
       content,
     });
     // Check filename
-    {
-      const prefix = meta.id.slice(0, 8) + "-" + meta.id.slice(8);
-      if (fileName !== `${prefix} ${meta.title}.md`) {
-        console.warn(`post file [ ${fileName} ] has incorrect name`);
-      }
+    const prefix = meta.id.slice(0, 8) + "-" + meta.id.slice(8);
+    if (fileName !== `${prefix} ${meta.title}.md`) {
+      console.warn(`post file [ ${fileName} ] has incorrect name`);
     }
   });
   posts.sort((post1, post2) => post2.id - post1.id);

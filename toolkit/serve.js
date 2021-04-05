@@ -1,7 +1,7 @@
 "use strict";
 
 const address = "127.0.0.1:4000";
-const mime = { html: "text/html;charset=utf-8", js: "text/javascript" };
+const mime = { html: "text/html;charset=utf8", js: "text/javascript" };
 const fs = require("fs");
 const r2a = require("path").join.bind(null, __dirname, "../public");
 const createServer = require("http").createServer;
