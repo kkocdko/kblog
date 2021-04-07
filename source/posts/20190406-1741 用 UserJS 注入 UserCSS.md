@@ -1,7 +1,7 @@
 ```
 title: 用 UserJS 注入 UserCSS
 date: 2019.04.06 17:41
-tags: Code Javascript CSS
+tags: Code JavaScript CSS
 description: 避免安装太多拓展
 ```
 
@@ -13,8 +13,9 @@ description: 避免安装太多拓展
 
 ```javascript
 // ==UserScript==
-// @name         User CSS Example
-// @match        *://example.com/*
+// @name        User CSS Example
+// @match       *://example.com/*
+// @run-at      document-start
 // ==/UserScript==
 document.lastChild.appendChild(document.createElement("style")).textContent = `
 

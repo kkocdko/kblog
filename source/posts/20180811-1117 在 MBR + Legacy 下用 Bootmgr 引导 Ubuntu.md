@@ -5,9 +5,9 @@ tags: Ubuntu Linux
 description: 标题已经说得够清楚了
 ```
 
-> 适用于 MBR+Legacy，UEFI 未尝试。
+> 适用于 MBR + Legacy，UEFI 未尝试。
 
-> Win10+Ubuntu，Win10 在分区索引 0。
+> Win10 + Ubuntu，Win10 在分区索引 0。
 
 ### Steps
 

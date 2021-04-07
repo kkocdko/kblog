@@ -1,11 +1,11 @@
 ```
 title: Convert Const to Let by Terser
 date: 2019.08.11 05:50
-tags: Tutorial Javascript
+tags: Tutorial JavaScript
 description: Using TreeTransformer
 ```
 
-> [Terser](https://github.com/terser-js/terser) is a Javascript optimizer for ES6+.
+> [Terser](https://github.com/terser-js/terser) is a JavaScript optimizer for ES6+.
 
 ### Why
 
@@ -13,6 +13,7 @@ description: Using TreeTransformer
 
 Source:
 
+<!-- prettier-ignore -->
 ```javascript
 const a = 1
 let b = 2
@@ -21,12 +22,14 @@ const c = 3
 
 Terser output:
 
+<!-- prettier-ignore -->
 ```javascript
 const a=1;let b=2;const c=3; // 28 chars
 ```
 
 If Terser convert `const` to `let`:
 
+<!-- prettier-ignore -->
 ```javascript
 let a=1,b=2,c=3; // 16 chars
 ```
@@ -36,16 +39,16 @@ But Terser's major contributors [refuse to implement this feature](https://githu
 ### Solution
 
 ```javascript
-const Terser = require('terser')
-const jsStr = 'const a = 0;'
-const transformer = new Terser.TreeTransformer(node => {
+const Terser = require("terser");
+const jsStr = "const a = 0;";
+const transformer = new Terser.TreeTransformer((node) => {
   if (node instanceof Terser.AST_Const) {
-    return new Terser.AST_Let(node)
+    return new Terser.AST_Let(node);
   }
-})
-const ast = Terser.parse(jsStr).transform(transformer)
-const minifiedJsStr = Terser.minify(ast).code
-constle.log(minifiedJsStr) // => "let a=0;"
+});
+const ast = Terser.parse(jsStr).transform(transformer);
+const minifiedJsStr = Terser.minify(ast).code;
+constle.log(minifiedJsStr); // => "let a=0;"
 ```
 
-* Want to know more? See <https://github.com/terser-js/terser#working-with-terser-ast>
+- Want to know more? See <https://github.com/terser-js/terser#working-with-terser-ast>
