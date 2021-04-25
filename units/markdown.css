@@ -15,11 +15,11 @@ article a {
 }
 
 article summary {
-  padding: 0 3px;
+  padding-left: 3px;
 }
 
 article blockquote {
-  padding: 0 15px;
+  padding-left: 15px;
   border-left: 3px solid #ddd;
 }
 
@@ -47,15 +47,14 @@ article table {
   border-collapse: collapse;
 }
 
-article td,
-article th {
+article tr:nth-child(2n) {
+  background: #f7f7f7;
+}
+
+article tr > * {
   padding: 5px 13px;
   font-weight: 400;
   border: 1px solid #ddd;
-}
-
-article tr:nth-child(2n) {
-  background: #f7f7f7;
 }
 
 article img {

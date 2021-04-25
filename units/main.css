@@ -29,7 +29,7 @@ main > * {
   box-shadow: 0 1px 4px #aaa;
 }
 
-@media screen and (max-width: 750px) {
+@media (max-width: 750px) {
   main {
     width: 100%;
     margin: 50px 0 0;
