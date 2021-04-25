@@ -27,6 +27,7 @@ onscroll = () => {
 
 onpopstate = (isPopState) => {
   document.body.className = "loading";
+  history.scrollRestoration = "manual"; // Futile in fetch.then, Chrome's bug?
   fetch(location)
     .then((response) => response.text())
     .then((s) => {
@@ -37,7 +38,6 @@ onpopstate = (isPopState) => {
       document.body.className = "loaded"; // Also replace the "loading"
       setTimeout(() => (document.body.className = ""), 250);
     });
-  history.scrollRestoration = "manual"; // Futile in fetch.then, Chrome's bug?
 };
 
 onPageLoad();

@@ -26,21 +26,17 @@ const mapstr = (parts, ...inserts) => {
 };
 
 const minify = (() => {
-  const htmlPretreat /* Strip useless chars, restone "/>" in <svg> */ = (s) =>
-    s.replace(/\/(?=>)|(?<=>)\s+|\s+(?=<)/g, "").replaceAll("; >", "/>");
+  const htmlStrip /* Strip useless chars, keep "/>" in <svg> */ = (s) =>
+    s.replace(/(?<=>)\s+|\s+(?=<)|(?<!\; )\/(?=>)|; (?=\/>)/g, "");
   const f = (s) => s;
-  if (isDev) return { html: htmlPretreat, htmlMd: f, css: f, js: f };
+  if (isDev) return { html: htmlStrip, htmlMd: f, css: f, js: f };
   const htmlclean = require("htmlclean");
   const terser = require("terser");
+  const cssR = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w#-:])|;\s*(?=})|0(?=\.)/g;
   return {
-    html: (s) => htmlclean(htmlPretreat(s)),
+    html: (s) => htmlclean(htmlStrip(s)),
     htmlMd: (s) => htmlclean(s),
-    css: (s) => {
-      s = s.replace(/\/\*.+?\*\/|\n|  /g, "");
-      for (const c of "{}+>,;:") s = s.replaceAll(c + " ", c);
-      for (const c of "{}+>") s = s.replaceAll(" " + c, c);
-      return s.replaceAll(";}", "}").replaceAll("0.", ".");
-    },
+    css: (s) => s.replace(cssR, ""),
     js: (s) => terser.minify(s, { toplevel: true }).code,
   };
 })();
@@ -158,13 +154,12 @@ const pages = [];
   for (let i = 0; i < posts.length; i += volume) {
     group.push(posts.slice(i, i + volume));
   }
-  group.forEach((list, i) => {
+  group.forEach((list, i, { length: last }) => {
     const cur = i + 1;
-    const last = group.length;
     makePage({
-      path: cur === 1 ? "/" : `/home/${cur}/`,
-      title: cur === 1 ? "Homepage" : `Home: ${cur}`,
-      description: cur === 1 ? "Welcome to my blog!" : "",
+      path: i ? `/home/${cur}/` : "/",
+      title: i ? `Home: ${cur}` : "Homepage",
+      description: i ? "" : "Welcome to my blog!",
       content: mapstr`
         ${list}${({ id, title, description, tags }) => mapstr`
         <section>
