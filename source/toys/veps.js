@@ -8,7 +8,6 @@ const inWindow = async () => {
 
   // Page Load Animation
   {
-    
   }
 
   // Manifest and Icon
@@ -23,11 +22,21 @@ const inWindow = async () => {
       const height = endY - startY;
       const full = `
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox}">
-          <path fill="${cfg.themeColor}" d="M0 0h${height}v${width}H0z"/>
+          <path fill="${cfg.themeColor}" d="M${startX} ${startY}h${height}v${width}H${startX}z"/>
           <g fill="#fff">${content}</g>
         </svg>
       `;
-      icon.url = "data:image/svg+xml," + encodeURIComponent(full);
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 256;
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+      icon.url = await new Promise((resolve) => {
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.src = "data:image/svg+xml," + encodeURIComponent(full);
+      });
     }
     const url = location.origin + location.pathname;
     const manifest = {
@@ -41,9 +50,8 @@ const inWindow = async () => {
       icons: [
         {
           src: icon.url,
-          type: "image/svg+xml",
-          // sizes: "1000x1000",
-          sizes: "150x150",
+          type: "image/png",
+          sizes: "256x256",
           purpose: "any maskable",
         },
       ],
