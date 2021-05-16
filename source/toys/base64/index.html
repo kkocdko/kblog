@@ -7,77 +7,48 @@
       name: "Base64",
       description: "Encode base64.",
       background: "rgb(248, 249, 250)",
-      themeColor: "rgb(63, 81, 181)",
-      icon: `0 0 48 48 | <path d="M18 32.34L9.66 24l-2.83 2.83L18 38l24-24-2.83-2.83z"/>`,
-      ver: "0.0.1",
+      themeColor: "rgb(51, 103, 214)",
+      icon: `-6 -6 60 60 | <path d="M15.54 13.52l-3.08-2.55L1.64 24l10.82 13.04 3.08-2.55L6.84 24l8.7-10.48zM14 26h4v-4h-4v4zm20-4h-4v4h4v-4zm-12 4h4v-4h-4v4zm13.54-15.04l-3.08 2.55L41.16 24l-8.7 10.48 3.08 2.55L46.36 24 35.54 10.96z"/>`,
+      ver: "0.0.3",
     };
   </script>
   <script veps-main src="../veps.js"></script>
 </head>
 
 <veps-deps>
-  <link rel="stylesheet" href="dark-mode.css" />
+  <link rel="stylesheet" href="../misc/tmd.css" />
 </veps-deps>
 
-<main>
-  <label for="input-file">Select File</label>
-  <input id="input-file" type="file" autocomplete="off" />
-  <input id="output-box" readonly spellcheck="false" autocomplete="off" />
-  <button id="copy-btn">Copy</button>
-</main>
+<style></style>
+
+<body>
+  <header>Base64</header>
+  <figure style="grid: none / 3fr 1fr">
+    <button onclick="children[0].click()" style="grid-area: 1 / 1 / 1 / 3">
+      <input id="$in" _none type="file" autocomplete="off" />
+      Select file
+    </button>
+    <input
+      id="$out"
+      style="border-radius: 4px; box-shadow: inset 0 0 0 1px #dadce0"
+      readonly
+      spellcheck="false"
+      autocomplete="off"
+    />
+    <button onclick="$out.select();document.execCommand('copy')">Copy</button>
+  </figure>
+</body>
 
 <script>
   "use strict";
 
-  const inputFile = document.querySelector("#input-file");
-  const outputBox = document.querySelector("#output-box");
-  const copyBtn = document.querySelector("#copy-btn");
-
-  inputFile.addEventListener("change", () => {
-    const file = inputFile.files[0];
-    if (file.size > 1024 ** 2 * 1) {
-      alert("Input file must small than 1 MB"); // todo: bigger file
+  $in.onchange = () => {
+    if ($in.files[0].size > 1024 ** 2 * 1) {
+      alert("Input file must small than 1 MB"); // TODO: Big file
       return;
     }
-    const fileReader = new FileReader();
-    fileReader.onload = (event) => {
-      outputBox.value = event.target.result;
-      outputBox.select();
-      inputFile.value = null;
-    };
-    fileReader.readAsDataURL(file);
-  });
-
-  copyBtn.addEventListener("click", () => {
-    outputBox.select();
-    document.execCommand("copy");
-  });
+    const reader = new FileReader();
+    reader.onload = () => ($out.value = reader.result);
+    reader.readAsDataURL($in.files[0]);
+  };
 </script>
-
-<style>
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-  }
-
-  main {
-    display: grid;
-    margin: 10px;
-  }
-
-  main > * {
-    height: 35px;
-    padding: 5px;
-    margin: 5px 0;
-    text-align: center;
-    border: 1px solid #777;
-    border-radius: 4px;
-  }
-
-  #input-file {
-    display: none;
-  }
-</style>
