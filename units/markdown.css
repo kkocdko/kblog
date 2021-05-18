@@ -27,6 +27,7 @@ article code {
   padding: 2px 5px;
   font-size: 14px;
   background: #f4f4f4;
+  border-radius: 4px;
 }
 
 article pre code {
@@ -63,5 +64,6 @@ article img {
 }
 
 article img:not(.no-border) {
-  filter: drop-shadow(0 0 3px #ccc); /* Fit irregular images */
+  filter: drop-shadow(0 0 2px #ccc); /* Fit irregular images */
+  border-radius: 4px;
 }
