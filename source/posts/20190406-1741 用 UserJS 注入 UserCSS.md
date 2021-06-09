@@ -23,7 +23,7 @@ body {
   background: #000;
 }
 
-`.replaceAll(";", "!important;");
+`.replace(/;/g, "!important;");
 ```
 
 示例：<https://greasyfork.org/scripts/371302>
