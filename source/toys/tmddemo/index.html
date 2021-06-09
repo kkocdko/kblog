@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<head>
+  <base href="/toy/tmddemo/" />
+  <script>
+    __VEPS_CFG__ = {
+      name: "TMD Demo",
+      description: "TMD - Tiny Material Design.",
+      background: "rgb(248, 249, 250)",
+      themeColor: "rgb(51, 103, 214)",
+      icon: `-3 -5 54 56 | <path d="M23.99 37.08L9.24 25.61 6 28.13l18 14 18-14-3.26-2.53-14.75 11.48zM24 32l14.73-11.45L42 18 24 4 6 18l3.26 2.53L24 32z"/>`,
+      version: "0.0.1",
+    };
+  </script>
+  <script veps-main src="../veps.js"></script>
+</head>
+
+<veps-deps>
+  <link rel="stylesheet" href="../misc/tmd.css" />
+</veps-deps>
+
+<style>
+  /* Hello TMD */
+</style>
+
+<body>
+  <header>TMD Demo Page</header>
+  <figure style="display: flex">
+    <button>Standard</button>
+    <button _action>Action</button>
+    <progress></progress>
+  </figure>
+  <figure style="grid: none / 1fr 1fr; text-align: center">
+    <input placeholder="Standard" type="number" />
+    <select>
+      <option>Option</option>
+    </select>
+    <form>
+      <input type="checkbox" checked />
+    </form>
+    <form>
+      <input name="demo-radio" type="radio" />
+      <input name="demo-radio" type="radio" checked />
+    </form>
+  </figure>
+  <figure>
+    <table>
+      <thead>
+        <tr>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Times</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+  </figure>
+  <figure style="display: flex">
+    <button>
+      Pick files
+      <label _film><input type="file" /></label>
+    </button>
+    <button onclick="nextElementSibling.toggleAttribute('_none');">
+      Toggle
+    </button>
+    <progress _none></progress>
+  </figure>
+  <figure id="$btnCube" style="grid: none / 32px 32px">
+    <button _action></button>
+    <button></button>
+    <button></button>
+    <button _action></button>
+  </figure>
+</body>
+
+<script>
+  console.log("Hello TMD!");
+  $btnCube.onclick = (event) => event.target.toggleAttribute("_action");
+</script>

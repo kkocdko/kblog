@@ -1,227 +1,75 @@
 <!DOCTYPE html>
+
 <head>
-  <meta name="viewport" content="width=device-width" />
   <base href="/toy/randnum/" />
-  <link
-    rel="stylesheet"
-    href="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.css"
-  />
-  <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
-  <script src="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.js"></script>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="rgb(98, 0, 238)" />
-  <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
-  <link rel="icon" href="favicon.svg" />
-  <title>Random Number Generator</title>
+  <script>
+    __VEPS_CFG__ = {
+      name: "Random Number",
+      description: "Random number generator.",
+      background: "rgb(248, 249, 250)",
+      themeColor: "rgb(51, 103, 214)",
+      icon: `-8 -8 64 64 | <path xmlns="http://www.w3.org/2000/svg" d="M37.2 13.25c-2.88 0-5.6 1.12-7.55 3.07l-5.65 5-.01-.01-3.03 2.67.02.02-5.39 4.78c-1.28 1.27-2.98 1.97-4.79 1.97-3.74 0-6.78-3.03-6.78-6.75s3.04-6.75 6.78-6.75c1.81 0 3.51.7 4.88 2.06l2.27 2.01 3.02-2.67-2.53-2.24c-2.04-2.03-4.75-3.15-7.64-3.15C4.84 13.25 0 18.07 0 24s4.84 10.75 10.8 10.75c2.88 0 5.59-1.12 7.55-3.06L24 26.68l.01.01 3.02-2.68-.01-.01 5.39-4.77c1.28-1.28 2.98-1.98 4.79-1.98 3.74 0 6.78 3.03 6.78 6.75s-3.04 6.75-6.78 6.75c-1.81 0-3.51-.7-4.88-2.05l-2.27-2.01-3.02 2.68 2.53 2.24c2.04 2.03 4.75 3.14 7.63 3.14C43.16 34.75 48 29.93 48 24s-4.84-10.75-10.8-10.75z"/>`,
+      version: "0.0.1",
+    };
+  </script>
+  <script veps-main src="../veps.js"></script>
 </head>
-<style>
-  body {
-    grid-template-columns: auto 1fr;
-    max-width: 900px;
-    max-height: 600px;
-  }
 
-  #console-panel,
-  #output-panel {
-    justify-content: space-between;
-  }
+<veps-deps>
+  <link rel="stylesheet" href="../misc/tmd.css" />
+</veps-deps>
 
-  #console-panel .mdc-card__action-buttons,
-  #output-panel .mdc-card__action-buttons {
-    margin-top: 20px;
-  }
+<style></style>
 
-  #console-panel #generate-config {
-    display: grid;
-    gap: 20px;
-  }
-
-  #numbers-list {
-    overflow: auto;
-    scroll-behavior: smooth;
-  }
-
-  #numbers-list tbody tr:first-child {
-    display: none;
-  }
-
-  @media screen and (max-width: 550px) {
-    body {
-      grid-template-rows: auto 1fr;
-      grid-template-columns: auto;
-      max-width: unset;
-      max-height: unset;
-    }
-  }
-</style>
-<body>
-  <div id="console-panel" class="mdc-card">
-    <form id="generate-config">
-      <div
-        class="mdc-text-field mdc-text-field--outlined"
-        data-mdc-auto-init="MDCTextField"
-      >
-        <input
-          name="minimum"
-          value="1"
-          type="number"
-          class="mdc-text-field__input"
-          id="text-field-hero-input"
-        />
-        <div class="mdc-notched-outline">
-          <div class="mdc-notched-outline__leading"></div>
-          <div class="mdc-notched-outline__notch">
-            <label for="text-field-hero-input" class="mdc-floating-label">
-              Minimum
-            </label>
-          </div>
-          <div class="mdc-notched-outline__trailing"></div>
-        </div>
-      </div>
-      <div
-        class="mdc-text-field mdc-text-field--outlined"
-        data-mdc-auto-init="MDCTextField"
-      >
-        <input
-          name="maximum"
-          value="100"
-          type="number"
-          class="mdc-text-field__input"
-          id="text-field-hero-input"
-        />
-        <div class="mdc-notched-outline">
-          <div class="mdc-notched-outline__leading"></div>
-          <div class="mdc-notched-outline__notch">
-            <label for="text-field-hero-input" class="mdc-floating-label">
-              Maximum
-            </label>
-          </div>
-          <div class="mdc-notched-outline__trailing"></div>
-        </div>
-      </div>
-      <div
-        class="mdc-text-field mdc-text-field--outlined"
-        data-mdc-auto-init="MDCTextField"
-      >
-        <input
-          name="quantity"
-          value="1"
-          type="number"
-          class="mdc-text-field__input"
-          id="text-field-hero-input"
-        />
-        <div class="mdc-notched-outline">
-          <div class="mdc-notched-outline__leading"></div>
-          <div class="mdc-notched-outline__notch">
-            <label for="text-field-hero-input" class="mdc-floating-label">
-              Quantity
-            </label>
-          </div>
-          <div class="mdc-notched-outline__trailing"></div>
-        </div>
-      </div>
-    </form>
-    <div class="mdc-card__action-buttons">
-      <button
-        id="regenerate-btn"
-        class="mdc-button mdc-card__action--button"
-        data-mdc-auto-init="MDCRipple"
-      >
-        <span class="mdc-button__ripple"></span>
-        Regenerate
-      </button>
-      <button
-        id="generate-btn"
-        class="mdc-button mdc-button--unelevated mdc-card__action--button"
-        data-mdc-auto-init="MDCRipple"
-      >
-        <span class="mdc-button__ripple"></span>
-        Generate
-      </button>
-    </div>
-  </div>
-  <div id="output-panel" class="mdc-card">
-    <div id="numbers-list" class="mdc-data-table">
-      <table class="mdc-data-table__table" aria-label="Dessert calories">
-        <thead>
-          <tr class="mdc-data-table__header-row">
-            <th class="mdc-data-table__header-cell">Generate Time</th>
-            <th class="mdc-data-table__header-cell">Random Number</th>
-          </tr>
-        </thead>
-        <tbody class="mdc-data-table__content">
-          <tr class="mdc-data-table__row">
-            <td class="mdc-data-table__cell"></td>
-            <td class="mdc-data-table__cell"></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="mdc-card__action-buttons">
-      <button id="empty-btn" class="mdc-button" data-mdc-auto-init="MDCRipple">
-        <span class="mdc-button__ripple"></span>
-        Empty
-      </button>
-    </div>
-  </div>
+<body style="display: grid; grid: auto auto 1fr / none; height: 100vh">
+  <header>Random Number</header>
+  <figure style="grid: none / 1fr 2fr; text-align: right">
+    <label>Minimum:</label>
+    <input id="$min" value="1" type="number" />
+    <label>Maximum:</label>
+    <input id="$max" value="50" type="number" />
+    <label>Count:</label>
+    <input id="$count" value="1" type="number" />
+    <button onclick="$out.innerHTML = ''">Clear</button>
+    <button id="$genBtn">Generate</button>
+  </figure>
+  <figure style="grid-auto-rows: min-content; margin-top: 0; overflow: auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody id="$out"></tbody>
+    </table>
+    <br />
+  </figure>
 </body>
+
 <script>
   "use strict";
 
-  mdc.autoInit();
-  navigator.serviceWorker.register("sw.js");
+  const rand = (min, max) => Math.round(Math.random() * (max - min)) + min;
 
-  const configForm = document.querySelector("#generate-config");
-  const numbersList = document.querySelector("#numbers-list tbody");
-  const generateBtn = document.querySelector("#generate-btn");
-  const regenerateBtn = document.querySelector("#regenerate-btn");
-  const emptyListBtn = document.querySelector("#empty-btn");
-
-  const randomInRange = (min, max) =>
-    Math.round(Math.random() * (max - min)) + min;
-
-  const getTimeStr = () => {
+  const getTime = () => {
     const zeroPad = (num, len = 3) => ("000000000" + num).slice(-len);
     const date = new Date();
-    const timeStr = `${date.toTimeString().slice(0, 8)}.${zeroPad(
-      date.getMilliseconds()
-    )}`;
-    return timeStr;
+    const ms = zeroPad(date.getMilliseconds());
+    return `${date.toTimeString().slice(0, 8)}.${ms}`;
   };
 
-  const generateNumber = () => {
-    const configData = new FormData(configForm);
-    const minimum = Number(configData.get("minimum"));
-    const maximum = Number(configData.get("maximum"));
-    const quantity = Number(configData.get("quantity"));
-    const creatTime = getTimeStr();
-    const rows = [];
-    for (let i = 0; i < quantity; i++) {
-      const randomNumber = randomInRange(minimum, maximum);
-      const row = numbersList.querySelector("tr:first-child").cloneNode(true);
-      const cells = row.querySelectorAll("td");
-      cells[0].textContent = creatTime;
-      cells[1].textContent = randomNumber;
-      rows.push(row);
+  $genBtn.addEventListener("click", () => {
+    const min = Number($min.value);
+    const max = Number($max.value);
+    const count = Number($count.value);
+    const time = getTime();
+    let insert = "";
+    for (let i = 0; i < count; i++) {
+      const num = rand(min, max);
+      insert += `<tr><td>${time}</td><td>${num}</td></tr>`;
     }
-    numbersList.append(...rows);
-    setTimeout(() => {
-      numbersList.lastElementChild.scrollIntoView();
-    });
-  };
-
-  const emptyList = () => {
-    [...numbersList.childNodes].slice(2).forEach((element) => {
-      element.remove();
-    });
-  };
-
-  generateBtn.addEventListener("click", generateNumber);
-
-  regenerateBtn.addEventListener("click", () => {
-    emptyList();
-    generateNumber();
+    $out.insertAdjacentHTML("beforeend", insert);
+    requestIdleCallback(() => $out.lastElementChild.scrollIntoView());
   });
-
-  emptyListBtn.addEventListener("click", emptyList);
 </script>
