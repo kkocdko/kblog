@@ -1,33 +1,31 @@
 <!DOCTYPE html>
+
 <head>
-  <meta name="viewport" content="width=device-width" />
   <base href="/toy/datetime/" />
-  <link
-    rel="stylesheet"
-    href="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.css"
-  />
-  <link rel="stylesheet" href="../misc/material-components-web-kmod.css" />
-  <script src="//cdn.jsdelivr.net/npm/material-components-web@6.0.0/dist/material-components-web.min.js"></script>
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="rgb(98, 0, 238)" />
-  <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
-  <link rel="icon" href="favicon.svg" />
-  <title>Date Time</title>
+  <script>
+    __VEPS_CFG__ = {
+      name: "Date Time",
+      description: "Tools about date and time.",
+      background: "rgb(248, 249, 250)",
+      themeColor: "rgb(51, 103, 214)",
+      icon: `-4 -4 56 56 | <path xmlns="http://www.w3.org/2000/svg" d="M23.99 4C12.94 4 4 12.95 4 24s8.94 20 19.99 20C35.04 44 44 35.05 44 24S35.04 4 23.99 4zM24 40c-8.84 0-16-7.16-16-16S15.16 8 24 8s16 7.16 16 16-7.16 16-16 16zm1-26h-3v12l10.49 6.3L34 29.84l-9-5.34z"/>`,
+      version: "0.0.1",
+    };
+  </script>
+  <script veps-main src="../veps.js"></script>
 </head>
-<style>
-  body {
-    max-width: 350px;
-    height: auto;
-  }
-</style>
+
+<veps-deps>
+  <link rel="stylesheet" href="../misc/tmd.css" />
+</veps-deps>
+
+<style></style>
+
 <body>
-  <div class="mdc-card">
-    <p>WIP</p>
-  </div>
+  <header>Date Time</header>
+  <figure></figure>
 </body>
+
 <script>
   "use strict";
-
-  mdc.autoInit();
-  navigator.serviceWorker.register("sw.js");
 </script>

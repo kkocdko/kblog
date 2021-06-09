@@ -1,20 +1,27 @@
 <!DOCTYPE html>
+
 <head>
-  <meta name="viewport" content="width=device-width" />
   <base href="/toy/solarsystem/" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="rgb(0, 0, 0)" />
-  <!-- [material-design-icons](https://github.com/google/material-design-icons) -->
-  <link rel="icon" href="favicon.svg" />
-  <title>Solar System Model</title>
+  <script>
+    __VEPS_CFG__ = {
+      name: "Solar System",
+      description: "A Solar System model.",
+      background: "rgb(0, 0, 0)",
+      themeColor: "rgb(51, 103, 214)",
+      icon: `-3 -3 30 30 | <circle cx="9" cy="12" r="8"/><path d="M17 4.26v2.09c2.33.82 4 3.04 4 5.65s-1.67 4.83-4 5.65v2.09c3.45-.89 6-4.01 6-7.74s-2.55-6.85-6-7.74z"/>`,
+      version: "0.0.1",
+    };
+  </script>
+  <script veps-main src="../veps.js"></script>
 </head>
+
 <style>
   *,
   *::before,
   *::after {
     box-sizing: border-box;
-    margin: 0;
     padding: 0;
+    margin: 0;
   }
 
   ::-webkit-scrollbar {
@@ -31,9 +38,9 @@
     min-width: 100vmax;
     height: 1280px;
     min-height: 100vmax;
+    user-select: none;
     background: #000;
     transition: 0.3s;
-    user-select: none;
   }
 
   body.hidden {
@@ -226,11 +233,11 @@
     height: 1.8%;
     margin-top: -0.8%;
     margin-left: -2.5%;
+    content: "";
     border-radius: 50%;
     box-shadow: 0 1px 0 1px rgba(152, 118, 65, 0.75),
       3px 1px 0 rgba(152, 118, 65, 0.75), -3px 1px 0 rgba(152, 118, 65, 0.75);
     transform: rotate(-130deg);
-    content: "";
   }
 
   #uranus {
@@ -263,6 +270,7 @@
     background: rgb(171, 122, 104);
   }
 </style>
+
 <body class="hidden">
   <div class="solar-system">
     <div id="sun"></div>
@@ -280,38 +288,32 @@
     <div id="pluto"></div>
   </div>
 </body>
+
 <script>
   "use strict";
 
-  navigator.serviceWorker.register("sw.js");
-
   setTimeout(() => {
-    window.scrollTo(
-      (document.body.clientWidth - window.innerWidth) / 2,
-      (document.body.clientHeight - window.innerHeight) / 2
+    scrollTo(
+      (document.body.clientWidth - innerWidth) / 2,
+      (document.body.clientHeight - innerHeight) / 2
     );
   }, 200);
 
-  setTimeout(() => {
-    document.body.classList.remove("hidden");
-  }, 300);
+  setTimeout(() => document.body.classList.remove("hidden"), 300);
 
-  window.addEventListener(
-    "mousedown",
-    ({ clientX: originX, clientY: originY }) => {
-      const onMouseMove = ({ clientX: currentX, clientY: currentY }) => {
-        const relativeX = currentX - originX;
-        const relativeY = currentY - originY;
-        window.scrollBy(-relativeX, -relativeY);
-        originX = currentX;
-        originY = currentY;
-      };
-      const onMouseUp = () => {
-        window.removeEventListener("mousemove", onMouseMove);
-        window.removeEventListener("mouseup", onMouseUp);
-      };
-      window.addEventListener("mousemove", onMouseMove);
-      window.addEventListener("mouseup", onMouseUp);
-    }
-  );
+  addEventListener("mousedown", ({ clientX: originX, clientY: originY }) => {
+    const onMouseMove = ({ clientX: currentX, clientY: currentY }) => {
+      const relativeX = currentX - originX;
+      const relativeY = currentY - originY;
+      scrollBy(-relativeX, -relativeY);
+      originX = currentX;
+      originY = currentY;
+    };
+    const onMouseUp = () => {
+      removeEventListener("mousemove", onMouseMove);
+      removeEventListener("mouseup", onMouseUp);
+    };
+    addEventListener("mousemove", onMouseMove);
+    addEventListener("mouseup", onMouseUp);
+  });
 </script>
