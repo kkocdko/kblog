@@ -49,7 +49,7 @@ article table {
 }
 
 article tr:nth-child(2n) {
-  background: #f7f7f7;
+  background: #f8f9fa;
 }
 
 article tr > * {

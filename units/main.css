@@ -50,6 +50,7 @@ main h1 {
 }
 
 section > * {
+  margin-top: 3px; /* For section > p */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -76,10 +77,6 @@ section span {
 
 section > a {
   display: inline-block;
-}
-
-section p {
-  margin-top: 3px;
 }
 
 nav {
