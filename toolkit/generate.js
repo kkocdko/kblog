@@ -32,11 +32,11 @@ const minify = (() => {
   if (isDev) return { html: htmlStrip, htmlMd: f, css: f, js: f };
   const htmlclean = require("htmlclean");
   const terser = require("terser");
-  const cssR = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w#-:])|;\s*(?=})|0(?=\.)/g;
+  const cssRule = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w#-:])|;\s*(?=})|0(?=\.)/g;
   return {
     html: (s) => htmlclean(htmlStrip(s)),
     htmlMd: (s) => htmlclean(s),
-    css: (s) => s.replace(cssR, ""),
+    css: (s) => s.replace(cssRule, ""),
     js: (s) => terser.minify(s, { toplevel: true }).code,
   };
 })();
