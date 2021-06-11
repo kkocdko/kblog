@@ -5,6 +5,7 @@ let scrollRecords = {};
 let scrollPos = 0;
 
 let onLinkClick = function (event) {
+  if (event.ctrlKey) return; // Open in background
   event.preventDefault();
   history.pushState(null, null, this.href);
   onpopstate(); // Because "pushState" will not trigger "popstate" event
