@@ -107,7 +107,6 @@ header > * {
   float: left;
   height: 28px;
   padding: 11px;
-  cursor: pointer;
   fill: #fff;
 }
 
@@ -126,7 +125,7 @@ footer,
 footer a {
   font-size: 13px;
   line-height: 3;
-  color: #ccc;
+  color: #ddd;
   text-align: center;
   background: #3f51b5;
 }
