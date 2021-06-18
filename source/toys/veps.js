@@ -37,7 +37,6 @@ const inWindow = async () => {
         resolve(canvas.toDataURL("image/png"));
       };
       img.src = "data:image/svg+xml," + encodeURIComponent(svg);
-      console.log(img.src);
     });
     const pageUrl = location.origin + location.pathname;
     const manifest = {

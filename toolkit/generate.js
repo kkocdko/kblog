@@ -32,7 +32,7 @@ const minify = (() => {
   if (isDev) return { html: htmlStrip, htmlMd: f, css: f, js: f };
   const htmlclean = require("htmlclean");
   const terser = require("terser");
-  const cssRule = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w#-:])|;\s*(?=})|0(?=\.)/g;
+  const cssRule = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w:#-])|;\s*(?=})|0(?=\.)/g;
   return {
     html: (s) => htmlclean(htmlStrip(s)),
     htmlMd: (s) => htmlclean(s),
@@ -92,15 +92,15 @@ const loadMdFile = (filePath) => {
   fs.writeFileSync(p`./public/update.html`, f`update.html`);
   fs.writeFileSync(p`./public/.nojekyll`, "");
 
-  const copyDirSync = (sourceDir, targetDir) => {
-    fs.readdirSync(sourceDir).forEach((item) => {
-      const source = path.join(sourceDir, item);
-      const target = path.join(targetDir, item);
-      if (fs.statSync(source).isFile()) {
-        fs.mkdirSync(targetDir, { recursive: true });
-        fs.copyFileSync(source, target);
+  const copyDirSync = (srcDir, destDir) => {
+    fs.readdirSync(srcDir).forEach((fileName) => {
+      const src = path.join(srcDir, fileName);
+      const dest = path.join(destDir, fileName);
+      if (fs.statSync(src).isFile()) {
+        fs.mkdirSync(destDir, { recursive: true });
+        fs.copyFileSync(src, dest);
       } else {
-        copyDirSync(source, target);
+        copyDirSync(src, dest);
       }
     });
   };
