@@ -79,5 +79,5 @@
 
 <script>
   console.log("Hello TMD!");
-  $btnCube.onclick = (event) => event.target.toggleAttribute("_action");
+  $btnCube.onclick = ({ target }) => target.toggleAttribute("_action");
 </script>
