@@ -1,16 +1,19 @@
 <div align="center">
 <h1>kblog</h1>
 <p>My Blog · 3 KB · Single Page · Material Design</p>
-<img src="https://flat.badgen.net/badge/code%20style/prettier?color=4caf50">
 <img src="https://flat.badgen.net/badge/license/Unlicense%20+%20CC0?color=4caf50">
 <img src="https://flat.badgen.net/badgesize/brotli/kkocdko/kkocdko.github.io/master/bundle.js?color=4caf50">
 </div>
 
 ### Intro
 
-- Address: <https://kkocdko.github.io>
+An unique blog solution. Instance: <https://kkocdko.site>
 
-- Mirror: <https://kkocdko.vercel.app>
+- Tiny, less than `3 KB` size (after brotli).
+
+- Fast, Single Page App using vanilla JavaScript.
+
+- Pretty, follow Material Design.
 
 ### Contributing
 

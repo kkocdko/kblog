@@ -264,7 +264,7 @@ const pages = [];
 
 // Site Map and RSS
 {
-  const domain = "https://kkocdko.github.io";
+  const domain = "https://kkocdko.site";
 
   fs.writeFileSync(
     p`./public/robots.txt`,
