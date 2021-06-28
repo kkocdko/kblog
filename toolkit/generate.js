@@ -80,7 +80,7 @@ const loadMdFile = (filePath) => {
   fs.mkdirSync(p`./public`);
 
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
-  const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
+  const avatar = "data:image/svg+xml," + f`avatar.svg`.replace(/#/g, "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
   const head = minify.html(f`head.html`).replace("/*{style}*/", style);
   const bundle = f`bundle.js`
