@@ -29,6 +29,10 @@ CPU 和 GPU 压力测试，可以用来烤机
 
 太阳系模型，拥有精确的周期
 
+### [QRCode Generator](/toy/qrcode/)
+
+二维码生成器（生成 SVG 矢量图）
+
 ### [Chrome Dino](/toy/dino/)
 
 （暂时下线）从 Chrome 中抽离出的离线小恐龙游戏
@@ -40,10 +44,6 @@ CPU 和 GPU 压力测试，可以用来烤机
 ### [Markdown Editor](/toy/mdeditor/)
 
 （暂时下线）简易 Markdown 编辑器
-
-### [QRCode Generator](/toy/qrcode/)
-
-（暂时下线）二维码生成器（生成 SVG 矢量图）
 
 ### [Image Comparator](/toy/imgcomparator/)
 
