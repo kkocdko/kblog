@@ -11,7 +11,7 @@ An unique blog solution. Instance: <https://kkocdko.site>
 
 - 🗜️ Tiny, less than `3 KB` (after brotli).
 
-- ⚡️ Fast, Single Page App using vanilla JavaScript.
+- ⚡️ Fast, Single Page App built with vanilla JavaScript.
 
 - 💎 Pretty, follow Material Design.
 
