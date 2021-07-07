@@ -32,6 +32,7 @@ onpopstate = (isPopState) => {
   fetch(location)
     .then((response) => response.text())
     .then((s) => {
+      // Regexp will cause a waste of time, but it's usually less than 1 ms
       [, document.title, , mainBox.innerHTML] = s.split(/<\/?title>|<\/?main>/);
       scroll(0, isPopState ? scrollRecords[location] || 0 : 0);
       // Ensure anchor makes down-scroll to hide topbar
