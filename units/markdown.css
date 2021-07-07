@@ -1,12 +1,12 @@
 article > *,
 article details > *,
 article p {
-  margin-top: 7px;
+  margin-top: 9px;
 }
 
 article h3,
 article h4 {
-  margin-top: 11px;
+  margin-top: 13px;
   font-weight: 400;
 }
 
@@ -19,7 +19,7 @@ article summary {
 }
 
 article blockquote {
-  padding-left: 15px;
+  padding-left: 13px;
   border-left: 3px solid #ddd;
 }
 
