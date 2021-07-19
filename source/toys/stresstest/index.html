@@ -9,7 +9,7 @@
       background: "rgb(248, 249, 250)",
       themeColor: "rgb(51, 103, 214)",
       icon: `-6 -6 60 60 | <path d="M27 1.34s1.48 5.3 1.48 9.6c0 4.12-2.7 7.47-6.83 7.47s-7.25-3.34-7.25-7.47l.05-.72C10.43 15.03 8 21.23 8 28c0 8.84 7.16 16 16 16s16-7.16 16-16c0-10.79-5.19-20.41-13-26.66zM23.42 38c-3.56 0-6.45-2.81-6.45-6.28 0-3.25 2.09-5.53 5.63-6.24s7.2-2.41 9.23-5.15c.78 2.58 1.19 5.3 1.19 8.07 0 5.29-4.3 9.6-9.6 9.6z"/>`,
-      version: "0.0.1",
+      version: "0.0.2",
     };
   </script>
   <script veps-main src="../veps.js"></script>
@@ -39,35 +39,148 @@
 <script>
   "use strict";
 
-  const workers = [];
-
-  const addWorker = (workerFn) => {
-    const str = `(${workerFn.toString()})()`;
-    const blob = new Blob([str]);
-    const url = URL.createObjectURL(blob);
-    workers.push(new Worker(url));
-  };
+  const cpuWorkers = [];
+  let gpuEnable = false;
 
   $toggle.onclick = () => {
+    // Stop all
     if ($toggle.lastElementChild.toggleAttribute("_none")) {
-      for (const worker of workers) worker.terminate();
-      workers.length = 0;
+      for (const worker of cpuWorkers) worker.terminate();
+      cpuWorkers.length = 0;
+      gpuEnable = false;
       return;
     }
+
+    // Warning if no item
     if (!$cpu.checked && !$gpu.checked) {
       alert("You should check at least one item");
       return;
     }
+
     if ($cpu.checked) {
+      const cpuCount = navigator.hardwareConcurrency;
+      const addWorker = (workerFn) => {
+        const str = `(${workerFn.toString()})()`;
+        const blob = new Blob([str]);
+        const url = URL.createObjectURL(blob);
+        cpuWorkers.push(new Worker(url));
+      };
       const workerFn = () => {
         while (1);
       };
-      const cpuCount = navigator.hardwareConcurrency;
       for (let i = 0; i < cpuCount; i++) addWorker(workerFn);
     }
+
     if ($gpu.checked) {
-      alert("GPU Stress Test is still developing...");
-      // workersList.push(makeWorker(() => (onmessage = (e) => console.log(e))));
+      // Based on `https://github.com/soulwire/WebGL-GPU-Particles`
+
+      gpuEnable = true;
+      const renderVS = ` 
+        attribute vec2 dataLocation;
+        uniform sampler2D physicsData;
+        void main() {
+          vec4 particle = texture2D(physicsData, dataLocation);
+          float perspective = 1.0 + particle.z * 5.5;
+          float phase = cos(particle.w) * max(0.5, tan(particle.z * 8.05));
+          gl_Position = vec4(particle.xyz, perspective);
+          gl_PointSize = min(64.0, (1.0 / perspective) * (0.75 + phase));
+        }
+      `;
+      const renderFS = `
+        uniform sampler2D particleTexture;
+        void main() {
+          gl_FragColor = texture2D(particleTexture, gl_PointCoord);
+        }
+      `;
+
+      const PARTICLE_COUNT = Math.pow(1024, 2);
+      const PARTICLE_COUNT_SQRT = Math.sqrt(PARTICLE_COUNT);
+
+      let viewportQuadBuffer;
+      let renderProgram;
+      let frameBuffer;
+      let gl;
+
+      const createShader = (source, type) => {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+          throw gl.getShaderInfoLog(shader);
+        }
+        return shader;
+      };
+
+      const createProgram = (vSource, fSource) => {
+        const vs = createShader(vSource, gl.VERTEX_SHADER);
+        const fs = createShader(fSource, gl.FRAGMENT_SHADER);
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          throw gl.getProgramInfoLog(program);
+        }
+        return program;
+      };
+
+      const createRenderProgram = () => {
+        const program = createProgram(renderVS, renderFS);
+        program.dataLocation = gl.getAttribLocation(program, "dataLocation");
+        program.particleTexture = gl.getUniformLocation(
+          program,
+          "particleTexture"
+        );
+        program.physicsData = gl.getUniformLocation(program, "physicsData");
+        gl.enableVertexAttribArray(program.dataLocation);
+        return program;
+      };
+
+      const createViewportQuadBuffer = () => {
+        const data = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        return buffer;
+      };
+
+      const render = () => {
+        gl.useProgram(renderProgram);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+        gl.vertexAttribPointer(
+          renderProgram.dataLocation,
+          2,
+          gl.FLOAT,
+          gl.FALSE,
+          0,
+          0
+        );
+        gl.activeTexture(gl.TEXTURE0);
+        gl.uniform1i(renderProgram.physicsData, 0);
+        gl.activeTexture(gl.TEXTURE1);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+        gl.drawArrays(gl.POINTS, 0, PARTICLE_COUNT);
+        gl.disable(gl.BLEND);
+      };
+
+      const update = () => {
+        if (!gpuEnable) return;
+        requestAnimationFrame(update);
+        // setTimeout(update, 10);
+        // Dynamic render fre?
+        render();
+        // render();
+      };
+
+      // init
+      gl = document.createElement("canvas").getContext("webgl");
+      gl.canvas.width = gl.canvas.height = 1000;
+      viewportQuadBuffer = createViewportQuadBuffer();
+      renderProgram = createRenderProgram();
+      frameBuffer = gl.createFramebuffer();
+      update();
     }
   };
 </script>
