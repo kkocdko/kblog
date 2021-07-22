@@ -5,6 +5,10 @@ tags: Code JavaScript VSCode
 description: Export / import the user data
 ```
 
+> This code does nothing on VSCode 1.58+, caution!
+>
+> I will update this soon.
+
 ### Intro
 
 The VSCode Web (like VSCode Remote, GitHub Codespaces) saves user data in [IndexedDB](https://developer.mozilla.org/docs/Web/API/IndexedDB_API) which will be lost if you clear the browser's storage.
