@@ -5,6 +5,10 @@ title: Toy
 
 > 使用了较新的 Web 标准功能，在旧版浏览器中可能出现缺陷。
 
+### [Realpha](/toy/realpha/)
+
+精确地恢复图片的 Alpha 通道，适用于提取图标等场景。
+
 ### [NCEE Countdown](/toy/ncee-countdown/)
 
 赶时间做出来的高考倒计时页面。敏捷开发，敏捷开发。

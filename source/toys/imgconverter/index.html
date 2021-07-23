@@ -66,7 +66,7 @@
     this.$tips?.remove();
     $in.previousElementSibling.textContent = "File: " + $in.files[0].name;
     const image = new Image();
-    image.onload = async () => {
+    image.onload = () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
       canvas.width = image.width;

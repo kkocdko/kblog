@@ -9,6 +9,11 @@
   outline: none;
 }
 
+a {
+  color: #3367d6;
+  text-decoration: none;
+}
+
 body {
   display: none;
   flex-direction: column;
@@ -18,6 +23,7 @@ body {
   padding: 20px;
   padding-top: 60px;
   margin: 0 auto;
+  font-family: sans-serif;
 }
 
 html::after {
