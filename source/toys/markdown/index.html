@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<!-- Copied from my old repo :P -->
+
+<head>
+  <base href="/toy/markdown/" />
+  <script>
+    __VEPS_CFG__ = {
+      name: "Markdown",
+      description: "Simple markdown preview.",
+      background: "rgb(248, 249, 250)",
+      themeColor: "rgb(51, 103, 214)",
+      icon: `-12 -12 72 72 | <path d="M6 34.5V42h7.5l22.13-22.13-7.5-7.5L6 34.5zm35.41-20.41c.78-.78.78-2.05 0-2.83l-4.67-4.67c-.78-.78-2.05-.78-2.83 0l-3.66 3.66 7.5 7.5 3.66-3.66z"/>`,
+      version: "0.0.1",
+    };
+  </script>
+  <script veps-main src="../veps.js"></script>
+</head>
+
+<veps-deps>
+  <link
+    rel="stylesheet"
+    href="//cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css"
+  />
+  <script src="//cdn.jsdelivr.net/npm/marked@2.1.3/marked.min.js"></script>
+</veps-deps>
+
+<style>
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  body {
+    padding: 0 7px 15px 7px;
+  }
+
+  .input-box,
+  .output-box {
+    display: block;
+    width: 100%;
+  }
+
+  #input-box {
+    width: 100%;
+    height: 60vh;
+    padding: 5px;
+    margin-top: 7px;
+    margin-bottom: -5px;
+    font-family: Consolas, "SFMono-Regular", "Liberation Mono", Menlo, Courier,
+      monospace;
+    resize: vertical;
+    border: 1px solid #777;
+  }
+
+  @keyframes flicker {
+    15% {
+      background: #ff9800;
+      opacity: 1;
+    }
+
+    70% {
+      background: #ff9800;
+      opacity: 1;
+    }
+  }
+
+  #partition {
+    padding: 1px 0.2em;
+    font-size: 14px;
+    color: #fff;
+    user-select: none;
+    border: 1px solid #777;
+    opacity: 0;
+    animation: flicker 5s;
+  }
+
+  #output-box {
+    margin-top: -0.1em;
+  }
+</style>
+
+<body>
+  <textarea
+    id="input-box"
+    class="in"
+    spellcheck="false"
+    autocapitalize="off"
+    autocomplete="off"
+    autocorrect="off"
+  ></textarea>
+  <p id="partition">Click here to hide or show input box</p>
+  <div id="output-box" class="markdown-body"></div>
+</body>
+
+<script>
+  "use strict";
+
+  const inputBox = document.querySelector("#input-box");
+  const outputBox = document.querySelector("#output-box");
+  const partition = document.querySelector("#partition");
+
+  const hideOrShowInputBox = () => {
+    inputBox.style.display = inputBox.style.display === "none" ? "" : "none";
+  };
+
+  const refreshOutput = () => {
+    outputBox.innerHTML =
+      inputBox.value === ""
+        ? "Compiled result will be displayed here."
+        : window.marked(inputBox.value);
+  };
+
+  inputBox.addEventListener("input", refreshOutput);
+  partition.addEventListener("click", hideOrShowInputBox);
+  refreshOutput();
+</script>

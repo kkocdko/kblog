@@ -24,6 +24,7 @@ body {
   padding-top: 60px;
   margin: 0 auto;
   font-family: sans-serif;
+  -webkit-tap-highlight-color: #0000;
 }
 
 html::after {

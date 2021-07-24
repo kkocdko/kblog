@@ -37,18 +37,6 @@ CPU 和 GPU 压力测试，可以用来烤机
 
 二维码生成器（生成 SVG 矢量图）
 
-### [Chrome Dino](/toy/dino/)
+### [Markdown](/toy/markdown/)
 
-（暂时下线）从 Chrome 中抽离出的离线小恐龙游戏
-
-### [Rubiks Cube](/toy/rubikscube/)
-
-（暂时下线）Google Doodle 上的交互式魔方
-
-### [Markdown Editor](/toy/mdeditor/)
-
-（暂时下线）简易 Markdown 编辑器
-
-### [Image Comparator](/toy/imgcomparator/)
-
-（暂时下线）进行图片比对，玩“找不同”游戏的好帮手
+提供简洁的 Markdown 预览功能
