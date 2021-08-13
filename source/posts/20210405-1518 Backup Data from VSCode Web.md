@@ -5,7 +5,7 @@ tags: Code JavaScript VSCode
 description: Export / import the user data
 ```
 
-> Tested on VSCode 1.56 ~ 1.58, may become invalid in a future version.
+> Tested on VSCode 1.56 ~ 1.59, may become invalid in a future version.
 
 ### Intro
 

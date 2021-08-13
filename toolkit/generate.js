@@ -1,10 +1,8 @@
 "use strict";
 
 // Timer
-{
-  console.time("generate time");
-  process.on("exit", () => console.timeEnd("generate time"));
-}
+console.time("generate time");
+process.on("exit", () => console.timeEnd("generate time"));
 
 const fs = require("fs");
 const path = require("path");
