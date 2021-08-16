@@ -9,7 +9,7 @@
       background: "rgb(248, 249, 250)",
       themeColor: "rgb(51, 103, 214)",
       icon: `-6 -6 60 60 | <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-2 35.86C14.11 38.88 8 32.16 8 24S14.11 9.12 22 8.14v31.72zm4-31.72c2.06.26 4 .9 5.74 1.86H26V8.14zM26 14h10.48c.5.63.96 1.3 1.36 2H26v-2zm0 6h13.48c.17.65.3 1.32.39 2H26v-2zm0 19.86V38h5.74c-1.74.96-3.68 1.6-5.74 1.86zM36.48 34H26v-2h11.84c-.4.7-.86 1.37-1.36 2zm3-6H26v-2h13.86c-.08.68-.22 1.35-.38 2z"/>`,
-      version: "0.0.2",
+      version: "0.0.3",
     };
   </script>
   <script veps-main src="../veps.js"></script>
@@ -24,7 +24,7 @@
     max-width: 100%;
     max-height: 100%;
     margin: auto;
-    background: linear-gradient(#0000, #0000),
+    background-image: linear-gradient(#0000, #0000),
       linear-gradient(45deg, #ccc 25%, #0000 25%, #0000 75%, #ccc 75%, #ccc),
       linear-gradient(45deg, #ccc 26%, #0000 26%, #0000 74%, #ccc 74%, #ccc);
     background-position: 0 0, 10px 10px;
@@ -78,10 +78,8 @@
 
   $out.onclick = () => {
     const { width, height } = $in1;
-    if (width !== $in2.width || height !== $in2.height) {
-      alert("Input images size must be the same");
-      return;
-    }
+    if (width !== $in2.width || height !== $in2.height)
+      return alert("Input images size must be the same");
     const [bg1R, bg1G, bg1B] = $bg1.value.split(" ").map(Number);
     const [bg2R, bg2G, bg2B] = $bg2.value.split(" ").map(Number);
     const imgData = $in1.getContext("2d").getImageData(0, 0, width, height);
@@ -101,8 +99,6 @@
     }
     $out.width = width;
     $out.height = height;
-    const ctx = $out.getContext("2d");
-    ctx.clearRect(0, 0, width, height);
-    ctx.putImageData(imgData, 0, 0);
+    $out.getContext("2d").putImageData(imgData, 0, 0);
   };
 </script>

@@ -9,10 +9,6 @@ title: Toy
 
 精确地恢复图片的 Alpha 通道，适用于提取图标等场景。
 
-### [NCEE Countdown](/toy/ncee-countdown/)
-
-赶时间做出来的高考倒计时页面。敏捷开发，敏捷开发。
-
 ### [Stress Test](/toy/stresstest/)
 
 CPU 和 GPU 压力测试，可以用来烤机。
@@ -21,7 +17,7 @@ CPU 和 GPU 压力测试，可以用来烤机。
 
 自用的小工具，将本地文件以 Base64 进行编码。
 
-### [Random Number Generator](/toy/randnum/)
+### [Random Number](/toy/randnum/)
 
 随机数生成器。
 
