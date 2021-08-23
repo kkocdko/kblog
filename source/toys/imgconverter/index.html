@@ -9,7 +9,7 @@
       background: "rgb(248, 249, 250)",
       themeColor: "rgb(51, 103, 214)",
       icon: `-4 -4 56 56 | <path d="M28 12l-7.5 10 5.7 7.6L23 32c-3.38-4.5-9-12-9-12L2 36h44L28 12z"/>`,
-      version: "0.0.3",
+      version: "0.0.4",
     };
   </script>
   <script veps-main src="../veps.js"></script>
@@ -31,9 +31,15 @@
       <option value="image/jpeg" selected>JPEG</option>
       <option value="image/png">PNG</option>
       <option value="image/webp">WEBP</option>
+      <option value="image/avif">AVIF</option>
     </select>
     <label style="text-align: right">Quality</label>
-    <input id="$quality" type="number" min="1" max="100" value="75" />
+    <input id="$quality" min="1" max="100" value="75" type="number" />
+    <label style="text-align: right">Resize</label>
+    <div style="display: grid; grid: auto / 1fr 1fr; gap: 15px">
+      <input id="$width" placeholder="Width" type="number" />
+      <input id="$height" placeholder="Height" type="number" />
+    </div>
   </figure>
   <figure
     style="align-items: center; justify-content: center; overflow: hidden"
@@ -60,9 +66,16 @@
     img.src = URL.createObjectURL($in.files[0]);
     await new Promise((r) => (img.onload = r));
     const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    canvas.getContext("2d").drawImage(img, 0, 0, img.width, img.height);
+    canvas.width = $width.value || img.width;
+    canvas.height = $height.value || img.height;
+    if (!!$width.value ^ !!$height.value) {
+      const rate = $width.value
+        ? $width.value / img.width
+        : $height.value / img.height;
+      canvas.width = rate * img.width;
+      canvas.height = rate * img.height;
+    }
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
     canvas.toBlob(
       (b) => ($out.src = URL.createObjectURL(b, { type: $type.value })),
       $type.value,
