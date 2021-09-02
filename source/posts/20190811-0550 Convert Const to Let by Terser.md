@@ -7,7 +7,7 @@ description: Using TreeTransformer
 
 > [Terser](https://github.com/terser-js/terser) is a JavaScript optimizer for ES6+.
 
-### Why
+## Why
 
 `const` is a keyword to define a unchangeable thing, it can make code stronger. But if you use `const`, Terser will not convert it to `let`. This **wastes more than two chars**:
 
@@ -36,7 +36,7 @@ let a=1,b=2,c=3; // 16 chars
 
 But Terser's major contributors [refuse to implement this feature](https://github.com/terser-js/terser/issues/172). Certainly, it's unsafe, but who will try to change a constant?
 
-### Solution
+## Solution
 
 ```javascript
 const Terser = require("terser");

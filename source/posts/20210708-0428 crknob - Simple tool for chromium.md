@@ -7,11 +7,11 @@ description: Disable profile encryption
 
 > Windows only
 
-### GitHub
+## GitHub
 
 <https://github.com/kkocdko/crknob>
 
-### Features
+## Features
 
 - Disable profile encryption, allow you to migrate by copy folder.
 

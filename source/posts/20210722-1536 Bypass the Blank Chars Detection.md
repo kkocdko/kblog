@@ -11,13 +11,13 @@ The original reason for this was to avoid confusion for other users, and protect
 
 But sometimes we still want a blank user name, so:
 
-### Method 1
+## Method 1
 
 Use some chars that are not in the invalid list, like [Braille Pattern Blank (U+2800)](https://unicode-table.com/en/2800/).
 
 You could see more on [Unicode Table](https://unicode-table.com/en/search/?q=space). From my experience, different sites have different forbidden list.
 
-### Method 2
+## Method 2
 
 Right click the input box, choose "Inspect Element", switch to "console" panel, then enter this code:
 

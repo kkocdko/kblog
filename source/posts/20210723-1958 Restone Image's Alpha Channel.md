@@ -9,7 +9,7 @@ Here a simple but special problem: I need an icon from app, but it is render dyn
 
 Just take a screenshot? This icon has translucent part. Use Photoshop to make translucent effect? Seems good, but it is impossible to restone alpha channel **precisely**. Why?
 
-### Algorithm
+## Algorithm
 
 ```javascript
 [fgR, fgG, fgB, alpha], [bgR, bgG, bgB];
@@ -20,7 +20,7 @@ Let's take a look about the algorithm for adding a background to a translucent i
 
 There are two unknowns in this equation! That's why Photoshop can't solve this problem. For example, with background `rgb(255, 255, 255)`, both `rgba(0, 0, 0, 63)` and `rgba(63, 63, 63, 255)` will mix the same result. So, we need two equations.
 
-### Solution
+## Solution
 
 Forcibly change the background color of app by debug tools, take two screenshot with different background.
 

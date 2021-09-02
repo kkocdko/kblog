@@ -9,7 +9,7 @@ description: 标题已经说得够清楚了
 
 > Win10 + Ubuntu，Win10 在分区索引 0。
 
-### Steps
+## Steps
 
 如果硬盘上的引导程序不是 Grub，或者不能引导 Ubuntu，保险起见，请先修复 Grub。
 
@@ -24,6 +24,6 @@ boot-repair
 
 在左侧的 GroupBox 里边点击 `Add New Entry`，选择 `Linux/BSD` 这个标签，`Type` 选择 `GRUB (Legacy)`（不要选 Grub2），`Drive` 选择安装 Ubuntu 的驱动器，`Name` 随便填。然后点击 `Add Entry`，重启即可。
 
-### By the Way
+## By the Way
 
 可以用 `sudo gedit /etc/default/grub` 修改 Grub 配置（例如超时时间）（任意文本编辑器均可），最后别忘了 `sudo update-grub`。
