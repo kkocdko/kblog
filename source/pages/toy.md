@@ -3,19 +3,17 @@ name: toy
 title: Toy
 ```
 
-> 使用了较新的 Web 标准功能，在旧版浏览器中可能出现缺陷。
-
 ### [Realpha](/toy/realpha/)
 
-精确地恢复图片的 Alpha 通道，适用于提取图标等场景。
+精确恢复图片的 Alpha 通道，用于提取透明图标。
 
 ### [Stress Test](/toy/stresstest/)
 
-CPU 和 GPU 压力测试，可以用来烤机。
+CPU & GPU 压力测试，烤机助手。
 
 ### [Base64 Tool](/toy/base64/)
 
-自用的小工具，将本地文件以 Base64 进行编码。
+将本地文件以 Base64 进行编码。
 
 ### [Random Number](/toy/randnum/)
 
@@ -23,7 +21,7 @@ CPU 和 GPU 压力测试，可以用来烤机。
 
 ### [Image Converter](/toy/imgconverter/)
 
-图片格式转换器，基于 Canvas，格式支持依赖于浏览器。
+基于 Canvas 的图片格式转换器，格式支持取决于浏览器。
 
 ### [Solar System](/toy/solarsystem/)
 
@@ -31,8 +29,8 @@ CPU 和 GPU 压力测试，可以用来烤机。
 
 ### [QRCode Generator](/toy/qrcode/)
 
-二维码生成器（生成 SVG 矢量图）。
+二维码生成器，生成 SVG 矢量图。
 
 ### [Markdown](/toy/markdown/)
 
-提供简洁的 Markdown 预览功能。
+提供简易的 Markdown 预览功能。
