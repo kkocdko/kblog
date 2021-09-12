@@ -24,7 +24,7 @@ There are two unknowns in this equation! That's why Photoshop can't solve this p
 
 Forcibly change the background color of app by debug tools, take two screenshot with different background.
 
-Then, try my online tool: [/toy/realpha/](/toy/realpha/)
+Then, try my online tool: [/toy/realpha](/toy/realpha)
 
 <img src="/res/20210723-1958-001.webp" width="640" height="984">
 

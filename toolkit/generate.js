@@ -161,17 +161,17 @@ const pages = [];
       content: mapstr`
         ${list}${({ id, title, description, tags }) => mapstr`
         <section>
-          <h3><a href="/./post/${id}/">${title}</a></h3>
+          <h3><a href="/./post/${id}">${title}</a></h3>
           <p>${description}</p>
-          <div>${tags}${(tag) => `<a href="/./tag/${tag}/">${tag}</a>`}</div>
+          <div>${tags}${(tag) => `<a href="/./tag/${tag}">${tag}</a>`}</div>
         </section>
         `}
         <nav>
-          <a href="/./">◁◁</a>
-          <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}/">◁</a>
+          <a href="/.">◁◁</a>
+          <a href="/.${cur > 2 ? `/home/${cur - 1}` : ""}">◁</a>
           <a>${cur} / ${last}</a>
-          <a href="/./home/${cur < last ? cur + 1 : last}/">▷</a>
-          <a href="/./home/${last}/">▷▷</a>
+          <a href="/./home/${cur < last ? cur + 1 : last}">▷</a>
+          <a href="/./home/${last}">▷▷</a>
         </nav>
       `,
     });
@@ -191,8 +191,8 @@ const pages = [];
     title: "Archive",
     content: mapstr`
       <section>
-        <h1><a href="/./archive/">Archive</a></h1>
-        ${map}${(_, year) => `<a href="/./archive/${year}/">${year}</a>`}
+        <h1><a href="/./archive">Archive</a></h1>
+        ${map}${(_, year) => `<a href="/./archive/${year}">${year}</a>`}
       </section>
     `,
   });
@@ -202,10 +202,10 @@ const pages = [];
       title: `Archive: ${year}`,
       content: mapstr`
         <section>
-          <h1><a href="/./archive/${year}/">${year}</a></h1>
+          <h1><a href="/./archive/${year}">${year}</a></h1>
           ${list}${({ id, date, title }) => `
           <p>
-            <a href="/./post/${id}/">
+            <a href="/./post/${id}">
               <span>${date.slice(5, 10)}</span>
               ${title}
             </a>
@@ -231,8 +231,8 @@ const pages = [];
     title: "Tag",
     content: mapstr`
       <section>
-        <h1><a href="/./tag/">Tag</a></h1>
-        ${map}${(_, tag) => `<a href="/./tag/${tag}/">${tag}</a>`}
+        <h1><a href="/./tag">Tag</a></h1>
+        ${map}${(_, tag) => `<a href="/./tag/${tag}">${tag}</a>`}
       </section>
     `,
   });
@@ -242,8 +242,8 @@ const pages = [];
       title: `Tag: ${tag}`,
       content: mapstr`
         <section>
-          <h1><a href="/./tag/${tag}/">${tag}</a></h1>
-          ${list}${(p) => `<p><a href="/./post/${p.id}/">${p.title}</a></p>`}
+          <h1><a href="/./tag/${tag}">${tag}</a></h1>
+          ${list}${(p) => `<p><a href="/./post/${p.id}">${p.title}</a></p>`}
         </section>
       `,
     });
@@ -274,8 +274,8 @@ const pages = [];
     mapstr`
       <?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-        ${pages}${(p) => `<url><loc>${domain}/${p.name}/</loc></url>`}
-        ${posts}${(p) => `<url><loc>${domain}/post/${p.id}/</loc></url>`}
+        ${pages}${(p) => `<url><loc>${domain}/${p.name}</loc></url>`}
+        ${posts}${(p) => `<url><loc>${domain}/post/${p.id}</loc></url>`}
       </urlset>
     `.trim()
   );
@@ -293,7 +293,7 @@ const pages = [];
           <item>
             <title>${title}</title>
             <description>${description}</description>
-            <link>${domain}/post/${id}/</link>
+            <link>${domain}/post/${id}</link>
           </item>
           `}
         </channel>
