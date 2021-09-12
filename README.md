@@ -1,13 +1,14 @@
 # kblog
 
-[![Bundle Size](https://flat.badgen.net/badgesize/brotli/kkocdko/kblog-dist/master/bundle.js?color=4caf50)](https://github.com/kkocdko/kblog-dist/blob/master/bundle.js)
-[![License](https://flat.badgen.net/badge/license/Unlicense%20+%20CC0?color=4caf50)](LICENSE)
+[![Address](https://img.shields.io/badge/address-kkocdko.site-2a4)](https://kkocdko.site)
+[![Bundle Size](https://img.shields.io/badge/brotil%20size-2.7%20KB-2a4)](https://github.com/kkocdko/kblog-dist/blob/master/bundle.js)
+[![License](https://img.shields.io/github/license/kkocdko/kblog?color=2a4)](LICENSE)
 
 My Blog · 3 KB · Single Page · Material Design
 
 ## Intro
 
-An unique blog solution. Instance: <https://kkocdko.site>
+A unique blog solution, which is:
 
 - 🗜️ Tiny, less than `3 KB` (after brotli).
 

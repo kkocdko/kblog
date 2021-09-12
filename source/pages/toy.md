@@ -3,7 +3,7 @@ name: toy
 title: Toy
 ```
 
-### [Realpha](/toy/realpha/)
+## [Realpha](/toy/realpha/)
 
 精确恢复图片的 Alpha 通道，用于提取透明图标。
 
