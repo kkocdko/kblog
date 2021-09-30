@@ -11,7 +11,7 @@ description: Export / import the user data
 
 VSCode Web (like VSCode Remote, GitHub Codespaces) saves user data in [IndexedDB](https://developer.mozilla.org/docs/Web/API/IndexedDB_API) which will be lost if you clear the browser storage.
 
-This code snippet enable you to export and import the user data. Run on DevTools, please **save your work** before doing anything!
+This code snippet enables you to export and import the user data. Run on DevTools, please **save your work** before doing anything!
 
 ## Code
 

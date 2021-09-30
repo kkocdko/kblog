@@ -1,5 +1,5 @@
 ```
-title: crknob - Simple tool for chromium
+title: crknob - Chrome portable patch
 date: 2021.07.08 04:28
 tags: Project Code C++
 description: Disable profile encryption

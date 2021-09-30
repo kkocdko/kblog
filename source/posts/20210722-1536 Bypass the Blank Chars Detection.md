@@ -5,9 +5,9 @@ tags: Tutorial JavaScript
 description: Register a blank nickname or others
 ```
 
-Almost every website's user registrations page will put blank chars into invalid list, then reject your register request during form checking.
+Almost every website's user registrations page will put blank chars into an invalid list, then reject your registration request during form checking.
 
-The original reason for this was to avoid confusion for other users, and protect some databases' index.
+The original reason for this was to avoid confusion for other users and protect some databases' indexes.
 
 But sometimes we still want a blank user name, so:
 

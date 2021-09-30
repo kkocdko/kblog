@@ -1,7 +1,7 @@
 # kblog
 
 [![Address](https://img.shields.io/badge/address-kkocdko.site-2a4)](https://kkocdko.site)
-[![Bundle Size](https://img.shields.io/badge/brotil%20size-2.7%20KB-2a4)](https://github.com/kkocdko/kblog-dist/blob/master/bundle.js)
+[![Size](https://img.shields.io/badge/brotil%20size-2.7%20KB-2a4)](https://kkocdko.site/res/20210612-0010-001.webp)
 [![License](https://img.shields.io/github/license/kkocdko/kblog?color=2a4)](LICENSE)
 
 My Blog · 3 KB · Single Page · Material Design
