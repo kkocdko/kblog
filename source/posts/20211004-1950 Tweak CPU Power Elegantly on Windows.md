@@ -1,13 +1,13 @@
 ```
-title: Tweak CPU Power Quickly on Windows
+title: Tweak CPU Power Elegantly on Windows
 date: 2021.10.04 19:50
 tags: Tutorial Code Power
 description: Using the powercfg
 ```
 
-> KKOCDKO was watching movie on his laptop, but the fan system come into a start-stop cycle, which made him crazy: fan on > cooling > fan off > heating > fan on...
+> KKOCDKO was watching movie on his laptop, but the fan system came into a start-stop cycle, which made him crazy: fan on > cooling > fan off > heating > fan on...
 
-Go to "Control Panel > Power Options > Advanced Settings > Processor Power Management", set "Minimum processor state" to `0%`, and the "Maximum processor state" is the point<sup>(1)</sup>.
+Go to "Control Panel > Power Options > Advanced Settings > Processor Power Management", set "Minimum processor state" to `0%`<sup>(1)</sup>, and the "Maximum processor state" is the point.
 
 Set this value to `99%`, you can disable the boosting. To `0%`, make the frequency to lowest<sup>(2)</sup>. **But it is troublesome to change the value by hand every time**, so:
 
