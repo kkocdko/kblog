@@ -5,7 +5,7 @@ tags: Code JavaScript VSCode
 description: Export / import the user data
 ```
 
-> Tested on VSCode 1.56 ~ 1.59, may become invalid in a future version.
+> Tested on VSCode `1.56` ~ `1.63`. Cautions! May become invalid in a future version.
 
 ## Intro
 
@@ -40,7 +40,7 @@ This code snippet enables you to export and import the user data. Run on DevTool
     }
   }
   const link = document.createElement("a");
-  link.download = "vscode-web-backup_" + Date.now() + ".json";
+  link.download = `vscode-web_${Date.now().toString(36).slice(0, -2)}.json`;
   link.href = "data:text/json," + encodeURIComponent(JSON.stringify(json));
   link.click();
 })();
@@ -77,6 +77,10 @@ This code snippet enables you to export and import the user data. Run on DevTool
 ```
 
 ## Change Log
+
+### 20220107
+
+- Shorter file name.
 
 ### 20210729
 

@@ -35,7 +35,7 @@ exit
 
 ## Using WinAPI
 
-Refer to the descriptions on [MSDN](https://docs.microsoft.com/en-us/windows/win32/api/powersetting/), we could find that there are some WinAPI provided functions which could modify the power config. So `boost-awhile.cc`:
+Refer to the descriptions on [MSDN](https://docs.microsoft.com/en-us/windows/win32/api/powersetting/), we could find that there are some WinAPI which could modify the power config. So `cpu-rate.cc`:
 
 ```cpp
 #include <windows.h>
@@ -43,33 +43,28 @@ Refer to the descriptions on [MSDN](https://docs.microsoft.com/en-us/windows/win
 #include <powrprof.h>
 
 int main(int argc, char *argv[]) {
-  DWORD percent = 100;
-  if (argc == 2) {
-    Sleep(1000);
-    percent = 0;
-  }
-  GUID *scheme_guid = new GUID;
-  PowerGetActiveScheme(NULL, &scheme_guid);
-  PowerWriteACValueIndex(NULL, scheme_guid, &GUID_PROCESSOR_SETTINGS_SUBGROUP,
+  if (argc == 3)
+    Sleep(atoi(argv[2]));
+  DWORD percent = atoi(argv[1]);
+  GUID guid, *scheme = &guid;
+  PowerGetActiveScheme(NULL, &scheme);
+  PowerWriteACValueIndex(NULL, scheme, &GUID_PROCESSOR_SETTINGS_SUBGROUP,
                          &GUID_PROCESSOR_THROTTLE_MAXIMUM, percent);
-  PowerWriteDCValueIndex(NULL, scheme_guid, &GUID_PROCESSOR_SETTINGS_SUBGROUP,
+  PowerWriteDCValueIndex(NULL, scheme, &GUID_PROCESSOR_SETTINGS_SUBGROUP,
                          &GUID_PROCESSOR_THROTTLE_MAXIMUM, percent);
-  PowerSetActiveScheme(NULL, scheme_guid);
-  // LocalFree(scheme_guid);
+  PowerSetActiveScheme(NULL, scheme);
   return 0;
 }
 ```
 
-Execute `boost-awhile.exe` to set the frequency to maximum, with any argument like `boost-awhile.exe --calm` to set minimum after 1 second.
-
 Seems much complex than `powercfg` cli tool? But **it's fast!** On my laptop, the `powercfg` took `200+ms` to finish its process, but this one took only `19ms`. This caused we could use this to modify our own CPU schedule policy. For example, I wrote a batch to compile my algorithm study project:
 
 ```batch
-@echo off
-start "" boost-awhile.exe
-clang++ src\main.cc -o build\main -Wall -g -fsanitize=undefined -fsanitize=address -fno-omit-frame-pointer
-start "" boost-awhile.exe --calm
-build\main.exe
+:: cpu-rate <percent> [delay]
+start "" cpu-rate 100
+clang++ src\main.cc -o build\main
+start "" cpu-rate 0 1000
+build\main
 ```
 
 Now CPU runs on the maximum frequency **only in compile**. Without this, the default CPU schedule will jump to high frequency even if you move the cursor.

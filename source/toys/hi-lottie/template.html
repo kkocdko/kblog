@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf8" />
+  <meta name="viewport" content="width=device-width" />
+</head>
+
+<style>
+  body {
+    box-sizing: border-box;
+    width: 100vmin;
+    height: 100vmin;
+    padding: 20vmin;
+    margin: calc(50vh - 50vmin) auto;
+    background: #fff;
+  }
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: #000;
+    }
+  }
+</style>
+
+<body></body>
+
+<script>
+  "use strict";
+  // https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.8.1/lottie.min.js
+  lottie.loadAnimation({
+    container: document.body,
+    renderer: "canvas",
+    animationData: {}, // json format
+  });
+</script>
