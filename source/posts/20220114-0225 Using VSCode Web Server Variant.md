@@ -15,6 +15,8 @@ description: Not just for fun
 
 - Haven't another renderer process, less memory usage.
 
+- Origin extension market, not [code-server](https://github.com/coder/code-server)'s market.
+
 - It's cool!
 
 ### Disadvantages
