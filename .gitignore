@@ -1,4 +1,6 @@
 /.vscode
 /node_modules
 /public
+/source/toys/next/react-all.js
+/source/toys/next/types
 /package-lock.json
