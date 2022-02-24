@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.63.2`, may become invalid in a future version.
+> Last tested version is `1.64.2`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -49,69 +49,29 @@ export VSCODE_AGENT_FOLDER=./data
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.63.2
-
-const path = require("path");
-const fs = require("fs");
-
-const modify = {};
-modify._modifyText = (relativePath, processor) => {
-  const filePath = path.join(__dirname, "../inner", relativePath);
+"use strict"; // Last Tested Version: 1.64.2
+const patch = (path, replaceList) => {
+  const fs = require("fs");
+  const filePath = require("path").join(__dirname, "../inner", path);
   const bakPath = filePath + `.bak`;
-  const hasBak = fs.existsSync(bakPath);
-  if (!hasBak) fs.renameSync(filePath, bakPath);
-  const content = fs.readFileSync(bakPath).toString();
-  fs.writeFileSync(filePath, processor(content)); // Overwrite
+  if (!fs.existsSync(bakPath)) fs.renameSync(filePath, bakPath);
+  let content = fs.readFileSync(bakPath).toString();
+  for (const [search, value] of replaceList) {
+    const fn = search instanceof RegExp ? "replace" : "replaceAll";
+    content = content[fn](search, value);
+  }
+  fs.writeFileSync(filePath, content);
+  console.log("patched", { path });
 };
-modify.replaceText = (filePath, list) => {
-  modify._modifyText(filePath, (text) => {
-    for (const [search, value] of list) {
-      if (search instanceof RegExp) {
-        text = text.replace(search, value);
-      } else {
-        text = text.replaceAll(search, value);
-      }
-    }
-    return text;
-  });
-};
-
-modify.replaceText("./out/vs/workbench/workbench.web.api.js", [
-  // Fix build tasks fail when offline, and others
-  ['webEndpointUrl:"https://vscodeweb.azureedge.net"', 'webEndpointUrl:""'],
-  ["+=`/${this._productService.commit}`", "+=``"],
-  ["+=`/${this._productService.quality}`", "+=`/static`"],
-
-  // CSP
-  [`http-equiv="Content-Security-Policy"`, ""],
-
-  // WebView
+patch("./out/vs/workbench/workbench.web.main.js", [
+  // Webview
   [
-    `this.options.webviewEndpoint||this.productService.webviewContentExternalBaseUrlTemplate||"https://{{uuid}}.vscode-webview.net/{{quality}}/{{commit}}/`,
-    `location.origin+"/static/`,
+    `"https://{{uuid}}.vscode-webview.net/{{quality}}/{{commit}}`,
+    `location.origin+"/static`,
   ],
-
-  // Extension scope `machine`
-  // [`case 2:this.handleLocalUserConfiguration`, `case 999999:`],
 ]);
-
-modify.replaceText("./out/vs/server/remoteExtensionHostAgent.js", [
-  // The CSP, allow redirect on webview extensions
-  [`"default-src 'self';"`, `""`],
-  [`"img-src 'self' https: data: blob:;"`, `""`],
-  [`"frame-src 'self' https://vscodeweb.azureedge.net data:;"`, `""`],
-
-  // WebView
-  [
-    "https://{{uuid}}.vscode-webview-test.com/{{commit}}",
-    "/static/out/vs/workbench/contrib/webview/browser/pre/",
-  ],
-
-  // Open without connection token, jump `403,"Forbidden."`
-  // ["this._environmentService.isBuilt&&!this._hasCorrectTokenCookie", "false&&"],
+patch("./out/vs/workbench/contrib/webview/browser/pre/main.js", [
+  // Webview
+  ["service-worker.js?", "service-worker.js?=${searchParams.get('id')}&"],
 ]);
-
-// modify.replaceText("./out/vs/server/remoteExtensionHostProcess.js", []);
-
-console.log("patch finished");
 ```
