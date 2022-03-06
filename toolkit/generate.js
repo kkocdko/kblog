@@ -16,9 +16,8 @@ const p = ([r], ...s) => path.join(__dirname, "..", r, ...s);
 const mapstr = (parts, ...inserts) => {
   let str = "";
   parts.forEach((part, i) => {
-    const insert = inserts[i];
-    if (part) str += (insert ?? []).keys ? part : part + insert;
-    else inserts[i - 1].forEach((v, k) => (str += insert(v, k)));
+    if (part) str += (inserts[i] ?? []).keys ? part : part + inserts[i];
+    else inserts[i - 1].forEach((v, k) => (str += inserts[i](v, k)));
   });
   return str;
 };
@@ -123,9 +122,8 @@ const posts = [];
     });
     // Check filename
     const prefix = meta.id.slice(0, 8) + "-" + meta.id.slice(8);
-    if (fileName !== `${prefix} ${meta.title}.md`) {
+    if (fileName !== `${prefix} ${meta.title}.md`)
       console.warn(`post file [ ${fileName} ] has incorrect name`);
-    }
   });
   posts.sort((post1, post2) => post2.id - post1.id);
 }
@@ -149,9 +147,8 @@ const pages = [];
 {
   const group = [];
   const volume = 10;
-  for (let i = 0; i < posts.length; i += volume) {
+  for (let i = 0; i < posts.length; i += volume)
     group.push(posts.slice(i, i + volume));
-  }
   group.forEach((list, i, { length: last }) => {
     const cur = i + 1;
     makePage({

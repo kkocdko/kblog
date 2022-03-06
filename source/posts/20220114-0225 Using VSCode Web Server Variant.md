@@ -70,9 +70,9 @@ patch("./out/vs/workbench/workbench.web.main.js", [
     `location.origin+"/static`,
   ],
 ]);
-patch("./out/vs/workbench/contrib/webview/browser/pre/main.js", [
-  // Webview: add id to create an unique service worker scope
-  ["service-worker.js?", "service-worker.js?_id=${ID}&"],
+patch("./out/vs/workbench/contrib/webview/browser/pre/service-worker.js", [
+  // Webview: bypass requests
+  [`addEventListener("fetch",`, "NaN;("],
 ]);
 patch("./out/vs/workbench/api/node/extensionHostProcess.js", [
   // Webview: block resources to avoid long waiting
