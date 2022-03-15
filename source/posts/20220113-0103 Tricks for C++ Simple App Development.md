@@ -1,7 +1,7 @@
 ```
 title: Tricks for C++ Simple App Development
 date: 2022.01.13 01:03
-tags: Tutorial Code CPP
+tags: Tutorial Note Code CPP
 description: Speed up compilation and more
 ```
 
