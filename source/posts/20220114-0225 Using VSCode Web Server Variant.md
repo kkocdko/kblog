@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.65.0`, may become invalid in a future version.
+> Last tested version is `1.65.2`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -49,7 +49,7 @@ export VSCODE_AGENT_FOLDER=./data
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.65.0
+"use strict"; // Last Tested Version: 1.65.2
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, "../inner", path);
@@ -70,6 +70,10 @@ patch("./out/vs/workbench/workbench.web.main.js", [
     `location.origin+"/static`,
   ],
 ]);
+patch("./out/vs/workbench/contrib/webview/browser/pre/main.js", [
+  // Webview: bypass hostname vertify
+  [/BigInt.+?catch/, "location.hostname}catch"],
+]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/service-worker.js", [
   // Webview: bypass requests
   [`addEventListener("fetch",`, "NaN;("],
@@ -79,3 +83,5 @@ patch("./out/vs/workbench/api/node/extensionHostProcess.js", [
   [`webviewResourceBaseHost="`, `webviewResourceBaseHost="//`],
 ]);
 ```
+
+- ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).

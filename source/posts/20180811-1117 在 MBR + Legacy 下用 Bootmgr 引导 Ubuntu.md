@@ -1,7 +1,7 @@
 ```
 title: 在 MBR + Legacy 下用 Bootmgr 引导 Ubuntu
 date: 2018.08.11 11:17
-tags: Ubuntu Linux
+tags: Linux
 description: 标题已经说得够清楚了
 ```
 
