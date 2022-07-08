@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.67.2`, may become invalid in a future version.
+> Last tested version is `1.69.0`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -49,10 +49,10 @@ export VSCODE_AGENT_FOLDER=./data
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.67.2
+"use strict"; // Last Tested Version: 1.69.0
 const patch = (path, replaceList) => {
   const fs = require("fs");
-  const filePath = require("path").join(__dirname, "../inner", path);
+  const filePath = require("path").join(__dirname, path);
   const bakPath = filePath + `.bak`;
   if (!fs.existsSync(bakPath)) fs.renameSync(filePath, bakPath);
   let content = fs.readFileSync(bakPath).toString();
@@ -67,12 +67,14 @@ patch("./out/vs/workbench/workbench.web.main.js", [
   // Webview: replaced with local server to allow offline work
   [
     `"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`,
-    `location.origin+"/static`,
+    `location.origin+"/{{quality}}-{{commit}}/static`,
   ],
 ]);
-patch("./out/vs/workbench/contrib/webview/browser/pre/main.js", [
+patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // Webview: bypass hostname vertify
-  [/BigInt.+?catch/, "location.hostname}catch"],
+  [/\.padStart\(52.+?\)/, "&&location.hostname"],
+  // Webview: modify CSP
+  [/\'sha256.+?\'/, "'unsafe-inline'"],
 ]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/service-worker.js", [
   // Webview: bypass requests
