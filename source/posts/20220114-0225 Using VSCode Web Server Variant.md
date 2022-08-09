@@ -32,7 +32,7 @@ description: Not just for fun
 First, the download link is [server-win32-x64-web](https://update.code.visualstudio.com/latest/server-win32-x64-web/stable) and [server-linux-x64-web](https://update.code.visualstudio.com/latest/server-linux-x64-web/stable).
 
 ```
-https://update.code.visualstudio.com/latest/ {target} /stable
+https://update.code.visualstudio.com/latest/{target}/stable
 ```
 
 Create directory named `vscode` with folder `data`, `inner` and `misc`.
