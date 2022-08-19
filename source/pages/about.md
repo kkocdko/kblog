@@ -14,9 +14,9 @@ Sort by activity from high to low.
 | Type           | Name                                            |
 | -------------- | ----------------------------------------------- |
 | GitHub         | [kkocdko](https://github.com/kkocdko)           |
+| Telegram       | [kkocdko](https://t.me/kkocdko)                 |
 | V2EX           | [kkocdko](https://v2ex.com/member/kkocdko)      |
 | Stack Overflow | [kkocdko](https://stackoverflow.com/u/11338291) |
-| Telegram       | [kkocdko](https://t.me/kkocdko)                 |
 | Luogu          | [kkocdko](https://www.luogu.com.cn/user/130329) |
 | Greasy Fork    | [kkocdko](https://greasyfork.org/users/197529)  |
 | Reddit         | [kkocdko](https://reddit.com/user/kkocdko)      |

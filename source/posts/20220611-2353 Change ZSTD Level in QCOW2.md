@@ -5,7 +5,7 @@ tags: Tutorial Code Linux QEMU
 description: Useful for read-only disk image
 ```
 
-> Currently it's QEMU 7.0
+> Currently it's QEMU 7.0.0
 
 The zstd level of qcow2 created by qemu is always 3. For a read-only disk image, I just want the best compression ratio.
 
