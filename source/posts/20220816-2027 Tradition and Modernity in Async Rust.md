@@ -245,7 +245,7 @@ self.fut = Box::pin(file.read());
 
 Compiled, it runs. But if you apply this on the program which deal with real files or network, and run it for a while, oh, `core dumped`!
 
-That's because: If `FileStream` was dropped, the `File` will be dropped together. Then if the executor is woken up unexpectedly after this, it will try to read the `File` that has been dropped, resulting in read-after-free.
+That's because: If `FileStream` was dropped, the `File` will be dropped together. Then if the executor is woken up unexpectedly after this, the program will try to read the `File` that has been dropped, resulting in read-after-free.
 
 ## References
 
