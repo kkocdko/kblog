@@ -1,9 +1,10 @@
 {
   "scripts": {
-    "generate": "node toolkit/generate.js",
-    "serve": "node toolkit/generate.js && node toolkit/serve.js",
-    "develop": "node toolkit/develop.js"
+    "develop": "node toolkit/generate.js develop",
+    "generate": "node toolkit/generate.js generate",
+    "serve": "node toolkit/generate.js serve"
   },
+  "type": "module",
   "dependencies": {
     "htmlclean": "^3.0.8",
     "marked": "0.7.0",

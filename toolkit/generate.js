@@ -1,16 +1,53 @@
-"use strict";
+import { fileURLToPath } from "node:url";
+import { createServer } from "node:http";
+import { fork } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
+import htmlclean from "htmlclean";
+import terser from "terser";
+import marked from "marked";
 
-// Timer
+const modulePath = fileURLToPath(import.meta.url);
+
+if (process.argv.includes("develop")) {
+  const childs = [];
+  const exec = (args) => childs.push(fork(modulePath, args));
+  let i = 0;
+  const spawn = () => {
+    console.log("#", ++i);
+    childs.forEach(() => childs.pop().kill());
+    exec(["serve", "--dev"]);
+  };
+  spawn();
+  process.stdin.on("data", spawn);
+  await new Promise(() => {});
+} else if (process.argv.includes("serve")) {
+  const port = 4000;
+  const mime = { html: "text/html;charset=utf8", js: "text/javascript" };
+  const r2a = path.join.bind(null, path.dirname(modulePath), "../public");
+  createServer(({ url }, res) => {
+    const pair = [
+      [200, r2a(url)],
+      [200, r2a(url, "index.html")],
+      [404, r2a("404.html")],
+    ].find(([_, p]) => fs.existsSync(p) && fs.statSync(p).isFile());
+    if (!pair) return res.writeHead(404).end("404 Not Found");
+    const [status, local] = pair;
+    res.setHeader("content-type", mime[local.split(".").pop()] || "");
+    res.writeHead(status).end(fs.readFileSync(local));
+  }).listen(port);
+  console.info(`server: 127.0.0.1:${port}`);
+} else if (process.argv.includes("generate")) {
+} else {
+  throw "unknown function";
+}
+
 console.time("generate time");
-process.on("exit", () => console.timeEnd("generate time"));
-
-const fs = require("fs");
-const path = require("path");
 
 const isDev = process.argv.includes("--dev");
 
 // Convert relative path to absolute
-const p = ([r], ...s) => path.join(__dirname, "..", r, ...s);
+const p = ([r], ...s) => path.join(path.dirname(modulePath), "..", r, ...s);
 
 // mapstr`<p>Hi ${[22,33]}${i=>i}</p>` === "<p>Hi 2233</p>"
 const mapstr = (parts, ...inserts) => {
@@ -27,8 +64,6 @@ const minify = (() => {
     s.replace(/(?<=>)\s+|\s+(?=<)|(?<!\; )\/(?=>)|; (?=\/>)/g, "");
   const f = (s) => s;
   if (isDev) return { html: htmlStrip, htmlMd: f, css: f, js: f };
-  const htmlclean = require("htmlclean");
-  const terser = require("terser");
   const cssRule = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w:#-])|;\s*(?=})|0(?=\.)/g;
   return {
     html: (s) => htmlclean(htmlStrip(s)),
@@ -39,7 +74,6 @@ const minify = (() => {
 })();
 
 const makePage = (() => {
-  const marked = require("marked");
   const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
   const template = minify.html(templateRaw);
   return ({ isMarkdown, path: rpath, title, description = "", content }) => {
@@ -298,3 +332,5 @@ const pages = [];
     `.trim()
   );
 }
+
+console.timeEnd("generate time");
