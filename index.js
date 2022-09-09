@@ -1,3 +1,6 @@
+/**
+ * Generator & Static Server for kblog.
+ */
 import { fileURLToPath } from "node:url";
 import { createServer } from "node:http";
 import { fork } from "node:child_process";
@@ -24,7 +27,7 @@ if (process.argv.includes("develop")) {
 } else if (process.argv.includes("serve")) {
   const port = 4000;
   const mime = { html: "text/html;charset=utf8", js: "text/javascript" };
-  const r2a = path.join.bind(null, path.dirname(modulePath), "../public");
+  const r2a = path.join.bind(null, path.dirname(modulePath), "public");
   createServer(({ url }, res) => {
     const pair = [
       [200, r2a(url)],
@@ -47,7 +50,7 @@ console.time("generate time");
 const isDev = process.argv.includes("--dev");
 
 // Convert relative path to absolute
-const p = ([r], ...s) => path.join(path.dirname(modulePath), "..", r, ...s);
+const p = ([r], ...s) => path.join(path.dirname(modulePath), r, ...s);
 
 // mapstr`<p>Hi ${[22,33]}${i=>i}</p>` === "<p>Hi 2233</p>"
 const mapstr = (parts, ...inserts) => {

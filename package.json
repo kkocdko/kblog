@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "develop": "node toolkit/generate.js develop",
-    "generate": "node toolkit/generate.js generate",
-    "serve": "node toolkit/generate.js serve"
+    "develop": "node index.js develop",
+    "generate": "node index.js generate",
+    "serve": "node index.js serve"
   },
   "type": "module",
   "dependencies": {
