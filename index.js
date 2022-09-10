@@ -6,9 +6,9 @@ import { createServer } from "node:http";
 import { fork } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import marked from "marked";
 import htmlclean from "htmlclean";
 import terser from "terser";
-import marked from "marked";
 
 const modulePath = fileURLToPath(import.meta.url);
 
@@ -23,7 +23,7 @@ if (process.argv.includes("develop")) {
   };
   spawn();
   process.stdin.on("data", spawn);
-  await new Promise(() => {});
+  await new Promise(() => {}); // Prevent script from continuing to run
 } else if (process.argv.includes("serve")) {
   const port = 4000;
   const mime = { html: "text/html;charset=utf8", js: "text/javascript" };
@@ -40,6 +40,7 @@ if (process.argv.includes("develop")) {
     res.writeHead(status).end(fs.readFileSync(local));
   }).listen(port);
   console.info(`server: 127.0.0.1:${port}`);
+  // Fall through here, go ahead and run generator
 } else if (process.argv.includes("generate")) {
 } else {
   throw "unknown function";

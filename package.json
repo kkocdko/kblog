@@ -6,8 +6,8 @@
   },
   "type": "module",
   "dependencies": {
-    "htmlclean": "^3.0.8",
+    "htmlclean": "3.0.8",
     "marked": "0.7.0",
-    "terser": "^4.8.0"
+    "terser": "4.8.1"
   }
 }
