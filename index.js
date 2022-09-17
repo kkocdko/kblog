@@ -3,7 +3,7 @@
  */
 import { fileURLToPath } from "node:url";
 import { createServer } from "node:http";
-import { fork } from "node:child_process";
+import { Worker } from "node:worker_threads";
 import fs from "node:fs";
 import path from "node:path";
 import marked from "marked";
@@ -14,11 +14,12 @@ const modulePath = fileURLToPath(import.meta.url);
 
 if (process.argv.includes("develop")) {
   const childs = [];
-  const exec = (args) => childs.push(fork(modulePath, args));
+  const exec = (argv) =>
+    childs.push(new Worker(modulePath, { argv }).on("error", console.error));
   let i = 0;
   const spawn = () => {
     console.log("#", ++i);
-    childs.forEach(() => childs.pop().kill());
+    childs.forEach(() => childs.pop().terminate());
     exec(["serve", "--dev"]);
   };
   spawn();
@@ -43,7 +44,7 @@ if (process.argv.includes("develop")) {
   // Fall through here, go ahead and run generator
 } else if (process.argv.includes("generate")) {
 } else {
-  throw "unknown function";
+  throw new Error("unknown function"); // https://stackoverflow.com/questions/73742023
 }
 
 console.time("generate time");
