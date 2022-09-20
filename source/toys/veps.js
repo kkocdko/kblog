@@ -14,17 +14,11 @@ const inWindow = async () => {
   const icon = { type: "image/png", sizes: "256x256" };
   {
     const lcg = (current) => (25214903917 * current) & 65535;
-    const text = vepsTag.getAttribute(":name").toUpperCase();
+    const text = document.baseURI.split("/").slice(-2)[0].toUpperCase();
     let sum = 0;
-    for (let i = text.length; i--; ) sum = lcg(sum + 7 * text.charCodeAt(i));
-    const exmap = (v, min, max, exMin, exMax) => {
-      const [rl1, rl2] = [exMin - min, max - exMax];
-      const mid = (exMax - exMin) * (rl1 / (rl1 + rl2)) + exMin;
-      return v < mid
-        ? (v - min) * (rl1 / (mid - min)) + min
-        : (v - mid) * (rl2 / (max - mid)) + exMax;
-    };
-    const hue = Math.round(exmap(sum % 360, 0, 360, 55, 150)); // exclude ugly color area
+    for (let i = text.length; i--; ) sum = lcg(sum) + 13 * text.charCodeAt(i);
+    const hueRaw = sum % (360 - (150 - 55)); // exclude ugly color area 55-150
+    const hue = hueRaw < 55 ? hueRaw : hueRaw + 150;
     const chars = [];
     for (let i = 0, j = 0; i < 4 ** 2; ) {
       chars.push([Math.floor(i / 4), i % 4, text[j]]);
@@ -69,7 +63,7 @@ const inWindow = async () => {
     <title>${manifest.name}</title>
     <style>/* veps prelude */*{box-sizing:border-box;color:#000;background:#fff}@media(prefers-color-scheme:dark){*{color:#fff;background:#000}}</style>
   `;
-  document.head.insertAdjacentHTML("beforeend", headInsert);
+  document.head.insertAdjacentHTML("afterbegin", headInsert);
   const reg = await navigator.serviceWorker.register(vepsTag.src);
   await navigator.serviceWorker.ready;
   const sw = reg.active;
