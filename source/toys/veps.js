@@ -30,12 +30,12 @@ const inWindow = async () => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     canvas.width = canvas.height = 500;
-    ctx.fillStyle = `hsl(${hue}deg,15%,65%)`;
+    ctx.fillStyle = `hsl(${hue}deg,15%,70%)`;
     ctx.fillRect(0, 0, 500, 500);
-    ctx.fillStyle = `hsl(${hue}deg,50%,35%)`;
+    ctx.fillStyle = `hsl(${hue}deg,40%,45%)`;
     for (const [i, j] of chars)
       ctx.fillRect(50 + j * 100, 50 + i * 100, 100, 100);
-    ctx.fillStyle = `hsl(${hue}deg,15%,85%)`;
+    ctx.fillStyle = `hsl(${hue}deg,15%,90%)`;
     ctx.font = "80px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
