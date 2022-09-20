@@ -19,15 +19,9 @@
     border: 1px solid #777;
     padding: 4px 8px;
   }
-  label {
-    text-align: right;
-  }
-  label > span {
-    float: left;
-    margin-right: 10px;
-  }
   label > :not(span) {
-    display: inline-block;
+    float: right;
+    margin-left: 8px;
     border: 1px solid #777;
     width: 70px;
   }
@@ -37,12 +31,9 @@
 </style>
 
 <body>
+  <label>Pick file<input id="$in" type="file" /></label>
   <label>
-    <span>Pick file</span>
-    <input id="$in" type="file" />
-  </label>
-  <label>
-    <span>Type</span>
+    Type
     <select id="$type">
       <option value="image/jpeg" selected>JPEG</option>
       <option value="image/png">PNG</option>
@@ -51,11 +42,11 @@
     </select>
   </label>
   <label>
-    <span>Quality</span>
+    Quality
     <input id="$quality" min="1" max="100" value="75" type="number" />
   </label>
   <label>
-    <span>Resize</span>
+    Resize
     <input id="$width" placeholder="Width" type="number" />
     <input id="$height" placeholder="Height" type="number" />
   </label>

@@ -1,14 +1,17 @@
 /**
- * Very Easy Page Solution v3.0.0
+ * Very Easy Page Solution v3.1.0
  *
- * PWA, cache control
- * Generate icon from app name
+ * Features:
+ * 1. Reduce the code of toy pages.
+ * 2. Single file as both loader and service worker.
+ * 3. Generate icon by app name.
  */
 "use strict";
 
 const inWindow = async () => {
+  // The yields(await) may cause unexpected behaviours, be careful
   // TODO: add loading animation?
-  const vepsTag = document.querySelector('[src="../veps.js"]'); // Don't use document.currentScript in async function
+  const vepsTag = document.currentScript;
   const icon = { type: "image/png", sizes: "500x500" };
   {
     const lcg = (current) => (25214903917 * current) & 65535;
@@ -39,9 +42,6 @@ const inWindow = async () => {
     for (const [i, j, c] of chars)
       ctx.fillText(c, 100 + j * 100, 105 + i * 100);
     icon.src = canvas.toDataURL("image/png");
-    // Even slower than base64 dataurl
-    // const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
-    // icon.src = URL.createObjectURL(blob);
   }
   const manifest = {
     id: document.baseURI,
@@ -61,7 +61,7 @@ const inWindow = async () => {
     <link rel="manifest" href="${manifetsUrl}">
     <title>${manifest.name}</title>
   `;
-  document.head.insertAdjacentHTML("afterbegin", headInsert);
+  document.head.insertAdjacentHTML("afterbegin", headInsert); // No awaits before!
   const reg = await navigator.serviceWorker.register(vepsTag.src);
   await navigator.serviceWorker.ready;
   const sw = reg.active;
