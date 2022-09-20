@@ -9,16 +9,14 @@
 const inWindow = async () => {
   // TODO: add loading animation?
   const vepsTag = document.querySelector('[src="../veps.js"]'); // Don't use document.currentScript in async function
-  const strToBlobUrl = (str, type) =>
-    URL.createObjectURL(new Blob([str], { type }));
-  const icon = { type: "image/png", sizes: "256x256" };
+  const icon = { type: "image/png", sizes: "500x500" };
   {
     const lcg = (current) => (25214903917 * current) & 65535;
     const text = document.baseURI.split("/").slice(-2)[0].toUpperCase();
     let sum = 0;
     for (let i = text.length; i--; ) sum = lcg(sum) + 13 * text.charCodeAt(i);
-    const hueRaw = sum % (360 - (150 - 55)); // exclude ugly color area 55-150
-    const hue = hueRaw < 55 ? hueRaw : hueRaw + 150;
+    const hueRaw = sum % (360 - (160 - 60)); // exclude ugly color area 60-160
+    const hue = hueRaw < 60 ? hueRaw : hueRaw + 160;
     const chars = [];
     for (let i = 0, j = 0; i < 4 ** 2; ) {
       chars.push([Math.floor(i / 4), i % 4, text[j]]);
@@ -26,22 +24,24 @@ const inWindow = async () => {
       i += (sum % 3) + 1;
       j = (j + 1) % text.length;
     }
-    let svg = `<svg style="background:hsl(${hue}deg,15%,65%)" xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 50 50" width="256" height="256">`;
-    for (const [i, j, c] of chars) {
-      const [x, y] = [j * 10, i * 10];
-      svg += `<rect x="${x}" y="${y}" fill="hsl(${hue}deg,50%,35%)" width="10" height="10"/>`;
-      svg += `<text x="${x + 5}" y="${y + 5}" font-size="8" fill="#fff" `;
-      svg += `style="dominant-baseline:central;text-anchor:middle">${c}</text>`;
-    }
-    svg += `</svg>`;
-    const img = new Image();
-    const imgOnload = new Promise((r) => (img.onload = r));
-    img.src = "data:image/svg+xml," + encodeURIComponent(svg);
     const canvas = document.createElement("canvas");
-    canvas.width = canvas.height = 256;
-    await imgOnload;
-    canvas.getContext("2d").drawImage(img, 0, 0, 256, 256);
+    const ctx = canvas.getContext("2d");
+    canvas.width = canvas.height = 500;
+    ctx.fillStyle = `hsl(${hue}deg,15%,65%)`;
+    ctx.fillRect(0, 0, 500, 500);
+    ctx.fillStyle = `hsl(${hue}deg,50%,35%)`;
+    for (const [i, j] of chars)
+      ctx.fillRect(50 + j * 100, 50 + i * 100, 100, 100);
+    ctx.fillStyle = `hsl(${hue}deg,15%,85%)`;
+    ctx.font = "80px monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const [i, j, c] of chars)
+      ctx.fillText(c, 100 + j * 100, 105 + i * 100);
     icon.src = canvas.toDataURL("image/png");
+    // Even slower than base64 dataurl
+    // const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+    // icon.src = URL.createObjectURL(blob);
   }
   const manifest = {
     id: document.baseURI,
@@ -50,18 +50,16 @@ const inWindow = async () => {
     short_name: vepsTag.getAttribute(":name"),
     description: vepsTag.getAttribute(":description"),
     display: "standalone",
-    icons: [
-      { ...icon, purpose: "any" },
-      { ...icon, purpose: "maskable" },
-    ],
+    icons: [{ ...icon, purpose: "any maskable" }],
   };
+  const manifetsUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)]));
   const headInsert = `
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <link rel="manifest" href="${strToBlobUrl(JSON.stringify(manifest))}">
-    <link rel="icon" href="${icon.src}">
-    <title>${manifest.name}</title>
     <style>/* veps prelude */*{box-sizing:border-box;color:#000;background:#fff}@media(prefers-color-scheme:dark){*{color:#fff;background:#000}}</style>
+    <link rel="icon" href="${icon.src}">
+    <link rel="manifest" href="${manifetsUrl}">
+    <title>${manifest.name}</title>
   `;
   document.head.insertAdjacentHTML("afterbegin", headInsert);
   const reg = await navigator.serviceWorker.register(vepsTag.src);

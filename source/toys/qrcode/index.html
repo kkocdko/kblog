@@ -14,18 +14,20 @@
 
 <style>
   svg {
-    width: 60vmin;
+    width: 80vmin;
     max-width: 300px;
-    height: 60vmin;
+    height: 80vmin;
     max-height: 300px;
   }
-  div ~ [id] {
-    width: 60vmin;
+  body > :not(script) {
+    width: 80vmin;
     max-width: 300px;
-    border: 1px solid #888;
-    padding: 4px 8px;
     display: block;
     margin: 10px auto 0;
+  }
+  div ~ :not(script) {
+    border: 1px solid #888;
+    padding: 4px 8px;
   }
 </style>
 
