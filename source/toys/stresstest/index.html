@@ -5,18 +5,18 @@
   <script
     :name="Stress Test"
     :description="CPU and GPU stress test."
-    :version="0.1.0"
+    :version="0.1.1"
     src="../veps.js"
   ></script>
 </head>
 
 <style>
-  body{
+  body {
     text-align: center;
   }
   label {
-    width: 120px;
     display: inline-block;
+    width: 120px;
     padding: 4px 8px;
     margin: 5px;
     border: 1px solid #888;
@@ -25,8 +25,8 @@
     visibility: hidden;
   }
   input::after {
-    content: "ON";
     visibility: visible;
+    content: "ON";
   }
   input:not(:checked)::after {
     content: "OFF";

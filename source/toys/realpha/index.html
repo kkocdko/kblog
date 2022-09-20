@@ -5,7 +5,7 @@
   <script
     :name="Realpha"
     :description="Restone image's alpha channel."
-    :version="0.1.0"
+    :version="0.1.1"
     src="../veps.js"
   ></script>
 </head>
@@ -14,8 +14,8 @@
   body {
     display: grid;
     grid: 1fr auto 2fr / 1fr 1fr;
-    height: calc(100vh - 16px);
     gap: 8px;
+    height: calc(100vh - 16px);
   }
   canvas {
     width: 100%;
@@ -36,10 +36,10 @@
     position: fixed;
     padding: 8px;
     font: 900 18px / 0.7 sans-serif;
+    color: #fffd;
     text-decoration: none;
     visibility: hidden;
     background: #e08700f0;
-    color: #fffd;
     animation: tips 2s;
   }
   @keyframes tips {
