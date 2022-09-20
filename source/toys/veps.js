@@ -30,9 +30,9 @@ const inWindow = async () => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     canvas.width = canvas.height = 500;
-    ctx.fillStyle = `hsl(${hue}deg,15%,70%)`;
+    ctx.fillStyle = `hsl(${hue}deg,15%,77%)`;
     ctx.fillRect(0, 0, 500, 500);
-    ctx.fillStyle = `hsl(${hue}deg,40%,45%)`;
+    ctx.fillStyle = `hsl(${hue}deg,35%,47%)`;
     for (const [i, j] of chars)
       ctx.fillRect(50 + j * 100, 50 + i * 100, 100, 100);
     ctx.fillStyle = `hsl(${hue}deg,15%,90%)`;
@@ -56,7 +56,7 @@ const inWindow = async () => {
   const headInsert = `
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <style>/* veps prelude */*{box-sizing:border-box;color:#000;background:#fff}@media(prefers-color-scheme:dark){*{color:#fff;background:#000}}</style>
+    <style>/* veps prelude */*{box-sizing:border-box;color:#000;background:#fff}@media(prefers-color-scheme:dark){*{color:#fff;background:#000}}script,style{display:none!important}</style>
     <link rel="icon" href="${icon.src}">
     <link rel="manifest" href="${manifetsUrl}">
     <title>${manifest.name}</title>
