@@ -15,7 +15,7 @@ Compilers work faster on Linux most of the time, and many tools only run on Linu
 
 [Fedora](https://fedoraproject.org) is the distribution I'm using.
 
-Then you should install the GCC, on Fedora it's `sudo dnf install gcc gcc-c++`. Search "Install GCC `Your Distribution`" for more.
+Then you should install the GCC, on Fedora it's `sudo dnf install gcc-c++`. Search "Install GCC `Your Distribution`" for more.
 
 ## Use MOLD
 

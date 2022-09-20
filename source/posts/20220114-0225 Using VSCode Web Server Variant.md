@@ -11,11 +11,13 @@ description: Not just for fun
 
 ### Advantages
 
-- Live as a tab on your browser, more convenient when you switch between webpage and editor frequently
+- As a tab on browser, more convenient.
 
 - Haven't another renderer process, less memory usage.
 
-- Origin extension market, not [code-server](https://github.com/coder/code-server)'s market.
+- Bypass Electron's IME issues on Wayland.
+
+- Origin extension market, not [coder/code-server](https://github.com/coder/code-server)'s market.
 
 - It's cool!
 
@@ -23,27 +25,25 @@ description: Not just for fun
 
 - Not officially supported. See [this issue](https://github.com/microsoft/vscode/issues/121116#issuecomment-818696827).
 
-- Key shortcut conflicts. `Ctrl + W` will close the browser tab instead of current file.
-
-- Some functions like workspace trust were missing.
+- Key shortcut conflicts, like `Ctrl + W` will close the browser tab (PWA mode fixes this).
 
 ## Guide
 
-First, the download link is [server-win32-x64-web](https://update.code.visualstudio.com/latest/server-win32-x64-web/stable) and [server-linux-x64-web](https://update.code.visualstudio.com/latest/server-linux-x64-web/stable).
+First, the download link is:
 
 ```
 https://update.code.visualstudio.com/latest/{target}/stable
 ```
 
-Create directory named `vscode` with folder `data`, `inner` and `misc`.
+`{target}` = `server-win32-x64-web`, `server-linux-x64-web` or others.
 
-Extract the package to `inner`, the you can directly execute `./inner/server.sh(bat)`.
+Extract the package, then execute `./bin/code-server.sh(bat)`.
 
 To change data directory, use custom token and port, `./run.sh`:
 
 ```shell
-export VSCODE_AGENT_FOLDER=./data
-./inner/bin/code-server.sh --port=8109 --connection-token=mytoken
+export VSCODE_AGENT_FOLDER=./data 
+./bin/code-server.sh --port=8109 --connection-token=mytoken
 ```
 
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:

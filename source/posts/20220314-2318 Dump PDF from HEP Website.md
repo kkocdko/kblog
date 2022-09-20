@@ -45,6 +45,10 @@ for (const [index, box] of canvas_box.childNodes.entries()) {
 
 You may need to turn off "Ask where to save each file before downloading" in browser settings.
 
+## By the Way
+
+`curl -o a.pdf https://wkobwp.sciencereading.cn/api/file/{id}/getDocumentbuffer`
+
 ## Result Demo
 
 <https://lanzoui.com/b0108u0lg>
