@@ -2,122 +2,98 @@
 
 <head>
   <base href="/toy/stresstest/" />
-  <script>
-    __VEPS_CFG__ = {
-      name: "Stress Test",
-      description: "CPU and GPU stress test.",
-      background: "rgb(248, 249, 250)",
-      themeColor: "rgb(51, 103, 214)",
-      icon: `-6 -6 60 60 | <path d="M27 1.34s1.48 5.3 1.48 9.6c0 4.12-2.7 7.47-6.83 7.47s-7.25-3.34-7.25-7.47l.05-.72C10.43 15.03 8 21.23 8 28c0 8.84 7.16 16 16 16s16-7.16 16-16c0-10.79-5.19-20.41-13-26.66zM23.42 38c-3.56 0-6.45-2.81-6.45-6.28 0-3.25 2.09-5.53 5.63-6.24s7.2-2.41 9.23-5.15c.78 2.58 1.19 5.3 1.19 8.07 0 5.29-4.3 9.6-9.6 9.6z"/>`,
-      version: "0.0.5",
-    };
-  </script>
-  <script veps-main src="../veps.js"></script>
+  <script
+    :name="Stress Test"
+    :description="CPU and GPU stress test."
+    :version="0.1.0"
+    src="../veps.js"
+  ></script>
 </head>
 
-<veps-deps>
-  <link rel="stylesheet" href="../misc/tmd.css" />
-</veps-deps>
+<style>
+  label {
+    width: 120px;
+    display: inline-block;
+    padding: 4px 8px;
+    margin: 5px;
+    border: 1px solid #888;
+  }
+  input {
+    visibility: hidden;
+  }
+  input::after {
+    content: "ON";
+    visibility: visible;
+  }
+  input:not(:checked)::after {
+    content: "OFF";
+    opacity: 0.4;
+  }
+</style>
 
-<style></style>
-
-<body style="width: fit-content; min-width: 0">
-  <header>Stress Test</header>
-  <figure style="grid: none / 60px 60px; text-align: center">
-    <label>CPU<input id="$cpu" type="checkbox" checked /></label>
-    <label>GPU<input id="$gpu" type="checkbox" /></label>
-    <button id="$toggle" style="grid-column: 1 / 3">
-      Run
-      <progress
-        _none
-        style="padding: 5px; margin-left: 5px; border-width: 2px"
-      ></progress>
-    </button>
-  </figure>
+<body>
+  <label>CPU <input id="$cpu" type="checkbox" /></label>
+  <label>GPU <input id="$gpu" type="checkbox" /></label>
 </body>
 
 <script>
   "use strict";
 
-  const cpuWorkers = [];
-  let gpuEnable = false;
+  $cpu.onchange = () => {
+    if (!$cpu.checked) return $cpu.workers.forEach((w) => w.terminate());
+    $cpu.workers = $cpu.workers ?? [];
+    const addWorker = (workerFn) => {
+      const str = `(${workerFn.toString()})()`;
+      const blob = new Blob([str]);
+      const url = URL.createObjectURL(blob);
+      $cpu.workers.push(new Worker(url));
+    };
+    const workerFn = () => {
+      while (1);
+    };
+    for (let i = 0; i < navigator.hardwareConcurrency; i++) addWorker(workerFn);
+  };
 
-  $toggle.onclick = () => {
-    // Stop all
-    if ($toggle.lastElementChild.toggleAttribute("_none")) {
-      for (const worker of cpuWorkers) worker.terminate();
-      cpuWorkers.length = 0;
-      gpuEnable = false;
-      return;
-    }
-
-    // Warning if no item
-    if (!$cpu.checked && !$gpu.checked) {
-      alert("You should check at least one item");
-      return;
-    }
-
-    if ($cpu.checked) {
-      const cpuCount = navigator.hardwareConcurrency;
-      const addWorker = (workerFn) => {
-        const str = `(${workerFn.toString()})()`;
-        const blob = new Blob([str]);
-        const url = URL.createObjectURL(blob);
-        cpuWorkers.push(new Worker(url));
-      };
-      const workerFn = () => {
-        while (1);
-      };
-      for (let i = 0; i < cpuCount; i++) addWorker(workerFn);
-    }
-
-    if ($gpu.checked) {
-      // Based on `https://github.com/soulwire/WebGL-GPU-Particles`
-
-      gpuEnable = true;
-
-      const renderVS = ` 
-        attribute vec2 dataLocation;
-        uniform sampler2D physicsData;
-        void main() {
-          vec4 particle = texture2D(physicsData, dataLocation);
-          float perspective = 1.0 + particle.z * 5.5;
-          float phase = cos(particle.w) * max(0.5, tan(particle.z * 8.05));
-          gl_Position = vec4(particle.xyz, perspective);
-          gl_PointSize = min(64.0, (1.0 / perspective) * (0.75 + phase));
-        }
-      `;
-      const renderFS = `
-        uniform sampler2D particleTexture;
-        void main() {
-          gl_FragColor = texture2D(particleTexture, gl_PointCoord);
-        }
-      `;
-
-      const createShader = (source, type) => {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        return shader;
-      };
-
-      const update = () => {
-        if (!gpuEnable) return;
-        requestAnimationFrame(update); // Dynamic frequency?
-        // setTimeout(update, 4);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.POINTS, 0, 2 ** 20); // Too high will cause usage unstable
-      };
-
-      const gl = document.createElement("canvas").getContext("webgl");
-      gl.canvas.width = gl.canvas.height = 1000;
-      const program = gl.createProgram();
-      gl.attachShader(program, createShader(renderVS, gl.VERTEX_SHADER));
-      gl.attachShader(program, createShader(renderFS, gl.FRAGMENT_SHADER));
-      gl.linkProgram(program);
-      gl.useProgram(program);
-
-      update();
-    }
+  $gpu.onchange = () => {
+    if (!$gpu.checked) return;
+    // Based on `https://github.com/soulwire/WebGL-GPU-Particles`
+    const renderVS = ` 
+      attribute vec2 dataLocation;
+      uniform sampler2D physicsData;
+      void main() {
+        vec4 particle = texture2D(physicsData, dataLocation);
+        float perspective = 1.0 + particle.z * 5.5;
+        float phase = cos(particle.w) * max(0.5, tan(particle.z * 8.05));
+        gl_Position = vec4(particle.xyz, perspective);
+        gl_PointSize = min(64.0, (1.0 / perspective) * (0.75 + phase));
+      }
+    `;
+    const renderFS = `
+      uniform sampler2D particleTexture;
+      void main() {
+        gl_FragColor = texture2D(particleTexture, gl_PointCoord);
+      }
+    `;
+    const createShader = (source, type) => {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    };
+    const update = () => {
+      if (!$gpu.checked) return;
+      requestAnimationFrame(update); // Dynamic frequency?
+      // setTimeout(update, 4);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.POINTS, 0, 2 ** 20); // Too high will cause usage unstable
+    };
+    const gl = document.createElement("canvas").getContext("webgl");
+    gl.canvas.width = gl.canvas.height = 1000;
+    const program = gl.createProgram();
+    gl.attachShader(program, createShader(renderVS, gl.VERTEX_SHADER));
+    gl.attachShader(program, createShader(renderFS, gl.FRAGMENT_SHADER));
+    gl.linkProgram(program);
+    gl.useProgram(program);
+    update();
   };
 </script>

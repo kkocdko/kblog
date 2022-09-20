@@ -2,53 +2,56 @@
 
 <head>
   <base href="/toy/base64/" />
-  <script>
-    __VEPS_CFG__ = {
-      name: "Base64",
-      description: "Encode local file to base64.",
-      background: "rgb(248, 249, 250)",
-      themeColor: "rgb(51, 103, 214)",
-      icon: `-6 -6 60 60 | <path d="M15.54 13.52l-3.08-2.55L1.64 24l10.82 13.04 3.08-2.55L6.84 24l8.7-10.48zM14 26h4v-4h-4v4zm20-4h-4v4h4v-4zm-12 4h4v-4h-4v4zm13.54-15.04l-3.08 2.55L41.16 24l-8.7 10.48 3.08 2.55L46.36 24 35.54 10.96z"/>`,
-      version: "0.0.4",
-    };
-  </script>
-  <script veps-main src="../veps.js"></script>
+  <script
+    :name="Base64"
+    :description="Encode local file to base64."
+    :version="0.1.1"
+    src="../veps.js"
+  ></script>
 </head>
 
-<veps-deps>
-  <link rel="stylesheet" href="../misc/tmd.css" />
-</veps-deps>
+<style>
+  label {
+    display: block;
+    width: 60vmin;
+    max-width: 300px;
+    text-align: center;
+    margin: auto;
+    border: 1px solid #777;
+    padding: 4px 8px;
+  }
+  #\$i {
+    display: none;
+  }
+  #\$o {
+    width: 2em;
+    position: fixed;
+    top: -100vh;
+  }
+</style>
 
-<style></style>
-
-<body style="max-width: 400px">
-  <header>Base64</header>
-  <figure style="grid: none / 3fr 1fr">
-    <button style="grid-area: 1 / 1 / 1 / 3">
-      <input id="$in" _film type="file" autocomplete="off" />
-      Select file
-    </button>
-    <input
-      id="$out"
-      style="border-radius: 4px; box-shadow: inset 0 0 0 1px #dadce0"
-      readonly
-      spellcheck="false"
-      autocomplete="off"
-    />
-    <button onclick="$out.select();document.execCommand('copy')">Copy</button>
-  </figure>
+<body>
+  <label>
+    <input id="$i" type="file" autocomplete="off" />
+    Select file
+  </label>
+  <input id="$o" readonly spellcheck="false" autocomplete="off" />
+  <div id="$svg"></div>
 </body>
 
 <script>
-  "use strict";
-
-  $in.onchange = () => {
-    if ($in.files[0].size > 1024 ** 2 * 1) {
-      alert("Input file must small than 1 MB"); // TODO: Big file
-      return;
-    }
+  // setTimeout(() => location.reload(), 1000);
+  // 1-3 空格
+  $i.onchange = () => {
+    if ($i.files[0].size > 1024 ** 2 * 1)
+      return alert("Input file must small than 1 MB"); // TODO: Big file
     const reader = new FileReader();
-    reader.onload = () => ($out.value = reader.result);
-    reader.readAsDataURL($in.files[0]);
+    reader.onload = () => {
+      $o.value = reader.result;
+      $o.select();
+      document.execCommand("copy");
+      alert("copied");
+    };
+    reader.readAsDataURL($i.files[0]);
   };
 </script>

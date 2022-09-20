@@ -2,23 +2,15 @@
 
 <head>
   <base href="/toy/qrcode/" />
-  <script>
-    __VEPS_CFG__ = {
-      name: "QRCode",
-      description: "Generate QRCode.",
-      background: "rgb(248, 249, 250)",
-      themeColor: "rgb(51, 103, 214)",
-      icon: `-128 -96 704 704 | <path d="M0 224h192V32H0v192zM64 96h64v64H64V96zm192-64v192h192V32H256zm128 128h-64V96h64v64zM0 480h192V288H0v192zm64-128h64v64H64v-64zm352-64h32v128h-96v-32h-32v96h-64V288h96v32h64v-32zm0 160h32v32h-32v-32zm-64 0h32v32h-32v-32z"/>`,
-      version: "0.0.3",
-    };
-  </script>
-  <script veps-main src="../veps.js"></script>
-</head>
+  <script
+    :name="QRCode"
+    :description="Generate QRCode."
+    :version="0.1.0"
+    src="../veps.js"
+  ></script>
 
-<veps-deps>
-  <link rel="stylesheet" href="../misc/tmd.css" />
-  <script src="//cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-</veps-deps>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+</head>
 
 <style>
   svg {
@@ -26,37 +18,36 @@
     max-width: 300px;
     height: 60vmin;
     max-height: 300px;
-    margin: 5px;
+  }
+  div ~ [id] {
+    width: 60vmin;
+    max-width: 300px;
+    border: 1px solid #888;
+    padding: 4px 8px;
+    display: block;
+    margin: 10px auto 0;
   }
 </style>
 
-<body style="width: fit-content; min-width: 0">
-  <header>QRCode</header>
-  <figure style="grid: none / 2fr 5fr; text-align: right">
-    <div id="$out" style="grid-column: 1 / 3; text-align: center"></div>
-    <label>Level</label>
-    <select id="$level">
-      <option value="L" selected>7%</option>
-      <option value="M">15%</option>
-      <option value="Q">25%</option>
-      <option value="H">30%</option>
-    </select>
-    <label>Content</label>
-    <input id="$in" placeholder="Input content here" />
-  </figure>
+<body>
+  <div id="$o"></div>
+  <select id="$level">
+    <option value="L" selected>7%</option>
+    <option value="M">15%</option>
+    <option value="Q">25%</option>
+    <option value="H">30%</option>
+  </select>
+  <input id="$i" placeholder="Input content here" />
 </body>
 
 <script>
-  "use strict";
-
-  $in.value = location.origin;
+  $i.value = location.origin;
   const refresh = () => {
     const qr = qrcode(0, $level.value);
-    qr.addData($in.value);
+    qr.addData($i.value);
     qr.make();
-    const svg = qr.createSvgTag(1, 0);
-    $out.innerHTML = svg;
+    $o.innerHTML = qr.createSvgTag(1, 1); // (block, margin)
   };
-  $level.onchange = $in.oninput = refresh;
   refresh();
+  $level.onchange = $i.oninput = refresh;
 </script>

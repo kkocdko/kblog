@@ -2,67 +2,65 @@
 
 <head>
   <base href="/toy/realpha/" />
-  <script>
-    __VEPS_CFG__ = {
-      name: "Realpha",
-      description: "Restone image's alpha channel.",
-      background: "rgb(248, 249, 250)",
-      themeColor: "rgb(51, 103, 214)",
-      icon: `-6 -6 60 60 | <path d="M24 4C12.95 4 4 12.95 4 24s8.95 20 20 20 20-8.95 20-20S35.05 4 24 4zm-2 35.86C14.11 38.88 8 32.16 8 24S14.11 9.12 22 8.14v31.72zm4-31.72c2.06.26 4 .9 5.74 1.86H26V8.14zM26 14h10.48c.5.63.96 1.3 1.36 2H26v-2zm0 6h13.48c.17.65.3 1.32.39 2H26v-2zm0 19.86V38h5.74c-1.74.96-3.68 1.6-5.74 1.86zM36.48 34H26v-2h11.84c-.4.7-.86 1.37-1.36 2zm3-6H26v-2h13.86c-.08.68-.22 1.35-.38 2z"/>`,
-      version: "0.0.3",
-    };
-  </script>
-  <script veps-main src="../veps.js"></script>
+  <script
+    :name="Realpha"
+    :description="Restone image's alpha channel."
+    :version="0.1.0"
+    src="../veps.js"
+  ></script>
 </head>
 
-<veps-deps>
-  <link rel="stylesheet" href="../misc/tmd.css" />
-</veps-deps>
-
 <style>
+  body {
+    display: grid;
+    grid: 1fr auto 2fr / 1fr 1fr;
+    height: calc(100vh - 16px);
+    gap: 8px;
+  }
   canvas {
-    max-width: 100%;
-    max-height: 100%;
-    margin: auto;
+    width: 100%;
+    height: 100%;
     background-image: linear-gradient(#0000, #0000),
       linear-gradient(45deg, #ccc 25%, #0000 25%, #0000 75%, #ccc 75%, #ccc),
       linear-gradient(45deg, #ccc 26%, #0000 26%, #0000 74%, #ccc 74%, #ccc);
     background-position: 0 0, 10px 10px;
     background-size: 20px 20px;
   }
-
+  #\$out {
+    grid-area: auto / 1 / auto / 3;
+  }
   input {
-    font-family: monospace;
+    border: 1px solid #888;
+  }
+  a {
+    position: fixed;
+    padding: 8px;
+    font: 900 18px / 0.7 sans-serif;
+    text-decoration: none;
+    visibility: hidden;
+    background: #e08700f0;
+    color: #fffd;
+    animation: tips 2s;
+  }
+  @keyframes tips {
+    0% {
+      visibility: visible;
+    }
   }
 </style>
 
 <body>
-  <header>
-    Realpha
-    <a href="/post/202107231958/#solution" style="float: right; color: #fff">
-      How to use?&emsp;
-    </a>
-  </header>
-  <figure style="grid: 150px auto / 1fr 1fr">
-    <canvas id="$in1"></canvas>
-    <canvas id="$in2"></canvas>
-    <input id="$bg1" value="0 0 0" />
-    <input id="$bg2" value="255 255 255" />
-  </figure>
-  <figure style="grid: calc(100vh - 390px) / auto">
-    <canvas id="$out"></canvas>
-  </figure>
+  <canvas id="$in1"></canvas>
+  <canvas id="$in2"></canvas>
+  <input id="$bg1" value="0 0 0" />
+  <input id="$bg2" value="255 255 255" />
+  <canvas id="$out"></canvas>
+  <a href="/post/202107231958/#solution">How to use?</a>
 </body>
 
 <script>
-  "use strict";
-
-  for (const el of [$in1, $in2, $out]) {
-    el.style.height = el.style.width = "100%";
+  for (const el of [$in1, $in2, $out])
     [el.height, el.width] = [el.clientHeight, el.clientWidth];
-    el.removeAttribute("style");
-  }
-
   $in1.onclick = $in2.onclick = ({ target: canvas }) => {
     const img = new Image();
     img.onload = () => {
@@ -75,7 +73,6 @@
     input.onchange = () => (img.src = URL.createObjectURL(input.files[0]));
     input.click();
   };
-
   $out.onclick = () => {
     const { width, height } = $in1;
     if (width !== $in2.width || height !== $in2.height)

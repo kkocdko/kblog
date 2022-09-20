@@ -2,17 +2,12 @@
 
 <head>
   <base href="/toy/solarsystem/" />
-  <script>
-    __VEPS_CFG__ = {
-      name: "Solar System",
-      description: "A Solar System model.",
-      background: "rgb(0, 0, 0)",
-      themeColor: "rgb(51, 103, 214)",
-      icon: `-3 -3 30 30 | <circle cx="9" cy="12" r="8"/><path d="M17 4.26v2.09c2.33.82 4 3.04 4 5.65s-1.67 4.83-4 5.65v2.09c3.45-.89 6-4.01 6-7.74s-2.55-6.85-6-7.74z"/>`,
-      version: "0.0.1",
-    };
-  </script>
-  <script veps-main src="../veps.js"></script>
+  <script
+    :name="Solar System"
+    :description="A Solar System model."
+    :version="0.1.0"
+    src="../veps.js"
+  ></script>
 </head>
 
 <style>
@@ -22,16 +17,14 @@
     box-sizing: border-box;
     padding: 0;
     margin: 0;
+    background: none;
   }
-
   ::-webkit-scrollbar {
     display: none;
   }
-
   :root {
     scrollbar-width: none;
   }
-
   body {
     --one-day: 0.02s;
     width: 1280px;
@@ -42,23 +35,19 @@
     background: #000;
     transition: 0.3s;
   }
-
   body.hidden {
     opacity: 0;
   }
-
   @keyframes revolution {
     to {
       transform: rotate(-360deg);
     }
   }
-
   .solar-system {
     width: 100%;
     height: 100%;
     transform: rotate(0);
   }
-
   .solar-system div,
   .solar-system div:not(#sun)::before {
     /* --diameter: 40px; */
@@ -69,7 +58,6 @@
     margin-left: calc(var(--diameter) / -2);
     border-radius: 50%;
   }
-
   .solar-system div {
     /* --revolution-cycle: 10; */
     top: 50%;
@@ -78,70 +66,57 @@
     animation: revolution calc(var(--one-day) * var(--revolution-cycle)) linear
       infinite;
   }
-
   .solar-system div:not(#sun)::before {
     left: 50%;
     content: "";
   }
-
   #sun {
     --diameter: 36px;
     background: rgb(251, 185, 0);
     box-shadow: 0 0 20px 5px rgba(255, 200, 0, 0.4);
   }
-
   #mercury {
     --diameter: 70px;
     --revolution-cycle: 87.5;
   }
-
   #mercury::before {
     --diameter: 4px;
     background: rgb(158, 158, 158);
   }
-
   #venus {
     --diameter: 100px;
     --revolution-cycle: 224.7;
   }
-
   #venus::before {
     --diameter: 8px;
     background: rgb(202, 194, 104);
   }
-
   #earth {
     --diameter: 145px;
     --revolution-cycle: 365.2563;
   }
-
   #earth::before {
     --diameter: 6px;
     background: rgb(17, 171, 233);
   }
-
   #earth > #moon {
     --diameter: 14px;
     --revolution-cycle: 27.3216;
     top: 0;
     left: 50%;
   }
-
   #earth > #moon::before {
     --diameter: 2px;
     background: rgb(158, 158, 158);
   }
-
   #mars {
     --diameter: 190px;
     --revolution-cycle: 687;
   }
-
   #mars::before {
     --diameter: 6px;
     background: rgb(207, 57, 33);
   }
-
   #asteroids-belt {
     --diameter: 300px;
     --revolution-cycle: 179;
@@ -149,82 +124,51 @@
     border: 0 !important;
     opacity: 0.7;
   }
-
   #asteroids-belt::before {
     --diameter: 210px;
     top: 50%;
-    box-shadow: 48px 117px 0 -104px rgba(255, 255, 255, 0.94),
-      80px 70px 0 -104px rgba(255, 255, 255, 0.78),
-      -2px -119px 0 -104px rgba(255, 255, 255, 0.754),
-      -50px 102px 0 -104px rgba(255, 255, 255, 0.199),
-      -40px 74px 0 -104px rgba(255, 255, 255, 0.953),
-      145px 12px 0 -104px rgba(255, 255, 255, 0.566),
-      43px -64px 0 -104px rgba(255, 255, 255, 0.386),
-      34px 38px 0 -104px rgba(255, 255, 255, 0.368),
-      13px -124px 0 -104px rgba(255, 255, 255, 0.783),
-      -31px 114px 0 -104px rgba(255, 255, 255, 0.386),
-      114px -76px 0 -104px rgba(255, 255, 255, 0.086),
-      59px 76px 0 -104px rgba(255, 255, 255, 0.358),
-      -52px 136px 0 -104px rgba(255, 255, 255, 0.767),
-      -78px -82px 0 -104px rgba(255, 255, 255, 0.014),
-      50px -36px 0 -104px rgba(255, 255, 255, 0.132),
-      -54px -106px 0 -104px rgba(255, 255, 255, 0.308),
-      -76px -109px 0 -104px rgba(255, 255, 255, 0.525),
-      -120px 42px 0 -104px rgba(255, 255, 255, 0.405),
-      109px 66px 0 -104px rgba(255, 255, 255, 0.58),
-      -108px -34px 0 -104px rgba(255, 255, 255, 0.772),
-      56px 142px 0 -104px rgba(255, 255, 255, 0.756),
-      119px 90px 0 -104px rgba(255, 255, 255, 0.505),
-      134px -71px 0 -104px rgba(255, 255, 255, 0.793),
-      111px 18px 0 -104px rgba(255, 255, 255, 0.092),
-      -2px 94px 0 -104px rgba(255, 255, 255, 0.251),
-      37px 37px 0 -104px rgba(255, 255, 255, 0.794),
-      -2px 65px 0 -104px rgba(255, 255, 255, 0.283),
-      94px 109px 0 -104px rgba(255, 255, 255, 0.189),
-      39px 26px 0 -104px rgba(255, 255, 255, 0.599),
-      -118px 118px 0 -104px rgba(255, 255, 255, 0.271),
-      -116px 120px 0 -104px rgba(255, 255, 255, 0.189),
-      119px -49px 0 -104px rgba(255, 255, 255, 0.044),
-      139px -105px 0 -104px rgba(255, 255, 255, 0.824),
-      -133px -77px 0 -104px rgba(255, 255, 255, 0.497),
-      30px -109px 0 -104px rgba(255, 255, 255, 0.492),
-      -105px 11px 0 -104px rgba(255, 255, 255, 0.496),
-      -28px -79px 0 -104px rgba(255, 255, 255, 0.293),
-      124px 125px 0 -104px rgba(255, 255, 255, 0.782),
-      -72px -50px 0 -104px rgba(255, 255, 255, 0.062),
-      58px 140px 0 -104px rgba(255, 255, 255, 0.44),
-      -45px 67px 0 -104px rgba(255, 255, 255, 0.875),
-      61px -99px 0 -104px rgba(255, 255, 255, 0.905),
-      -128px 93px 0 -104px rgba(255, 255, 255, 0.535),
-      -13px 135px 0 -104px rgba(255, 255, 255, 0.323),
-      -61px -72px 0 -104px rgba(255, 255, 255, 0.101),
-      110px -117px 0 -104px rgba(255, 255, 255, 0.882),
-      -128px 42px 0 -104px rgba(255, 255, 255, 0.888),
-      -134px 76px 0 -104px rgba(255, 255, 255, 0.389),
-      20px -107px 0 -104px rgba(255, 255, 255, 0.374),
-      -89px -20px 0 -104px rgba(255, 255, 255, 0.937);
+    box-shadow: 48px 117px 0 -104px #fff5, 80px 70px 0 -104px #fff5,
+      -2px -119px 0 -104px #fff5, -50px 102px 0 -104px #fff5,
+      -40px 74px 0 -104px #fff5, 145px 12px 0 -104px #fff5,
+      43px -64px 0 -104px #fff6, 34px 38px 0 -104px #fff6,
+      13px -124px 0 -104px #fff6, -31px 114px 0 -104px #fff6,
+      114px -76px 0 -104px #fff6, 59px 76px 0 -104px #fff7,
+      -52px 136px 0 -104px #fff7, -78px -82px 0 -104px #fff7,
+      50px -36px 0 -104px #fff7, -54px -106px 0 -104px #fff7,
+      -76px -109px 0 -104px #fff7, -120px 42px 0 -104px #fff8,
+      109px 66px 0 -104px #fff8, -108px -34px 0 -104px #fff8,
+      56px 142px 0 -104px #fff8, 119px 90px 0 -104px #fff8,
+      134px -71px 0 -104px #fff8, 111px 18px 0 -104px #fff8,
+      -2px 94px 0 -104px #fff9, 37px 37px 0 -104px #fff9,
+      -2px 65px 0 -104px #fff9, 94px 109px 0 -104px #fff9,
+      39px 26px 0 -104px #fffa, -118px 118px 0 -104px #fffa,
+      -116px 120px 0 -104px #fffa, 119px -49px 0 -104px #fffa,
+      139px -105px 0 -104px #fffb, -133px -77px 0 -104px #fffb,
+      30px -109px 0 -104px #fffb, -105px 11px 0 -104px #fffb,
+      -28px -79px 0 -104px #fffb, 124px 125px 0 -104px #fffc,
+      -72px -50px 0 -104px #fffc, 58px 140px 0 -104px #fffc,
+      -45px 67px 0 -104px #fffc, 61px -99px 0 -104px #fffc,
+      -128px 93px 0 -104px #fffd, -13px 135px 0 -104px #fffd,
+      -61px -72px 0 -104px #fffd, 110px -117px 0 -104px #fffd,
+      -128px 42px 0 -104px #fffe, -134px 76px 0 -104px #fffe,
+      20px -107px 0 -104px #fffe, -89px -20px 0 -104px #fffe;
   }
-
   #jupiter {
     --diameter: 340px;
     --revolution-cycle: 4331;
   }
-
   #jupiter::before {
     --diameter: 18px;
     background: rgb(199, 110, 42);
   }
-
   #saturn {
     --diameter: 440px;
     --revolution-cycle: 10747;
   }
-
   #saturn::before {
     --diameter: 12px;
     background: rgb(231, 193, 148);
   }
-
   #saturn::after {
     position: absolute;
     top: 0;
@@ -239,32 +183,26 @@
       3px 1px 0 rgba(152, 118, 65, 0.75), -3px 1px 0 rgba(152, 118, 65, 0.75);
     transform: rotate(-130deg);
   }
-
   #uranus {
     --diameter: 520px;
     --revolution-cycle: 30589;
   }
-
   #uranus::before {
     --diameter: 10px;
     background: rgb(101, 221, 221);
   }
-
   #neptune {
     --diameter: 630px;
     --revolution-cycle: 59802;
   }
-
   #neptune::before {
     --diameter: 10px;
     background: rgb(23, 94, 158);
   }
-
   #pluto {
     --diameter: 780px;
     --revolution-cycle: 90580;
   }
-
   #pluto::before {
     --diameter: 2px;
     background: rgb(171, 122, 104);
@@ -276,9 +214,7 @@
     <div id="sun"></div>
     <div id="mercury"></div>
     <div id="venus"></div>
-    <div id="earth">
-      <div id="moon"></div>
-    </div>
+    <div id="earth"><div id="moon"></div></div>
     <div id="mars"></div>
     <div id="asteroids-belt"></div>
     <div id="jupiter"></div>
@@ -290,17 +226,13 @@
 </body>
 
 <script>
-  "use strict";
-
   setTimeout(() => {
     scrollTo(
       (document.body.clientWidth - innerWidth) / 2,
       (document.body.clientHeight - innerHeight) / 2
     );
   }, 200);
-
   setTimeout(() => document.body.classList.remove("hidden"), 300);
-
   addEventListener("mousedown", ({ clientX: originX, clientY: originY }) => {
     const onMouseMove = ({ clientX: currentX, clientY: currentY }) => {
       const relativeX = currentX - originX;
