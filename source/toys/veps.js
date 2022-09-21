@@ -1,5 +1,5 @@
 /**
- * Very Easy Page Solution v3.1.0
+ * Very Easy Page Solution v3.2.1
  *
  * Features:
  * 1. Reduce the code of toy pages.
@@ -12,10 +12,18 @@ const inWindow = async () => {
   // The yields(await) may cause unexpected behaviours, be careful
   // TODO: add loading animation?
   const vepsTag = document.currentScript;
-  const icon = { type: "image/png", sizes: "500x500" };
+  const manifest = {
+    id: document.baseURI,
+    start_url: document.baseURI,
+    name: vepsTag.getAttribute(":name"),
+    short_name: vepsTag.getAttribute(":name"),
+    description: vepsTag.getAttribute(":description"),
+    display: "standalone",
+    icons: [{ type: "image/png", sizes: "500x500", purpose: "any maskable" }],
+  };
   {
     const lcg = (current) => (25214903917 * current) & 65535;
-    const text = document.baseURI.split("/").slice(-2)[0].toUpperCase();
+    const text = manifest.id.split("/").slice(-2)[0].toUpperCase();
     let sum = 0;
     for (let i = text.length; i--; ) sum = lcg(sum) + 13 * text.charCodeAt(i);
     const hueRaw = sum % (360 - (160 - 60)); // exclude ugly color area 60-160
@@ -41,24 +49,16 @@ const inWindow = async () => {
     ctx.textBaseline = "middle";
     for (const [i, j, c] of chars)
       ctx.fillText(c, 100 + j * 100, 105 + i * 100);
-    icon.src = canvas.toDataURL("image/png");
+    manifest.icons[0].src = canvas.toDataURL("image/png");
   }
-  const manifest = {
-    id: document.baseURI,
-    start_url: document.baseURI,
-    name: vepsTag.getAttribute(":name"),
-    short_name: vepsTag.getAttribute(":name"),
-    description: vepsTag.getAttribute(":description"),
-    display: "standalone",
-    icons: [{ ...icon, purpose: "any maskable" }],
-  };
-  const manifetsUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)]));
+  const manifestUrl =
+    "data:text/json," + encodeURIComponent(JSON.stringify(manifest));
   const headInsert = `
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <style>/* veps prelude */*{box-sizing:border-box;color:#000;background:#fff}@media(prefers-color-scheme:dark){*{color:#fff;background:#000}}script,style{display:none!important}</style>
-    <link rel="icon" href="${icon.src}">
-    <link rel="manifest" href="${manifetsUrl}">
+    <link rel="icon" href="${manifest.icons[0].src}">
+    <link rel="manifest" href="${manifestUrl}">
     <title>${manifest.name}</title>
   `;
   document.head.insertAdjacentHTML("afterbegin", headInsert); // No awaits before!
@@ -80,13 +80,13 @@ const inWindow = async () => {
 const inServiceWorker = () => {
   onmessage = async ({ data: msg }) => {
     if (msg.type !== "cache") throw new Error(`unknown msg type [${msg.type}]`);
-    const selector = (name) => name.startsWith(msg.name);
-    const originName = [...(await caches.keys())].find(selector);
-    const name = msg.name + " - " + msg.version;
-    const cache = await caches.open(name);
+    const matcher = (name) => name.startsWith(msg.name);
+    const originName = [...(await caches.keys())].find(matcher);
+    const currentName = msg.name + " - " + msg.version;
+    const cache = await caches.open(currentName);
     const addToCache = (list) =>
       list.forEach((url) => cache.add(new Request(url, { mode: "cors" })));
-    if (name === originName) return addToCache(msg.hotList);
+    if (currentName === originName) return addToCache(msg.hotList);
     caches.delete(originName);
     addToCache(msg.list);
   };
