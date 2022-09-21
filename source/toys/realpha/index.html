@@ -5,7 +5,7 @@
   <script
     :name="Realpha"
     :description="Restone image's alpha channel."
-    :version="0.1.1"
+    :version="0.1.2"
     src="../veps.js"
   ></script>
 </head>
@@ -20,11 +20,9 @@
   canvas {
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(#0000, #0000),
-      linear-gradient(45deg, #ccc 25%, #0000 25%, #0000 75%, #ccc 75%, #ccc),
-      linear-gradient(45deg, #ccc 26%, #0000 26%, #0000 74%, #ccc 74%, #ccc);
-    background-position: 0 0, 10px 10px;
-    background-size: 20px 20px;
+    --bg-img: 45deg, #ccc 25%, #0000 25%, #0000 75%, #ccc 75%, #ccc;
+    background: linear-gradient(var(--bg-img)) 0 0 / 20px 20px,
+      linear-gradient(var(--bg-img)) 10px 10px / 20px 20px;
   }
   #\$out {
     grid-area: auto / 1 / auto / 3;

@@ -5,11 +5,10 @@
   <script
     :name="QRCode"
     :description="Generate QRCode."
-    :version="0.1.1"
+    :version="0.1.2"
     src="../veps.js"
   ></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 </head>
 
 <style>
@@ -44,12 +43,11 @@
 
 <script>
   $i.value = location.origin;
-  const refresh = () => {
+  $level.onchange = $i.oninput = () => {
     const qr = qrcode(0, $level.value);
     qr.addData($i.value);
     qr.make();
     $o.innerHTML = qr.createSvgTag(1, 1); // (block, margin)
   };
-  refresh();
-  $level.onchange = $i.oninput = refresh;
+  $i.oninput();
 </script>
