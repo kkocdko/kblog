@@ -5,7 +5,7 @@
   <script
     :name="Image Converter"
     :description="Change image format and size."
-    :version="0.1.3"
+    :version="0.1.4"
     src="../veps.js"
   ></script>
 </head>
@@ -60,7 +60,7 @@
 <script>
   document.body.onchange = document.body.oninput = async () => {
     this.$tips?.remove();
-    $in.previousElementSibling.textContent = "File: " + $in.files[0].name;
+    $in.previousSibling.nodeValue = "File: " + $in.files[0].name;
     const img = new Image();
     img.src = URL.createObjectURL($in.files[0]);
     await new Promise((r) => (img.onload = r));
@@ -78,7 +78,7 @@
     canvas.toBlob(
       (b) => ($out.src = URL.createObjectURL(b, { type: $type.value })),
       $type.value,
-      Number($quality.value) / 100
+      $quality.value / 100
     );
   };
 </script>

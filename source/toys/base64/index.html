@@ -5,7 +5,7 @@
   <script
     :name="Base64"
     :description="Encode local file to base64."
-    :version="0.1.4"
+    :version="0.1.5"
     src="../veps.js"
   ></script>
 </head>
@@ -30,16 +30,16 @@
 </body>
 
 <script>
-  $i.onchange = () => {
+  $i.onchange = async () => {
     if ($i.files[0].size > 1024 ** 2 * 2)
       return alert("Input file must small than 2 MB"); // TODO: Big file
+    $i.previousSibling.nodeValue = "File: " + $i.files[0].name;
     const reader = new FileReader();
-    reader.onload = () => {
-      $o.value = reader.result;
-      $o.select();
-      document.execCommand("copy");
-      alert("copied");
-    };
     reader.readAsDataURL($i.files[0]);
+    await new Promise((r) => (reader.onload = r));
+    $o.value = reader.result;
+    $o.select();
+    document.execCommand("copy");
+    alert("copied");
   };
 </script>
