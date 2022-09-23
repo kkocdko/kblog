@@ -5,15 +5,13 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.69.0`, may become invalid in a future version.
+> Last tested version is `1.71.2`, may become invalid in a future version.
 
 ## Why & Why Not?
 
 ### Advantages
 
-- As a tab on browser, more convenient.
-
-- Haven't another renderer process, less memory usage.
+- As a tab on browser, more convenient. Haven't redundant renderer process, less memory footprint.
 
 - Bypass Electron's IME issues on Wayland.
 
@@ -42,14 +40,14 @@ Extract the package, then execute `./bin/code-server.sh(bat)`.
 To change data directory, use custom token and port, `./run.sh`:
 
 ```shell
-export VSCODE_AGENT_FOLDER=./data 
+export VSCODE_AGENT_FOLDER=./data
 ./bin/code-server.sh --port=8109 --connection-token=mytoken
 ```
 
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.69.0
+"use strict"; // Last Tested Version: 1.71.2
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, path);
