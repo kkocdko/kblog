@@ -1,5 +1,5 @@
 /**
- * Very Easy Page Solution v3.2.1
+ * Very Easy Page Solution v3.2.3
  *
  * Features:
  * 1. Reduce the code of toy pages.
@@ -9,24 +9,21 @@
 "use strict";
 
 const inWindow = async () => {
-  // The yields(await) may cause unexpected behaviours, be careful
-  // TODO: add loading animation?
+  // yields(await) may cause unexpected behaviours, be careful
   const vepsTag = document.currentScript;
   const manifest = {
-    id: document.baseURI,
     start_url: document.baseURI,
     name: vepsTag.getAttribute(":name"),
-    short_name: vepsTag.getAttribute(":name"),
     description: vepsTag.getAttribute(":description"),
     display: "standalone",
-    icons: [{ type: "image/png", sizes: "500x500", purpose: "any maskable" }],
+    icons: [{ type: "image/png", sizes: "200x200", purpose: "any maskable" }],
   };
   {
-    const lcg = (current) => (25214903917 * current) & 65535;
-    const text = manifest.id.split("/").slice(-2)[0].toUpperCase();
+    const lcg = (cur) => (25214903917 * cur) & 65535; // lcg random generator
+    const text = document.baseURI.split("/").at(-2).toUpperCase();
     let sum = 0;
     for (let i = text.length; i--; ) sum = lcg(sum) + 13 * text.charCodeAt(i);
-    const hueRaw = sum % (360 - (160 - 60)); // exclude ugly color area 60-160
+    const hueRaw = sum % (360 - (160 - 60)); // exclude ugly color area: 60 - 160
     const hue = hueRaw < 60 ? hueRaw : hueRaw + 160;
     const chars = [];
     for (let i = 0, j = 0; i < 4 ** 2; ) {
@@ -37,18 +34,16 @@ const inWindow = async () => {
     }
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = canvas.height = 500;
+    canvas.width = canvas.height = 200;
     ctx.fillStyle = `hsl(${hue}deg,15%,77%)`;
-    ctx.fillRect(0, 0, 500, 500);
+    ctx.fillRect(0, 0, 200, 200);
     ctx.fillStyle = `hsl(${hue}deg,35%,47%)`;
-    for (const [i, j] of chars)
-      ctx.fillRect(50 + j * 100, 50 + i * 100, 100, 100);
+    for (const [i, j] of chars) ctx.fillRect(20 + j * 40, 20 + i * 40, 40, 40);
     ctx.fillStyle = `hsl(${hue}deg,15%,90%)`;
-    ctx.font = "80px monospace";
+    ctx.font = "30px monospace";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    for (const [i, j, c] of chars)
-      ctx.fillText(c, 100 + j * 100, 105 + i * 100);
+    for (const [i, j, c] of chars) ctx.fillText(c, 40 + j * 40, 41 + i * 40);
     manifest.icons[0].src = canvas.toDataURL("image/png");
   }
   const manifestUrl =
@@ -61,7 +56,7 @@ const inWindow = async () => {
     <link rel="manifest" href="${manifestUrl}">
     <title>${manifest.name}</title>
   `;
-  document.head.insertAdjacentHTML("afterbegin", headInsert); // No awaits before!
+  document.head.insertAdjacentHTML("afterbegin", headInsert); // no awaits before!
   const reg = await navigator.serviceWorker.register(vepsTag.src);
   await navigator.serviceWorker.ready;
   const sw = reg.active;
@@ -70,28 +65,31 @@ const inWindow = async () => {
     name: manifest.name,
     version: vepsTag.getAttribute(":version"),
     list: [
-      location,
+      location, // has `href` attribute
       ...document.head.querySelectorAll("script,[rel=stylesheet]"),
     ].map((v) => v.src || v.href),
-    hotList: [location.href], // Refetch everytime
+    hotList: [location.href], // refetch everytime
   });
 };
 
 const inServiceWorker = () => {
   onmessage = async ({ data: msg }) => {
     if (msg.type !== "cache") throw new Error(`unknown msg type [${msg.type}]`);
-    const matcher = (name) => name.startsWith(msg.name);
-    const originName = [...(await caches.keys())].find(matcher);
+    const matcher = (v) => v.startsWith(msg.name);
+    const originName = (await caches.keys()).find(matcher);
     const currentName = msg.name + " - " + msg.version;
     const cache = await caches.open(currentName);
     const addToCache = (list) =>
-      list.forEach((url) => cache.add(new Request(url, { mode: "cors" })));
+      // `cache.addAll` cancel others if any of request failed
+      // `cors` has no effects if needless
+      cache.addAll(list.map((url) => new Request(url, { mode: "cors" })));
     if (currentName === originName) return addToCache(msg.hotList);
+    // app version upgraded, rebuild cache
     caches.delete(originName);
     addToCache(msg.list);
   };
-  const inFetch = async (req) => (await caches.match(req)) || fetch(req);
-  onfetch = (e) => e.respondWith(inFetch(e.request));
+  const inFetch = async (req) => (await caches.match(req)) || fetch(req); // just query all
+  onfetch = (e) => e.respondWith(inFetch(e.request)); // remember to use `respondWith`
 };
 
 switch (constructor.name) {
