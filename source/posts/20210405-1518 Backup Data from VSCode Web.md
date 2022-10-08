@@ -74,6 +74,8 @@ This code snippet enables you to export and import the user data. Run on DevTool
 })();
 ```
 
+- To reduce backup size, try to delete log storages manually.
+
 ## Change Log
 
 ### 20220107
