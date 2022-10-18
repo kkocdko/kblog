@@ -28,11 +28,11 @@ onscroll = () => {
 
 onpopstate = (isPopState) => {
   document.body.className = "loading";
-  history.scrollRestoration = "manual"; // Futile in fetch.then, Chrome's bug?
+  history.scrollRestoration = "manual"; // Failed in fetch.then, Chrome's bug?
   fetch(location)
     .then((response) => response.text())
     .then((s) => {
-      // Regexp will cause a waste of time, but it's usually less than 1 ms
+      // Regexp is slower than indexOf, but it's usually less than 5 ms
       [, document.title, , mainBox.innerHTML] = s.split(/<\/?title>|<\/?main>/);
       scroll(0, isPopState ? scrollRecords[location] || 0 : 0);
       // Ensure anchor makes down-scroll to hide topbar

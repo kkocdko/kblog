@@ -112,11 +112,12 @@ const loadMdFile = (filePath) => {
 
 // Init
 {
-  fs.rmSync(p`./public`, { recursive: true, force: true });
+  if (fs.existsSync(p`./public`)) fs.renameSync(p`./public`, p`./public_old`);
+  fs.rm(p`./public_old`, { recursive: true, force: true }, () => {});
   fs.mkdirSync(p`./public`);
 
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
-  const avatar = "data:image/svg+xml," + f`avatar.svg`.replace(/#/g, "%23");
+  const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
   const head = minify.html(f`head.html`).replace("/*{style}*/", style);
   const bundle = f`bundle.js`
@@ -126,7 +127,7 @@ const loadMdFile = (filePath) => {
     .replace("/*{script}*/", f`main.js`);
   fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
   fs.writeFileSync(p`./public/update.html`, f`update.html`);
-  fs.writeFileSync(p`./public/.nojekyll`, "");
+  fs.writeFileSync(p`./public/.nojekyll`, ""); // Prevent the GitHub Pages to run Jekyll
 
   const copyDirSync = (srcDir, destDir) => {
     fs.readdirSync(srcDir).forEach((fileName) => {
