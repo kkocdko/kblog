@@ -10,8 +10,8 @@
     box-sizing: border-box;
     width: 100vmin;
     height: 100vmin;
-    padding: 20vmin;
     margin: calc(50vh - 50vmin) auto;
+    overflow: hidden;
     background: #fff;
   }
   @media (prefers-color-scheme: dark) {
@@ -23,11 +23,12 @@
 
 <body></body>
 
+<script src="https://lib.baomitu.com/lottie-web/5.5.10/lottie_canvas.min.js"></script>
 <script>
-  // https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.8.1/lottie.min.js
   lottie.loadAnimation({
     container: document.body,
     renderer: "canvas",
-    animationData: {}, // json format
+    // prettier-ignore
+    animationData: JSON.parse(``),
   });
 </script>

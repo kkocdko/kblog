@@ -5,7 +5,7 @@
   <script
     :name="Markdown"
     :description="Simple markdown preview."
-    :version="0.2.1"
+    :version="0.2.2"
     src="../veps.js"
   ></script>
   <link
@@ -34,7 +34,7 @@
     color: #fffd;
     background: #e08700f0;
     opacity: 0;
-    animation: tips cubic-bezier(1, 0, 1, 0) 2s;
+    animation: tips cubic-bezier(1, -0.5, 0.5, 1) 3s;
   }
   @keyframes tips {
     0% {
@@ -44,15 +44,14 @@
 </style>
 
 <body>
-  <textarea id="$i" spellcheck="false"></textarea>
-  <p id="$tips">Click here to hide or show input box</p>
+  <textarea id="$i" placeholder="Markdown input" spellcheck="false"></textarea>
+  <p id="$tips">Click here to toggle input box</p>
   <div id="$o" class="markdown-body"></div>
 </body>
 
 <script>
   $tips.onclick = () =>
     ($i.style.display = $i.style.display === "none" ? "" : "none");
-  $i.oninput = () =>
-    ($o.innerHTML = marked.parse($i.value || "Compiled result will be here."));
+  $i.oninput = () => ($o.innerHTML = marked.parse($i.value));
   $i.oninput();
 </script>
