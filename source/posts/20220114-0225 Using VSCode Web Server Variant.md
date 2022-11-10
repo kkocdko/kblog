@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.71.2`, may become invalid in a future version.
+> Last tested version is `1.73.1`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -35,19 +35,19 @@ https://update.code.visualstudio.com/latest/{target}/stable
 
 `{target}` = `server-win32-x64-web`, `server-linux-x64-web` or others.
 
-Extract the package, then execute `./bin/code-server.sh(bat)`.
+Extract the package, then execute `./bin/code-server(.bat)`.
 
 To change data directory, use custom token and port, `./run.sh`:
 
 ```shell
 export VSCODE_AGENT_FOLDER=./data
-./bin/code-server.sh --port=8109 --connection-token=mytoken
+./bin/code-server --accept-server-license-terms --port=8109 --connection-token=mytoken
 ```
 
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.71.2
+"use strict"; // Last Tested Version: 1.73.1
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, path);
@@ -62,26 +62,19 @@ const patch = (path, replaceList) => {
   console.log("patched: " + path);
 };
 patch("./out/vs/workbench/workbench.web.main.js", [
-  // Webview: replaced with local server to allow offline work
-  [
-    `"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`,
-    `location.origin+"/{{quality}}-{{commit}}/static`,
-  ],
+  // Replace entry url with local server to allow offline work (for webview)
+  // Source: src/vs/workbench/services/environment/browser/environmentService.ts
+  [`"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`, `baseUrl+"`],
 ]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
-  // Webview: bypass hostname vertify
-  [/\.padStart\(52.+?\)/, "&&location.hostname"],
-  // Webview: modify CSP
+  // Modify CSP (for webview)
+  // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
   [/\'sha256.+?\'/, "'unsafe-inline'"],
+  // Bypass hostname vertify (for webview)
+  // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
+  [/\.padStart\(52.+?\)/, "&&location.hostname"],
 ]);
-patch("./out/vs/workbench/contrib/webview/browser/pre/service-worker.js", [
-  // Webview: bypass requests
-  [`addEventListener("fetch",`, "NaN;("],
-]);
-patch("./out/vs/workbench/api/node/extensionHostProcess.js", [
-  // Webview: block resources to avoid long waiting
-  [`webviewResourceBaseHost="`, `webviewResourceBaseHost="//`],
-]);
+// strip ./node_modules/@vscode/ripgrep/bin/rg manually?
 ```
 
 - ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
