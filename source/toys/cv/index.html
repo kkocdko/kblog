@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<head>
+  <base href="/toy/cv/" />
+  <script
+    :name="CV"
+    :description="The CV of kkocdko"
+    :version="0.1.0-beta"
+    src="../veps.js"
+  ></script>
+  <script src="//cdn.jsdelivr.net/npm/pdfmake@0.3.0-beta.3/build/pdfmake.min.js"></script>
+  <!-- prefetch fonts? -->
+</head>
+
+<body style="margin: 0; height: 100vh; display: flex">
+  <iframe style="border: none; flex-grow: 1"></iframe>
+</body>
+
+<script type="module">
+  const lang = (o) => o.zh; // en / zh
+  pdfMake.addFonts({
+    default: {
+      normal: `https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@4.5.12/files/noto-serif-sc-chinese-simplified-400-normal.woff`,
+    },
+    // monospace: {
+    //   normal: `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-mono@4.5.12/files/noto-sans-mono-latin-400-normal.woff`,
+    // },
+  });
+  const section = (
+    title = "Title",
+    entrys = [[["Entry 0:", "Root", "2022.01"], "Leaf 0", "Leaf 1"]]
+  ) => [
+    { text: title, fontSize: 14, margin: [0, 8, 0, 4] },
+    {
+      layout: {
+        ...{ hLineWidth: (i) => (i === 0 ? 0.4 : 0), vLineWidth: () => 0 },
+        ...{ paddingTop: () => 4, paddingLeft: () => 0, paddingRight: () => 0 },
+      },
+      fontSize: 10,
+      lineHeight: 0.8,
+      table: {
+        widths: ["*", "auto"],
+        body: entrys.flatMap(([r, ...ls] /* root, leafs */) => [
+          [
+            {
+              text: [
+                { ...(r[0].text ? r[0] : { text: r[0] }), fontSize: 11 },
+                " : " + r[1],
+              ],
+            },
+            { text: r[2] || "", alignment: "right" },
+          ],
+          ...ls.map((l) => [{ text: "·  " + l, margin: [2, 0, 0, 0] }, ""]),
+        ]),
+      },
+    },
+  ];
+  const pdf = pdfMake.createPdf({
+    defaultStyle: { font: "default" },
+    compress: false,
+    pageSize: { width: 595.28 /* A4 width */, height: "auto" },
+    pageMargins: [50, 40, 50, 40], // left, top, right, bottom
+    info: { title: lang({ en: "The CV of kkocdko", zh: "kkocdko 的简历" }) },
+    content: [
+      {
+        ...{ alignment: "center", fontSize: 18 },
+        text: lang({ en: "kkocdko (<mock>)", zh: "<mock> (kkocdko)" }),
+      },
+      {
+        ...{ alignment: "center", fontSize: 11, margin: [0, 10, 0, 4] },
+        text: [
+          "Mail: ",
+          { text: "kkocdko@gmail.com", link: "mailto:kkocdko@email.com" },
+          "  ·  ",
+          "Site: ",
+          { text: "kkocdko.site", link: "https://kkocdko.site" },
+          "  ·  ",
+          "GitHub: ",
+          { text: "kkocdko", link: "https://github.com/kkocdko" },
+          "  ·  ",
+          "Tel: ",
+          { text: "<mock>" },
+        ],
+      },
+      ...section(lang({ en: "Education", zh: "教育经历" }), [
+        [
+          [
+            lang({ en: "TODO", zh: "江苏科技大学" }),
+            "计算机科学与技术 专业. 本科在读 (大二).",
+            "2021.09 - 当下",
+          ],
+        ],
+      ]),
+      ...section(lang({ en: "Skills", zh: "技能" }), [
+        [
+          [
+            lang({ en: "Programming Language", zh: "编程语言" }),
+            lang({
+              en: "TODO",
+              zh: "不受特定语言限制.",
+            }),
+          ],
+          "日常使用 Rust, JS / TS, C / C++.",
+        ],
+        [
+          [
+            "Rust",
+            lang({
+              en: "TODO",
+              zh: "掌握, 并在多个项目中使用.",
+            }),
+          ],
+          "精通各种语言技巧和类型体操.",
+          "熟悉异步编程 (Tokio 生态), Unsafe 与常用 UB 分析工具 (ASAN, Miri 等).",
+          "接触过 Binding / FFI, 过程宏.",
+        ],
+        [
+          [
+            lang({ en: "Linux Dev", zh: "Linux 开发" }),
+            lang({
+              en: "TODO",
+              zh: "熟悉常用技术栈.",
+            }),
+          ],
+          "日常桌面使用 Fedora. 熟悉主流发行版结构, 构建系统和包管理.",
+          // "熟悉常用性能分析方法, 内核模块开发.",
+          "了解文件系统子系统, 常用网络协议.",
+          "接触过常用虚拟化和容器技术, 尝试过嵌入式开发.",
+        ],
+        [
+          [
+            lang({ en: "Web Frontend", zh: "Web 前端" }),
+            lang({
+              en: "TODO",
+              zh: "熟悉 React, SolidJS 响应式框架, 使用过 Material UI 组件库. 掌握各种 CSS 技巧.",
+            }),
+          ],
+        ],
+        [
+          [
+            lang({ en: "Algorithm", zh: "算法" }),
+            lang({
+              en: "TODO",
+              zh: "能熟练运用常用数据结构和算法.",
+            }),
+          ],
+        ],
+        [
+          [
+            lang({ en: "Common knowledges", zh: "常识" }),
+            lang({
+              en: "TODO",
+              zh: "作为开发者应有的常识. Git, Docker, CI / CD 和基础的运维等.",
+            }),
+          ],
+        ],
+      ]),
+      ...section(lang({ en: "Open Source Contributions", zh: "开源贡献" }), [
+        [
+          [
+            { text: "ricq", link: "https://github.com/lz1998/ricq" },
+            lang({
+              en: "TODO",
+              zh: "(作为贡献者) Rust 实现的 QQ 机器人协议库, 高性能低占用.",
+            }),
+          ],
+          "实现了链接分享等功能, 改进了登录相关逻辑.",
+          "使用宏重构并消除大量冗余代码.",
+          "作出多项性能改进.",
+        ],
+        [
+          [
+            { text: "ksite", link: "https://github.com/kkocdko/ksite" },
+            lang({
+              en: "TODO",
+              zh: "多合一 Web 服务端程序, 包含 简易代理, QQ 机器人, 剪贴板, 新闻聚合, 及其他零碎功能.",
+            }),
+          ],
+          "使用 Rust 语言, axum 框架构建. 数据库使用 SQLite.",
+          "拥有精简的二进制体积和极低资源占用, 在低配开发板上完美运行.",
+          "手动实现 TLS Event Loop, 进程保活, 自动更新, 定时任务等框架缺失的特性.",
+          "实现了轻量级 protobuf 编译器 prost-gen, 解决 prost 在 CI 上构建不稳定的问题.",
+        ],
+        [
+          [
+            { text: "kblog", link: "https://github.com/kkocdko/kblog" },
+            lang({
+              en: "TODO",
+              zh: "个人博客, 记录一些独特的原创技术经验和教程.",
+            }),
+          ],
+          "自 2018 年开始运营, 日 PV 约为 300. 目前在 Vercel 上静态托管.",
+          "实现 SPA 同时保持极小的页面体积, 首页网络流量不超过 4 KiB.",
+        ],
+        [
+          [
+            {
+              text: "clevert",
+              link: "https://github.com/kkocdko/clevert",
+            },
+            lang({
+              en: "TODO",
+              zh: "可扩展, 并行化的文件格式转换器.",
+            }),
+          ],
+          "实现简单的任务调度, 解决大多数格式转换程序 CPU 核心利用不充分的问题.",
+          "通过配置文件支持多种文件格式.", // 改？
+          // "为大量项目提供交叉编译和静态链接方案.",
+          "正尝试使用 React + Material UI 创建用户面板.",
+          // "全平台适配.",
+          // "正在尝试商业化运作.",
+        ],
+        [
+          [
+            {
+              text: "others",
+              link: "https://github.com/pulls?q=is%3Apr+author%3Akkocdko",
+            },
+            "向 vscode, axum, actix-web 等项目提交过补丁.",
+          ],
+        ],
+      ]),
+      ...section(lang({ en: "Honors", zh: "荣誉" }), [
+        [
+          [
+            "蓝桥杯",
+            lang({
+              en: "Provincial second prize, group B",
+              zh: "江苏省二等奖", // 应该能写，至少不是三等吧
+            }),
+            "2022.03",
+          ],
+        ],
+        [
+          [
+            {
+              text: "江苏科技大学计算机协会",
+              link: "https://github.com/orgs/just-ca-unofficial/projects/1",
+            },
+            lang({ en: "As Mascot", zh: "担任吉祥物" }),
+            "2022.07 - 当下",
+          ],
+        ],
+      ]),
+      ...section(lang({ en: "TODO", zh: "意向" }), [
+        [
+          [
+            lang({ en: "TODO", zh: "寻求实习岗位" }),
+            "寒假和日常实习. Web 后端, Linux 开发, 内核开发岗位均可.",
+          ],
+        ],
+      ]),
+      // 实习经历
+      // 其他
+    ],
+    // footer: (cur, len) => ({
+    //   text: `${cur} / ${len}`,
+    //   ...{ alignment: "center", fontSize: 10, margin: [0, 8, 0, 0] },
+    // }),
+  });
+  const blobUrl = URL.createObjectURL(await pdf.getBlob());
+  document.querySelector("iframe").src = blobUrl;
+</script>

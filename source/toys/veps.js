@@ -1,5 +1,5 @@
 /**
- * Very Easy Page Solution v3.2.3
+ * Very Easy Page Solution v3.2.4
  *
  * Features:
  * 1. Reduce the code of toy pages.
@@ -56,7 +56,9 @@ const inWindow = async () => {
     <link rel="manifest" href="${manifestUrl}">
     <title>${manifest.name}</title>
   `;
-  document.head.insertAdjacentHTML("afterbegin", headInsert); // no awaits before!
+  document.head.insertAdjacentHTML("afterbegin", headInsert);
+  if (vepsTag.getAttribute(":version").includes("-")) return; // is testing version
+  // no awaits before!
   const reg = await navigator.serviceWorker.register(vepsTag.src);
   await navigator.serviceWorker.ready;
   const sw = reg.active;
