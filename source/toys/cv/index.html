@@ -1,3 +1,7 @@
+<!--
+TODO: use pdf.js
+-->
+
 <!DOCTYPE html>
 
 <head>
@@ -5,15 +9,46 @@
   <script
     :name="CV"
     :description="The CV of kkocdko"
-    :version="0.1.0-beta"
+    :version="0.1.1-beta"
     src="../veps.js"
   ></script>
   <script src="//cdn.jsdelivr.net/npm/pdfmake@0.3.0-beta.3/build/pdfmake.min.js"></script>
   <!-- prefetch fonts? -->
 </head>
 
-<body style="margin: 0; height: 100vh; display: flex">
-  <iframe style="border: none; flex-grow: 1"></iframe>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+  }
+  iframe {
+    border: none;
+    flex-grow: 1;
+  }
+  @keyframes spin {
+    100% {
+      transform: rotate(3600deg);
+    }
+  }
+  progress {
+    appearance: none;
+    position: fixed;
+    left: calc(50vw - 30px);
+    top: calc(50vh - 30px);
+    width: 60px;
+    height: 60px;
+    border: 30px solid #0000;
+    background: none;
+    border-radius: 8px;
+    box-shadow: 0 0 0px 12px #2196f3;
+    animation: spin 10s linear infinite;
+  }
+</style>
+
+<body>
+  <iframe></iframe>
+  <progress></progress>
 </body>
 
 <script type="module">
@@ -57,10 +92,15 @@
   ];
   const pdf = pdfMake.createPdf({
     defaultStyle: { font: "default" },
-    compress: false,
+    compress: false, // better speed on dev
     pageSize: { width: 595.28 /* A4 width */, height: "auto" },
     pageMargins: [50, 40, 50, 40], // left, top, right, bottom
-    info: { title: lang({ en: "The CV of kkocdko", zh: "kkocdko 的简历" }) },
+    info: {
+      title: lang({
+        en: "The CV of kkocdko (<mock>)",
+        zh: "<mock> (kkocdko) 的简历",
+      }),
+    },
     content: [
       {
         ...{ alignment: "center", fontSize: 18 },
@@ -260,4 +300,6 @@
   });
   const blobUrl = URL.createObjectURL(await pdf.getBlob());
   document.querySelector("iframe").src = blobUrl;
+
+  document.querySelector("progress").remove();
 </script>

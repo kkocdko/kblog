@@ -3,6 +3,10 @@ name: toy
 title: Toy
 ```
 
+## [CV](/toy/cv)
+
+我本人的简历。目前正积极寻求寒假和日常实习。Web 后端，Linux 开发，内核开发岗位均可。
+
 ## [Realpha](/toy/realpha)
 
 精确恢复图片的 Alpha 通道，用于提取透明图标。
