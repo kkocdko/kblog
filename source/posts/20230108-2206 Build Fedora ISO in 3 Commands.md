@@ -13,7 +13,7 @@ Why? In a word, you may be not satisfied by [official build](https://getfedora.o
 
 - Enable more optimization to speed up livecd booting and install progress.
 
-And there's a prebuilt [custom fedora 37 x86_64 iso](https://github.com/kkocdko/utils4fedora/releases/tag/0.2.0).
+And there's a prebuilt [custom fedora 37 x86_64 iso](https://github.com/kkocdko/utils4fedora/releases/tag/0.2.1).
 
 ## How
 
