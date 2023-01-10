@@ -35,7 +35,7 @@ docker run --network=host --privileged -v $(pwd):$(pwd) --name mkimg0 makeimage 
     --make-iso --iso-only --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=22
 ```
 
-Then, see what's produced, `ls -lh ./result/*`.
+Then, see what's produced, `ls -lh ./result/*`. It takes 4 minutes on my machine with local mirror (make download time zero) and 15 minutes on GitHub Actions.
 
 Using docker, easy to build and avoid most of troubles caused by environment.
 
@@ -74,7 +74,7 @@ After that, let's see the command line switches:
 --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=22
 ```
 
-Every time you build the image will take about 1.7 GiB of data traffic. If you want to build multi times, running a local mirror of packages may be a good idea to reduce the time you download packages. I recommend a HTTP proxy caching instead of a traditional mirror which used huge disk space. You can try [squid](http://www.squid-cache.org) or [my server program](https://github.com/kkocdko/ksite/tree/main/src/units/mirror). See how fast it is:
+Every time building the image will take about 1.7 GiB of data traffic, so running a local mirror may be a good idea if you want to build multi times. I recommend a HTTP proxy caching instead of a traditional mirror which used huge disk space. Try [squid](http://www.squid-cache.org) or [my server program](https://github.com/kkocdko/ksite/tree/main/src/units/mirror). See how fast it is:
 
 ```txt
 2023-01-10 07:33:55,507: Starting package installation process
@@ -86,9 +86,9 @@ Every time you build the image will take about 1.7 GiB of data traffic. If you w
 
 ## Troubles
 
-If you search _build fedora install iso_ with Google, the first result is [this one](https://fedoraproject.org/wiki/How_to_create_a_Fedora_install_ISO_for_testing) in Fedora wiki, but it's outdated now (20230110). As a result, I wasted a lot of time.
+If you search "build fedora install iso" with Google, the first result is [this one](https://fedoraproject.org/wiki/How_to_create_a_Fedora_install_ISO_for_testing) in Fedora wiki, but it's outdated now (20230110). As a result, I wasted a lot of time.
 
-Then I found the [osbuild](https://www.osbuild.org), it's a "modern" way, but has many limitations. It may be suitable for some company's IT managers.
+Then I found the [osbuild](https://www.osbuild.org), a "modern" way, but has many limitations. It may be suitable for some company's IT managers.
 
 Finally, I found the right path. [Ultramarine-Linux/build-scripts](https://github.com/Ultramarine-Linux/build-scripts), a distro based on Fedora. Their repo shows the right way to build a custom Fedora image.
 
