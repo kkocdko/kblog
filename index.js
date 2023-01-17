@@ -1,5 +1,5 @@
 /**
- * Generator & Static Server for kblog.
+ * Generator & Static Server.
  */
 import { fileURLToPath } from "node:url";
 import { createServer } from "node:http";
@@ -85,6 +85,7 @@ const makePage = (() => {
     if (isMarkdown) {
       content = `<article><h1>${title}</h1>${marked(content)}</article>`;
       content = minify.htmlMd(content);
+      // bug: console.log(htmlclean(`<article><!-- ## Links --></article>`))
     } else {
       content = minify.html(content);
     }

@@ -74,7 +74,9 @@ patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
   [/\.padStart\(52.+?\)/, "&&location.hostname"],
 ]);
-// strip ./node_modules/@vscode/ripgrep/bin/rg manually?
+// rm -rf ~/.vscode-server/extensions/ms-python.vscode-pylance-*/dist/native/onnxruntime/
+// rm -rf ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/
+// strip ./node_modules/@vscode/ripgrep/bin/rg
 ```
 
 - ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
