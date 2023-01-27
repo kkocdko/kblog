@@ -47,8 +47,8 @@ TODO: use pdf.js
 </style>
 
 <body>
-  <iframe></iframe>
-  <progress></progress>
+  <iframe id="$iframe"></iframe>
+  <progress id="$progress"></progress>
 </body>
 
 <script type="module">
@@ -97,14 +97,14 @@ TODO: use pdf.js
     pageMargins: [50, 40, 50, 40], // left, top, right, bottom
     info: {
       title: lang({
-        en: "The CV of kkocdko (<mock>)",
-        zh: "<mock> (kkocdko) 的简历",
+        en: "The CV of kkocdko (<hidden>)",
+        zh: "<hidden> (kkocdko) 的简历",
       }),
     },
     content: [
       {
         ...{ alignment: "center", fontSize: 18 },
-        text: lang({ en: "kkocdko (<mock>)", zh: "<mock> (kkocdko)" }),
+        text: lang({ en: "kkocdko (<hidden>)", zh: "<hidden> (kkocdko)" }),
       },
       {
         ...{ alignment: "center", fontSize: 11, margin: [0, 10, 0, 4] },
@@ -119,7 +119,7 @@ TODO: use pdf.js
           { text: "kkocdko", link: "https://github.com/kkocdko" },
           "  ·  ",
           "Tel: ",
-          { text: "<mock>" },
+          { text: "<hidden>" },
         ],
       },
       ...section(lang({ en: "Education", zh: "教育经历" }), [
@@ -299,7 +299,15 @@ TODO: use pdf.js
     // }),
   });
   const blobUrl = URL.createObjectURL(await pdf.getBlob());
-  document.querySelector("iframe").src = blobUrl;
-
-  document.querySelector("progress").remove();
+  $iframe.onerror = () => {
+    const aTag = document.createElement("a");
+    aTag.download = "cv-kkocdko.pdf";
+    aTag.href = blobUrl;
+    aTag.style = "margin:1em;font:1.3em/1.5em sans-serif";
+    aTag.textContent =
+      "Click to download PDF (Your browser dosen't support embed PDF)";
+    $iframe.replaceWith(aTag);
+  };
+  $iframe.src = blobUrl;
+  $progress.remove();
 </script>
