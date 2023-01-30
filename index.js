@@ -27,7 +27,11 @@ if (process.argv.includes("develop")) {
   await new Promise(() => {}); // Prevent script from continuing to run
 } else if (process.argv.includes("serve")) {
   const port = 4000;
-  const mime = { html: "text/html;charset=utf8", js: "text/javascript" };
+  const mime = {
+    html: "text/html;charset=utf8",
+    js: "text/javascript",
+    svg: "image/svg+xml",
+  };
   const r2a = path.join.bind(null, path.dirname(modulePath), "public");
   createServer(({ url }, res) => {
     const pair = [
