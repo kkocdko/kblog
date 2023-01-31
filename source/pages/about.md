@@ -3,32 +3,39 @@ name: about
 title: About
 ```
 
-这是我的个人博客。
+> *kkocdko's blog.* 一些独特的技术经验和教程。
 
 自由，无人干涉；清静，没有无逻辑的争辩；以自我为中心，不迁就读者。
 
 ## Contact
 
-Sort by activity from high to low.
+<!-- prettier-ignore -->
+| _Activity from high to low_ |
+| - |
+| [kkocdko - GitHub](https://github.com/kkocdko) |
+| [kkocdko - Telegram](https://t.me/kkocdko) |
+| [kkocdko - V2EX](https://v2ex.com/member/kkocdko) |
+| [kkocdko - Stack Overflow](https://stackoverflow.com/u/11338291) |
+| [kkocdko - Luogu](https://www.luogu.com.cn/user/130329) |
+| [kkocdko - Greasy Fork](https://greasyfork.org/users/197529) |
 
-| Type           | Name                                            |
-| -------------- | ----------------------------------------------- |
-| GitHub         | [kkocdko](https://github.com/kkocdko)           |
-| Telegram       | [kkocdko](https://t.me/kkocdko)                 |
-| V2EX           | [kkocdko](https://v2ex.com/member/kkocdko)      |
-| Stack Overflow | [kkocdko](https://stackoverflow.com/u/11338291) |
-| Luogu          | [kkocdko](https://www.luogu.com.cn/user/130329) |
-| Greasy Fork    | [kkocdko](https://greasyfork.org/users/197529)  |
-| Reddit         | [kkocdko](https://reddit.com/user/kkocdko)      |
-| Zhihu          | [kkocdko](https://zhihu.com/people/kkocdko)     |
-| Bilibili       | [kkocdko](https://space.bilibili.com/22587059)  |
-| WuYou          | [kkocdko](http://wuyou.net/?730300)             |
+<!--
+Deprecated
+| [kkocdko - Reddit](https://reddit.com/user/kkocdko) |
+| [kkocdko - Zhihu](https://zhihu.com/people/kkocdko) |
+| [kkocdko - Bilibili](https://space.bilibili.com/22587059) |
+| [kkocdko - WuYou](http://wuyou.net/?730300) |
+-->
 
 ## Links
 
-| Name    | Address                            |
-| ------- | ---------------------------------- |
-| SomeExp | [someexp.com](https://someexp.com) |
+<!-- prettier-ignore -->
+| (≧▽≦) |
+| - |
+| [Mzdyl's Blog](https://mzdyl.xyz) · 此人声称自己太懒了不打算花时间想一句放在这里的话 |
+| [Karuboniru's Blog](https://yanqiyu.info) · 一位物理大佬，也是 Linux 资深用户 |
+| [SomeExp](https://someexp.com) · 希望世界更开源，透明与自由 |
+| [Kenji Mouri](https://mouri.moe) · 致力于编写使用最少的语法特性和第三方库的紧凑实现 |
 
 ## License
 
