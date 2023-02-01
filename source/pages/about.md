@@ -3,9 +3,11 @@ name: about
 title: About
 ```
 
-> *kkocdko's blog.* 一些独特的技术经验和教程。
+这里是 kkocdko 的博客，记录 kk 的一些 ~~奇技淫巧~~ 独特技术经验和教程。
 
-自由，无人干涉；清静，没有无逻辑的争辩；以自我为中心，不迁就读者。
+<!-- 自由，无人干涉；清静，没有无逻辑的争辩；以自我为中心，不迁就读者。 -->
+
+（本站未开设评论功能，如果你有话想说，请 [在仓库发布 issue](https://github.com/kkocdko/kblog/issues)）
 
 ## Contact
 
