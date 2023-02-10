@@ -70,13 +70,13 @@ const mapstr = (parts, ...inserts) => {
 
 const minify = (() => {
   const htmlStrip /* Strip useless chars, keep "/>" in <svg> */ = (s) =>
-    s.replace(/(?<=>)\s+|\s+(?=<)|(?<!\; )\/(?=>)|; (?=\/>)/g, "");
+    s.replace(/(?<=>)( |\n)+|( |\n)+(?=<)|(?<!\; )\/(?=>)|; (?=\/>)/g, "");
   const f = (s) => s;
-  if (isDev) return { html: htmlStrip, htmlMd: f, css: f, js: f };
+  if (isDev) return { htmlEnhanced: htmlStrip, html: f, css: f, js: f };
   const cssRule = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w:#-])|;\s*(?=})|0(?=\.)/g;
   return {
-    html: (s) => htmlclean(htmlStrip(s)),
-    htmlMd: (s) => htmlclean(s),
+    htmlEnhanced: (s) => htmlclean(htmlStrip(s)),
+    html: (s) => htmlclean(s), // bug: htmlclean(`<p><!-- ## Links --></p>`)
     css: (s) => s.replace(cssRule, ""),
     js: (s) => terser.minify(s, { toplevel: true }).code,
   };
@@ -84,15 +84,11 @@ const minify = (() => {
 
 const makePage = (() => {
   const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
-  const template = minify.html(templateRaw);
+  const template = minify.htmlEnhanced(templateRaw);
   return ({ isMarkdown, path: rpath, title, description = "", content }) => {
-    if (isMarkdown) {
+    if (isMarkdown)
       content = `<article><h1>${title}</h1>${marked(content)}</article>`;
-      content = minify.htmlMd(content);
-      // bug: console.log(htmlclean(`<article><!-- ## Links --></article>`))
-    } else {
-      content = minify.html(content);
-    }
+    content = minify.html(content);
     const result = template
       .replace("/*{title}*/", title)
       .replace("/*{description}*/", description)
@@ -124,11 +120,11 @@ const loadMdFile = (filePath) => {
   const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
   const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
-  const head = minify.html(f`head.html`).replace("/*{style}*/", style);
+  const head = minify.htmlEnhanced(f`head.html`).replace("/*{style}*/", style);
   const bundle = f`bundle.js`
     .replace("/*{avatar}*/", avatar)
     .replace("/*{head}*/", head)
-    .replace("/*{extra}*/", minify.html(f`extra.html`))
+    .replace("/*{extra}*/", minify.htmlEnhanced(f`extra.html`))
     .replace("/*{script}*/", f`main.js`);
   fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
   fs.writeFileSync(p`./public/update.html`, f`update.html`);
@@ -205,7 +201,7 @@ const pages = [];
         <section>
           <h3><a href="/./post/${id}">${title}</a></h3>
           <p>${description}</p>
-          <div>${tags}${(tag) => `<a href="/./tag/${tag}">${tag}</a>`}</div>
+          <div>${tags}${(tag) => `<a href="/./tag/${tag}">${tag}</a> `}</div>
         </section>
         `}
         <nav>
@@ -234,7 +230,7 @@ const pages = [];
     content: mapstr`
       <section>
         <h1><a href="/./archive">Archive</a></h1>
-        ${map}${(_, year) => `<a href="/./archive/${year}">${year}</a>`}
+        ${map}${(_, year) => `<a href="/./archive/${year}">${year}</a> `}
       </section>
     `,
   });
@@ -248,8 +244,7 @@ const pages = [];
           ${list}${({ id, date, title }) => `
           <p>
             <a href="/./post/${id}">
-              <span>${date.slice(5, 10)}</span>
-              ${title}
+              <span>${date.slice(5, 10)}</span> ${title}
             </a>
           </p>
           `}
@@ -274,7 +269,7 @@ const pages = [];
     content: mapstr`
       <section>
         <h1><a href="/./tag">Tag</a></h1>
-        ${map}${(_, tag) => `<a href="/./tag/${tag}">${tag}</a>`}
+        ${map}${(_, tag) => `<a href="/./tag/${tag}">${tag}</a> `}
       </section>
     `,
   });
