@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.73.1`, may become invalid in a future version.
+> Last tested version is `1.75.1`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -47,7 +47,7 @@ export VSCODE_AGENT_FOLDER=./data
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.73.1
+"use strict"; // Last Tested Version: 1.75.1
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, path);
@@ -74,9 +74,36 @@ patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
   [/\.padStart\(52.+?\)/, "&&location.hostname"],
 ]);
+// strip ./node_modules/@vscode/ripgrep/bin/rg
+// strip ./node_modules/node-vsce-sign/bin/vsce-sign
+// rm -rf ~/.vscode-server/extensions/redhat.java-*/jre/
 // rm -rf ~/.vscode-server/extensions/ms-python.vscode-pylance-*/dist/native/onnxruntime/
 // rm -rf ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/
-// strip ./node_modules/@vscode/ripgrep/bin/rg
+```
+
+```js
+const p = () => {}; // const p = console.log;
+class Logger {
+  constructor(loggerType, name, filename, filesize, filecount) {}
+  trace = p;
+  debug = p;
+  info = p;
+  warn = p;
+  error = p;
+  critical = p;
+  getLevel = () => 2;
+  setLevel(level) {}
+  setPattern(pattern) {}
+  clearFormatters() {}
+  flush() {}
+  drop() {}
+}
+const c = (...args) => new Promise((r) => r(new Logger(...args)));
+exports.createRotatingLogger = (...args) => c("rotating", ...args);
+exports.createAsyncRotatingLogger = (...args) => c("rotating_async", ...args);
+exports.setLevel = (level) => {};
+exports.setFlushOn = (level) => {};
+exports.version = 11100;
 ```
 
 - ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
