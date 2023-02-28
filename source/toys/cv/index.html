@@ -13,7 +13,6 @@ TODO: use pdf.js
     src="../veps.js"
   ></script>
   <script src="//cdn.jsdelivr.net/npm/pdfmake@0.3.0-beta.3/build/pdfmake.min.js"></script>
-  <!-- prefetch fonts? -->
 </head>
 
 <style>
@@ -21,10 +20,6 @@ TODO: use pdf.js
     margin: 0;
     height: 100vh;
     display: flex;
-  }
-  iframe {
-    border: none;
-    flex-grow: 1;
   }
   @keyframes spin {
     100% {
@@ -47,7 +42,8 @@ TODO: use pdf.js
 </style>
 
 <body>
-  <iframe id="$iframe"></iframe>
+  <canvas id="$canvas" style="width: 100vw"></canvas>
+  <iframe id="$iframe" style="border: none; flex-grow: 1"></iframe>
   <progress id="$progress"></progress>
 </body>
 
@@ -286,7 +282,7 @@ TODO: use pdf.js
         [
           [
             lang({ en: "TODO", zh: "寻求实习岗位" }),
-            "寒假和日常实习. Web 后端, Linux 开发, 内核开发岗位均可.",
+            "日常实习和暑期实习. Web 后端, Linux 开发岗位均可.",
           ],
         ],
       ]),
@@ -298,16 +294,27 @@ TODO: use pdf.js
     //   ...{ alignment: "center", fontSize: 10, margin: [0, 8, 0, 0] },
     // }),
   });
-  const blobUrl = URL.createObjectURL(await pdf.getBlob());
-  $iframe.onerror = () => {
-    const aTag = document.createElement("a");
-    aTag.download = "cv-kkocdko.pdf";
-    aTag.href = blobUrl;
-    aTag.style = "margin:1em;font:1.3em/1.5em sans-serif";
-    aTag.textContent =
-      "Click to download PDF (Your browser dosen't support embed PDF)";
-    $iframe.replaceWith(aTag);
-  };
-  $iframe.src = blobUrl;
+  let pdfBlob = await pdf.getBlob();
+  {
+    await import("//cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.js");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.worker.min.js`;
+    const doc = await pdfjsLib.getDocument(await pdfBlob.arrayBuffer()).promise;
+    const page = await doc.getPage(1);
+    const viewport = page.getViewport({ scale: 3 * devicePixelRatio });
+    $canvas.width = viewport.width;
+    $canvas.height = viewport.height;
+    page.render({ viewport, canvasContext: $canvas.getContext("2d") });
+  }
+  // const blobUrl = URL.createObjectURL(pdfBlob);
+  // $iframe.onerror = () => {
+  //   const aTag = document.createElement("a");
+  //   aTag.download = "cv-kkocdko.pdf";
+  //   aTag.href = blobUrl;
+  //   aTag.style = "margin:1em;font:1.3em/1.5em sans-serif";
+  //   aTag.textContent =
+  //     "Click to download PDF (Your browser dosen't support embed PDF)";
+  //   $iframe.replaceWith(aTag);
+  // };
+  // $iframe.src = blobUrl;
   $progress.remove();
 </script>
