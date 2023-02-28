@@ -12,7 +12,7 @@ TODO: use pdf.js
     :version="0.1.1-beta"
     src="../veps.js"
   ></script>
-  <script src="//cdn.jsdelivr.net/npm/pdfmake@0.3.0-beta.3/build/pdfmake.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pdfmake@0.3.0-beta.5/build/pdfmake.min.js"></script>
 </head>
 
 <style>
@@ -42,7 +42,6 @@ TODO: use pdf.js
 </style>
 
 <body>
-  <canvas id="$canvas" style="width: 100vw"></canvas>
   <iframe id="$iframe" style="border: none; flex-grow: 1"></iframe>
   <progress id="$progress"></progress>
 </body>
@@ -57,6 +56,7 @@ TODO: use pdf.js
     //   normal: `https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-mono@4.5.12/files/noto-sans-mono-latin-400-normal.woff`,
     // },
   });
+  const link = (text, link) => ({ text, link, decoration: "underline" });
   const section = (
     title = "Title",
     entrys = [[["Entry 0:", "Root", "2022.01"], "Leaf 0", "Leaf 1"]]
@@ -68,7 +68,6 @@ TODO: use pdf.js
         ...{ paddingTop: () => 4, paddingLeft: () => 0, paddingRight: () => 0 },
       },
       fontSize: 10,
-      lineHeight: 0.8,
       table: {
         widths: ["*", "auto"],
         body: entrys.flatMap(([r, ...ls] /* root, leafs */) => [
@@ -78,17 +77,18 @@ TODO: use pdf.js
                 { ...(r[0].text ? r[0] : { text: r[0] }), fontSize: 11 },
                 " : " + r[1],
               ],
+              margin: [0, 0, 0, -2],
             },
             { text: r[2] || "", alignment: "right" },
           ],
-          ...ls.map((l) => [{ text: "·  " + l, margin: [2, 0, 0, 0] }, ""]),
+          ...ls.map((l) => [{ text: "·  " + l, margin: [2, -1, 0, -1] }, ""]),
         ]),
       },
     },
   ];
   const pdf = pdfMake.createPdf({
-    defaultStyle: { font: "default" },
-    compress: false, // better speed on dev
+    defaultStyle: { font: "default", decorationStyle: "dotted" },
+    compress: true, // better speed on dev
     pageSize: { width: 595.28 /* A4 width */, height: "auto" },
     pageMargins: [50, 40, 50, 40], // left, top, right, bottom
     info: {
@@ -106,18 +106,26 @@ TODO: use pdf.js
         ...{ alignment: "center", fontSize: 11, margin: [0, 10, 0, 4] },
         text: [
           "Mail: ",
-          { text: "kkocdko@gmail.com", link: "mailto:kkocdko@email.com" },
+          link("kkocdko@gmail.com", "mailto:kkocdko@email.com"),
           "  ·  ",
           "Site: ",
-          { text: "kkocdko.site", link: "https://kkocdko.site" },
+          link("kkocdko.site", "https://kkocdko.site"),
           "  ·  ",
           "GitHub: ",
-          { text: "kkocdko", link: "https://github.com/kkocdko" },
+          link("kkocdko", "https://github.com/kkocdko"),
           "  ·  ",
           "Tel: ",
-          { text: "<hidden>" },
+          link("<hidden>", "tel:+86 <hidden>"),
         ],
       },
+      ...section(lang({ en: "TODO", zh: "意向" }), [
+        [
+          [
+            lang({ en: "TODO", zh: "寻求实习岗位" }),
+            "日常实习和暑期实习. Web 后端, Linux 开发岗位均可.",
+          ],
+        ],
+      ]),
       ...section(lang({ en: "Education", zh: "教育经历" }), [
         [
           [
@@ -194,7 +202,7 @@ TODO: use pdf.js
       ...section(lang({ en: "Open Source Contributions", zh: "开源贡献" }), [
         [
           [
-            { text: "ricq", link: "https://github.com/lz1998/ricq" },
+            link("ricq", "https://github.com/lz1998/ricq"),
             lang({
               en: "TODO",
               zh: "(作为贡献者) Rust 实现的 QQ 机器人协议库, 高性能低占用.",
@@ -206,7 +214,7 @@ TODO: use pdf.js
         ],
         [
           [
-            { text: "ksite", link: "https://github.com/kkocdko/ksite" },
+            link("ksite", "https://github.com/kkocdko/ksite"),
             lang({
               en: "TODO",
               zh: "多合一 Web 服务端程序, 包含 简易代理, QQ 机器人, 剪贴板, 新闻聚合, 及其他零碎功能.",
@@ -219,7 +227,7 @@ TODO: use pdf.js
         ],
         [
           [
-            { text: "kblog", link: "https://github.com/kkocdko/kblog" },
+            link("kblog", "https://github.com/kkocdko/kblog"),
             lang({
               en: "TODO",
               zh: "个人博客, 记录一些独特的原创技术经验和教程.",
@@ -230,10 +238,7 @@ TODO: use pdf.js
         ],
         [
           [
-            {
-              text: "clevert",
-              link: "https://github.com/kkocdko/clevert",
-            },
+            link("clevert", "https://github.com/kkocdko/clevert"),
             lang({
               en: "TODO",
               zh: "可扩展, 并行化的文件格式转换器.",
@@ -248,10 +253,10 @@ TODO: use pdf.js
         ],
         [
           [
-            {
-              text: "others",
-              link: "https://github.com/pulls?q=is%3Apr+author%3Akkocdko",
-            },
+            link(
+              "others",
+              "https://github.com/pulls?q=is%3Apr+author%3Akkocdko"
+            ),
             "向 vscode, axum, actix-web 等项目提交过补丁.",
           ],
         ],
@@ -269,23 +274,16 @@ TODO: use pdf.js
         ],
         [
           [
-            {
-              text: "江苏科技大学计算机协会",
-              link: "https://github.com/orgs/just-ca-unofficial/projects/1",
-            },
+            link(
+              "江苏科技大学计算机协会",
+              "https://github.com/orgs/just-ca-unofficial/projects/1"
+            ),
             lang({ en: "As Mascot", zh: "担任吉祥物" }),
             "2022.07 - 当下",
           ],
         ],
       ]),
-      ...section(lang({ en: "TODO", zh: "意向" }), [
-        [
-          [
-            lang({ en: "TODO", zh: "寻求实习岗位" }),
-            "日常实习和暑期实习. Web 后端, Linux 开发岗位均可.",
-          ],
-        ],
-      ]),
+      // https://kkocdko.site/toy/cv
       // 实习经历
       // 其他
     ],
@@ -294,27 +292,17 @@ TODO: use pdf.js
     //   ...{ alignment: "center", fontSize: 10, margin: [0, 8, 0, 0] },
     // }),
   });
-  let pdfBlob = await pdf.getBlob();
-  {
-    await import("//cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.js");
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdn.jsdelivr.net/npm/pdfjs-dist@3.4.120/build/pdf.worker.min.js`;
-    const doc = await pdfjsLib.getDocument(await pdfBlob.arrayBuffer()).promise;
-    const page = await doc.getPage(1);
-    const viewport = page.getViewport({ scale: 3 * devicePixelRatio });
-    $canvas.width = viewport.width;
-    $canvas.height = viewport.height;
-    page.render({ viewport, canvasContext: $canvas.getContext("2d") });
+  const blobUrl = URL.createObjectURL(await pdf.getBlob());
+  if (navigator.pdfViewerEnabled) {
+    $iframe.src = blobUrl;
+  } else {
+    const aTag = document.createElement("a");
+    aTag.download = "cv-kkocdko.pdf";
+    aTag.href = blobUrl;
+    aTag.style = "margin:1em;font:1.3em/1.5em sans-serif";
+    aTag.textContent =
+      "Click to download PDF (Your browser dosen't support embed PDF)";
+    $iframe.replaceWith(aTag);
   }
-  // const blobUrl = URL.createObjectURL(pdfBlob);
-  // $iframe.onerror = () => {
-  //   const aTag = document.createElement("a");
-  //   aTag.download = "cv-kkocdko.pdf";
-  //   aTag.href = blobUrl;
-  //   aTag.style = "margin:1em;font:1.3em/1.5em sans-serif";
-  //   aTag.textContent =
-  //     "Click to download PDF (Your browser dosen't support embed PDF)";
-  //   $iframe.replaceWith(aTag);
-  // };
-  // $iframe.src = blobUrl;
   $progress.remove();
 </script>
