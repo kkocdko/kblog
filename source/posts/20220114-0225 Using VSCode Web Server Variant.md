@@ -47,7 +47,7 @@ export VSCODE_AGENT_FOLDER=./data
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.75.1
+"use strict"; // Last Tested Version: 1.76.0
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, path);
@@ -81,6 +81,20 @@ patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
 // rm -rf ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/
 ```
 
+- ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
+
+Because [node-spdlog](https://github.com/microsoft/node-spdlog) and [node-pty](https://github.com/microsoft/node-pty) were both use NAN, so cross NodeJS version is hard to do (especially when you want pointer compression enabled). You can use a faked spdlog and [daniel-brenot's node-pty fork](https://github.com/daniel-brenot/node-pty).
+
+```json
+{
+  "name": "spdlog",
+  "version": "0.13.7",
+  "description": "Faked Node bindings for spdlog",
+  "main": "index.js",
+  "license": "MIT"
+}
+```
+
 ```js
 const p = () => {}; // const p = console.log;
 class Logger {
@@ -105,5 +119,3 @@ exports.setLevel = (level) => {};
 exports.setFlushOn = (level) => {};
 exports.version = 11100;
 ```
-
-- ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).

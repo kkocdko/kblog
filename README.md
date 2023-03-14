@@ -1,8 +1,8 @@
 # kblog
 
-[![Address](https://img.shields.io/badge/address-kkocdko.site-2a4)](https://kkocdko.site)
-[![Size](https://img.shields.io/badge/brotil%20size-2.7%20KB-2a4)](https://kkocdko.site/res/20210612-0010-001.webp)
-[![License](https://img.shields.io/github/license/kkocdko/kblog?color=2a4)](LICENSE)
+[![Address](https://img.shields.io/badge/address-kkocdko.site-293?style=flat)](https://kkocdko.site)
+[![Size](https://img.shields.io/badge/brotil%20size-2.7%20KB-293?style=flat)](https://kkocdko.site/res/20210612-0010-001.webp)
+[![License](https://img.shields.io/github/license/kkocdko/kblog?style=flat&color=293)](LICENSE)
 
 My Blog · 3 KB · Single Page · Material Design
 
