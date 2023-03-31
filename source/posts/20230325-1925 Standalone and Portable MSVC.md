@@ -25,3 +25,13 @@ nmake.exe = 14.35.32216.1
 msbuild.exe = no included
 windows sdk = 10.0.22621.0
 ```
+
+## Pros
+
+- Lightweight. x86_64 only and 100+ MiB package size. Offical VS Build Tools included many arch's cross compiler, with 1.9 GiB package and about 8 GiB expanded size.
+
+- Less limitation. Offical VS Build Tools force you to have .NET runtime, will cause many problems in special environment.
+
+## Cons
+
+- No MSBuild included.

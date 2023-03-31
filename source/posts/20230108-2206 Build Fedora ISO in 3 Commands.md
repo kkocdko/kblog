@@ -13,7 +13,7 @@ Why? In a word, you may be not satisfied by [official build](https://getfedora.o
 
 - Enable more optimization to speed up livecd booting and install progress.
 
-And there's a prebuilt [custom fedora 37 x86_64 iso](https://github.com/kkocdko/utils4fedora/releases/tag/0.2.1).
+And there's a prebuilt [custom fedora 37 x86_64 iso](https://github.com/kkocdko/utils4fedora/releases/tag/0.2.2).
 
 ## How
 
@@ -23,16 +23,18 @@ As the title, we only needs 3 commands:
 # sudo -i # or add sudo before every command
 # setenforce 0 # if you get any errors like memory permission
 
-# 1. clone this repo
-git clone --depth=1 https://github.com/kkocdko/utils4fedora
+# clone this repo
+git clone --depth=1 https://github.com/kkocdko/utils4fedora ; cd utils4fedora
 
-# 2. build the docker image
-docker build -t makeimage utils4fedora/makeimage
+# build the docker image
+docker build -t mkimg mkimg
 
-# 3. build your custom fedora iso!
-docker run --network=host --privileged -v $(pwd):$(pwd) --name mkimg0 makeimage \
-    $(pwd)/utils4fedora/makeimage/custom.ks $(pwd)/result \
-    --make-iso --iso-only --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=22
+# build your custom fedora iso!
+docker run --privileged -v `pwd`/mkimg:/mkimg --rm --name mkimg0 mkimg \
+  --make-iso --iso-only --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=22
+
+# see what's produced
+# ls -lh ./mkimg/result/*
 ```
 
 Then, see what's produced, `ls -lh ./result/*`. It takes 4 minutes on my machine with local mirror (make download time zero) and 15 minutes on GitHub Actions.
@@ -147,21 +149,21 @@ sys	0m2.653s
 ```
 
 ```sh
-cd /tmp/lmc ; rm -rf * ; cp /home/kkocdko/misc/code/utils4fedora/makeimage/custom.test.ks .
+cd /tmp/lmc ; rm -rf * ; cp /home/kkocdko/misc/code/utils4fedora/mkimg/custom.test.ks .
 docker kill mkimg0 ; docker rm mkimg0
-docker run -it --network=host --privileged -v $(pwd):$(pwd) --name mkimg0 makeimage $(pwd)/custom.test.ks $(pwd)/result0 --make-iso --iso-only --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=1
+docker run -it --network=host --privileged -v $(pwd):$(pwd) --name mkimg0 mkimg $(pwd)/custom.test.ks $(pwd)/result0 --make-iso --iso-only --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=1
 
 qemu-kvm -machine q35 -device qemu-xhci -device usb-tablet -cpu host -smp 4 -m 2G -cdrom /tmp/lmc/result0/boot.iso
 
-docker cp mkimg0:/fedora-kickstarts/makeimage.ks ./mk.ks
+docker cp mkimg0:/fedora-kickstarts/mkimg.ks ./mk.ks
 
 LiveOS_rootfs
 
 noxattrs is not bootable
 
-docker run --network=host --privileged -v $(pwd):$(pwd) --name makeimage-0-0 -it --entrypoint /bin/bash makeimage-0
+docker run --network=host --privileged -v $(pwd):$(pwd) --name mkimg-0-0 -it --entrypoint /bin/bash mkimg-0
 
-sudo docker run --network=host --privileged -v $(pwd):$(pwd) --name makeimage-0 -it --entrypoint /bin/bash makeimage
+sudo docker run --network=host --privileged -v $(pwd):$(pwd) --name mkimg-0 -it --entrypoint /bin/bash mkimg
 
 46.71 MB iwlax2xx-firmware
 
@@ -180,14 +182,14 @@ exit
 # ==============================
 
 sudo sh -c "systemctl kill docker && rm -rf /tmp/docker && systemctl start docker"
-sudo docker run --network=host --hostname docker --name makeimage --privileged=true --cap-add=SYS_ADMIN -d fedora:37 tail -f /dev/null
-sudo docker exec -it makeimage bash
+sudo docker run --network=host --hostname docker --name mkimg --privileged=true --cap-add=SYS_ADMIN -d fedora:37 tail -f /dev/null
+sudo docker exec -it mkimg bash
 
 sudo livemedia-creator \
     --make-iso \
     --no-virt \
     --resultdir ./result \
-    --ks makeimage.ks \
+    --ks mkimg.ks \
     --logfile livemedia-creator.log \
     --fs-label ultramarine-G-x86_64 \
     --project 'Ultramarine Linux' \
