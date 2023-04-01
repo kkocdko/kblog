@@ -15,26 +15,32 @@ Why? In a word, you may be not satisfied by [official build](https://getfedora.o
 
 And there's a prebuilt [custom fedora 37 x86_64 iso](https://github.com/kkocdko/utils4fedora/releases/tag/0.2.2).
 
+<details>
+<summary>About this prebuilt ISO (Click to show)</summary>
+
+- Remove rarely used packages like gnome-weather to reduce size.
+
+- Use ZSTD compression instead of XZ.
+
+- Use [adw-gtk3](https://github.com/lassekongo83/adw-gtk3) theme to improve the style of gtk3 apps.
+
+</details>
+
 ## How
 
 As the title, we only needs 3 commands:
 
 ```sh
-# sudo -i # or add sudo before every command
-# setenforce 0 # if you get any errors like memory permission
+# sudo setenforce 0 # if you get any errors like memory permission
 
-# clone this repo
-git clone --depth=1 https://github.com/kkocdko/utils4fedora ; cd utils4fedora
+# Clone repo
+git clone --depth=1 https://github.com/kkocdko/utils4fedora
 
-# build the docker image
-docker build -t mkimg mkimg
+# Change dir
+cd utils4fedora/mkimg
 
-# build your custom fedora iso!
-docker run --privileged -v `pwd`/mkimg:/mkimg --rm --name mkimg0 mkimg \
-  --make-iso --iso-only --compression zstd --compress-arg=-b --compress-arg=1M --compress-arg=-Xcompression-level --compress-arg=22
-
-# see what's produced
-# ls -lh ./mkimg/result/*
+# chmod +x mkimg
+./mkimg # needs docker and sudo inner
 ```
 
 Then, see what's produced, `ls -lh ./result/*`. It takes 4 minutes on my machine with local mirror (make download time zero) and 15 minutes on GitHub Actions.
