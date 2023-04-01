@@ -1,10 +1,5 @@
 {
   "type": "module",
-  "scripts": {
-    "develop": "node index.js develop",
-    "generate": "node index.js generate",
-    "serve": "node index.js serve"
-  },
   "dependencies": {
     "htmlclean": "3.0.8",
     "marked": "0.7.0",

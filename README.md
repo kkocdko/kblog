@@ -16,6 +16,13 @@ A unique blog solution, which is:
 
 - 💎 Pretty, follow Material Design.
 
+## Usage
+
+```sh
+# npm i # or download node_modules from release page
+node . serve # serve | generate | develop
+```
+
 ## Contributing
 
 Follow [prettier](https://github.com/prettier/prettier) and [stylelint-config-recess-order](https://github.com/stormwarning/stylelint-config-recess-order).
