@@ -18,7 +18,7 @@ There are not a command line option, so we need to modify the source code<sup>(1
   209 | /*
 ```
 
-Compiling it following [offical tutorial](https://www.qemu.org/download/) (or [prebuild binary](https://github.com/kkocdko/kblog/releases/download/0.0.5/qemu-img-zstd-extreme.zip)). Here some tips:
+Compiling it following [offical tutorial](https://www.qemu.org/download/) (or [prebuilt binary](https://github.com/kkocdko/kblog/releases/download/simple_storage/qemu-img-zstd-extreme.zip)). Here some tips:
 
 ```sh
 # (Fedora) Install dependencies

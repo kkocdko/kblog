@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.75.1`, may become invalid in a future version.
+> Last tested version is `1.77.3`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -47,7 +47,7 @@ export VSCODE_AGENT_FOLDER=./data
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.76.0
+"use strict"; // Last Tested Version: 1.77.3
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, path);
@@ -74,11 +74,9 @@ patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
   [/\.padStart\(52.+?\)/, "&&location.hostname"],
 ]);
-// strip ./node_modules/@vscode/ripgrep/bin/rg
-// strip ./node_modules/node-vsce-sign/bin/vsce-sign
 // rm -rf ~/.vscode-server/extensions/redhat.java-*/jre/
-// rm -rf ~/.vscode-server/extensions/ms-python.vscode-pylance-*/dist/native/onnxruntime/
 // rm -rf ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/
+// rm -rf ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
 ```
 
 - ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
@@ -96,26 +94,25 @@ Because [node-spdlog](https://github.com/microsoft/node-spdlog) and [node-pty](h
 ```
 
 ```js
-const p = () => {}; // const p = console.log;
-class Logger {
-  constructor(loggerType, name, filename, filesize, filecount) {}
-  trace = p;
-  debug = p;
-  info = p;
-  warn = p;
-  error = p;
-  critical = p;
-  getLevel = () => 2;
-  setLevel(level) {}
-  setPattern(pattern) {}
-  clearFormatters() {}
-  flush() {}
-  drop() {}
+const fs = require("node:fs");
+const path = require("node:path");
+function Logger(name, filepath) {
+  fs.mkdirSync(path.dirname(filepath), { recursive: true });
+  const fd = fs.openSync(filepath, "a");
+  this.trace = (v) =>
+    fs.write(fd, `[${Date.now()}] ${v.trimEnd()}\n`, () => {});
+  this.debug = this.info = this.warn = this.error = this.critical = this.trace;
+  this.getLevel = () => 2;
+  this.setLevel = this.setPattern = this.clearFormatters = () => {};
+  this.flush = () => fs.fsync(fd, () => {});
+  this.drop = () => fs.close(fd);
 }
-const c = (...args) => new Promise((r) => r(new Logger(...args)));
-exports.createRotatingLogger = (...args) => c("rotating", ...args);
-exports.createAsyncRotatingLogger = (...args) => c("rotating_async", ...args);
-exports.setLevel = (level) => {};
-exports.setFlushOn = (level) => {};
+const createLogger = (_1, name, filepath, _2, _3) =>
+  new Promise((resolve) => resolve(new Logger(name, filepath)));
+exports.createRotatingLogger = (name, filepath, maxFileSize, maxFiles) =>
+  createLogger("rotating", name, filepath, maxFileSize, maxFiles);
+exports.createAsyncRotatingLogger = (name, filepath, maxFileSize, maxFiles) =>
+  createLogger("rotating_async", name, filepath, maxFileSize, maxFiles);
+exports.setLevel = exports.setFlushOn = () => {};
 exports.version = 11100;
 ```
