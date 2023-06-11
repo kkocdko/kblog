@@ -5,11 +5,16 @@
   <!-- <script :name="CV" :description="The CV of kkocdko" :version="0.2.0-beta" src="../veps.js"></script> -->
 </head>
 
+<!--
+/opt/google/chrome/chrome --headless --disable-pdf-tagging --no-pdf-header-footer --print-to-pdf=out.pdf index.html
+https://github.com/puppeteer/puppeteer/issues/4768
+-->
+
 <style>
-  /* https://github.com/puppeteer/puppeteer/issues/4768 */
   @font-face {
     font-family: "Noto Serif SC";
-    src: url("https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.3/files/noto-serif-sc-chinese-simplified-400-normal.woff2");
+    font-display: block;
+    src: url("https://registry.npmmirror.com/@fontsource/noto-serif-sc/5.0.3/files/files/noto-serif-sc-chinese-simplified-400-normal.woff2");
   }
   @page {
     size: A4;
@@ -20,7 +25,7 @@
     html {
       color-scheme: light dark;
       min-width: fit-content;
-      padding: 20mm 10mm;
+      margin: 8vh max(10mm, calc(50% - 105mm));
     }
   }
   * {
@@ -34,8 +39,6 @@
     width: 210mm;
     height: 297mm;
     padding: 10mm 18mm;
-    margin: 0 auto;
-    overflow: auto;
     font: 10pt / 1.75 "Noto Serif SC";
     box-shadow: 0 0 0 1px #888;
     --underline: repeating-linear-gradient(90deg, #888 0 1pt, #0000 1pt 3pt) 0 100% / 100% 0.5pt no-repeat;
@@ -172,10 +175,6 @@
   </p>
   <!-- <h2>实习经历</h2> -->
 </main>
-
-<!--
-/opt/google/chrome/chrome --headless --disable-pdf-tagging --no-pdf-header-footer --print-to-pdf=out.pdf index.html
--->
 
 <script>
   document.body.firstChild.innerHTML.replace(/\[hidden-.+?\]/g, (v) => {
