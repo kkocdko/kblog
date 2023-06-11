@@ -20,6 +20,7 @@ const inWindow = async () => {
   };
   {
     const lcg = (cur) => (25214903917 * cur) & 65535; // lcg random generator
+    // const lcg = (cur) => (1103515245 * lcgSeed + 12345) % 2147483648;
     const text = document.baseURI.split("/").at(-2).toUpperCase();
     let sum = 0;
     for (let i = text.length; i--; ) sum = lcg(sum) + 13 * text.charCodeAt(i);
