@@ -31,7 +31,7 @@ Then, use this command:
 ```sh
 watch -n 0.1 \
 ~/misc/apps/ffmpeg \
-  -f kmsgrab -device /dev/dri/card1 -framerate 60 -i - -vf 'hwmap=derive_device=vaapi,scale_vaapi=format=nv12' -c:v h264_vaapi -profile:v high \
+  -f kmsgrab -device /dev/dri/card1 -framerate 30 -i - -vf 'hwmap=derive_device=vaapi,scale_vaapi=format=nv12' -c:v h264_vaapi -profile:v high \
   -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:8554/mystream
 
 ~/misc/apps/ffmpeg -re -stream_loop -1 -i ../dxchannel-callducks.mp4 -c copy -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:8554/mystream
