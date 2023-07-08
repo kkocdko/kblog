@@ -44,10 +44,10 @@ But you may find that in some languages, the print statement does immediately sy
 
 Reference:
 
-https://askubuntu.com/questions/66195/what-is-a-tty-and-how-do-i-access-a-tty
+- https://askubuntu.com/q/66195
 
-https://unix.stackexchange.com/questions/13724/file-descriptors-shell-scripting
+- https://unix.stackexchange.com/q/13724
 
-https://stackoverflow.com/questions/21778850/process-connected-to-separate-pty-for-stdout-and-stderr
+- https://stackoverflow.com/q/21778850
 
-https://stackoverflow.com/questions/4057985/disabling-stdout-buffering-of-a-forked-process/4058037#4058037
+- https://stackoverflow.com/a/4058037

@@ -40,14 +40,14 @@ Linux 中的 TTY 是个历史悠久的玩意儿。通过串口或 ttyUSB 是最�
 
 这里有一个特别的知识点：很多人认为 `puts("\n")` 会 [`sync`](https://man7.org/linux/man-pages/man2/sync.2.html) stdout 的缓冲区，其实这是错误的。**“在遇到换行符时刷新”是由 PTY 提供的，stdout 只是 fd 1 而已，并没有这样的特异功能**。如果你使用 hook 或者别的手段，实时观察 stdout，就能明确这一点。
 
-但你可能会发现，在某些语言中，print 语句确实会立刻刷新或在换行时 sync stdout，例如 Golang 的 `fmt.Println("hi")`。这是语言或语言标准库自行作出的操作。如非必要，我们不应当依赖这种语言或库的特定行为。
+但你可能会发现，在某些语言中，print 语句确实会立刻或在换行时 sync stdout，例如 Golang 的 `fmt.Println("hi")`。这是语言或语言标准库自行作出的操作。如非必要，我们不应当依赖这种语言或库的特定行为。
 
 参考文章如下：
 
-https://askubuntu.com/questions/66195/what-is-a-tty-and-how-do-i-access-a-tty
+- https://askubuntu.com/q/66195
 
-https://unix.stackexchange.com/questions/13724/file-descriptors-shell-scripting
+- https://unix.stackexchange.com/q/13724
 
-https://stackoverflow.com/questions/21778850/process-connected-to-separate-pty-for-stdout-and-stderr
+- https://stackoverflow.com/q/21778850
 
-https://stackoverflow.com/questions/4057985/disabling-stdout-buffering-of-a-forked-process/4058037#4058037
+- https://stackoverflow.com/a/4058037

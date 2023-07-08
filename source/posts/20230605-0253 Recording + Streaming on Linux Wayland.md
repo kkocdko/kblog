@@ -1,6 +1,6 @@
 ```
 title: Recording + Streaming on Linux Wayland
-date: 2023.06.05 02:52
+date: 2023.06.05 02:53
 tags: Tutorial Linux
 description: FFMpeg's kmsgrab
 ```
