@@ -22,17 +22,17 @@ docker run -d --name kblog ubuntu tail -f /dev/null
 docker exec -it kblog df
 ```
 
-But if you write commands above to file `a.sh` and run `a.sh >a.txt`, you will see a Docker error in `a.txt`: `... input device is not a TTY ... `.
+But if you write commands above to file `a.sh` and run `a.sh >a.txt`, you will see `... input device is not a TTY ... ` in `a.txt`.
 
 According to [docs](https://docs.docker.com/engine/reference/commandline/run/#name), the `-t` switch will alloc a pseudo-TTY. What does this mean? Let's start with the phenomenon: **without `-i`**, the `read` command inside the container can't read user input from stdin; **without `-t`**, you can't use the `Ctrl + C` to send SIGINT / SIGTERM to exit the program.
 
 So we often use `-it` to make running a program inside a container work like running it natively (blocking, able to type in, able to use the Ctrl + some key). But since the `docker` command is not in a pty environment when using redirect / as a child process, the `-t` option then causes error.
 
-The solution for most people is [removing `-t` switch](https://stackoverflow.com/a/48230089/11338291) or use some auto-detection to remove. But this may require huge command modifications, bringing a lot of inconsistencies.
+The most popular solution is [removing `-t` switch](https://stackoverflow.com/a/48230089/11338291), or use some auto-detection to remove, which require huge modifications in existing shell script, bringing a lot of inconsistencies.
 
 I think a better way would be to:
 
-Use the `script` command, which provides the ability to run commands innner pty. Just `script -c 'a.sh' a.txt`, then `docker exec -it kblog df` in `a.sh` will no longer report errors. If you don't need to save the output, just change the last argument to `/dev/null`.
+Use the `script` command, it provides the ability to run commands innner pty. Just `script -c 'a.sh' a.txt`, then `docker exec -it kblog df` in `a.sh` will no longer report errors. If you don't need to save the output, just change the last argument to `/dev/null`.
 
 ## Extra
 
