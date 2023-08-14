@@ -5,7 +5,7 @@
   <script
     :name="QR Code"
     :description="Generate QR Code and allow select mask function."
-    :version="0.1.7"
+    :version="0.1.9"
     src="../veps.js"
   ></script>
   <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
@@ -51,14 +51,14 @@
     $o.innerHTML = qr.createSvgTag(1, 1); // (block, margin)
   };
   $i.oninput();
-  (async () => {
+  setTimeout(async () => {
     const url = document.querySelector('[src$="qrcode.js"]').src;
     const src = await (await fetch(url)).text();
     const idx = src.indexOf("pattern;");
     eval(src.slice(0, idx) + "window.qrmask??" + src.slice(idx));
     window.qrcode = qrcode;
     $mask.removeAttribute("disabled");
-  })();
+  }, 100);
   $mask.oninput = () => {
     window.qrmask = $mask.value === "" ? undefined : +$mask.value;
     if (qrmask < 0 || qrmask > 7 || $mask.value.includes(".")) {
