@@ -3,12 +3,12 @@
 <head>
   <base href="/toy/qrcode/" />
   <script
-    :name="QRCode"
-    :description="Generate QRCode."
-    :version="0.1.5"
+    :name="QR Code"
+    :description="Generate QR Code and allow select mask function."
+    :version="0.1.7"
     src="../veps.js"
   ></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
 </head>
 
 <style>
@@ -33,11 +33,12 @@
 <body>
   <div id="$o"></div>
   <select id="$level">
-    <option value="L" selected>7%</option>
-    <option value="M">15%</option>
-    <option value="Q">25%</option>
-    <option value="H">30%</option>
+    <option value="L" selected>Level L (7%)</option>
+    <option value="M">Level M (15%)</option>
+    <option value="Q">Level Q (25%)</option>
+    <option value="H">Level H (30%)</option>
   </select>
+  <input id="$mask" placeholder="Custom mask (0-7)" type="number" disabled />
   <input id="$i" placeholder="Input content here" />
 </body>
 
@@ -50,4 +51,20 @@
     $o.innerHTML = qr.createSvgTag(1, 1); // (block, margin)
   };
   $i.oninput();
+  (async () => {
+    const url = document.querySelector('[src$="qrcode.js"]').src;
+    const src = await (await fetch(url)).text();
+    const idx = src.indexOf("pattern;");
+    eval(src.slice(0, idx) + "window.qrmask??" + src.slice(idx));
+    window.qrcode = qrcode;
+    $mask.removeAttribute("disabled");
+  })();
+  $mask.oninput = () => {
+    window.qrmask = $mask.value === "" ? undefined : +$mask.value;
+    if (qrmask < 0 || qrmask > 7 || $mask.value.includes(".")) {
+      qrmask = undefined;
+      return alert("Custom mask allows only 0-7");
+    }
+    $i.oninput();
+  };
 </script>

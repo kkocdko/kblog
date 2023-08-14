@@ -33,7 +33,7 @@ CPU & GPU 压力测试，烤机助手。
 
 ### [QRCode Generator](/toy/qrcode)
 
-二维码生成器，生成 SVG 矢量图。
+二维码生成器，允许自行选择掩模函数。生成 SVG 矢量图。
 
 ### [Markdown](/toy/markdown)
 
