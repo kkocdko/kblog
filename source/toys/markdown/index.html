@@ -5,14 +5,14 @@
   <script
     :name="Markdown"
     :description="Simple markdown preview."
-    :version="0.2.2"
+    :version="0.2.4"
     src="../veps.js"
   ></script>
   <link
     rel="stylesheet"
-    href="//cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css"
+    href="//registry.npmmirror.com/github-markdown-css/5.2.0/files/github-markdown.css"
   />
-  <script src="//cdnjs.cloudflare.com/ajax/libs/marked/4.1.1/marked.min.js"></script>
+  <script src="//registry.npmmirror.com/marked/7.0.3/files/marked.min.js"></script>
 </head>
 
 <style>
@@ -50,8 +50,7 @@
 </body>
 
 <script>
-  $tips.onclick = () =>
-    ($i.style.display = $i.style.display === "none" ? "" : "none");
-  $i.oninput = () => ($o.innerHTML = marked.parse($i.value));
+  $tips.onclick = () => void ($i.style.display = $i.offsetHeight ? "none" : "");
+  $i.oninput = () => void ($o.innerHTML = marked.parse($i.value));
   $i.oninput();
 </script>
