@@ -5,7 +5,7 @@
   // https://www.zhihu.com/question/29456069 | https://zhuanlan.zhihu.com/p/400044029 | https://zhuanlan.zhihu.com/p/19990906 | https://gist.github.com/salipro4ever/e234addf92eb80f1858f | https://en.wikipedia.org/wiki/RC4 | https://www.zhihu.com/market/pub/119564870/manuscript/975092965525442560 | https://github.com/rust-lang/rust/blob/1.72.0/library/core/src/escape.rs#L17-L31
   // prettier-ignore
   function rc4(k,v){let s=[...Array(256).keys()],x,r="",i=0,j=0;for(;i<256;i++){j=(j+s[i]+k.charCodeAt(i%k.length))%256;x=s[i];s[i]=s[j];s[j]=x;}i=0;j=0;for(let c of v){i=(i+1)%256;j=(j+s[i])%256;x=s[i];s[i]=s[j];s[j]=x;r+=String.fromCharCode(c.charCodeAt(0)^s[(s[i]+s[j])%256])}return r}
-  // console.log([rc4("346e", JSON.stringify(secrets))]);
+  // console.log([rc4("346e", JSON.stringify(secrets))]); // escape illegal chars
   const encrypted = "îÔn0!µ\x16¥¼É¯õ¶á×Ê\rJ杪铩厎Ýµ]\x1DHïxüxik~7\x9Dù\x18foz\x82Ç]f\x85\x9B©úùÕ\x8A\x01";
   const secrets = JSON.parse(rc4(prompt("secret info password"), encrypted));
   const replacer = (k) => secrets[k] || (console.log(k), k);
