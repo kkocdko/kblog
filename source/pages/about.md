@@ -39,6 +39,7 @@ Deprecated
 | [Karuboniru's Blog](https://yanqiyu.info) · 一位物理大佬，也是 Linux 资深用户 |
 | [SomeExp](https://someexp.com) · 希望世界更开源，透明与自由 |
 | [Kenji Mouri](https://mouri.moe) · 致力于编写使用最少的语法特性和第三方库的紧凑实现 |
+| [ximu](https://xlog.timero.xyz) · What's here? |
 
 ## License
 
