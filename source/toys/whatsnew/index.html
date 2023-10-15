@@ -5,6 +5,8 @@
 </head>
 
 <style>
+  /* vscode css language server failed to parse this */
+  /* @import url("dark.css") layer(d) supports(scale: 1) and (width >= 320px); */
   html {
     background: #fff;
     color: 000;
@@ -103,6 +105,43 @@
   }
   @media (orientation: portrait) {
   }
+  cascade_ {
+    display: block;
+    width: 80px;
+    height: 80px;
+    border: 2px solid #777;
+    margin-top: 20px;
+  }
+  cascade_ lines_ {
+    margin: 4px;
+    display: inline-block;
+    width: 40px;
+    height: 16px;
+    border: 2px solid #777;
+    /* prettier-ignore */
+    background-image: linear-gradient(to right,#fff 0px,#fff 2px,#777 2px,#777 4px,#fff 4px,#fff 6px,#777 6px,#777 8px,#fff 8px,#fff 10px,#777 10px,#777 12px,#fff 12px,#fff 14px,#777 14px,#777 16px,#fff 16px);
+    background-repeat: no-repeat;
+  }
+  lines_ {
+    background-position-x: -12px;
+  }
+  /* compare ":where" and ":is" */
+  /* The difference between :where() and :is() is that :where() always has 0 specificity,  */
+  /* whereas :is() takes on the specificity of the most specific selector in its arguments. */
+  :where(lines_) {
+    background-position-x: -8px;
+  }
+  /* @layer l4, l3; */
+  @layer l3 {
+    cascade_ lines_ {
+      background-position-x: -8px;
+    }
+  }
+  @layer l4 {
+    lines_ {
+      background-position-x: -4px;
+    }
+  }
 </style>
 
 <body>
@@ -122,4 +161,7 @@
       <mark_></mark_>
     </has_contain_>
   </has_>
+  <cascade_>
+    <lines_></lines_>
+  </cascade_>
 </body>
