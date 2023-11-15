@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.77.3`, may become invalid in a future version.
+> Last tested version is `1.84.2`, may become invalid in a future version.
 
 ## Why & Why Not?
 
@@ -40,14 +40,14 @@ Extract the package, then execute `./bin/code-server(.bat)`.
 To change data directory, use custom token and port, `./run.sh`:
 
 ```shell
-export VSCODE_AGENT_FOLDER=./data
-./bin/code-server --accept-server-license-terms --port=8109 --connection-token=mytoken
+# export VSCODE_AGENT_FOLDER=./data
+./bin/code-server --accept-server-license-terms --host 127.0.0.1 --port=8109 --connection-token=mytoken
 ```
 
 But a lot of inconvenience here, such as build tasks always fail when offline. So there is a patch `./misc/patch.js`:
 
 ```javascript
-"use strict"; // Last Tested Version: 1.77.3
+// Last Tested Version: 1.84.2
 const patch = (path, replaceList) => {
   const fs = require("fs");
   const filePath = require("path").join(__dirname, path);
@@ -77,6 +77,7 @@ patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
 // rm -rf ~/.vscode-server/extensions/redhat.java-*/jre/
 // rm -rf ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/
 // rm -rf ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
+// node_modules/@vscode/spdlog node_modules/node-pty
 ```
 
 - ~~There is a bug that caused UI freezed when entering debug after `1.65`.~~ [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
