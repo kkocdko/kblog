@@ -1,5 +1,5 @@
 ```
-title: 更优雅地解决 'input device is not a TTY'
+title: 更优雅地解决 Docker 'input device is not a TTY'
 date: 2023.07.03 00:24
 tags: Note Linux Shell Docker
 description: 满足它，而不是移除 -t 选项
