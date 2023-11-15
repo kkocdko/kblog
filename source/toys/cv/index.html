@@ -7,7 +7,7 @@
   function rc4(k,v){let s=[...Array(256).keys()],x,r="",i=0,j=0;for(;i<256;i++){j=(j+s[i]+k.charCodeAt(i%k.length))%256;x=s[i];s[i]=s[j];s[j]=x;}i=0;j=0;for(let c of v){i=(i+1)%256;j=(j+s[i])%256;x=s[i];s[i]=s[j];s[j]=x;r+=String.fromCharCode(c.charCodeAt(0)^s[(s[i]+s[j])%256])}return r}
   // console.log([rc4("346e", JSON.stringify(secrets))]); // escape illegal chars
   const encrypted = "îÔn0!µ\x16¥¼É¯õ¶á×Ê\rJ杪铩厎Ýµ]\x1DHïxüxik~7\x9Dù\x18foz\x82Ç]f\x85\x9B©úùÕ\x8A\x01";
-  const secrets = JSON.parse(rc4(prompt("secret info password"), encrypted));
+  const secrets = JSON.parse(rc4(location.hash.slice(1), encrypted));
   const replacer = (k) => secrets[k] || (console.log(k), k);
   onload = () => void (document.body.innerHTML = document.body.innerHTML.replace(/\[secret-.+?\]/g, replacer));
   // google-chrome --headless --incognito --disable-pdf-tagging --no-pdf-header-footer --print-to-pdf=out.pdf index.html
@@ -62,7 +62,7 @@
     margin: 3pt 0;
     text-align: center;
   }
-  strong {
+  b {
     font-size: 11pt;
   }
   li::marker {
@@ -87,73 +87,67 @@
   </aside>
   <h2>意向</h2>
   <p>
-    <strong>寻求实习岗位 : </strong>
+    <b>寻求实习岗位 : </b>
     Web 后端, Linux 开发岗位均可.
-  </p>
-  <h2>教育经历</h2>
-  <p>
-    <strong>江苏科技大学 : </strong>
-    计算机科学与技术 专业. 本科在读 (大三).
-    <ins>2021.09 - 当下</ins>
   </p>
   <h2>技能</h2>
   <p>
-    <strong>编程语言 : </strong>
+    <b>编程语言 : </b>
     不受特定语言限制. 日常使用 Rust, JS / TS, C / C++, Golang 等.
   </p>
   <p>
-    <strong>Rust : </strong>
+    <b>Rust : </b>
     掌握, 并在多个项目中使用.
-    <li>精通各种技巧和类型体操. 熟悉异步和网络编程 (Tokio 生态).</li>
+    <li>精通各类语言技巧和类型体操. 熟悉异步和网络编程 (Tokio 生态).</li>
     <li>熟悉 FFI, 异步 FFI, Unsafe. 熟练使用常用分析工具 (ASAN, Miri 等).</li>
   </p>
   <p>
-    <strong>Linux 开发 : </strong>
+    <b>Linux 开发 : </b>
     熟悉常用技术栈.
     <li>日常桌面使用 Fedora. 熟悉主流发行版结构, 构建系统和包管理.</li>
-    <li>熟悉常用性能分析方法, 内核模块开发.</li>
-    <li>了解文件系统子系统, 常用网络协议. 接触过常用虚拟化和容器技术, 尝试过嵌入式开发.</li>
+    <li>熟悉常用性能分析方法.</li>
+    <li>接触过常用虚拟化和容器技术, 嵌入式开发.</li>
   </p>
   <p>
-    <strong>Web 前端 : </strong>
+    <b>Web 前端 : </b>
     开发并维护过多个项目.
-    <li>有扎实前端基础, 精通 CSS 各类技巧和怪癖.</li>
-    <li>熟悉 React 和 MUI (Material UI) 组件库.</li>
+    <li>有扎实前端基础, 熟悉 CSS 各类技巧和怪癖.</li>
+    <li>主要使用 React 和 MUI (Material UI) 组件库.</li>
   </p>
   <p>
-    <strong>常识 : </strong>
+    <b>常识 : </b>
     作为开发者应有的常识. Git, Docker, Linux 运维, 常用数据结构和算法等.
   </p>
   <h2>开源贡献</h2>
   <p>
-    <strong><a href="https://github.com/lz1998/ricq">ricq</a> : </strong>
+    <b><a href="https://github.com/lz1998/ricq/tree/master">ricq</a> : </b>
     Rust 实现的 QQ 机器人协议库, 高性能低占用. (作为贡献者)
     <li>实现了链接分享等功能, 改进了登录相关逻辑.</li>
     <li>使用宏重构并消除大量冗余代码.</li>
     <li>作出多项性能改进, 降低内存占用.</li>
   </p>
   <p>
-    <strong><a href="https://github.com/kkocdko/ksite">ksite</a> : </strong>
+    <b><a href="https://github.com/kkocdko/ksite">ksite</a> : </b>
     多合一 Web 服务端, 包含 QQ 机器人, 代理, 剪贴板, 新闻聚合及其他零碎功能.
     <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite.</li>
     <li>拥有精简的二进制体积和极低资源占用, 在低配开发板上完美运行.</li>
-    <li>手动实现 TLS (见下文 tlsimple), 限流, 定时任务, 进程保活, 自动更新等框架缺失特性.</li>
-    <li>实现轻量级 ProtoBuf 编译器 prost-gen, 相比官方 prost-build 缩短约 7 秒 (全量) 编译时间.</li>
+    <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 自动更新等.</li>
+    <li>实现轻量级 ProtoBuf 编译器 prost-gen, 相比官方 prost-build 大幅缩短编译时间.</li>
   </p>
   <p>
-    <strong><a href="https://github.com/kkocdko/kblog">kblog</a> : </strong>
+    <b><a href="https://github.com/kkocdko/kblog">kblog</a> : </b>
     个人博客, 记录一些独特的原创技术经验和教程.
     <li>自 2018 年开始运营, 目前在 Vercel 上静态托管, 日 PV 约为 300 (据 Vercel 统计).</li>
     <li>从零编写的静态页面生成器, 以极小体积实现 SPA (单页应用), 首页网络流量少于 4 KiB.</li>
   </p>
   <p>
-    <strong><a href="https://github.com/kkocdko/tlsimple">tlsimple</a> : </strong>
+    <b><a href="https://github.com/kkocdko/tlsimple">tlsimple</a> : </b>
     对 Mbed TLS 的异步 FFI, 为 Rust 提供轻量便捷的 TLS 支持
     <li>高度裁减，在提供与 tokio-openssl 类似功能与性能的同时，减少 2 MiB 二进制体积.</li>
     <li>完全使用 build.rs 构建, 稳定可靠, 不依赖其他构建系统.</li>
   </p>
   <!-- <p>
-    <strong><a href="https://github.com/kkocdko/clevert">clevert</a> : </strong>
+    <b><a href="https://github.com/kkocdko/clevert">clevert</a> : </b>
     可扩展, 并行化的文件格式转换器.
     <li>实现简单的任务调度, 解决大多数格式转换程序 CPU 利用不充分问题.</li>
     <li>全平台适配. 通过使用配置文件和预设的方式, 支持大量文件格式.</li>
@@ -161,19 +155,25 @@
     <li>正在尝试商业化运作.</li>
   </p> -->
   <p>
-    <strong><a href="https://github.com/pulls?q=is%3Apr+author%3Akkocdko">其他</a> : </strong>
+    <b><a href="https://github.com/pulls?q=is%3Apr+author%3Akkocdko">其他</a> : </b>
     向 VSCode, axum, actix-web 等项目提交过补丁.
   </p>
   <h2>荣誉</h2>
   <p>
-    <strong>蓝桥杯 : </strong>
-    江苏省二等奖 (请不要问我 LeetCode Hard 谢谢)
-    <ins>2022.03</ins>
+    <b>蓝桥杯 : </b>
+    江苏省二等奖 (切勿提问 LeetCode Hard 谢谢)
+    <ins>(大一) 2022.03</ins>
   </p>
   <p>
-    <strong><a href="https://github.com/orgs/just-ca-official/projects/1">江苏科技大学计算机协会</a> : </strong>
+    <b><a href="https://github.com/orgs/just-ca-official/projects/1">江苏科技大学计算机协会</a> : </b>
     担任吉祥物
-    <ins>2022.07 - 当下</ins>
+    <ins>(大二) 2022.07 - 2023.07</ins>
+  </p>
+  <h2>教育经历</h2>
+  <p>
+    <b>江苏科技大学 : </b>
+    计算机科学与技术 专业. 本科在读 (大三).
+    <ins>2021.09 - 当下</ins>
   </p>
   <!-- <h2>实习经历</h2> -->
 </body>
