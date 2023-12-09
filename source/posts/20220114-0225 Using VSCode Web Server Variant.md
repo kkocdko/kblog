@@ -62,44 +62,22 @@ const patch = (filePath, replaceList) => {
   fs.writeFileSync(filePath, content);
 };
 patch("./out/vs/workbench/workbench.web.main.js", [
-  // Replace entry url with local server to allow offline work (for webview)
-  // Source: src/vs/workbench/services/environment/browser/environmentService.ts
-  [`"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`, `baseUrl+"`],
-  // Store user settings in remote machine
-  // [`("/User").with({`, `("/opt/vsc/User").with({scheme:"vscode-remote"});({`],
+  // > src/vs/workbench/services/environment/browser/environmentService.ts
+  [`"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`, `baseUrl+"`], // Replace entry url with local server to allow offline work (for webview)
+  // > src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
+  [/(?<="extensions.autoUpdate".+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default value = false. Because the "User Settings" is store in browser (indexedDB), so if you open a page in a fresh incognito window, the update progress will start unexpectedly
 ]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
-  // Modify CSP (for webview)
-  // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
-  [/\'sha256.+?\'/, "'unsafe-inline'"],
-  // Bypass hostname vertify (for webview)
-  // Source: src/vs/workbench/contrib/webview/browser/pre/index.html
-  [/\.padStart\(52.+?\)/, "&&location.hostname"],
+  // > src/vs/workbench/contrib/webview/browser/pre/index.html
+  [/\'sha256.+?\'/, "'unsafe-inline'"], // Modify CSP (for webview)
+  [/\.padStart\(52.+?\)/, "&&location.hostname"], // Bypass hostname vertify (for webview)
 ]);
 patch("./out/vs/code/browser/workbench/workbench.html", [
   [
-    `</html>`,
+    `<script `,
     `<script>\n(${(() => {
-      const waitForMark = (mark) =>
-        new Promise((resolve) => {
-          const observer = new PerformanceObserver((list) => {
-            if (list.getEntries().find((entry) => entry.name === mark)) {
-              observer.disconnect();
-              resolve();
-            }
-          });
-          observer.observe({ entryTypes: ["mark"] });
-        });
-      const executeCommand = require("vs/workbench/workbench.web.main").commands
-        .executeCommand;
-      (async () => {
-        await waitForMark("code/didStartWorkbench");
-        // The "User Settings" is store in browser (indexedDB), so if you open a page in a fresh incognito window, the update progress will start unexpectedly
-        executeCommand("workbench.extensions.action.disableAutoUpdate");
-        // An example command which cause visable changes for easier testing
-        // executeCommand("workbench.action.toggleLightDarkThemes");
-      })();
-    }).toString()})();\n</script>\n</html>`,
+      // extra functions here maybe
+    }).toString()})();\n</script>\n<script `,
   ],
 ]);
 const spdlogDirPath = "node_modules/@vscode/spdlog";
