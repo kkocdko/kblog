@@ -6,10 +6,12 @@ description: FFMpeg's kmsgrab
 ```
 
 ```
-versions = gnome:44.1-1.fc38, libwayland:1.22.0-1.fc38, kernel:6.2.13-300.fc38, cpu:amd-r5-5600u-with-built-in-gpu
+versions = gnome:45.0, libwayland:1.22.0, kernel:6.5.6-300.fc39.x86_64, cpu:amd-r5-5600u-with-built-in-gpu
 ```
 
-The distro I'm using is Fedora 38, with the default GNOME + Wayland pair. Although the Wayland was used widely many years ago, it's still weak in support in some edge fields like IME (for CJK users) and maybe screen casting / streaming / recording.
+- **However the mouse cursor still not able to capture, my recommand is using a HDMI capture card instead**. Or you can use OBS studio.
+
+The distro I'm using is Fedora 39, with the default GNOME + Wayland pair. Although the Wayland was used widely many years ago, it's still weak in support in some edge fields like IME (for CJK users) and maybe screen casting / streaming / recording.
 
 ## [FFMpeg kmsgrab](https://ffmpeg.org/ffmpeg-devices.html#kmsgrab)
 
@@ -29,6 +31,20 @@ Then, use this command:
 <summary>Details (click to show)</summary>
 
 ```sh
+# http://127.0.0.1:8889/mystream/
+
+sudo ~/misc/apps/ffmpeg -hide_banner \
+  -f kmsgrab -device /dev/dri/card1 -framerate 30 -i - -vf 'hwmap=derive_device=vaapi,hwdownload,format=bgr0' \
+  -c:v libvpx -crf 24 -preset veryfast -threads 2 \
+  -f rtsp -rtsp_transport tcp rtsp://127.0.0.1:8554/mystream
+
+  -c:v libx264 -crf 24 -preset veryfast -threads 2 \
+  -y rec`date +%s`.mp4
+
+~/misc/apps/ffmpeg \
+  -f kmsgrab -device /dev/dri/card1 -framerate 60 -i - -vf 'hwmap=derive_device=vaapi,scale_vaapi=format=nv12' -c:v h264_vaapi -profile:v high -qp 20 \
+  -y rec`date +%s`.mp4
+
 watch -n 0.1 \
 ~/misc/apps/ffmpeg \
   -f kmsgrab -device /dev/dri/card1 -framerate 30 -i - -vf 'hwmap=derive_device=vaapi,scale_vaapi=format=nv12' -c:v h264_vaapi -profile:v high \
@@ -79,6 +95,8 @@ ffmpeg -format bgra -framerate 60 -f kmsgrab -thread_queue_size 1024 -i - \
 Thanks for these article:
 
 https://github.com/BtbN/FFmpeg-Builds
+
+https://trac.ffmpeg.org/wiki/Encode/H.264
 
 https://github.com/aler9/mediamtx/
 

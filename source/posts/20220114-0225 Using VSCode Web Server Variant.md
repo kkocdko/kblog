@@ -55,9 +55,12 @@ const patch = (filePath, replaceList) => {
   const bakPath = filePath + `.bak`;
   if (!fs.existsSync(bakPath)) fs.renameSync(filePath, bakPath);
   let content = fs.readFileSync(bakPath).toString();
-  for (const [search, value] of replaceList) {
-    const fn = search instanceof RegExp ? "replace" : "replaceAll";
-    content = content[fn](search, value);
+  for (const [from, to] of replaceList) {
+    const testFn = from instanceof RegExp ? "match" : "includes";
+    const replaceFn = from instanceof RegExp ? "replace" : "replaceAll";
+    if (!content[testFn](from))
+      console.error("Patch entry not found", { from, to });
+    content = content[replaceFn](from, to);
   }
   fs.writeFileSync(filePath, content);
 };
@@ -65,20 +68,12 @@ patch("./out/vs/workbench/workbench.web.main.js", [
   // > src/vs/workbench/services/environment/browser/environmentService.ts
   [`"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`, `baseUrl+"`], // Replace entry url with local server to allow offline work (for webview)
   // > src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
-  [/(?<="extensions.autoUpdate".+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default value = false. Because the "User Settings" is store in browser (indexedDB), so if you open a page in a fresh incognito window, the update progress will start unexpectedly
+  [/(?<="extensions.autoUpdate".+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default = false. Because the "User Settings" is store in browser (indexedDB), so if you open a page in a fresh incognito window, the update progress will start unexpectedly
 ]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // > src/vs/workbench/contrib/webview/browser/pre/index.html
   [/\'sha256.+?\'/, "'unsafe-inline'"], // Modify CSP (for webview)
   [/\.padStart\(52.+?\)/, "&&location.hostname"], // Bypass hostname vertify (for webview)
-]);
-patch("./out/vs/code/browser/workbench/workbench.html", [
-  [
-    `<script `,
-    `<script>\n(${(() => {
-      // extra functions here maybe
-    }).toString()})();\n</script>\n<script `,
-  ],
 ]);
 const spdlogDirPath = "node_modules/@vscode/spdlog";
 fs.rmSync(spdlogDirPath, { recursive: true, force: true });
