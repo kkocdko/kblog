@@ -1,5 +1,5 @@
 ```
-title: Fix Docker 'input device is not a TTY' Elegantly
+title: Fix Docker 'input device is not a TTY' elegantly
 date: 2023.07.03 00:23
 tags: Note Linux Shell Docker
 description: Satisfy its needs instead of remove -t switch

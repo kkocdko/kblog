@@ -1,5 +1,5 @@
 ```
-title: Standalone and Portable MSVC
+title: Standalone and portable MSVC
 date: 2023.03.25 19:25
 tags: Note C CPP
 description: For testing, CI and more
