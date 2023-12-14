@@ -5,8 +5,6 @@ tags: Note Linux Shell Docker
 description: Satisfy its needs instead of remove -t switch
 ```
 
-> I18N: English | [简体中文](/./post/202307030024)
-
 ## TLDR
 
 `docker exec -it kblog df` -> `script -c 'docker exec -it kblog df' /dev/null`
