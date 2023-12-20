@@ -11,6 +11,8 @@ import htmlclean from "htmlclean";
 import terser from "terser";
 
 const modulePath = fileURLToPath(import.meta.url);
+if (path.dirname(modulePath) !== process.cwd())
+  throw Error("Current directory is different from project directory");
 
 if (process.argv.includes("develop")) {
   const childs = [];
@@ -48,15 +50,12 @@ if (process.argv.includes("develop")) {
   // Fall through here, go ahead and run generator
 } else if (process.argv.includes("generate")) {
 } else {
-  throw new Error("unknown function"); // https://stackoverflow.com/questions/73742023
+  throw Error("unknown function"); // https://stackoverflow.com/questions/73742023
 }
 
 console.time("generate time");
 
 const isDev = process.argv.includes("--dev");
-
-// Convert relative path to absolute
-const p = ([r], ...s) => path.join(path.dirname(modulePath), r, ...s);
 
 // mapstr`<p>Hi ${[22,33]}${i=>i}</p>` === "<p>Hi 2233</p>"
 const mapstr = (parts, ...inserts) => {
@@ -83,7 +82,7 @@ const minify = (() => {
 })();
 
 const makePage = (() => {
-  const templateRaw = fs.readFileSync(p`./units/template.html`).toString();
+  const templateRaw = fs.readFileSync("./units/template.html").toString();
   const template = minify.htmlEnhanced(templateRaw);
   return ({ isMarkdown, path: rpath, title, description = "", content }) => {
     if (isMarkdown)
@@ -94,7 +93,7 @@ const makePage = (() => {
       .replace("/*{description}*/", description)
       .replace("/*{content}*/", content);
     if (rpath.endsWith("/")) rpath += "index.html";
-    const targetPath = p`./public/${rpath}`;
+    const targetPath = `./public/${rpath}`;
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
     fs.writeFileSync(targetPath, result);
   };
@@ -113,11 +112,12 @@ const loadMdFile = (filePath) => {
 
 // Init
 {
-  if (fs.existsSync(p`./public`)) fs.renameSync(p`./public`, p`./public_old`);
-  fs.rm(p`./public_old`, { recursive: true, force: true }, () => {});
-  fs.mkdirSync(p`./public`);
+  fs.rmSync("./public_old", { recursive: true, force: true });
+  if (fs.existsSync("./public")) fs.renameSync("./public", "./public_old");
+  fs.rm("./public_old", { recursive: true, force: true }, () => {});
+  fs.mkdirSync("./public");
 
-  const f = ([r]) => fs.readFileSync(p`./units/${r}`).toString(); // Read file str
+  const f = ([r]) => fs.readFileSync(`./units/${r}`).toString(); // Read file str
   const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
   const style = minify.css(f`main.css` + f`markdown.css`);
   const head = minify.htmlEnhanced(f`head.html`).replace("/*{style}*/", style);
@@ -126,32 +126,20 @@ const loadMdFile = (filePath) => {
     .replace("/*{head}*/", head)
     .replace("/*{extra}*/", minify.htmlEnhanced(f`extra.html`))
     .replace("/*{script}*/", f`main.js`);
-  fs.writeFileSync(p`./public/bundle.js`, minify.js(bundle));
-  fs.writeFileSync(p`./public/update.html`, f`update.html`);
-  fs.writeFileSync(p`./public/.nojekyll`, ""); // Prevent the GitHub Pages to run Jekyll
+  fs.writeFileSync("./public/bundle.js", minify.js(bundle));
+  fs.writeFileSync("./public/update.html", f`update.html`);
+  fs.writeFileSync("./public/.nojekyll", ""); // Prevent the GitHub Pages to run Jekyll
 
-  const copyDirSync = (srcDir, destDir) => {
-    fs.readdirSync(srcDir).forEach((fileName) => {
-      const src = path.join(srcDir, fileName);
-      const dest = path.join(destDir, fileName);
-      if (fs.statSync(src).isFile()) {
-        fs.mkdirSync(destDir, { recursive: true });
-        fs.copyFileSync(src, dest);
-      } else {
-        copyDirSync(src, dest);
-      }
-    });
-  };
-  copyDirSync(p`./source/toys`, p`./public/toy`);
-  copyDirSync(p`./source/res`, p`./public/res`);
+  fs.cpSync("./source/toys", "./public/toy", { recursive: true });
+  fs.cpSync("./source/res", "./public/res", { recursive: true });
 }
 
 // Posts
 const posts = [];
 {
-  const files = fs.readdirSync(p`./source/posts`);
+  const files = fs.readdirSync("./source/posts");
   files.slice(isDev ? -12 : 0).forEach((fileName) => {
-    const { meta, content } = loadMdFile(p`./source/posts/${fileName}`);
+    const { meta, content } = loadMdFile(`./source/posts/${fileName}`);
     meta.id = meta.date.replace(/:|\.| /g, "");
     meta.tags = meta.tags.split(" ");
     posts.push(meta);
@@ -172,8 +160,8 @@ const posts = [];
 // Custom Pages
 const pages = [];
 {
-  fs.readdirSync(p`./source/pages`).forEach((fileName) => {
-    const { meta, content } = loadMdFile(p`./source/pages/${fileName}`);
+  fs.readdirSync("./source/pages").forEach((fileName) => {
+    const { meta, content } = loadMdFile(`./source/pages/${fileName}`);
     pages.push(meta);
     makePage({
       ...meta,
@@ -302,12 +290,12 @@ const pages = [];
   const domain = "https://kkocdko.site";
 
   fs.writeFileSync(
-    p`./public/robots.txt`,
+    "./public/robots.txt",
     `User-agent: *\nAllow: /\nSitemap: ${domain}/sitemap.xml`
   );
 
   fs.writeFileSync(
-    p`./public/sitemap.xml`,
+    "./public/sitemap.xml",
     mapstr`
       <?xml version="1.0" encoding="UTF-8"?>
       <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -318,7 +306,7 @@ const pages = [];
   );
 
   fs.writeFileSync(
-    p`./public/feed.xml`,
+    "./public/feed.xml",
     mapstr`
       <?xml version="1.0" encoding="UTF-8"?>
       <rss version="2.0">
