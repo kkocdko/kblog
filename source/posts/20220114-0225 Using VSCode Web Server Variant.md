@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.85.0 (2023-12-06T17:43:36.790Z)`, may become invalid in a future version.
+> Last tested version is `1.85.1 (2023-12-13T09:14:51.474Z)`, may become invalid in a future version.
 
 ### Pros
 
@@ -37,7 +37,7 @@ node ./out/server-main.js --accept-server-license-terms --host 0.0.0.0 --port 81
 And here's a `patch.js` to workaround some issues like offline webview, see comments for details:
 
 ```javascript
-// Last Tested Version: 1.85.0
+// Last Tested Version: 1.85.1
 const fs = require("node:fs");
 if (!fs.existsSync("./out/vs/server/node/server.cli.js"))
   throw Error("current dir wrong");
@@ -103,5 +103,7 @@ fs.writeFileSync(
 ```
 
 - There's a bug that caused UI freezed when entering debug after `1.65`. **(UPDATED)** [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
+
+- Can not install extensions after Node.js 21. **(UPDATED)** [Patch is merged into mainline](https://github.com/microsoft/vscode/pull/200935).
 
 - Because [node-spdlog](https://github.com/microsoft/node-spdlog) and [node-pty](https://github.com/microsoft/node-pty) were both use NAN, so cross NodeJS version needs recompiling. You can use a faked spdlog (included in above `patch.js`) and [daniel-brenot's node-pty fork](https://github.com/daniel-brenot/node-pty). **(UPDATED)** Recommand to use my [PR in node-pty to migrate to NAPI](https://github.com/microsoft/node-pty/pull/644).

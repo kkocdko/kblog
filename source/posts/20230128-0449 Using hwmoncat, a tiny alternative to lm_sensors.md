@@ -1,13 +1,13 @@
 ```
-title: Tiny alternative to lm_sensors - hwmoncat
+title: Using hwmoncat, a tiny alternative to lm_sensors
 date: 2023.01.28 04:49
 tags: Code Linux Devices Power
-description: Yeah, w/o lm_sensors and it's annoy dependencies 
+description: Yeah, w/o lm_sensors and it's annoy dependencies
 ```
 
-When it comes to sensors on Linux, the [lm-sensors](https://github.com/lm-sensors/lm-sensors) (`sensors` command) is the most common answer. We use it to read temperature, voltage and fan speed for many years.
+[hwmoncat - kkocdko/utils4linux](https://github.com/kkocdko/utils4linux/tree/master/hwmoncat)
 
-It is written in Perl language and is compatible with old kernel version, resulting in many dependencies:
+When it comes to sensors on Linux, the [lm-sensors](https://github.com/lm-sensors/lm-sensors) (`sensors` command) is the most common answer. However it's written in Perl and is compatible with old kernel, resulting in many dependencies:
 
 ```
 [kkocdko@klf apps]$ sudo dnf install lm_sensors
@@ -21,7 +21,7 @@ Install  59 Packages
 Installed size: 26 M
 ```
 
-However, after kernel `5.6`, we can read sensors easily through the [hwmon module](https://www.kernel.org/doc/html/latest/hwmon/), without any other dependencies. So I write this helper script.
+However, after kernel `5.6`, we can read sensors easily through the [hwmon module](https://www.kernel.org/doc/html/latest/hwmon/), without any other dependencies. So I make this.
 
 This script shows:
 
@@ -74,8 +74,8 @@ in0:          15.75 V
 
 ## Thanks
 
-- <https://www.kernel.org/doc/html/latest/hwmon/>
+- https://www.kernel.org/doc/html/latest/hwmon/
 
-- <https://unix.stackexchange.com/questions/558112/>
+- https://unix.stackexchange.com/questions/558112/
 
-- <https://www.gnu.org/software/gawk/manual/gawk.html>
+- https://www.gnu.org/software/gawk/manual/gawk.html

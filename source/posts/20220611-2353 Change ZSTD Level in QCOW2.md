@@ -5,27 +5,21 @@ tags: Tutorial Code Linux QEMU
 description: Useful for read-only disk image
 ```
 
-> Currently it's QEMU 7.1.0
+> Currently it's QEMU `8.2.0`
 
 The zstd level of qcow2 created by qemu is always 3. For a read-only disk image, I just want the best compression ratio.
 
-There are not a command line option, so we need to modify the source code<sup>(1)</sup>. On [./block/qcow2-threads.c](https://github.com/qemu/qemu/blob/v7.1.0/block/qcow2-threads.c#L203-L209):
+There are not a command line option, so we need to modify the source code<sup>(1)</sup>. On [./block/qcow2-threads.c](https://github.com/qemu/qemu/blob/v8.2.0/block/qcow2-threads.c#L224-L226):
 
-```diff
-  206 |     return -EIO;
-  207 | }
-+ 208 | ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, ZSTD_maxCLevel());
-  209 | /*
+```
+  224 |  */
++     | ZSTD_CCtx_setParameter(cctx, ZSTD_c_strategy, ZSTD_btultra2);
++     | ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, ZSTD_maxCLevel());
++     | ZSTD_CCtx_setParameter(cctx, ZSTD_c_enableLongDistanceMatching, 1);
+  225 | zstd_ret = ZSTD_compressStream2(cctx, &output, &input, ZSTD_e_end);
 ```
 
-Compiling it following [offical tutorial](https://www.qemu.org/download/) (or [prebuilt binary](https://github.com/kkocdko/kblog/releases/download/simple_storage/qemu-img-zstd-extreme.zip)). Here some tips:
-
-```sh
-# (Fedora) Install dependencies
-dnf install bzip2 ninja-build libzstd-devel pixman-devel
-# Enable ZSTD, disable useless features for shorter compile time
-./configure --enable-zstd --disable-tcg --disable-kvm
-```
+Compiling by yourself or use my [prebuilt binary](https://github.com/kkocdko/kblog/releases/download/simple_storage/qemu-img-zstd-x.zip) (built [on GitHub Actions](https://github.com/kkocdko/utils4linux/blob/master/.github/workflows/qemu-img.yml)).
 
 Now we found `qemu-img` at `./build`. Have a try?
 
@@ -42,4 +36,4 @@ total 3411264
 -rw-r--r--. 1 kkocdko kkocdko 1841496064 May 25 18:21  win10.qcow2
 ```
 
-> (1) You can find more zstd parameters from [docs](https://zstd.docsforge.com/dev/api/ZSTD_cParameter/).
+> (1) You can find more zstd parameters from [docs](https://facebook.github.io/zstd/zstd_manual.html).
