@@ -35,6 +35,7 @@ if (process.argv.includes("develop")) {
     svg: "image/svg+xml",
   };
   const r2a = path.join.bind(null, path.dirname(modulePath), "public");
+  // (await import("node:https")).createServer((p=>(p=([s])=>fs.readFileSync(`/home/kkocdko/.local/share/caddy/certificates/local/127.0.0.1/127.0.0.1.${s}`),{key:p`key`,cert:p`crt`}))(),({url},res)=>{
   createServer(({ url }, res) => {
     const pair = [
       [200, r2a(url)],
