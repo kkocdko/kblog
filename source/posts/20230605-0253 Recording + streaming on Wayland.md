@@ -207,3 +207,5 @@ https://write.corbpie.com/ffmpeg-list-all-codecs-encoders-decoders-and-formats/
 https://zhuanlan.zhihu.com/p/634052876
 
 https://www.bilibili.com/read/cv17341923/
+
+https://www.reddit.com/r/Fedora/comments/137e194/comment/jivq2ne/?utm_source=share&utm_medium=web2x&context=3
