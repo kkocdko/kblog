@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>QR Code - En/decode, specified mask, with OpenCV WASM</title>
-  <script :version="2.0.4" src="/toy/veps.js"></script>
+  <script :version="2.0.5" src="/toy/veps.js"></script>
   <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
 </head>
 
@@ -28,7 +28,7 @@
 <body>
   <input type="checkbox" id="$decodeMode" />
   <button id="$mode"><b>Encode</b> / Decode</button>
-  <div id="$qrcode"></div>
+  <img id="$qrcode" />
   <select id="$level">
     <option value="L">Level L (7%)</option>
     <option value="M">Level M (15%)</option>
@@ -61,14 +61,12 @@
     const qr = qrcode(0, $level.value);
     qr.addData($content.value);
     qr.make();
-    $qrcode.innerHTML = qr.createSvgTag(1, 1); // (block, margin)
-    $qrcode.children[0].removeAttribute("width");
-    $qrcode.children[0].removeAttribute("height");
+    $qrcode.src = "data:image/svg+xml," + encodeURI(qr.createSvgTag(1, 1)); // (block, margin)
   };
   $level.onchange = $mask.onchange = $content.oninput = refresh;
   refresh();
   setTimeout(async () => {
-    const url = document.querySelector('[src$="qrcode.js"]').src;
+    const url = document.querySelector('[src$="/qrcode.js"]').src;
     const src = await (await fetch(url)).text();
     const idx = src.indexOf("pattern;"); // hook it
     eval(src.slice(0, idx) + "window.qrmask??" + src.slice(idx));
