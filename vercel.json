@@ -1,0 +1,15 @@
+{
+  "framework": null,
+  "buildCommand": "node . generate",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "max-age=30,stale-while-revalidate=600"
+        }
+      ]
+    }
+  ]
+}

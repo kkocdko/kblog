@@ -129,7 +129,6 @@ const loadMdFile = (filePath) => {
     .replace("/*{script}*/", f`main.js`);
   fs.writeFileSync("./public/bundle.js", minify.js(bundle));
   fs.writeFileSync("./public/update.html", f`update.html`);
-  fs.writeFileSync("./public/.nojekyll", ""); // Prevent the GitHub Pages to run Jekyll
 
   fs.cpSync("./source/toys", "./public/toy", { recursive: true });
   fs.cpSync("./source/res", "./public/res", { recursive: true });
@@ -286,7 +285,7 @@ const pages = [];
   });
 }
 
-// Site Map and RSS
+// Site Map, RSS and more
 {
   const domain = "https://kkocdko.site";
 
@@ -326,6 +325,8 @@ const pages = [];
       </rss>
     `.trim()
   );
+
+  fs.writeFileSync("./public/.nojekyll", ""); // Prevent the GitHub Pages to run Jekyll
 }
 
 console.timeEnd("generate time");
