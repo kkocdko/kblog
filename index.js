@@ -327,6 +327,8 @@ const pages = [];
   );
 
   fs.writeFileSync("./public/.nojekyll", ""); // Prevent the GitHub Pages to run Jekyll
+
+  fs.writeFileSync("./public/favicon.ico", ""); // Avoid favicon.ico 404
 }
 
 console.timeEnd("generate time");
