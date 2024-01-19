@@ -123,16 +123,19 @@
   <p>
     <b><a href="https://github.com/lz1998/ricq/tree/master">ricq</a> : </b>
     Rust 实现的高性能 QQ 机器人协议库. (作为贡献者)
-    <li>实现了链接分享等功能, 改进了登录相关逻辑.</li>
-    <li>使用宏重构并消除大量冗余代码.</li>
+    <li>实现了链接分享等功能, 修复多个边界条件下的崩溃问题, 改进了登录相关逻辑.</li>
+    <li>使用宏重构并消除大量冗余代码. 改进 ProtoBuf 编译流程.</li>
     <li>作出多项性能改进, 降低内存占用.</li>
+    <!-- https://github.com/lz1998/ricq/issues/76 -->
+    <!-- https://github.com/lz1998/ricq/pull/102 -->
+    <!-- https://github.com/lz1998/ricq/pull/90 -->
   </p>
   <p>
     <b><a href="https://github.com/kkocdko/ksite">ksite</a> : </b>
-    多合一 Web 服务端, 包含 代理, QQ 机器人, 剪贴板, 新闻聚合及其他零碎功能.
-    <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite.</li>
+    多合一 Web 服务端, 包含 代理, QQ 机器人, 新闻聚合, 简易视频会议 及其他零碎功能.
+    <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite 并调优.</li>
     <li>拥有精简的二进制体积和极低资源占用, 在廉价开发板上完美运行.</li>
-    <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 自动更新等.</li>
+    <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 推送更新等.</li>
     <li>实现轻量级 ProtoBuf 编译器 prost-gen, 相比官方 prost-build 大幅缩短编译时间.</li>
   </p>
   <p>
@@ -173,7 +176,12 @@
   <p>
     <b><a href="https://github.com/orgs/just-ca-official/projects/1">江苏科技大学计算机协会</a> : </b>
     担任吉祥物
-    <ins>(大二) 2022.07 - 2023.07</ins>
+    <ins>(大二) 2022.07 - 当下</ins>
   </p>
+  <!-- <p>
+    <b><a href="https://github.com/orgs/just-ca-official/projects/1">英语六级</a> : </b>
+    555
+    <ins>2023.12</ins>
+  </p> -->
   <!-- <h2>实习经历</h2> -->
 </body>
