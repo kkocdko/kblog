@@ -91,10 +91,49 @@
     <b>寻求实习岗位 : </b>
     Web 后端, Rust, Linux 开发岗均可.
   </p>
+  <h2>开源贡献</h2>
+  <p>
+    <b><a href="https://github.com/microsoft/node-pty/pull/644">node-pty</a> : </b>
+    被 VSCode 等大量开发类 Electron 应用所依赖的 pty 绑定 (作为贡献者)
+    <li>从 NAN 完全迁移到 NAPI, 实现跨 Electron / Node 版本兼容, 支持启用 V8 指针压缩的 Node.</li>
+    <li>修复 Unix 下 event loop 时序不符合规范问题.</li>
+    <li>修复 Windows 下的句柄泄漏问题.</li>
+  </p>
+  <p>
+    <b><a href="https://github.com/lz1998/ricq/tree/master">ricq</a> : </b>
+    Rust 实现的高性能 QQ 机器人协议库. (作为贡献者)
+    <li>实现了链接分享等功能, 修复多个边界条件下的崩溃问题, 改进了登录相关逻辑.</li>
+    <li>作出多项性能改进, 降低了收到图片消息时的内存占用.</li>
+    <li>使用宏重构并消除大量冗余代码. 改进 ProtoBuf 编译流程.</li>
+  </p>
+  <p>
+    <b><a href="https://github.com/kkocdko/ksite">ksite</a> : </b>
+    多合一 Web 服务端, 包含 代理, QQ 机器人, 新闻聚合, 简易视频会议 及其他零碎功能.
+    <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite 并调优.</li>
+    <li>拥有精简的二进制体积和极低资源占用, 在单核 ARMv5 的廉价开发板上完美运行.</li>
+    <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 推送更新等.</li>
+    <li>实现轻量级 ProtoBuf 编译器 prost-gen, 相比官方 prost-build 大幅缩短编译时间.</li>
+  </p>
+  <p>
+    <b><a href="https://github.com/kkocdko/tlsimple">tlsimple</a> : </b>
+    对 Mbed TLS 的异步 FFI, 为 Rust 提供轻量便捷的 TLS 支持
+    <li>高度裁减，在提供与 tokio-openssl 类似功能与性能的同时，减少 2 MiB 二进制体积.</li>
+    <li>完全使用 build.rs 构建, 稳定可靠, 不依赖其他构建系统, 可以便捷地交叉编译.</li>
+  </p>
+  <p>
+    <b><a href="https://github.com/kkocdko/kblog">kblog</a> : </b>
+    个人博客, 记录一些独特的原创技术经验和教程.
+    <li>自 2018 年开始运营, 目前在 Vercel 上静态托管, 日 PV 约为 300 (据 Vercel 统计).</li>
+    <li>从零编写的静态页面生成器, 以极小体积实现 SPA (单页应用), 首页网络流量少于 4 KiB.</li>
+  </p>
+  <p>
+    <b><a href="https://github.com/pulls?q=+is%3Apr+author%3Akkocdko">其他</a> : </b>
+    向 VSCode, axum, actix-web 等知名开源项目作出多个贡献.
+  </p>
   <h2>技能</h2>
   <p>
     <b>编程语言 : </b>
-    不受特定语言限制. 日常使用 Rust, JS / TS, C / C++, Golang 等.
+    不受特定语言限制. 日常使用 Rust, C / C++, Golang, JS / TS 等.
   </p>
   <p>
     <b>Rust : </b>
@@ -106,61 +145,12 @@
     <b>Linux 开发 : </b>
     熟悉常用技术栈.
     <li>日常桌面使用 Fedora. 熟悉主流发行版结构, 构建系统和包管理.</li>
-    <li>熟悉常用性能分析方法.</li>
+    <li>熟悉常用性能分析方法, 能快速通过 Profile 找出性能热点并优化.</li>
     <li>接触过常用虚拟化和容器技术, 嵌入式开发.</li>
-  </p>
-  <p>
-    <b>Web 前端 : </b>
-    开发并维护过多个项目.
-    <li>有扎实前端基础, 熟悉 CSS 各类技巧和怪癖.</li>
-    <li>主要使用 React 和 MUI (Material UI) 组件库. 有实际项目经验.</li>
   </p>
   <p>
     <b>常识 : </b>
     作为开发者应有的常识. Git, Docker, Linux 运维, 常用数据结构和算法等.
-  </p>
-  <h2>开源贡献</h2>
-  <p>
-    <b><a href="https://github.com/lz1998/ricq/tree/master">ricq</a> : </b>
-    Rust 实现的高性能 QQ 机器人协议库. (作为贡献者)
-    <li>实现了链接分享等功能, 修复多个边界条件下的崩溃问题, 改进了登录相关逻辑.</li>
-    <li>使用宏重构并消除大量冗余代码. 改进 ProtoBuf 编译流程.</li>
-    <li>作出多项性能改进, 降低内存占用.</li>
-    <!-- https://github.com/lz1998/ricq/issues/76 -->
-    <!-- https://github.com/lz1998/ricq/pull/102 -->
-    <!-- https://github.com/lz1998/ricq/pull/90 -->
-  </p>
-  <p>
-    <b><a href="https://github.com/kkocdko/ksite">ksite</a> : </b>
-    多合一 Web 服务端, 包含 代理, QQ 机器人, 新闻聚合, 简易视频会议 及其他零碎功能.
-    <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite 并调优.</li>
-    <li>拥有精简的二进制体积和极低资源占用, 在廉价开发板上完美运行.</li>
-    <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 推送更新等.</li>
-    <li>实现轻量级 ProtoBuf 编译器 prost-gen, 相比官方 prost-build 大幅缩短编译时间.</li>
-  </p>
-  <p>
-    <b><a href="https://github.com/kkocdko/kblog">kblog</a> : </b>
-    个人博客, 记录一些独特的原创技术经验和教程.
-    <li>自 2018 年开始运营, 目前在 Vercel 上静态托管, 日 PV 约为 300 (据 Vercel 统计).</li>
-    <li>从零编写的静态页面生成器, 以极小体积实现 SPA (单页应用), 首页网络流量少于 4 KiB.</li>
-  </p>
-  <p>
-    <b><a href="https://github.com/kkocdko/tlsimple">tlsimple</a> : </b>
-    对 Mbed TLS 的异步 FFI, 为 Rust 提供轻量便捷的 TLS 支持
-    <li>高度裁减，在提供与 tokio-openssl 类似功能与性能的同时，减少 2 MiB 二进制体积.</li>
-    <li>完全使用 build.rs 构建, 稳定可靠, 不依赖其他构建系统.</li>
-  </p>
-  <!-- <p>
-    <b><a href="https://github.com/kkocdko/clevert">clevert</a> : </b>
-    可扩展, 并行化的文件格式转换器.
-    <li>实现简单的任务调度, 解决大多数格式转换程序 CPU 利用不充分问题.</li>
-    <li>全平台适配. 通过使用配置文件和预设的方式, 支持大量文件格式.</li>
-    <li>正尝试使用 React + Material UI 创建用户面板.</li>
-    <li>正在尝试商业化运作.</li>
-  </p> -->
-  <p>
-    <b><a href="https://github.com/pulls?q=+is%3Apr+author%3Akkocdko">其他</a> : </b>
-    向 VSCode, axum, actix-web 等项目提交过补丁.
   </p>
   <h2>其他</h2>
   <p>
