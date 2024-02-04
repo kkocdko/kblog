@@ -29,6 +29,14 @@
       min-width: fit-content;
       margin: 10mm max(5mm, calc(50% - 105mm));
     }
+    body::before {
+      content: "- 下划线文本为链接.\a- 右键打印可获得标准单页 PDF.";
+      white-space: pre;
+      position: absolute;
+      margin: -10mm -18mm;
+      padding: 1mm 2mm;
+      box-shadow: inherit;
+    }
   }
   * {
     box-sizing: border-box;
@@ -82,14 +90,14 @@
     <b>&nbsp;·&nbsp;</b>
     Site: <a href="https://kkocdko.site">kkocdko.site</a>
     <b>&nbsp;·&nbsp;</b>
-    Mail: <a href="mailto:kkocdko@email.com">kkocdko@gmail.com</a>
+    Mail: <a href="mailto:kkocdko@gmail.com">kkocdko@gmail.com</a>
     <b>&nbsp;·&nbsp;</b>
     Tel: <a href="tel:+86 [secret-tel]">[secret-tel]</a>
   </aside>
   <h2>意向</h2>
   <p>
     <b>寻求实习岗位 : </b>
-    Web 后端, Rust, Linux 开发岗均可.
+    Web 后端, Rust, Golang, C++ 均可.
   </p>
   <h2>开源贡献</h2>
   <p>
@@ -102,13 +110,14 @@
   <p>
     <b><a href="https://github.com/microsoft/node-pty/pull/644">node-pty</a> : </b>
     被 VSCode 等多个开发类 Electron 应用所依赖的 pty 绑定 (作为贡献者)
-    <li>从 NAN 完全迁移到 NAPI, 实现跨 Electron / Node 版本兼容, 支持启用 V8 指针压缩的 Node.</li>
+    <li>大规模重构, 从 NAN 完全迁移到 NAPI.</li>
+    <li>实现跨 Electron / Node 版本兼容, 支持启用 V8 指针压缩的 Node.</li>
     <li>修复 Unix 下 event loop 时序不符合规范问题.</li>
     <li>修复 Windows 下的句柄泄漏问题.</li>
   </p>
   <p>
     <b><a href="https://github.com/kkocdko/ksite">ksite</a> : </b>
-    多合一 Web 服务端, 包含 代理, QQ 机器人, 新闻聚合, 简易视频会议 及其他零碎功能.
+    多合一 Web 服务端, 包含 代理, WebDAV 网盘, QQ 机器人, 新闻聚合, 视频会议 及其他功能.
     <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite 并调优.</li>
     <li>拥有精简的二进制体积和极低资源占用, 在单核 ARMv5 的廉价开发板上完美运行.</li>
     <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 推送更新等.</li>
@@ -122,7 +131,7 @@
   </p>
   <p>
     <b><a href="https://github.com/pulls?q=+is%3Apr+author%3Akkocdko">其他</a> : </b>
-    向 VSCode, axum, actix-web 等知名开源项目作出多个贡献.
+    向 VSCode, axum, actix-web 等知名项目作出多个贡献.
   </p>
   <h2>技能</h2>
   <p>
@@ -149,7 +158,7 @@
   <h2>其他</h2>
   <p>
     <b>江苏科技大学 : </b>
-    计算机科学与技术 专业. 本科在读 (大三).
+    计算机科学与技术 专业. 本科在读 (大三, 2025 届).
     <ins>2021.09 - 当下</ins>
   </p>
   <p>
