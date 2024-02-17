@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Cookie File - Key-value pairs to Netscape HTTP Cookie file</title>
+  <script :version="1.0.5" src="/toy/veps.js"></script>
+</head>
+
+<style>
+  body > :not(script) {
+    box-sizing: border-box;
+    display: block;
+    width: 300px;
+    padding: 4px 8px;
+    margin: 10px auto 0;
+    border: 1px solid #888;
+  }
+</style>
+
+<body>
+  <input id="$domain" value=".example.com" />
+  <textarea id="$in" placeholder="A=a; B=b (F12 Copy as cURL)"></textarea>
+  <textarea id="$out" placeholder="# Netscape HTTP Cookie File ..."></textarea>
+</body>
+
+<script>
+  oninput = () => {
+    let out = "# Netscape HTTP Cookie File\n";
+    for (const e of $in.value.split(";")) {
+      const [k, v] = e.trim().split("=");
+      out += $domain.value + "\tTRUE\t/\tFALSE\t0\t" + k + "\t" + v + "\n";
+    }
+    $out.value = out;
+  };
+  // https://docs.cyotek.com/cyowcopy/current/netscapecookieformat.html
+</script>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Sort CSS - Reorder properties by stylelint-config-recess-order</title>
+  <script :version="1.0.1" src="/toy/veps.js"></script>
+  <script>
+    const module = {};
+  </script>
+  <script src="https://registry.npmmirror.com/stylelint-config-recess-order/4.6.0/files/groups.js"></script>
+</head>
+
+<style>
+  body {
+    display: grid;
+    gap: 8px;
+    height: calc(100vh - 20px);
+  }
+</style>
+
+<body>
+  <textarea id="$in" spellcheck="false" autocomplete="off"></textarea>
+  <textarea id="$out" spellcheck="false" autocomplete="off" readonly></textarea>
+</body>
+
+<script>
+  $in.placeholder =
+    "/* Input here */\nbody {\n  height: 200px;\n  width: 100px;\n}\n";
+  const rules = new Map(
+    module.exports
+      .flatMap((o) => o.properties)
+      .filter((e) => !e.includes(":"))
+      .map((k, i) => [k, i])
+  );
+  $in.oninput = () => {
+    let out = "";
+    const block = []; // not a full-featured parser, please ensure the input is valid and formatted css
+    for (const line of $in.value.split("\n")) {
+      if (line.endsWith(";")) {
+        block.push(line);
+      } else {
+        if (block.length != 0) {
+          const idx = (e) => rules.get(e.split(":")[0].trim()) ?? -1;
+          block.sort((a, b) => idx(a) - idx(b));
+          out += block.join("\n") + "\n";
+          block.length = 0;
+        }
+        out += line + "\n";
+      }
+    }
+    $out.value = out;
+  };
+</script>
