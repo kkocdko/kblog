@@ -1,40 +1,41 @@
 <!DOCTYPE html>
 
 <head>
-  <meta charset="utf8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
+  <title>Warshall - Visable algorithm demo</title>
+  <script :version="1.0.1" src="/toy/veps.js"></script>
 </head>
 
 <style>
-  body {
-    display: grid;
-    margin: 15px;
-    gap: 15px;
-  }
-  body > * {
-    min-height: 20px;
-    border: 1px solid #777;
-    padding: 10px;
-  }
-  input[type="checkbox"] {
-    height: 16px;
-    width: 16px;
-    box-shadow: inset 0 0 0 1px #aaa, inset 0 0 0 9px #fff, inset 0 0 0 9px #888;
-  }
-  input[type="checkbox"]:checked {
-    box-shadow: inset 0 0 0 1px #aaa, inset 0 0 0 3px #fff, inset 0 0 0 9px #888;
-  }
   * {
     color: #000;
     background: #fff;
     transition: 0.2s;
   }
+  body {
+    display: grid;
+    gap: 8px;
+  }
+  body > * {
+    min-height: 20px;
+    padding: 10px;
+    border: 1px solid #777;
+  }
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    box-shadow: inset 0 0 0 1px #aaa, inset 0 0 0 9px #fff, inset 0 0 0 9px #888;
+  }
+  input[type="checkbox"]:checked {
+    box-shadow: inset 0 0 0 1px #aaa, inset 0 0 0 3px #fff, inset 0 0 0 9px #888;
+  }
 </style>
 
 <body>
   <input id="$order" placeholder="Order" type="number" />
-  <form id="$i"></form>
-  <form id="$o"></form>
+  <form id="$in"></form>
+  <form id="$out"></form>
 </body>
 
 <script>
@@ -43,14 +44,14 @@
     if (n > 32) throw alert("Matrix order should not greater than 32");
     let innerHTML = "";
     for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n; j++) innerHTML += "<input type='checkbox' />";
-      innerHTML += "<br />";
+      for (let j = 0; j < n; j++) innerHTML += "<input type=checkbox>";
+      innerHTML += "<br>";
     }
-    $i.innerHTML = $o.innerHTML = innerHTML;
+    $in.innerHTML = $out.innerHTML = innerHTML;
   };
-  $i.onchange = () => {
+  $in.onchange = () => {
     const n = Number($order.value);
-    let m = [...$i.querySelectorAll("input")].map((v) => v.checked);
+    let m = [...$in.querySelectorAll("input")].map((v) => v.checked);
     for (let k = 0; k < n; k++)
       for (let i = 0; i < n; i++)
         for (let j = 0; j < n; j++) m[i * n + j] |= m[i * n + k] & m[k * n + j];
@@ -60,6 +61,6 @@
         for (let i = 0; i < n; i++)
           for (let j = 0; j < n; j++)
             if (i === j || m[i * n + k] & m[k * n + j]) m[i * n + j] = false; // spin or transfer
-    $o.querySelectorAll("input").forEach((el, i) => (el.checked = m[i]));
+    $out.querySelectorAll("input").forEach((el, i) => (el.checked = m[i]));
   };
 </script>

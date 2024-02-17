@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 
 <head>
-  <base href="/toy/qrcode/" />
-  <script
-    :name="QR Code"
-    :description="Encode / decode QR Code. Allow select mask function manually. Fast decode using OpenCV WASM."
-    :version="0.2.1"
-    src="../veps.js"
-  ></script>
-  <script src="//registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>QR Code - En/decode, specified mask, with OpenCV WASM</title>
+  <script :version="2.0.2" src="/toy/veps.js"></script>
+  <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
 </head>
 
 <style>
-  body > * {
+  body > :not(script) {
+    box-sizing: border-box;
     display: block;
-    width: 80vmin;
-    max-width: 300px;
-    margin: 10px auto 0;
+    width: 300px;
     padding: 4px 8px;
+    margin: 10px auto 0;
     border: 1px solid #888;
   }
   #\$file,
@@ -33,13 +30,13 @@
   <button id="$mode"><b>Encode</b> / Decode</button>
   <div id="$qrcode"></div>
   <select id="$level">
-    <option value="L" selected>Level L (7%)</option>
+    <option value="L">Level L (7%)</option>
     <option value="M">Level M (15%)</option>
     <option value="Q">Level Q (25%)</option>
     <option value="H">Level H (30%)</option>
   </select>
   <select id="$mask" disabled>
-    <option value="-1" selected>Auto mask</option>
+    <option value="-1">Auto mask</option>
     <option>0</option>
     <option>1</option>
     <option>2</option>
@@ -87,10 +84,8 @@
     // load script & wait user at the same time
     const cvloading = new Promise((resolve) => {
       const el = document.createElement("script");
-      el.onload = () => {
-        cv.then(() => resolve());
-      };
-      el.src = `//registry.npmmirror.com/@techstark/opencv-js/4.8.0-release.10/files/dist/opencv.js`;
+      el.onload = () => void cv.then(() => resolve());
+      el.src = `https://registry.npmmirror.com/@techstark/opencv-js/4.9.0-release.2/files/dist/opencv.js`;
       document.head.appendChild(el);
     });
     try {

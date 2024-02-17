@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 
 <head>
-  <base href="/toy/markdown/" />
-  <script
-    :name="Markdown"
-    :description="Simple markdown preview."
-    :version="0.2.5"
-    src="../veps.js"
-  ></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Markdown Preview</title>
+  <script :version="2.0.5" src="/toy/veps.js"></script>
   <link
     rel="stylesheet"
-    href="//registry.npmmirror.com/github-markdown-css/5.5.0/files/github-markdown.css"
+    href="https://registry.npmmirror.com/github-markdown-css/5.5.1/files/github-markdown-light.css"
   />
-  <script src="//registry.npmmirror.com/marked/11.1.0/files/marked.min.js"></script>
+  <script src="https://registry.npmmirror.com/marked/12.0.0/files/marked.min.js"></script>
 </head>
 
 <style>
-  #\$i {
+  #\$in {
+    box-sizing: border-box;
     width: 100%;
     height: 60vh;
     padding: 5px;
@@ -24,9 +22,6 @@
     font-family: monospace;
     resize: vertical;
     border: 1px solid #777;
-  }
-  #\$o {
-    --color-canvas-default: #0000;
   }
   #\$tips {
     padding: 0 5px;
@@ -44,13 +39,14 @@
 </style>
 
 <body>
-  <textarea id="$i" placeholder="Markdown input" spellcheck="false"></textarea>
+  <textarea id="$in" placeholder="Markdown input" spellcheck="false"></textarea>
   <p id="$tips">Click here to toggle input box</p>
-  <div id="$o" class="markdown-body"></div>
+  <div id="$out" class="markdown-body"></div>
 </body>
 
 <script>
-  $tips.onclick = () => void ($i.style.display = $i.offsetHeight ? "none" : "");
-  $i.oninput = () => void ($o.innerHTML = marked.parse($i.value));
-  $i.oninput();
+  $tips.onclick = () =>
+    void ($in.style.display = $in.style.display ? "" : "none");
+  $in.oninput = () => void ($out.innerHTML = marked.parse($in.value));
+  $in.oninput();
 </script>

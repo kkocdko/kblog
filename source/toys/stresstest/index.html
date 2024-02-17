@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 
 <head>
-  <base href="/toy/stresstest/" />
-  <script
-    :name="Stress Test"
-    :description="CPU and GPU stress test."
-    :version="0.1.3"
-    src="../veps.js"
-  ></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Stress Test - Drain your CPU and GPU</title>
+  <script :version="1.0.1" src="/toy/veps.js"></script>
 </head>
 
 <style>
-  body {
-    text-align: center;
-  }
-  label {
-    display: inline-block;
-    width: 120px;
+  body > :not(script) {
+    box-sizing: border-box;
+    display: block;
+    width: 300px;
     padding: 4px 8px;
-    margin: 5px;
+    margin: 10px auto 0;
     border: 1px solid #888;
   }
   input {
@@ -40,8 +35,6 @@
 </body>
 
 <script>
-  "use strict";
-
   $cpu.onchange = () => {
     if (!$cpu.checked) return $cpu.workers.forEach((w) => w.terminate());
     $cpu.workers = $cpu.workers ?? [];

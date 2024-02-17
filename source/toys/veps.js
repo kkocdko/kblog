@@ -1,27 +1,25 @@
 /**
- * Very Easy Page Solution v3.2.4
+ * Very Easy Page Solution v4.0.1
  *
- * Features:
- * 1. Reduce the code of toy pages.
- * 2. Single file as both loader and service worker.
- * 3. Generate icon by app name.
+ * Single file as both loader and service worker.
  */
 "use strict";
 
 const inWindow = async () => {
   // yields(await) may cause unexpected behaviours, be careful
   const vepsTag = document.currentScript;
+  if (location.href.endsWith("/")) location.href = location.href.slice(0, -1);
   const manifest = {
-    start_url: document.baseURI,
-    name: vepsTag.getAttribute(":name"),
-    description: vepsTag.getAttribute(":description"),
+    start_url: location.href,
+    name: document.title.split(" - ")[0],
+    description: document.title.split(" - ")[1] || "",
     display: "standalone",
     icons: [{ type: "image/png", sizes: "200x200", purpose: "any maskable" }],
   };
   {
     const lcg = (cur) => (25214903917 * cur) & 65535; // lcg random generator
     // const lcg = (cur) => (1103515245 * lcgSeed + 12345) % 2147483648;
-    const text = document.baseURI.split("/").at(-2).toUpperCase();
+    const text = manifest.name.replace(" ", "").toUpperCase();
     let sum = 0;
     for (let i = text.length; i--; ) sum = lcg(sum) + 13 * text.charCodeAt(i);
     const hueRaw = sum % (360 - (160 - 60)); // exclude ugly color area: 60 - 160
@@ -50,12 +48,8 @@ const inWindow = async () => {
   const manifestUrl =
     "data:text/json," + encodeURIComponent(JSON.stringify(manifest));
   const headInsert = `
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
-    <style>/* veps prelude */*{box-sizing:border-box;color:#000;background:#fff}@media(prefers-color-scheme:dark){*{color:#fff;background:#000}}script,style{display:none!important}</style>
     <link rel="icon" href="${manifest.icons[0].src}">
     <link rel="manifest" href="${manifestUrl}">
-    <title>${manifest.name}</title>
   `;
   document.head.insertAdjacentHTML("afterbegin", headInsert);
   if (vepsTag.getAttribute(":version").includes("-")) return; // is testing version
@@ -69,7 +63,7 @@ const inWindow = async () => {
     version: vepsTag.getAttribute(":version"),
     list: [
       location, // has `href` attribute
-      ...document.head.querySelectorAll("script,[rel=stylesheet]"),
+      ...document.head.querySelectorAll("script[src],[rel=stylesheet]"),
     ].map((v) => v.src || v.href),
     hotList: [location.href], // refetch everytime
   });
