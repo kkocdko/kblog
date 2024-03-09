@@ -87,10 +87,10 @@ ffmpeg \
 
 # ===== other notes =====
 
-# encoding, through svt-av1, down to 30 fps, crf 35 is enough for me, preset 0 is slowest, always tune=0
+# encoding, through svt-av1, crf 35 is enough for me, preset 0 is slowest, always tune=0
 ffmpeg \
   -i i.mp4 \
-  -vf fps=30 -c:v libsvtav1 -crf 35 -preset 0 -svtav1-params tune=0 \
+  -c:v libsvtav1 -crf 35 -preset 0 -svtav1-params tune=0 \
   -c:a copy \
   o.svtav1.mp4
 
@@ -106,8 +106,12 @@ ffmpeg -i v.mp4 -i a.m4a -c:v copy -c:a copy -map 0:v:0 -map 1:a:0 o.combine.mp4
 
 # maybe useful
 -tune stillimage
-# less latency but no recommand
+# less latency but no recommended
 -tune zerolatency
+# move mp4 moov to front, recommended, no size punishment
+-movflags faststart
+# down to 30 fps
+-vf fps=30
 # using rtsp with tcp
 -f rtsp -rtsp_transport tcp 'rtsp://127.0.0.1:9254/s0'
 # output one frame
