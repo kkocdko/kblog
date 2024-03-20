@@ -40,6 +40,7 @@ Deprecated
 | [SomeExp](https://someexp.com) · 希望世界更开源，透明与自由 |
 | [Kenji Mouri](https://mouri.moe) · 致力于编写使用最少的语法特性和第三方库的紧凑实现 |
 | [ximu](https://xlog.timero.xyz) · What's here? |
+| [天真的小窝](https://bin.zmide.com) · What's here? |
 
 ## License
 
