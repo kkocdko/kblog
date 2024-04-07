@@ -1,5 +1,5 @@
 /**
- * Very Easy Page Solution v4.0.1
+ * Very Easy Page Solution v4.0.2
  *
  * Single file as both loader and service worker.
  */
@@ -63,7 +63,13 @@ const inWindow = async () => {
     version: vepsTag.getAttribute(":version"),
     list: [
       location, // has `href` attribute
-      ...document.head.querySelectorAll("script[src],[rel=stylesheet]"),
+      ...document.head.querySelectorAll("script[src],link[rel=stylesheet]"),
+      ...Object.values(
+        JSON.parse(
+          document.head.querySelector("script[type=importmap]")?.textContent ||
+            '{"imports":{}}'
+        )?.imports
+      ),
     ].map((v) => v.src || v.href),
     hotList: [location.href], // refetch everytime
   });
