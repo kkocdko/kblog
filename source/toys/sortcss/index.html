@@ -4,11 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>Sort CSS - Reorder properties by stylelint-config-recess-order</title>
-  <script :version="1.0.1" src="/toy/veps.js"></script>
-  <script>
-    const module = {};
+  <script :version="1.0.2" src="/toy/veps.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "stylelint-config-recess-order": "https://registry.npmmirror.com/stylelint-config-recess-order/5.0.0/files/groups.js"
+      }
+    }
   </script>
-  <script src="https://registry.npmmirror.com/stylelint-config-recess-order/4.6.0/files/groups.js"></script>
 </head>
 
 <style>
@@ -24,11 +27,12 @@
   <textarea id="$out" spellcheck="false" autocomplete="off" readonly></textarea>
 </body>
 
-<script>
+<script type="module">
+  import propertyGroups from "stylelint-config-recess-order";
   $in.placeholder =
-    "/* Input here */\nbody {\n  height: 200px;\n  width: 100px;\n}\n";
+    "/* Input here */\nbody {\n  height: 200px;\n  margin: 8px;\n  width: 100px;\n}\n";
   const rules = new Map(
-    module.exports
+    propertyGroups
       .flatMap((o) => o.properties)
       .filter((e) => !e.includes(":"))
       .map((k, i) => [k, i])
