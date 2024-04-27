@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Binary Utils</title>
+  <script :version="1.0.1-alpha.1" src="/toy/veps.js"></script>
+</head>
+
+<style>
+  body > :not(script) {
+    box-sizing: border-box;
+    display: block;
+    width: 300px;
+    padding: 4px 8px;
+    margin: 10px auto 0;
+    border: 1px solid #888;
+  }
+  body > label {
+    display: grid;
+    grid: auto / 4em 1fr;
+    gap: 8px;
+  }
+</style>
+
+<body>
+  <label>
+    <select id="$inType">
+      <option value="plain">Plain</option>
+      <option value="base64">Base64</option>
+      <option value="hex">Hex</option>
+      <option value="json">JSON</option>
+      <option value="uri">URI</option>
+      <option value="file">File</option>
+    </select>
+    <input id="$in" spellcheck="false" autocomplete="off" />
+  </label>
+  <label>
+    <select id="$outType">
+      <option value="plain">Plain</option>
+      <option value="base64">Base64</option>
+      <option value="hex">Hex</option>
+      <option value="json">JSON</option>
+      <option value="uri">URI</option>
+      <option value="save">Save</option>
+    </select>
+    <input id="$out" spellcheck="false" autocomplete="off" readonly />
+  </label>
+</body>
+
+<script>
+  onchange = async () => {
+    console.log(1);
+    return;
+    if ($i.files[0].size > 1024 ** 2 * 2)
+      return alert("Input file must small than 2 MB"); // TODO: Big file
+    $i.previousSibling.nodeValue = "File: " + $i.files[0].name;
+    const reader = new FileReader();
+    reader.readAsDataURL($i.files[0]);
+    await new Promise((r) => (reader.onload = r));
+    $o.value = reader.result;
+    $o.select();
+    document.execCommand("copy");
+    alert("copied");
+  };
+</script>

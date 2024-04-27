@@ -40,6 +40,7 @@
   $in.oninput = () => {
     let out = "";
     const block = []; // not a full-featured parser, please ensure the input is valid and formatted css
+    // todo: support css nesting
     for (const line of $in.value.split("\n")) {
       if (line.endsWith(";")) {
         block.push(line);
