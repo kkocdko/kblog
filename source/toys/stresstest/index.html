@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>Stress Test - Drain your CPU and GPU</title>
-  <script :version="1.0.1" src="/toy/veps.js"></script>
+  <script :version="1.0.2" src="/toy/veps.js"></script>
 </head>
 
 <style>
@@ -19,19 +19,19 @@
   input {
     visibility: hidden;
   }
-  input::after {
+  input + i::after {
     visibility: visible;
     content: "ON";
   }
-  input:not(:checked)::after {
+  input:not(:checked) + i::after {
     content: "OFF";
     opacity: 0.4;
   }
 </style>
 
 <body>
-  <label>CPU <input id="$cpu" type="checkbox" /></label>
-  <label>GPU <input id="$gpu" type="checkbox" /></label>
+  <label>CPU <input id="$cpu" type="checkbox" /><i></i></label>
+  <label>GPU <input id="$gpu" type="checkbox" /><i></i></label>
 </body>
 
 <script>
