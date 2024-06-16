@@ -33,6 +33,8 @@ description: Only a draft for fun
 
 - Connect other devices that needs high permission, like writing bootable USB disk or another Android Phone: Unsolved.
 
+- Some Android Phone doesn't supports DP output: Unsolved.
+
 ### Why
 
 It's a "multiplex-aholic" thinking that want to multiplex everything.
