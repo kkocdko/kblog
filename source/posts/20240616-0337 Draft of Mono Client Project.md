@@ -31,7 +31,7 @@ description: Only a draft for fun
 
 - Other GUI App: Use Windows RDP. Don't use Linux desktop.
 
-- Connect other devices that needs high permission, like writing bootable USB disk or another Android Phone: Unsolved.
+- Connect other devices that needs high permission, like writing bootable USB disk, or flush another Android Phone: Unsolved.
 
 - Some Android Phone doesn't supports DP output: Unsolved.
 
@@ -44,3 +44,7 @@ Like, I share Windows and Linux host with others, the only exclusive client is m
 Multiplex even my Android Phone, uses it as both a normal phone and a compute unit of thin-client, and a mouse/touchpad.
 
 It is also a kind of extreme case of the opposite of the "multi-client" advocated by many manufacturers nowadays. Certainly, manufacturers want to sell more clients, but in this draft, use mono-client instead.
+
+## ToDo
+
+- https://sspai.com/post/39591
