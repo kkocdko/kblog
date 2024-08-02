@@ -34,21 +34,18 @@ nm --dynamic --undefined-only --with-symbol-versions ./mp4box | grep GLIBC | sed
 mkdir root
 
 # download and extract latest glibc https://packages.debian.org/sid/amd64/libc6/download
-curl -o downloaded.deb -L http://ftp.debian.org/debian/pool/main/g/glibc/libc6_2.39-3.1_amd64.deb
-ar x downloaded.deb data.tar.xz
-tar -xf data.tar.xz -C root
+curl -o downloaded.deb -L http://ftp.debian.org/debian/pool/main/g/glibc/libc6_2.40-1_amd64.deb
+ar p downloaded.deb data.tar.xz | tar -Jx -C root
 rm -rf downloaded.deb data.tar.xz
 
 # (optional) download and extract latest libgcc https://packages.debian.org/sid/amd64/libgcc-s1/download
 curl -o downloaded.deb -L http://ftp.debian.org/debian/pool/main/g/gcc-14/libgcc-s1_14.1.0-1_amd64.deb
-ar x downloaded.deb data.tar.xz
-tar -xf data.tar.xz -C root
+ar p downloaded.deb data.tar.xz | tar -Jx -C root
 rm -rf downloaded.deb data.tar.xz
 
 # (optional) download and extract latest libstdc++ https://packages.debian.org/sid/amd64/libstdc++6/download
 curl -o downloaded.deb -L http://ftp.debian.org/debian/pool/main/g/gcc-14/libstdc++6_14.1.0-1_amd64.deb
-ar x downloaded.deb data.tar.xz
-tar -xf data.tar.xz -C root
+ar p downloaded.deb data.tar.xz | tar -Jx -C root
 rm -rf downloaded.deb data.tar.xz
 
 # run with latest glibc
