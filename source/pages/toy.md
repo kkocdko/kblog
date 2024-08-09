@@ -7,6 +7,10 @@ title: Toy
 
 我本人的简历/履历，目前正积极寻求实习机会。Web 后端，Linux 开发，内核开发岗位均可。
 
+## [WebUSB KVM](/toy/webusbkvm)
+
+在浏览器上的 USB KVM (键盘 视频 鼠标) 客户端。使用 WebUSB/WebSerial。
+
 ## [Realpha](/toy/realpha)
 
 通过差分背景精确地恢复图片的 Alpha 通道，可用于提取透明图标。
