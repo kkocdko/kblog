@@ -161,7 +161,7 @@
     $monitor.play();
   };
   $avtweak.onchange = () => {
-    if ($avtweak.value === "fullscreen") $video.requestFullscreen();
+    if ($avtweak.value === "fullscreen") $monitor.requestFullscreen();
     if ($avtweak.value === "origin_size") {
       if ($monitor.style.maxWidth === "unset") {
         $monitor.style.maxWidth = "100%";
