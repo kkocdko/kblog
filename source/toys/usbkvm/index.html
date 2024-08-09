@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>USB KVM - Keyboard Video Mouse with CH9329</title>
+  <title>WebUSB KVM - Keyboard Video Mouse</title>
   <script :version="0.0.2" src="/toy/veps.js"></script>
   <script type="importmap">
     {
@@ -93,14 +93,8 @@
     position: absolute;
     right: 0;
     bottom: 0;
-    display: inline-block;
     width: 4em;
-    padding: 0 1px 1px 0;
-    line-height: 1.5;
     user-select: none;
-    background: #7775;
-    border: 1px solid #777;
-    border-width: 1px 0 0 1px;
   }
   #\$pasteSend:active {
     background: #777;
@@ -116,21 +110,17 @@
 <body>
   <main id="$main" tabindex="-1">
     <video id="$monitor"></video>
-    <div id="$keyboard">
-      <!-- because the <button> will capture focus, so we use <kbd> instead -->
-      <!--
-      <kbd>Shift</kbd>
-      <kbd>Ctrl</kbd>
-      <kbd>Alt</kbd>
-      <kbd>Tab</kbd>
-      <kbd>Enter</kbd>
-      -->
-    </div>
+    <!-- because the <button> will capture focus, so we use <kbd> instead -->
+    <!--
+      <div id="$keyboard">
+        <kbd>Shift</kbd>
+        <kbd>Ctrl</kbd>
+        <kbd>Alt</kbd>
+        <kbd>Tab</kbd>
+        <kbd>Enter</kbd>
+      </div>
+    -->
   </main>
-  <figure id="$paste">
-    <textarea id="$pasteText" rows="3" placeholder="Paste text here"></textarea>
-    <button id="$pasteSend">Send</button>
-  </figure>
   <select id="$audio">
     <option value="false">No audio</option>
   </select>
@@ -145,8 +135,29 @@
     <option value="video_cfg">Video config</option>
     <option value="video_w1920">Video width to 1920</option>
     <option value="video_r30">Video fps to 30</option>
-    <!-- <option value="video_b12000">Video bitrate to 12000</option> -->
   </select>
+  <button id="$fullscreen">Fullscreen</button>
+  <button id="$scale">Scale</button>
+  <div style="flex-grow: 1"></div>
+  <button id="$mouse">Mouse mode</button>
+  <select id="$comboKeys">
+    <option value hidden selected>Combo keys</option>
+    <option value="alt_f4">Alt+F4</option>
+    <option value="ctrl_alt_del">Ctrl+Alt+Del</option>
+    <option value="ctrl_alt_f1">Ctrl+Alt+F1</option>
+    <option value="ctrl_alt_f2">Ctrl+Alt+F2</option>
+    <option value="ctrl_alt_f3">Ctrl+Alt+F3</option>
+    <option value="ctrl_alt_f4">Ctrl+Alt+F4</option>
+    <option value="ctrl_alt_f5">Ctrl+Alt+F5</option>
+    <option value="ctrl_alt_f6">Ctrl+Alt+F6</option>
+    <option value="ctrl_alt_f7">Ctrl+Alt+F7</option>
+    <option value="ctrl_alt_f8">Ctrl+Alt+F8</option>
+    <option value="ctrl_alt_f9">Ctrl+Alt+F9</option>
+  </select>
+  <figure id="$paste">
+    <textarea id="$pasteText" rows="3" placeholder="Paste text here"></textarea>
+    <button id="$pasteSend">Send</button>
+  </figure>
 </body>
 
 <script type="module">
@@ -161,18 +172,6 @@
     $monitor.play();
   };
   $avtweak.onchange = () => {
-    if ($avtweak.value === "fullscreen") $monitor.requestFullscreen();
-    if ($avtweak.value === "origin_size") {
-      if ($monitor.style.maxWidth === "unset") {
-        $monitor.style.maxWidth = "100%";
-        $monitor.removeAttribute("width");
-        $monitor.removeAttribute("height");
-      } else {
-        $monitor.style.maxWidth = "unset";
-        $monitor.width = $monitor.videoWidth / devicePixelRatio;
-        $monitor.height = $monitor.videoHeight / devicePixelRatio;
-      }
-    }
     const modify = (el, f) => (el.selectedOptions[0].value = f(el.value));
     if ($avtweak.value === "audio_cfg")
       modify($audio, (v) => prompt("audio", v));
@@ -184,6 +183,18 @@
       modify($video, (v) => v.replace("({", "({frameRate:30,"));
     $avtweak.value = "";
     $audio.onchange();
+  };
+  $fullscreen.onclick = () => $monitor.requestFullscreen();
+  $scale.onclick = () => {
+    if ($monitor.style.maxWidth === "unset") {
+      $monitor.style.maxWidth = "100%";
+      $monitor.removeAttribute("width");
+      $monitor.removeAttribute("height");
+    } else {
+      $monitor.style.maxWidth = "unset";
+      $monitor.width = $monitor.videoWidth / devicePixelRatio;
+      $monitor.height = $monitor.videoHeight / devicePixelRatio;
+    }
   };
   let warn = () => new Promise((t, f) => ((t = "not inited"), alert(t), f(t))); // warn while the target function (video or usb keyboard mouse) not inited
   let [reader, writer] = [{ read: warn }, { write: warn }];
@@ -253,19 +264,6 @@
     ["Control",0xe0,0],["Shift",0xe1,0],["Alt",0xe2,0],["Meta",0xe3,0],
     ["\0",0x00,0],
   ].map(([key, hidCode, shift]) => [key, [hidCode, shift]]));
-  $pasteSend.onclick = async (e) => {
-    await new Promise((r) => setTimeout(r, 100));
-    for (const key of $pasteText.value) {
-      // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
-      const [hidCode, shift] = KEYS.get(key);
-      const value = new Uint8Array([
-        ...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0),
-        ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
-      ]);
-      // console.log({ char, hidCode, shift, value });
-      await writer.write(value);
-    }
-  };
   // keypress can not capture many keys like backspace and tab, so we use keydown/keyup instead
   const currentDownKeys = new Set();
   const eatKeys = new Set(); // avoid tailing control keys (press and release key A will emit event keyup[A] and keyup[Shift])
@@ -275,7 +273,7 @@
   $main.onkeyup = async (e) => {
     e.preventDefault(); // avoid the Tab key to switch out focus
     if (eatKeys.has(e.key)) return eatKeys.delete(e.key);
-    console.log(e);
+    // console.log(e);
     const [hidCode, shift] = KEYS.get(e.key);
     let controlBits = 0;
     if (shift) controlBits |= 0b00000010;
@@ -288,6 +286,34 @@
       ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
     ]);
     await writer.write(value);
+  };
+  $comboKeys.onchange = async () => {
+    let key, controlBits;
+    if ($comboKeys.value === "alt_f4") [key, controlBits] = ["F4", 0b00000100];
+    if ($comboKeys.value === "ctrl_alt_delete")
+      [key, controlBits] = ["Delete", 0b00000101];
+    if ($comboKeys.value.startsWith("ctrl_alt_f"))
+      [key, controlBits] = ["F" + $comboKeys.value.slice(10), 0b00000101];
+    const [hidCode] = KEYS.get(key);
+    const value = new Uint8Array([
+      ...genPacket(2, controlBits, 0, hidCode, 0, 0, 0, 0, 0),
+      ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
+    ]);
+    $comboKeys.value = "";
+    await writer.write(value);
+  };
+  $pasteSend.onclick = async (e) => {
+    await new Promise((r) => setTimeout(r, 100));
+    for (const key of $pasteText.value) {
+      // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
+      const [hidCode, shift] = KEYS.get(key);
+      const value = new Uint8Array([
+        ...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0),
+        ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
+      ]);
+      // console.log({ char, hidCode, shift, value });
+      await writer.write(value);
+    }
   };
   // TODO
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
@@ -310,35 +336,4 @@ sleep 0.2
 echo -e "\x57\xAB\x00\x02\x08\x00\x00\x20\x00\x00\x00\x00\x00\x2C" > /dev/ttyUSB0
 sleep 0.2
 echo -e "\x57\xAB\x00\x02\x08\x00\x00\x00\x00\x00\x00\x00\x00\x0C" > /dev/ttyUSB0
--->
-
-<!--
-<label>Pick file<input id="$in" type="file" /></label>
-<label>
-  Type
-  <select id="$type">
-    <option value="image/jpeg">JPEG</option>
-    <option value="image/png">PNG</option>
-    <option value="image/webp">WEBP</option>
-    <option value="image/avif">AVIF</option>
-    <option value="image/jxl">JPEG-XL</option>
-  </select>
-</label>
-<label>
-  Quality
-  <input id="$quality" min="1" max="100" value="75" type="number" />
-</label>
-<label>
-  Resize
-  <input id="$width" placeholder="Width" type="number" />
-  <input id="$height" placeholder="Height" type="number" />
-</label>
-<div id="$tips">
-  <p>Use "Pick file" button or dragging to add file.</p>
-  <p>Right click "Save as" or drag to save the output.</p>
-</div>
-<img id="$out" />
-<div>
-  <button id="$toggleSoftKeyboard">Soft keyboard</button>
-</div>
 -->
