@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>USB KVM - Keyboard Video Mouse</title>
+  <title>USB KVM - Keyboard Video Mouse with CH9329</title>
   <script :version="0.0.2" src="/toy/veps.js"></script>
   <script type="importmap">
     {
@@ -139,6 +139,8 @@
   </select>
   <select id="$avtweak">
     <option value hidden selected>A/V tweak</option>
+    <option value="fullscreen">Fullscreen</option>
+    <option value="origin_size">Origin size</option>
     <option value="audio_cfg">Audio config</option>
     <option value="video_cfg">Video config</option>
     <option value="video_w1920">Video width to 1920</option>
@@ -159,6 +161,18 @@
     $monitor.play();
   };
   $avtweak.onchange = () => {
+    if ($avtweak.value === "fullscreen") $video.requestFullscreen();
+    if ($avtweak.value === "origin_size") {
+      if ($monitor.style.maxWidth === "unset") {
+        $monitor.style.maxWidth = "100%";
+        $monitor.removeAttribute("width");
+        $monitor.removeAttribute("height");
+      } else {
+        $monitor.style.maxWidth = "unset";
+        $monitor.width = $monitor.videoWidth / devicePixelRatio;
+        $monitor.height = $monitor.videoHeight / devicePixelRatio;
+      }
+    }
     const modify = (el, f) => (el.selectedOptions[0].value = f(el.value));
     if ($avtweak.value === "audio_cfg")
       modify($audio, (v) => prompt("audio", v));
