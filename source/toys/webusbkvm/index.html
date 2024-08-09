@@ -265,13 +265,13 @@
   document.onpointerlockchange = () => {
     if (document.pointerLockElement && document.pointerLockElement !== $monitor)
       throw Error("assert error");
+    const i8clamp = (v) => Math.max(-0x7f, Math.min(v, 0x7f)); // clamp to int8
     let [pressedBits, x, y] = [0, 0, 0];
     let timer = null; // an modified throttle strategy
-    const clamp = (v) => Math.max(-0x80, Math.min(v, 0x7f)); // clamp to int8
     const f = (e) => {
       x += e.movementX;
       y += e.movementY;
-      if (pressedBits != e.buttons || clamp(x) !== x || clamp(y) !== y) {
+      if (pressedBits != e.buttons || i8clamp(x) !== x || i8clamp(y) !== y) {
         clearTimeout(timer);
         timer = null; // force trigger
       }
@@ -280,7 +280,7 @@
       (x = Math.round(x)), (y = Math.round(y));
       const value = [];
       do {
-        let [pX, pY] = [clamp(x), clamp(y)];
+        let [pX, pY] = [i8clamp(x), i8clamp(y)];
         (x -= pX), (y -= pY);
         if (pX < 0) pX = (0xff + pX) & 0xff;
         if (pY < 0) pY = (0xff + pY) & 0xff;
@@ -289,7 +289,7 @@
       } while (x !== 0 || y !== 0);
       (x = 0), (y = 0);
       writer.write(new Uint8Array(value)); // without await on purpose
-      timer = setTimeout(() => (timer = null), 0);
+      timer = setTimeout(() => (timer = null), 8);
     };
     if (document.pointerLockElement) {
       $monitor.onmousemove = $monitor.onmousedown = $monitor.onmouseup = f;
