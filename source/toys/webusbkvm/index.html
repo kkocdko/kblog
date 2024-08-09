@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="0.0.2" src="/toy/veps.js"></script>
+  <script :version="0.0.6" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -32,11 +32,19 @@
   #\$main > * {
     display: block;
     margin: 0 auto;
+    outline: none;
   }
   #\$main > #\$monitor {
     position: relative;
     max-width: 100%;
     background: #000;
+    outline: none;
+  }
+  #\$main > #\$monitor::-webkit-media-controls {
+    display: none !important;
+  }
+  #\$main > #\$monitor::-webkit-media-controls-enclosure {
+    display: none !important;
   }
   #\$main::after {
     position: absolute;
@@ -129,12 +137,12 @@
   </select>
   <select id="$avtweak">
     <option value hidden selected>A/V tweak</option>
-    <option value="fullscreen">Fullscreen</option>
-    <option value="origin_size">Origin size</option>
-    <option value="audio_cfg">Audio config</option>
-    <option value="video_cfg">Video config</option>
     <option value="video_w1920">Video width to 1920</option>
+    <option value="video_w1280">Video width to 1280</option>
+    <option value="video_w800">Video width to 800</option>
     <option value="video_r30">Video fps to 30</option>
+    <option value="video_cfg">Video config</option>
+    <option value="audio_cfg">Audio config</option>
   </select>
   <button id="$fullscreen">Fullscreen</button>
   <button id="$scale">Scale</button>
@@ -179,6 +187,10 @@
       modify($video, (v) => prompt("video", v));
     if ($avtweak.value === "video_w1920")
       modify($video, (v) => v.replace("({", "({width:1920,"));
+    if ($avtweak.value === "video_w1280")
+      modify($video, (v) => v.replace("({", "({width:1280,"));
+    if ($avtweak.value === "video_w800")
+      modify($video, (v) => v.replace("({", "({width:800,"));
     if ($avtweak.value === "video_r30")
       modify($video, (v) => v.replace("({", "({frameRate:30,"));
     $avtweak.value = "";
@@ -237,7 +249,7 @@
   const genPacket = (cmd = 0x01, ...data) => {
     let ret = [0x57, 0xab, 0x00, cmd, data.length, ...data];
     ret.push((ret.reduce((prev, cur) => prev + cur, 0) - 1) % 255);
-    return new Uint8Array(ret);
+    return ret;
   };
   // prettier-ignore
   const KEYS = new Map([ // https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
@@ -290,9 +302,9 @@
   $comboKeys.onchange = async () => {
     let key, controlBits;
     if ($comboKeys.value === "alt_f4") [key, controlBits] = ["F4", 0b00000100];
-    if ($comboKeys.value === "ctrl_alt_delete")
+    if ($comboKeys.value === "ctrl_alt_del")
       [key, controlBits] = ["Delete", 0b00000101];
-    if ($comboKeys.value.startsWith("ctrl_alt_f"))
+    if (/^ctrl_alt_f\d+$/.test($comboKeys.value))
       [key, controlBits] = ["F" + $comboKeys.value.slice(10), 0b00000101];
     const [hidCode] = KEYS.get(key);
     const value = new Uint8Array([
@@ -303,25 +315,23 @@
     await writer.write(value);
   };
   $pasteSend.onclick = async (e) => {
-    await new Promise((r) => setTimeout(r, 100));
-    for (const key of $pasteText.value) {
-      // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
-      const [hidCode, shift] = KEYS.get(key);
-      const value = new Uint8Array([
-        ...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0),
-        ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
-      ]);
-      // console.log({ char, hidCode, shift, value });
-      await writer.write(value);
+    // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
+    for (let i = 0; i < $pasteText.value.length; ) {
+      const value = []; // press down 6 keys then release, faster
+      for (let j = Math.min(i + 6, $pasteText.value.length); i < j; i++) {
+        const [hidCode, shift] = KEYS.get($pasteText.value[i]);
+        const packet = genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0);
+        for (const byte of packet) value.push(byte);
+      }
+      for (const byte of genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0)) value.push(byte);
+      await writer.write(new Uint8Array(value));
     }
   };
   // TODO
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
   // 鼠标摇杆（Android 手机）
   // 直接鼠标点击（需要和分辨率对齐）
-  // 视频的其他功能（感知浏览器缩放，与实际分辨率对齐，实现最佳清晰度）
 
-  // https://blog.csdn.net/wangmj_hdu/article/details/110528620
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/
   // https://blog.csdn.net/u014794783/article/details/108097412
