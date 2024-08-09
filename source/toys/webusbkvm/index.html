@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="0.0.6" src="/toy/veps.js"></script>
+  <script :version="0.0.7" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -327,10 +327,23 @@
       await writer.write(new Uint8Array(value));
     }
   };
+  $pasteSend.onclick = async (e) => {
+    // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
+    for (const key of $pasteText.value) {
+      const [hidCode, shift] = KEYS.get(key);
+      // there's a faster strategy, press down 6 keys before release. however this will cause adjacent same chars to be wrong, like "root" became "rot"
+      const value = new Uint8Array([
+        ...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0),
+        ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
+      ]);
+      // console.log({ char, hidCode, shift, value });
+      await writer.write(value);
+    }
+  };
   // TODO
-  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
   // 鼠标摇杆（Android 手机）
   // 直接鼠标点击（需要和分辨率对齐）
+  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
 
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/

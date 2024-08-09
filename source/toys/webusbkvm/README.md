@@ -12,7 +12,7 @@ There are already USB KVM clients on the world with similar functions, but they 
 
 ## Usage
 
-First you need the MS2109 capture card (18 ￥ chinese yuan), CH9329 module (5 ￥), CH340 module (3 ￥). This is much cheaper than a portable screen + mouse and keyboard.
+First you need the CH9329 module (5 ￥ chinese yuan), CH340 module (3 ￥), MS2109 capture card (18 ￥). This is much cheaper than a portable screen + mouse and keyboard.
 
 Connect the target machine and your PC (sometimes you need `sudo chmod 777 /dev/ttyUSBn`), open <https://kkocdko.site/toy/webusbkvm> and follow the tips on page.
 
@@ -37,7 +37,7 @@ If you want a pretty look, you can buy CH9329+CH340 end product cable (15 ¥), w
 
 ## 使用方法
 
-首先你需要 MS2109 采集卡（18 ￥）、 CH9329 模块（5 ￥）、 CH340 模块（3 ￥）。比起 便携屏+鼠标键盘 便宜多了。
+首先你需要 CH9329 模块（5 ￥）、 CH340 模块（3 ￥）、MS2109 采集卡（18 ￥）。比起 便携屏+鼠标键盘 便宜多了。
 
 连接目标设备和你的电脑（可能需要 `sudo chmod 777 /dev/ttyUSBn`），然后打开 <https://kkocdko.site/toy/webusbkvm> ，按页面指示使用即可。
 
