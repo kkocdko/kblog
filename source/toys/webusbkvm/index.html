@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="0.0.7" src="/toy/veps.js"></script>
+  <script :version="0.0.8" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -147,7 +147,7 @@
   <button id="$fullscreen">Fullscreen</button>
   <button id="$scale">Scale</button>
   <div style="flex-grow: 1"></div>
-  <button id="$mouse">Mouse mode</button>
+  <button id="$captureMouse">Capture mouse</button>
   <select id="$comboKeys">
     <option value hidden selected>Combo keys</option>
     <option value="alt_f4">Alt+F4</option>
@@ -247,9 +247,78 @@
     $main.classList.add("inited");
   };
   const genPacket = (cmd = 0x01, ...data) => {
+    for (const v of data) if (v < 0 || v > 0xff) throw v;
     let ret = [0x57, 0xab, 0x00, cmd, data.length, ...data];
-    ret.push((ret.reduce((prev, cur) => prev + cur, 0) - 1) % 255);
+    let sum = new Uint8Array([0]);
+    for (const v of ret) sum[0] += v;
+    ret.push(sum[0]);
     return ret;
+  };
+  $captureMouse.onclick = async () => {
+    try {
+      await $monitor.requestPointerLock({ unadjustedMovement: true });
+    } catch (_) {
+      await $monitor.requestPointerLock();
+    }
+  };
+  document.onpointerlockchange = () => {
+    if (document.pointerLockElement && document.pointerLockElement !== $monitor)
+      throw Error("assert error");
+    if (document.pointerLockElement) {
+      let [pressedBits, moveX, moveY] = [0, 0, 0];
+      let timer = null; // an modified throttle strategy
+      const clamp = (v) => {
+        if (v > 0x7f) return 0x7f;
+        if (v < -0x80) return -0x80;
+        return v;
+      };
+      const updateMouse = () => {
+        if (timer !== null) return;
+        (moveX = Math.round(moveX)), (moveY = Math.round(moveY));
+        const value = [];
+        do {
+          let [x, y] = [clamp(moveX), clamp(moveY)];
+          (moveX -= x), (moveY -= y);
+          if (x < 0) x = (0xff + x) & 0xff;
+          if (y < 0) y = (0xff + y) & 0xff;
+          // console.log({ x, y });
+          value.push(...genPacket(5, 1, pressedBits, x, y, 0));
+        } while (moveX !== 0 || moveY !== 0);
+        (moveX = 0), (moveY = 0);
+        writer.write(new Uint8Array(value)); // without await on purpose
+        timer = setTimeout(() => {
+          timer = null;
+        }, 16);
+      };
+      $monitor.onmousemove = (e) => {
+        moveX += e.movementX;
+        moveY += e.movementY;
+        if (clamp(moveX) !== moveX || clamp(moveY) !== moveY) {
+          clearTimeout(timer);
+          timer = null; // force trigger
+        }
+        // console.log({ a: e.movementX, b: e.movementY });
+        updateMouse();
+      };
+      $monitor.onmousedown = () => {
+        pressedBits |= 0b00000001;
+        clearTimeout(timer);
+        timer = null;
+        updateMouse();
+      };
+      $monitor.onmouseup = () => {
+        pressedBits &= 0b11111110;
+        clearTimeout(timer);
+        timer = null;
+        updateMouse();
+      };
+      // $monitor.onwheel;
+      // onauxclick;
+    } else {
+      $monitor.onmousemove = null;
+      $monitor.onmousedown = null;
+      $monitor.onmouseup = null;
+    }
   };
   // prettier-ignore
   const KEYS = new Map([ // https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
@@ -320,8 +389,7 @@
       const value = []; // press down 6 keys then release, faster
       for (let j = Math.min(i + 6, $pasteText.value.length); i < j; i++) {
         const [hidCode, shift] = KEYS.get($pasteText.value[i]);
-        const packet = genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0);
-        for (const byte of packet) value.push(byte);
+        value.push(...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0));
       }
       for (const byte of genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0)) value.push(byte);
       await writer.write(new Uint8Array(value));
@@ -342,7 +410,6 @@
   };
   // TODO
   // 鼠标摇杆（Android 手机）
-  // 直接鼠标点击（需要和分辨率对齐）
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
 
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice

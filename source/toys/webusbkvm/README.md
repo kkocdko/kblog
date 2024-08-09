@@ -1,6 +1,6 @@
 # webusbkvm
 
-[简体中文](#translation-zh-cn)
+🌐 - [简体中文](#translation-zh-cn)
 
 An USB KVM (Keyboard Video Mouse) client in your browser.
 
