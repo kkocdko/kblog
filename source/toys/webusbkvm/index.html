@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="0.0.8" src="/toy/veps.js"></script>
+  <script :version="0.0.9" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -275,7 +275,7 @@
         clearTimeout(timer);
         timer = null; // force trigger
       }
-      pressedBits = e.buttons;
+      pressedBits = e.buttons; // so lucky, coincidence or necessity?
       if (timer !== null) return;
       (x = Math.round(x)), (y = Math.round(y));
       const value = [];
@@ -289,10 +289,10 @@
       } while (x !== 0 || y !== 0);
       (x = 0), (y = 0);
       writer.write(new Uint8Array(value)); // without await on purpose
-      timer = setTimeout(() => (timer = null), 8);
+      timer = setTimeout(() => (timer = null), 16);
     };
     if (document.pointerLockElement) {
-      $monitor.onmousemove = $monitor.onmousedown = $monitor.onmouseup = f;
+      $monitor.onmousemove = $monitor.onmousedown = $monitor.onmouseup = f; // todo: onwhell?
     } else {
       $monitor.onmousemove = $monitor.onmousedown = $monitor.onmouseup = null;
     }
@@ -385,7 +385,7 @@
       await writer.write(value);
     }
   };
-  // TODO
+  // todo:
   // 鼠标摇杆（Android 手机）
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
 
