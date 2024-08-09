@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>USB KVM - Keyboard Video Mouse</title>
-  <script :version="0.0.1-alpha" src="/toy/veps.js"></script>
+  <script :version="0.0.2" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -118,11 +118,13 @@
     <video id="$monitor"></video>
     <div id="$keyboard">
       <!-- because the <button> will capture focus, so we use <kbd> instead -->
+      <!--
       <kbd>Shift</kbd>
       <kbd>Ctrl</kbd>
       <kbd>Alt</kbd>
       <kbd>Tab</kbd>
       <kbd>Enter</kbd>
+      -->
     </div>
   </main>
   <figure id="$paste">
@@ -188,18 +190,6 @@
     await port.open({ baudRate: +prompt("baud rate = ", "9600") });
     reader = port.readable.getReader();
     writer = port.writable.getWriter();
-    // while (true) {
-    //   const { value, done } = await reader.read();
-    //   if (done) break;
-    //   onreaded(value);
-    // }
-    // while (true) {
-    //   await send(0x02, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00);
-    //   await new Promise((r) => setTimeout(r, 200));
-    //   await send(0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-    //   await new Promise((r) => setTimeout(r, 200));
-    // }
-    // console.log(port);
   };
   const initMonitor = async () => {
     for (const device of await navigator.mediaDevices.enumerateDevices()) {
@@ -228,25 +218,28 @@
   const KEYS = new Map([ // https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
     ["a",0x04,0],["A",0x04,1],["b",0x05,0],["B",0x05,1],["c",0x06,0],["C",0x06,1],["d",0x07,0],["D",0x07,1],["e",0x08,0],["E",0x08,1],["f",0x09,0],["F",0x09,1],["g",0x0a,0],["G",0x0a,1],["h",0x0b,0],["H",0x0b,1],["i",0x0c,0],["I",0x0c,1],["j",0x0d,0],["J",0x0d,1],["k",0x0e,0],["K",0x0e,1],["l",0x0f,0],["L",0x0f,1],["m",0x10,0],["M",0x10,1],["n",0x11,0],["N",0x11,1],["o",0x12,0],["O",0x12,1],["p",0x13,0],["P",0x13,1],["q",0x14,0],["Q",0x14,1],["r",0x15,0],["R",0x15,1],["s",0x16,0],["S",0x16,1],["t",0x17,0],["T",0x17,1],["u",0x18,0],["U",0x18,1],["v",0x19,0],["V",0x19,1],["w",0x1a,0],["W",0x1a,1],["x",0x1b,0],["X",0x1b,1],["y",0x1c,0],["Y",0x1c,1],["z",0x1d,0],["Z",0x1d,1],
     ["1",0x1e,0],["!",0x1e,1],["2",0x1f,0],["@",0x1f,1],["3",0x20,0],["#",0x20,1],["4",0x21,0],["$",0x21,1],["5",0x22,0],["%",0x22,1],["6",0x23,0],["^",0x23,1],["7",0x24,0],["&",0x24,1],["8",0x25,0],["*",0x25,1],["9",0x26,0],["(",0x26,1],["0",0x27,0],[")",0x27,1],
-    ["\t",0x2b,0],
-    [" " ,0x2c,0],
-    ["-" ,0x2d,0],["_" ,0x2d,1],
-    ["=" ,0x2e,0],["+" ,0x2e,1],
-    ["[" ,0x2F,0],["{" ,0x2F,1],
-    ["]" ,0x30,0],["}" ,0x30,1],
-    ["\\",0x31,0],["|" ,0x31,1],
-    [";" ,0x33,0],[":" ,0x33,1],
-    ["'" ,0x34,0],['"' ,0x34,1],
-    ["`" ,0x35,0],["~" ,0x35,1],
-    ["," ,0x36,0],["<" ,0x36,1],
-    ["." ,0x37,0],[">" ,0x37,1],
-    ["/" ,0x38,0],["?" ,0x38,1],
-    ["Enter"    , 0x58, 0], ["Enter_R"  , 0x58, 0], ["\n"       , 0x58, 0],
+    ["Enter"    ,0x28,0],["\n",0x28,0],
+    ["Esc"      ,0x29,0],
+    ["Backspace",0x2a,0],["\b",0x2a,0],
+    ["Tab"      ,0x2b,0],["\t",0x2b,0],
+    ["Space"    ,0x2c,0],[" " ,0x2c,0],
+    ["-" ,0x2d,0],["_",0x2d,1],
+    ["=" ,0x2e,0],["+",0x2e,1],
+    ["[" ,0x2F,0],["{",0x2F,1],
+    ["]" ,0x30,0],["}",0x30,1],
+    ["\\",0x31,0],["|",0x31,1],
+    [";" ,0x33,0],[":",0x33,1],
+    ["'" ,0x34,0],['"',0x34,1],
+    ["`" ,0x35,0],["~",0x35,1],
+    ["," ,0x36,0],["<",0x36,1],
+    ["." ,0x37,0],[">",0x37,1],
+    ["/" ,0x38,0],["?",0x38,1],
+    ["Pause",0x48,0],["Insert",0x49,0],["Home",0x4a,0],["PageUp",0x4b,0],["Delete",0x4c,0],["End",0x4d,0],["PageDown",0x4e,0],["ArrowRight",0x4f,0],["ArrowLeft",0x50,0],["ArrowDown",0x51,0],["ArrowUp",0x52,0],
     ["F1",0x3a,0],["F2",0x3b,0],["F3",0x3c,0],["F4",0x3d,0],["F5",0x3e,0],["F6",0x3f,0],["F7",0x40,0],["F8",0x41,0],["F9",0x42,0],["F10",0x43,0],["F11",0x44,0],["F12",0x45,0],
-    ["" , 0x00, 0],
+    ["Control",0xe0,0],["Shift",0xe1,0],["Alt",0xe2,0],["Meta",0xe3,0],
+    ["\0",0x00,0],
   ].map(([key, hidCode, shift]) => [key, [hidCode, shift]]));
-  $pasteText.onkeypress = async ({ key }) => {
-    if (key !== "Enter") return;
+  $pasteSend.onclick = async (e) => {
     await new Promise((r) => setTimeout(r, 100));
     for (const key of $pasteText.value) {
       // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
@@ -259,47 +252,34 @@
       await writer.write(value);
     }
   };
-  // keydown keyup
-  $main.onkeypress = async ({ key }) => {
-    const [hidCode, shift] = KEYS.get(key);
+  // keypress can not capture many keys like backspace and tab, so we use keydown/keyup instead
+  const currentDownKeys = new Set();
+  const eatKeys = new Set(); // avoid tailing control keys (press and release key A will emit event keyup[A] and keyup[Shift])
+  $main.onkeydown = async (e) => {
+    e.preventDefault(); // avoid the Tab key to switch out focus
+  };
+  $main.onkeyup = async (e) => {
+    e.preventDefault(); // avoid the Tab key to switch out focus
+    if (eatKeys.has(e.key)) return eatKeys.delete(e.key);
+    console.log(e);
+    const [hidCode, shift] = KEYS.get(e.key);
+    let controlBits = 0;
+    if (shift) controlBits |= 0b00000010;
+    if (e.ctrlKey) (controlBits |= 0b00000001), eatKeys.add("Control");
+    if (e.shiftKey) (controlBits |= 0b00000010), eatKeys.add("Shift");
+    if (e.altKey) (controlBits |= 0b00000100), eatKeys.add("Alt");
+    if (e.metaKey) (controlBits |= 0b00001000), eatKeys.add("Meta");
     const value = new Uint8Array([
-      ...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0),
+      ...genPacket(2, controlBits, 0, hidCode, 0, 0, 0, 0, 0),
       ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
     ]);
     await writer.write(value);
   };
-
-  // 切到 ascii 模式然后直接打进去
-  // const toAsciiMode=async
-  // const read = async (size) => {
-  //   const ret = new Uint8Array(size);
-  //   while (size !== 0) {
-  //     let { value, done } = await reader.read();
-  //     if (done) break;
-  //     console.log(value);
-  //     ret.set(value, ret.length - size); // if out of range, will throw error
-  //     size -= value.length;
-  //     value = undefined;
-  //   }
-  //   return ret;
-  // };
-  // const response = read(56);
-  // await writer.write(genPacket(0x08));
-  // const value = await response;
-  // value[6] = 0x01; // ascii mode
-  // await writer.write(genPacket(0x09, ...value));
-  // await new Promise((r) => setTimeout(r, 100));
-  // await writer.write(new TextEncoder().encode($pasteText.value)); // only ascii chars?
-  // await new Promise((r) => setTimeout(r, 100));
-  // value[6] = 0x00; // protocol transmission mode
-  // await writer.write(genPacket(0x09, ...value));
-
-  // 完整的软键盘
-  // 粘贴处
-  // 鼠标摇杆
-  // 直接鼠标点击
-
-  // 视频
+  // TODO
+  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
+  // 鼠标摇杆（Android 手机）
+  // 直接鼠标点击（需要和分辨率对齐）
+  // 视频的其他功能（感知浏览器缩放，与实际分辨率对齐，实现最佳清晰度）
 
   // https://blog.csdn.net/wangmj_hdu/article/details/110528620
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
