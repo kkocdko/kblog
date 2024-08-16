@@ -9,7 +9,7 @@ title: Toy
 
 ## [WebUSB KVM](/toy/webusbkvm)
 
-在浏览器上的 USB KVM (键盘 视频 鼠标) 客户端。使用 WebUSB/WebSerial。
+浏览器上的 USB KVM (键盘 视频 鼠标) ，使用 WebUSB/WebSerial。
 
 ## [Realpha](/toy/realpha)
 

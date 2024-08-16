@@ -2,7 +2,7 @@
 
 🌐 - [简体中文](#translation-zh-cn)
 
-An USB KVM (Keyboard Video Mouse) client in your browser.
+USB KVM (Keyboard Video Mouse) in your browser using WebUSB/WebSerial. With CH9329 chip.
 
 ## Why
 
@@ -27,7 +27,7 @@ If you want a pretty look, you can buy CH9329+CH340 end product cable (15 ¥), w
 <details>
 <summary id="translation-zh-cn">简体中文</summary>
 
-> webusbkvm - 在浏览器上的 USB KVM (键盘 视频 鼠标) 客户端。
+> webusbkvm - 浏览器上的 USB KVM (键盘 视频 鼠标) ，使用 WebUSB/WebSerial。适配 CH9329。
 
 ## 为什么
 
