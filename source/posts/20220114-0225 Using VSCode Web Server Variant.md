@@ -5,13 +5,13 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.85.1 (2023-12-13T09:14:51.474Z)`, may become invalid in a future version.
+> Last tested version is `1.94.2`, may become invalid in a future version.
 
 ### Pros
 
-- As a tab on browser, more convenient. Haven't redundant renderer process, less memory footprint.
+- As a tab on browser, more convenient. Haven't redundant services and GPU processs, less overhead.
 
-- Bypass Electron's IME issues on Linux Wayland.
+- Bypass Electron's IME issues on Linux Wayland (Electron 33 alpha fixed this).
 
 - Official extension market, not [coder/code-server](https://github.com/coder/code-server)'s market.
 
@@ -19,7 +19,7 @@ description: Not just for fun
 
 - Not officially supported. See [this issue](https://github.com/microsoft/vscode/issues/121116#issuecomment-818696827).
 
-- Key shortcut conflicts like `Ctrl + W` will close the browser tab (PWA mode fixes this).
+- Key shortcut conflicts, like `Ctrl + W` will close the browser tab (PWA mode fixes this).
 
 ## Guide
 
@@ -31,14 +31,13 @@ Then use `./bin/code-server(.bat)` or write a custom `./run.sh`:
 cd $(dirname $0)
 # export VSCODE_AGENT_FOLDER=$(pwd)/agent_folder # chaneg the data directory
 # export UV_USE_IO_URING=0 # avoid bug in nodejs 21
-node ./out/server-main.js --accept-server-license-terms --host 0.0.0.0 --port 8109 --connection-token=mytoken
+node ./out/server-main.js --accept-server-license-terms --host 127.0.0.1 --port 8109 --connection-token=mytoken
 ```
 
 And here's a `patch.js` to workaround some issues like offline webview, see comments for details:
 
 ```javascript
-// Last Tested Version: 1.85.1
-const fs = require("node:fs");
+import fs from "node:fs";
 if (!fs.existsSync("./out/vs/server/node/server.cli.js"))
   throw Error("current dir wrong");
 const patch = (filePath, replaceList) => {
@@ -54,11 +53,11 @@ const patch = (filePath, replaceList) => {
   }
   fs.writeFileSync(filePath, content);
 };
-patch("./out/vs/workbench/workbench.web.main.js", [
+patch("./out/vs/code/browser/workbench/workbench.js", [
   // > src/vs/workbench/services/environment/browser/environmentService.ts
   [`"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`, `baseUrl+"`], // Replace entry url with local server to allow offline work (for webview)
   // > src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
-  [/(?<="extensions.autoUpdate":\{.+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default = false. Because the "User Settings" is store in browser (indexedDB), so if you open a page in a fresh incognito window, the update progress will start unexpectedly
+  [/(?<="extensions.autoUpdate":\{.+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default = false. Because the "User Settings" is store in browser (indexedDB), so update will start unexpectedly if you open a page in incognito
 ]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // > src/vs/workbench/contrib/webview/browser/pre/index.html
@@ -102,8 +101,8 @@ fs.writeFileSync(
 // rm -rf ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
 ```
 
-- There's a bug that caused UI freezed when entering debug after `1.65`. **(UPDATED)** [Patch is merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
+- There's a bug that caused UI freezed when entering debug after `1.65`. **(UPDATED)** [Patch merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
 
-- Can not install extensions after Node.js 21. **(UPDATED)** [Patch is merged into mainline](https://github.com/microsoft/vscode/pull/200935).
+- Can not install extensions after Node.js 21. **(UPDATED)** [Patch merged into mainline](https://github.com/microsoft/vscode/pull/200935).
 
-- Because [node-spdlog](https://github.com/microsoft/node-spdlog) and [node-pty](https://github.com/microsoft/node-pty) were both use NAN, so cross NodeJS version needs recompiling. You can use a faked spdlog (included in above `patch.js`) and [daniel-brenot's node-pty fork](https://github.com/daniel-brenot/node-pty). **(UPDATED)** Recommand to use my [PR in node-pty to migrate to NAPI](https://github.com/microsoft/node-pty/pull/644).
+- NAN addons like [node-spdlog](https://github.com/microsoft/node-spdlog) and [node-pty](https://github.com/microsoft/node-pty) may needs recompiling, you can use a faked spdlog in above `patch.js`, and [daniel-brenot's node-pty fork](https://github.com/daniel-brenot/node-pty). **(UPDATED)** [Patch merged into mainline in node-pty with NAPI](https://github.com/microsoft/node-pty/pull/644).
