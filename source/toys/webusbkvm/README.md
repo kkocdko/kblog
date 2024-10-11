@@ -18,7 +18,7 @@ Connect the target machine and your PC (sometimes you need `sudo chmod 777 /dev/
 
 ## By the way
 
-MS2109 capture card maximum transmission 1080p 30fps mjpeg, if you need better quality, try MS2130 (35 ¥). But I personally don't think it's necessary, because the target machine is usually in TTY or running WinPE.
+MS2109 capture card maximum transmission 1080p 30fps mjpeg, if you need better quality, try MS2130 (29 ¥). But I personally don't think it's necessary, because the target machine is usually in TTY or running WinPE.
 
 If you want a pretty look, you can buy CH9329+CH340 end product cable (15 ¥), which cost more compared to two modules and dupont cable.
 
@@ -43,7 +43,7 @@ If you want a pretty look, you can buy CH9329+CH340 end product cable (15 ¥), w
 
 ## 多说几句
 
-MS2109 采集卡最高传输 1080p 30fps mjpeg，如果你需要更高的画质，可以选择 MS2130，价格在 35 ￥左右。但是我个人觉得这是不必要的，毕竟一般目标机器都是在 TTY 里或者运行 WinPE。
+MS2109 采集卡最高传输 1080p 30fps mjpeg，如果你需要更高的画质，可以选择 MS2130，价格在 29 ￥左右。但是我个人觉得这是不必要的，毕竟一般目标机器都是在 TTY 里或者运行 WinPE。
 
 如果你希望外观好看，可以购买 CH9329+CH340 的成品线（15 ￥），相对于自己买两个模块和杜邦线要贵一些。
 

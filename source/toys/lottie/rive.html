@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Lottie Demo</title>
+  <script :version="0.0.1-alpha.1" src="/toy/veps.js"></script>
+</head>
+
+<style>
+  body {
+    width: 100vmin;
+    height: 100vmin;
+    margin: calc(50vh - 50vmin) auto;
+    overflow: hidden;
+  }
+</style>
+
+<body>
+  <canvas id="cv" style="width: 100vmin; height: 100vmin"></canvas>
+</body>
+
+<!--
+lottie - rlottie - rive
+-->
+
+<script src="https://unpkg.com/@rive-app/canvas-lite/rive.js"></script>
+<script>
+  // rive.RuntimeLoader.setWasmUrl("https://unpkg.com/@rive-app/canvas-lite/rive")
+  // https://unpkg.com/@rive-app/webgl2-advanced@2.21.5/rive.wasm
+  // import rive from "https://unpkg.com/@rive-app/canvas-lite/rive.js"
+  // import Rive from "https://unpkg.com/@rive-app/webgl2-advanced@2.21.5/webgl2_advanced.mjs"
+  //   const rive = await Rive()
+  // window.rive = rive;
+
+  // -------------------------------------------------------
+  // ---- [START - OPTION 1]
+  // ---- LOCAL RIVE EXAMPLE
+  // Loads a .riv file from local resources.
+  // Set this as the src attribute when creating a new Rive instance.
+
+  // --[EXAMPLE FROM HERE]
+  const riveInstance = new rive.Rive({
+    // Load a local riv `clean_the_car.riv` or upload your own!
+    src: "a.riv",
+    // Be sure to specify the correct state machine (or animation) name
+    stateMachines: "State Machine 1", // Name of the State Machine to play
+    // artboard: "Artboard" // Optionally provide the artboard to display
+    canvas: cv,
+    autoplay: true,
+    onLoad: () => {
+      // Prevent a blurry canvas by using the device pixel ratio
+      riveInstance.resizeDrawingSurfaceToCanvas();
+    },
+  });
+  // --[EXAMPLE FROM HERE]
+  // async function loadRiveFileBuffer(url) {
+  //   return await (await fetch(new Request(url))).arrayBuffer();
+  // }
+
+  // async function bufferExample() {
+  //   const buffer = await loadRiveFileBuffer(
+  //     "https://cdn.rive.app/animations/vehicles.riv"
+  //   );
+
+  //   const riveInstance = new rive.Rive({
+  //     // Buffer .riv asset.
+  //     buffer: buffer,
+  //     stateMachines: "bumpy",
+  //     canvas: riveCanvas,
+  //     autoplay: true,
+  //     onLoad: () => {
+  //       riveInstance.resizeDrawingSurfaceToCanvas();
+  //     },
+  //   });
+  // }
+</script>

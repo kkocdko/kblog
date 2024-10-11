@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!-- Authored by [meeop](https://v2ex.com/t/1074289), modified by kkocdko -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Unicode字符展示工具</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 5px;
+    }
+    #controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+      flex-wrap: wrap;
+      font-size: 12px;
+    }
+    #grid {
+      display: grid;
+      gap: 1px;
+    }
+    .cell {
+      text-align: center;
+      line-height: 1;
+    }
+    .code {
+      font-size: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <div>
+      <label for="fontSize">字号:</label
+      ><input
+        type="number"
+        id="fontSize"
+        min="1"
+        max="50"
+        value="16"
+        style="width: 40px"
+      /><label for="cols">列:</label
+      ><input
+        type="number"
+        id="cols"
+        min="1"
+        max="50"
+        value="20"
+        style="width: 40px"
+      /><label for="rows">行:</label
+      ><input
+        type="number"
+        id="rows"
+        min="1"
+        max="50"
+        value="20"
+        style="width: 40px"
+      />
+    </div>
+    <div>
+      <label for="startCode">起始:</label
+      ><input
+        type="text"
+        id="startCode"
+        value="0000"
+        style="width: 50px"
+      /><label for="endCode">结束:</label
+      ><input type="text" id="endCode" value="FFFF" style="width: 50px" />
+    </div>
+    <div>
+      <label for="unicodePlane">平面:</label
+      ><select id="unicodePlane" style="width: 120px">
+        <option value="0,FFFF">基本多文种平面</option>
+        <option value="10000,1FFFF">多文种补充平面</option>
+        <option value="20000,2FFFF">表意文字补充平面</option>
+        <option value="30000,3FFFF">表意文字第三平面</option>
+        <option value="E0000,EFFFF">特别用途补充平面</option>
+        <option value="F0000,FFFFF">私人使用区A</option>
+        <option value="100000,10FFFF">私人使用区B</option>
+      </select>
+    </div>
+    <div>
+      <button id="prevPage">上一页</button><span id="pageInfo"></span
+      ><button id="nextPage">下一页</button>
+    </div>
+  </div>
+  <div id="grid"></div>
+  <script>
+    const g = document.getElementById("grid"),
+      f = document.getElementById("fontSize"),
+      c = document.getElementById("cols"),
+      r = document.getElementById("rows"),
+      s = document.getElementById("startCode"),
+      e = document.getElementById("endCode"),
+      u = document.getElementById("unicodePlane"),
+      p = document.getElementById("prevPage"),
+      n = document.getElementById("nextPage"),
+      i = document.getElementById("pageInfo");
+    let C = 0,
+      t = 0;
+    function u_() {
+      const o = parseInt(f.value),
+        l = parseInt(c.value),
+        d = parseInt(r.value),
+        a = parseInt(s.value, 16),
+        h = parseInt(e.value, 16);
+      (g.style.gridTemplateColumns = `repeat(${l}, 1fr)`), (g.innerHTML = "");
+      const m = l * d;
+      t = Math.ceil((h - a + 1) / m);
+      const v = a + C * m;
+      for (let n = 0; n < m; n++) {
+        const t = v + n;
+        if (t > h) break;
+        const e = document.createElement("div");
+        e.className = "cell";
+        const c = String.fromCodePoint(t);
+        (e.innerHTML = `<span style="font-size: ${o}px;">${c}</span><br><span class="code">${t
+          .toString(16)
+          .toUpperCase()
+          .padStart(4, "0")}</span>`),
+          g.appendChild(e);
+      }
+      (i.textContent = `${C + 1}/${t}`),
+        (p.disabled = 0 === C),
+        (n.disabled = C === t - 1);
+    }
+    function u_p(n) {
+      (C += n), C < 0 && (C = 0), C >= t && (C = t - 1), u_();
+    }
+    function u_u() {
+      const [n, t] = u.value.split(",");
+      (s.value = n), (e.value = t), (C = 0), u_();
+    }
+    f.addEventListener("input", u_),
+      c.addEventListener("input", u_),
+      r.addEventListener("input", u_),
+      s.addEventListener("input", () => {
+        (C = 0), u_();
+      }),
+      e.addEventListener("input", () => {
+        (C = 0), u_();
+      }),
+      u.addEventListener("change", u_u),
+      p.addEventListener("click", () => u_p(-1)),
+      n.addEventListener("click", () => u_p(1)),
+      u_();
+  </script>
+</body>
