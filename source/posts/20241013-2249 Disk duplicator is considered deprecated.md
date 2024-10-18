@@ -21,7 +21,10 @@ Hard disk duplicator is something that is not sold on Taobao, Amazon and other p
 
 ## Alternatives
 
-Obviously there's no need for me to go into more detail. If you're installing a computer, you can use an empty disk with a LiveCD, and if you're really going mega, you can use a USB to M.2 adapter for writes (the JMS583 10G USB adapter that is currently 22 ￥ or 4 $). Some people will suggest using a PCIe adapter and M.2 on the motherboard and then repeatedly off-on, I'm skeptical about repeatedly turning it on and off. If you have a Thunderbolt that can transfer out of PCIe, that's also a good option, but slightly more costly.
+- Obviously there's no need for me to go into more detail. If you're installing a computer, you can use an empty disk with a LiveCD/WinPE
+- If you're really going mega, you can use a fast portable disk for writes (the JMS583 10G USB is currently 22 ￥ or 5 $), then use something like [USB KVM](https://github.com/kkocdko/kblog/tree/master/source/toys/webusbkvm) to do auto operation. The _Mechrevo_ do this, don't ask me how I know this.
+
+- Some people will suggest using a PCIe adapter and M.2 on the motherboard and then repeatedly off-on, I'm skeptical about repeatedly turning it on and off. If you have a Thunderbolt that can transfer out of PCIe, that's also a good option, but slightly more costly.
 
 ## Translation
 
@@ -40,8 +43,16 @@ Obviously there's no need for me to go into more detail. If you're installing a 
 
 - 不感知分区表和文件系统，造成非必要的写入，以及 GPT GUID 和文件系统 UUID 重复。
 
+- 无法充分利用硬盘特性，例如做 bitlocker crypt offload 配置。
+
+- 不够灵活，无法做一些类似写入递增序列号的操作。
+
 ## 替代方案
 
-显然已经不需要我多讲。如果你要装机，完全可以使用空盘与 LiveCD。如果真的要超大规模部署，可以使用 USB 转 M.2 来写入（JMS583 方案的 10G USB 转接当前 22 ￥）。有些人会建议使用 PCIe 转接的和主板上的 M.2 然后反复关机开机，我对反复开关机表示怀疑。如果你有雷电可以转出 PCIe，也是不错的选择，但是成本略高。
+- 显然已经不需要我多讲。如果你要装机，完全可以使用空盘与 LiveCD/WinPE。
+
+- 如果真要超大规模部署，可以使用高速的移动硬盘来装载 LiveCD（JMS583 10G USB 当前 22 ￥），然后配合 [USB KVM](https://github.com/kkocdko/kblog/tree/master/source/toys/webusbkvm) 类似的模拟鼠标键盘来自动化，这是 _机械革命_ 他们的方案，别问我是怎么知道的。
+
+- 有些人会建议使用 PCIe 转接的和主板上的 M.2 然后反复关机开机，我对反复开关机表示怀疑。如果你有雷电可以转出 PCIe，或许也是不错的选择，但是成本略高。
 
 </details>
