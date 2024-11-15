@@ -219,12 +219,12 @@
     writer = port.writable.getWriter();
   };
   const initMonitor = async () => {
-    for (const device of await navigator.mediaDevices.enumerateDevices()) {
-      const select = { audioinput: $audio, videoinput: $video }[device.kind];
+    for (const info of await navigator.mediaDevices.enumerateDevices()) {
+      const select = { audioinput: $audio, videoinput: $video }[info.kind];
       if (!select) continue;
       const option = select.appendChild(document.createElement("option"));
-      option.value = `({deviceId:'${device.deviceId}'})`;
-      option.textContent = device.label;
+      option.value = `({deviceId:'${info.deviceId}'})`;
+      option.textContent = info.label.trim() || "id:" + info.deviceId.slice(7);
     }
     $video.classList.add("tips");
     setTimeout(() => $video.classList.remove("tips"), 2000);
@@ -292,21 +292,10 @@
     ["Backspace",0x2a,0],["\b",0x2a,0],
     ["Tab"      ,0x2b,0],["\t",0x2b,0],
     ["Space"    ,0x2c,0],[" " ,0x2c,0],
-    ["-" ,0x2d,0],["_",0x2d,1],
-    ["=" ,0x2e,0],["+",0x2e,1],
-    ["[" ,0x2F,0],["{",0x2F,1],
-    ["]" ,0x30,0],["}",0x30,1],
-    ["\\",0x31,0],["|",0x31,1],
-    [";" ,0x33,0],[":",0x33,1],
-    ["'" ,0x34,0],['"',0x34,1],
-    ["`" ,0x35,0],["~",0x35,1],
-    ["," ,0x36,0],["<",0x36,1],
-    ["." ,0x37,0],[">",0x37,1],
-    ["/" ,0x38,0],["?",0x38,1],
+    ["-",0x2d,0],["_",0x2d,1],["=",0x2e,0],["+",0x2e,1],["[",0x2F,0],["{",0x2F,1],["]",0x30,0],["}",0x30,1],["\\",0x31,0],["|",0x31,1],[";",0x33,0],[":",0x33,1],["'",0x34,0],['"',0x34,1],["`",0x35,0],["~",0x35,1],[",",0x36,0],["<",0x36,1],[".",0x37,0],[">",0x37,1],["/",0x38,0],["?",0x38,1],
     ["Pause",0x48,0],["Insert",0x49,0],["Home",0x4a,0],["PageUp",0x4b,0],["Delete",0x4c,0],["End",0x4d,0],["PageDown",0x4e,0],["ArrowRight",0x4f,0],["ArrowLeft",0x50,0],["ArrowDown",0x51,0],["ArrowUp",0x52,0],
     ["F1",0x3a,0],["F2",0x3b,0],["F3",0x3c,0],["F4",0x3d,0],["F5",0x3e,0],["F6",0x3f,0],["F7",0x40,0],["F8",0x41,0],["F9",0x42,0],["F10",0x43,0],["F11",0x44,0],["F12",0x45,0],
     ["Control",0xe0,0],["Shift",0xe1,0],["Alt",0xe2,0],["Meta",0xe3,0],
-    ["\0",0x00,0],
   ].map(([key, hidCode, shift]) => [key, [hidCode, shift]]));
   // keypress can not capture many keys like backspace and tab, so we use keydown/keyup instead
   const currentDownKeys = new Set();
@@ -363,6 +352,8 @@
   // todo:
   // 鼠标摇杆（Android 手机）
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
+  // 按下与弹起
+  // 多键按下
 
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/
