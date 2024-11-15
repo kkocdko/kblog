@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="1.0.1" src="/toy/veps.js"></script>
+  <script :version="1.0.2" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -219,6 +219,10 @@
     writer = port.writable.getWriter();
   };
   const initMonitor = async () => {
+    const opt = { video: true, audio: true };
+    const tempStream = await navigator.mediaDevices.getUserMedia(opt); // grant permission first, otherwise the enumerateDevices() below will returns empty
+    for (const t of tempStream.getTracks() ?? [])
+      t.stop(), tempStream.removeTrack(t); // stop tracks, the above getUserMedia() will open default tracks, usually the laptop's built-in camera
     for (const info of await navigator.mediaDevices.enumerateDevices()) {
       const select = { audioinput: $audio, videoinput: $video }[info.kind];
       if (!select) continue;
@@ -363,7 +367,7 @@
 
 <!--
 python -m http.server 9439
-sudo chmod 777 /dev/ttyUSB0 
+sudo chmod 777 /dev/ttyUSB0
 echo "will press the key '3' then release"
 sleep 0.2
 echo -e "\x57\xAB\x00\x02\x08\x00\x00\x20\x00\x00\x00\x00\x00\x2C" > /dev/ttyUSB0

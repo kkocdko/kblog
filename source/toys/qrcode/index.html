@@ -84,7 +84,7 @@
     // load script & wait user at the same time
     const cvloading = new Promise((resolve) => {
       const el = document.createElement("script");
-      el.onload = () => void cv.then(() => resolve());
+      el.onload = () => void cv.then(() => resolve()); // https://stackoverflow.com/a/54546092/11338291
       el.src = `https://registry.npmmirror.com/@techstark/opencv-js/4.10.0-release.1/files/dist/opencv.js`;
       document.head.appendChild(el);
     });
