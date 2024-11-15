@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>QR Code - En/decode, specified mask, with OpenCV WASM</title>
-  <script :version="2.0.2" src="/toy/veps.js"></script>
+  <script :version="2.0.3" src="/toy/veps.js"></script>
   <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
 </head>
 
@@ -85,20 +85,9 @@
     const cvloading = new Promise((resolve) => {
       const el = document.createElement("script");
       el.onload = () => void cv.then(() => resolve());
-      el.src = `https://registry.npmmirror.com/@techstark/opencv-js/4.9.0-release.2/files/dist/opencv.js`;
+      el.src = `https://registry.npmmirror.com/@techstark/opencv-js/4.10.0-release.1/files/dist/opencv.js`;
       document.head.appendChild(el);
     });
-    try {
-      // if user denied to open camera, keep the file selector working normal
-      await navigator.mediaDevices.getUserMedia({ video: { zoom: true } });
-      for (const device of await navigator.mediaDevices.enumerateDevices()) {
-        if (device.kind !== "videoinput") continue;
-        const entry = `<option value="({frameRate:5,deviceId:'${device.deviceId}'})">${device.label}</option>`;
-        $camera.insertAdjacentHTML("beforeend", entry);
-      }
-    } catch (_e) {
-      $preview.style.display = $camera.style.display = "none";
-    }
     $camera.onchange = async () => {
       // https://stackoverflow.com/a/73550841/11338291
       $preview.srcObject?.getTracks().forEach((t) => {
@@ -121,7 +110,18 @@
       $zoom.oninput = () =>
         void videoTrack.applyConstraints({ advanced: [{ zoom: $zoom.value }] });
     };
-    await $camera.onchange();
+    try {
+      // if user denied to open camera, keep the file selector working normal
+      await navigator.mediaDevices.getUserMedia({ video: { zoom: true } });
+      for (const device of await navigator.mediaDevices.enumerateDevices()) {
+        if (device.kind !== "videoinput") continue;
+        const entry = `<option value="({frameRate:5,deviceId:'${device.deviceId}'})">${device.label}</option>`;
+        $camera.insertAdjacentHTML("beforeend", entry);
+      }
+      await $camera.onchange();
+    } catch (_e) {
+      $preview.style.display = $camera.style.display = "none";
+    }
     await cvloading;
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d", {
