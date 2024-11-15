@@ -1,23 +1,21 @@
-/**
- * Generator & Static Server.
- */
-import { fileURLToPath } from "node:url";
-import { createServer } from "node:http";
-import { Worker } from "node:worker_threads";
 import fs from "node:fs";
 import path from "node:path";
+import http from "node:http";
+import worker_threads from "node:worker_threads";
 import marked from "marked";
 import htmlclean from "htmlclean";
 import terser from "terser";
 
-const modulePath = fileURLToPath(import.meta.url);
+const modulePath = import.meta.filename;
 if (path.dirname(modulePath) !== process.cwd())
   throw Error("Current directory is different from project directory");
 
 if (process.argv.includes("develop")) {
   const childs = [];
-  const exec = (argv) =>
-    childs.push(new Worker(modulePath, { argv }).on("error", console.error));
+  const exec = (argv) => {
+    const worker = new worker_threads.Worker(modulePath, { argv });
+    childs.push(worker.on("error", console.error));
+  };
   let i = 0;
   const spawn = () => {
     console.log("#", ++i);
@@ -36,7 +34,7 @@ if (process.argv.includes("develop")) {
   };
   const r2a = path.join.bind(null, path.dirname(modulePath), "public");
   // (await import("node:https")).createServer((p=>(p=([s])=>fs.readFileSync(`/home/kkocdko/.local/share/caddy/certificates/local/127.0.0.1/127.0.0.1.${s}`),{key:p`key`,cert:p`crt`}))(),({url},res)=>{
-  createServer(({ url }, res) => {
+  const server = http.createServer(({ url }, res) => {
     const pair = [
       [200, r2a(url)],
       [200, r2a(url, "index.html")],
@@ -46,7 +44,8 @@ if (process.argv.includes("develop")) {
     const [status, local] = pair;
     res.setHeader("content-type", mime[local.split(".").pop()] || "");
     res.writeHead(status).end(fs.readFileSync(local));
-  }).listen(port);
+  });
+  server.listen(port, "127.0.0.1");
   console.info(`server: 127.0.0.1:${port}`);
   // Fall through here, go ahead and run generator
 } else if (process.argv.includes("generate")) {
@@ -55,6 +54,371 @@ if (process.argv.includes("develop")) {
 }
 
 console.time("generate time");
+
+const html = ([s]) => s; // Please use this extension to show syntax highlight: https://github.com/0x00000001A/es6-string-html
+const css = ([s]) => s;
+// Front-end units
+const units = {
+  avatarSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" style="background:#333c3e"><path d="M-40 1000L0 0h960z" fill="#009083"/><path d="M-40 1000l318-318L0 200z" fill="#23b39b"/><path d="M-40 1000l318-318L0 521z" fill="#95e9dd"/><path d="M-40 1000l318-318 184 318z" fill="#698287"/><path d="M490 710L1200 0H80z" fill="#027e63"/><path d="M490 710L1200 0h360L718 842z" fill="#38574c"/></svg>`,
+  mainCss: css`
+    * {
+      max-height: 100%; /* Disable Font Boosting */
+      margin: 0;
+    }
+    html {
+      font-family: sans-serif;
+      line-height: 1.8;
+      overflow-wrap: break-word;
+      background: #f8f9fa;
+      -webkit-tap-highlight-color: #0000;
+    }
+    a {
+      color: #3f51b5;
+      text-decoration: none;
+    }
+    main {
+      width: 100%;
+      min-height: 100vh;
+      margin: 50px 0 0;
+    }
+    main > * {
+      padding: 20px;
+      margin-top: 1px;
+      background: #fff;
+      box-shadow: 0 1px #ddd;
+    }
+    @media (min-width: 750px) {
+      main {
+        width: 700px;
+        margin: 75px auto 25px;
+      }
+      main > * {
+        margin-top: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px #aaa;
+      }
+    }
+    main h1 {
+      padding-bottom: 7px;
+      margin: -9px 0 13px;
+      font-weight: 400;
+      box-shadow: 0 1px #ddd;
+    }
+    section > * {
+      margin-top: 3px; /* For section > p */
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    section h3 {
+      margin: -8px 0 5px;
+      font-weight: 400;
+    }
+    section div {
+      margin: 9px 0 -2px;
+    }
+    section div a,
+    section > a,
+    section span {
+      padding: 2px 7px;
+      margin: 5px 5px -4px 0;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    section > a {
+      display: inline-block;
+    }
+    nav {
+      padding: 0;
+      font-size: 14px;
+      line-height: 3;
+      text-align: center;
+    }
+    nav a {
+      padding: 1em 6%;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: #3f51b5;
+      box-shadow: 0 0 5px #aaa;
+      transition: 0.2s;
+    }
+    header.hidden {
+      transform: translateY(-55px);
+    }
+    header > * {
+      float: left;
+      height: 28px;
+      padding: 11px;
+      fill: #fff;
+    }
+    header a + * {
+      float: right;
+    }
+    header img {
+      width: 24px;
+      margin-left: -10px;
+      border: 2px solid #fff;
+      border-radius: 50%;
+    }
+    footer,
+    footer a {
+      font-size: 13px;
+      line-height: 3;
+      color: #ddd;
+      text-align: center;
+      background: #3f51b5;
+    }
+    aside {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: #0008;
+      transition: 0.3s;
+    }
+    aside.hidden {
+      visibility: hidden;
+      background: #0000;
+    }
+    aside div {
+      width: 70%;
+      max-width: 230px;
+      height: 100%;
+      padding-top: 50px;
+      overflow: auto;
+      background: #fff;
+      transition: 0.3s;
+    }
+    aside.hidden div {
+      transform: translateX(-100%);
+    }
+    aside a {
+      display: block;
+      padding-left: 15%;
+      line-height: 4;
+      color: #333;
+    }
+    spin-circle {
+      position: fixed;
+      opacity: 0;
+    }
+    .loading spin-circle {
+      top: 50%;
+      left: 50%;
+      padding: 17px;
+      margin: -20px;
+      border: 3px solid #3f51b5;
+      border-top-color: #0000;
+      border-radius: 50%;
+      opacity: 1;
+      transition: opacity 0.3s 0.1s, transform 5s linear;
+      transform: rotate(3600deg);
+    }
+    .loading main,
+    .loading footer {
+      filter: opacity(0.2); /* Force GPU render */
+      transition: 0.3s;
+    }
+    @keyframes loaded {
+      0% {
+        filter: opacity(0.1);
+        transform: translateY(9px);
+      }
+    }
+    .loaded main,
+    .loaded footer {
+      transition: none; /* Avoid flicker */
+      animation: 0.2s ease-out loaded;
+    }
+  `,
+  markdownCss: css`
+    article > *,
+    article details > *,
+    article p {
+      margin-top: 9px;
+    }
+    article h2,
+    article h3 {
+      margin-top: 13px;
+      font-weight: 400;
+    }
+    article h2 {
+      font-size: 21px;
+    }
+    article a {
+      color: #0366d6;
+    }
+    article summary {
+      padding-left: 3px;
+    }
+    article blockquote {
+      padding-left: 13px;
+      border-left: 3px solid #ddd;
+    }
+    article code {
+      padding: 2px 5px;
+      font-size: 14px;
+      background: #f4f4f4;
+      border-radius: 4px;
+    }
+    article pre code {
+      display: block;
+      padding: 16px;
+      overflow: auto;
+      line-height: 1.3;
+    }
+    article ol,
+    article ul {
+      padding-left: 22px;
+    }
+    article table {
+      display: block;
+      overflow: auto;
+      border-collapse: collapse;
+    }
+    article tr:nth-child(2n) {
+      background: #f8f9fa;
+    }
+    article tr > * {
+      padding: 5px 13px;
+      font-weight: 400;
+      border: 1px solid #ddd;
+    }
+    article img {
+      max-width: 100%;
+      height: auto; /* Override the HTML height attr (about aspect-ratio) */
+    }
+    article img:not(.no-border) {
+      filter: drop-shadow(0 0 2px #ccc); /* Fit irregular images */
+      border-radius: 4px;
+    }
+  `,
+  headHtml: html`
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#3f51b5" />
+    <!-- prettier-ignore -->
+    <link rel="icon" href='\${avatar}' />
+    <style>
+      /*{style}*/
+    </style>
+  `,
+  extraHtml: html`
+    <header>
+      <!-- From material-design-icons, redrawed to reduce size -->
+      <svg
+        viewBox="-6 0 12 12"
+        onclick="document.body.children[4].className=''"
+      >
+        <circle r="1" cy="3" ; />
+        <circle r="1" cy="6" ; />
+        <circle r="1" cy="9" ; />
+      </svg>
+      <a href="/.">
+        <!-- prettier-ignore -->
+        <img src='\${avatar}' />
+      </a>
+      <svg viewBox="0 0 48 48" onclick="self.scroll({top:0,behavior:'smooth'})">
+        <path d="M22 15.7V40h4V15.7l11.2 11.1L40 24 24 8 8 24l2.8 2.8z" ; />
+      </svg>
+    </header>
+    <footer>
+      <a href="/./about#license">CC0</a>
+       - 
+      <a href="/feed.xml">RSS</a>
+    </footer>
+    <spin-circle></spin-circle>
+    <aside class="hidden" onclick="className='hidden'">
+      <div>
+        <a href="/.">Home</a>
+        <a href="/./archive">Archive</a>
+        <a href="/./tag">Tag</a>
+        <a href="/./toy">Toy</a>
+        <a href="/./about">About</a>
+      </div>
+    </aside>
+  `,
+  temlpateHtml: html`
+    <!DOCTYPE html>
+    <!-- If <head> does not exist, some search engines will reject this page -->
+    <head>
+      <title>/*{title}*/ - kkocdko's blog</title>
+      <meta name="description" content="/*{description}*/" />
+      <!-- Firefox >= 62 | Chrome >= 69 | Safari >= 12 -->
+      <script
+        src="/bundle.js"
+        onload="[].flat||(location='/update.html')"
+      ></script>
+    </head>
+    <main>/*{content}*/</main>
+  `,
+  updateHtml: html`
+    <script>
+      location = "//browser-update.org/update.html";
+    </script>
+  `,
+  bundleJs: (() => {
+    "use strict";
+    history.scrollRestoration = "auto"; // Restone position when page resume
+    let avatar = `/*{avatar}*/`;
+    document.head.insertAdjacentHTML("beforeend", `/*{head}*/`);
+    document.addEventListener("DOMContentLoaded", () => {
+      document.body.insertAdjacentHTML("beforeend", `/*{extra}*/`);
+      /*{script}*/
+    });
+  })
+    .toString()
+    .slice("() => {".length, -"}".length),
+  mainJs: (() => {
+    "use strict";
+    let [mainBox /* main */, topBar /* header */] = document.body.children;
+    let scrollRecords = {};
+    let scrollPos = 0;
+    let onLinkClick = function (event) {
+      if (event.ctrlKey) return; // Open in background
+      event.preventDefault();
+      history.pushState(null, "", this.href);
+      onpopstate(); // Because "pushState" will not trigger "popstate" event
+    };
+    let onPageLoad = () => {
+      (
+        document.getElementById(location.hash.slice(1)) || topBar
+      ).scrollIntoView();
+      document
+        .querySelectorAll('a[href^="/."],a[href^="#"]')
+        .forEach((element) => (element.onclick = onLinkClick));
+    };
+    onscroll = () => {
+      topBar.className =
+        scrollPos < (scrollRecords[location] = scrollPos = scrollY) &&
+        scrollPos /* Was set to "scrollY" */ > 55
+          ? "hidden"
+          : "";
+    };
+    onpopstate = (isPopState) => {
+      document.body.className = "loading";
+      history.scrollRestoration = "manual"; // Failed in fetch.then, Chrome's bug?
+      fetch(location)
+        .then((response) => response.text())
+        .then((s) => {
+          // Regexp is slower than indexOf, but it's usually less than 5 ms
+          [, document.title, , mainBox.innerHTML] =
+            s.split(/<\/?title>|<\/?main>/);
+          scroll(0, isPopState ? scrollRecords[location] || 0 : 0);
+          // Ensure anchor makes down-scroll to hide topbar
+          onPageLoad();
+          document.body.className = "loaded"; // Also replace the "loading"
+          setTimeout(() => (document.body.className = ""), 250);
+        });
+    };
+    onPageLoad();
+  })
+    .toString()
+    .slice("() => {".length, -"}".length),
+};
 
 const isDev = process.argv.includes("--dev");
 
@@ -83,8 +447,7 @@ const minify = (() => {
 })();
 
 const makePage = (() => {
-  const templateRaw = fs.readFileSync("./units/template.html").toString();
-  const template = minify.htmlEnhanced(templateRaw);
+  const template = minify.htmlEnhanced(units.temlpateHtml);
   return ({ isMarkdown, path: rpath, title, description = "", content }) => {
     if (isMarkdown)
       content = `<article><h1>${title}</h1>${marked(content)}</article>`;
@@ -118,17 +481,18 @@ const loadMdFile = (filePath) => {
   fs.rm("./public_old", { recursive: true, force: true }, () => {});
   fs.mkdirSync("./public");
 
-  const f = ([r]) => fs.readFileSync(`./units/${r}`).toString(); // Read file str
-  const avatar = "data:image/svg+xml," + f`avatar.svg`.replaceAll("#", "%23");
-  const style = minify.css(f`main.css` + f`markdown.css`);
-  const head = minify.htmlEnhanced(f`head.html`).replace("/*{style}*/", style);
-  const bundle = f`bundle.js`
+  const avatar = "data:image/svg+xml," + units.avatarSvg.replaceAll("#", "%23");
+  const style = minify.css(units.mainCss + units.markdownCss);
+  const head = minify
+    .htmlEnhanced(units.headHtml)
+    .replace("/*{style}*/", style);
+  const bundle = units.bundleJs
     .replace("/*{avatar}*/", avatar)
     .replace("/*{head}*/", head)
-    .replace("/*{extra}*/", minify.htmlEnhanced(f`extra.html`))
-    .replace("/*{script}*/", f`main.js`);
+    .replace("/*{extra}*/", minify.htmlEnhanced(units.extraHtml))
+    .replace("/*{script}*/", units.mainJs);
   fs.writeFileSync("./public/bundle.js", minify.js(bundle));
-  fs.writeFileSync("./public/update.html", f`update.html`);
+  fs.writeFileSync("./public/update.html", units.updateHtml);
 
   fs.cpSync("./source/toys", "./public/toy", { recursive: true });
   fs.cpSync("./source/res", "./public/res", { recursive: true });
