@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="1.0.2" src="/toy/veps.js"></script>
+  <script :version="1.0.3" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -108,8 +108,9 @@
   select {
     width: 8em;
   }
-  #\$video.tips {
+  .tips {
     background: #e08700c0;
+    transition: background-color 0.7s cubic-bezier(0.3, 3, 0.7, -2);
   }
 </style>
 
@@ -214,7 +215,18 @@
         usbTransferInterfaceClass: 255,
       });
     }
-    await port.open({ baudRate: +prompt("baud rate = ", "9600") });
+    const opened = port.open({ baudRate: +prompt("baud rate = ", "9600") });
+    const timeout = new Promise((resolve, reject) => setTimeout(reject, 700));
+    try {
+      await new Promise.race([timeout, opened]);
+    } catch (e) {
+      $pasteText.classList.add("tips");
+      setTimeout(() => $pasteText.classList.remove("tips"), 2000);
+      $pasteText.textContent =
+        "for linux, try: sudo chmod 777 /dev/ttyUSB0\nerror = " +
+        JSON.stringify(e);
+      throw e;
+    }
     reader = port.readable.getReader();
     writer = port.writable.getWriter();
   };
@@ -355,22 +367,18 @@
   };
   // todo:
   // 鼠标摇杆（Android 手机）
-  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键）
-  // 按下与弹起
-  // 多键按下
+  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键，要提供一个 US 布局键盘）
+  // 真正的按下与弹起
 
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/
   // https://blog.csdn.net/u014794783/article/details/108097412
-  // file:///run/media/kkocdko/data/docs/archived/ch9329/ch9329-protocol.pdf
 </script>
 
 <!--
 python -m http.server 9439
 sudo chmod 777 /dev/ttyUSB0
 echo "will press the key '3' then release"
-sleep 0.2
-echo -e "\x57\xAB\x00\x02\x08\x00\x00\x20\x00\x00\x00\x00\x00\x2C" > /dev/ttyUSB0
-sleep 0.2
-echo -e "\x57\xAB\x00\x02\x08\x00\x00\x00\x00\x00\x00\x00\x00\x0C" > /dev/ttyUSB0
+sleep 0.2 ; echo -e "\x57\xAB\x00\x02\x08\x00\x00\x20\x00\x00\x00\x00\x00\x2C" > /dev/ttyUSB0
+sleep 0.2 ; echo -e "\x57\xAB\x00\x02\x08\x00\x00\x00\x00\x00\x00\x00\x00\x0C" > /dev/ttyUSB0
 -->
