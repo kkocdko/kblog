@@ -216,9 +216,9 @@
       });
     }
     const opened = port.open({ baudRate: +prompt("baud rate = ", "9600") });
-    const timeout = new Promise((resolve, reject) => setTimeout(reject, 700));
+    const timeout = new Promise((resolve, reject) => setTimeout(reject, 900));
     try {
-      await new Promise.race([timeout, opened]);
+      await Promise.race([timeout, opened]);
     } catch (e) {
       $pasteText.classList.add("tips");
       setTimeout(() => $pasteText.classList.remove("tips"), 2000);
@@ -369,6 +369,7 @@
   // 鼠标摇杆（Android 手机）
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键，要提供一个 US 布局键盘）
   // 真正的按下与弹起
+  // 录制功能
 
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/
