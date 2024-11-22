@@ -6,14 +6,13 @@ import marked from "marked";
 import htmlclean from "htmlclean";
 import terser from "terser";
 
-const modulePath = import.meta.filename;
-if (path.dirname(modulePath) !== process.cwd())
+if (import.meta.dirname !== process.cwd())
   throw Error("Current directory is different from project directory");
 
 if (process.argv.includes("develop")) {
   const childs = [];
   const exec = (argv) => {
-    const worker = new worker_threads.Worker(modulePath, { argv });
+    const worker = new worker_threads.Worker(import.meta.dirname, { argv });
     childs.push(worker.on("error", console.error));
   };
   let i = 0;
@@ -32,7 +31,7 @@ if (process.argv.includes("develop")) {
     js: "text/javascript",
     svg: "image/svg+xml",
   };
-  const r2a = path.join.bind(null, path.dirname(modulePath), "public");
+  const r2a = path.join.bind(null, import.meta.dirname, "public");
   // (await import("node:https")).createServer((p=>(p=([s])=>fs.readFileSync(`/home/kkocdko/.local/share/caddy/certificates/local/127.0.0.1/127.0.0.1.${s}`),{key:p`key`,cert:p`crt`}))(),({url},res)=>{
   const server = http.createServer(({ url }, res) => {
     const pair = [
@@ -90,7 +89,7 @@ const units = {
     @media (min-width: 750px) {
       main {
         width: 700px;
-        margin: 75px auto 25px;
+        margin: 75px auto 5px;
       }
       main > * {
         margin-top: 20px;
@@ -131,12 +130,12 @@ const units = {
     }
     nav {
       padding: 0;
-      font-size: 14px;
-      line-height: 3;
       text-align: center;
     }
     nav a {
-      padding: 1em 6%;
+      display: inline-block;
+      padding: 7px 6%;
+      font-size: 14px;
     }
     header {
       position: fixed;
@@ -164,13 +163,10 @@ const units = {
       border: 2px solid #fff;
       border-radius: 50%;
     }
-    footer,
-    footer a {
+    footer {
       font-size: 13px;
       line-height: 3;
-      color: #ddd;
       text-align: center;
-      background: #3f51b5;
     }
     aside {
       position: fixed;
@@ -491,7 +487,7 @@ const loadMdFile = (filePath) => {
     .replace("/*{head}*/", head)
     .replace("/*{extra}*/", minify.htmlEnhanced(units.extraHtml))
     .replace("/*{script}*/", units.mainJs);
-  fs.writeFileSync("./public/bundle.js", minify.js(bundle));
+  fs.writeFileSync("./public/bundle.js", minify.js(bundle)); // import("node:zlib").then(m=>console.log(m.gzipSync(fs.readFileSync("./public/bundle.js"),{level:9}).length));
   fs.writeFileSync("./public/update.html", units.updateHtml);
 
   fs.cpSync("./source/toys", "./public/toy", { recursive: true });

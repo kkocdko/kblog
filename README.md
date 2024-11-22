@@ -21,7 +21,7 @@ A unique blog solution, which is:
 ## Usage
 
 ```sh
-# npm i # or download node_modules from release page
+npm i # or download stripped node_modules from release page
 node . serve # serve | generate | develop
 ```
 
