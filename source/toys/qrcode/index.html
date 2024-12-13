@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>QR Code - En/decode, specified mask, with OpenCV WASM</title>
-  <script :version="2.0.3" src="/toy/veps.js"></script>
+  <script :version="2.0.4" src="/toy/veps.js"></script>
   <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
 </head>
 
@@ -54,7 +54,8 @@
 </body>
 
 <script>
-  $content.value = location.origin;
+  const params = new URLSearchParams(location.hash.slice(1));
+  $content.value = params.get("content") || location.origin;
   const refresh = () => {
     window.qrmask = $mask.value === "-1" ? undefined : +$mask.value;
     const qr = qrcode(0, $level.value);
