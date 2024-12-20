@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="1.0.3" src="/toy/veps.js"></script>
+  <script :version="1.0.4" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -199,8 +199,11 @@
       $monitor.height = $monitor.videoHeight / devicePixelRatio;
     }
   };
-  let warn = () => new Promise((t, f) => ((t = "not inited"), alert(t), f(t))); // warn while the target function (video or usb keyboard mouse) not inited
-  let [reader, writer] = [{ read: warn }, { write: warn }];
+  const serial = {};
+  serial.read = serial.write = async () => {
+    const notInitedTips = "serial port not inited"; // warn while the target function (video or usb keyboard mouse) not inited
+    throw (alert(notInitedTips), new Error(notInitedTips));
+  };
   const initSerial = async () => {
     let port = null;
     if (navigator?.serial?.requestPort) {
@@ -223,12 +226,14 @@
       $pasteText.classList.add("tips");
       setTimeout(() => $pasteText.classList.remove("tips"), 2000);
       $pasteText.textContent =
-        "for linux, try: sudo chmod 777 /dev/ttyUSB0\nerror = " +
-        JSON.stringify(e);
+        `Error: ${JSON.stringify(e)}\n` +
+        "For linux, try: chmod 777 /dev/ttyUSB0\n";
       throw e;
     }
-    reader = port.readable.getReader();
-    writer = port.writable.getWriter();
+    const reader = port.readable.getReader();
+    const writer = port.writable.getWriter();
+    serial.read = reader.read.bind(reader);
+    serial.write = writer.write.bind(writer);
   };
   const initMonitor = async () => {
     const opt = { video: true, audio: true };
@@ -253,11 +258,11 @@
     $main.classList.add("inited");
   };
   const genPacket = (cmd = 0x01, ...data) => {
-    for (const v of data) if (v < 0 || v > 0xff) throw v;
+    for (const v of data) if (v < 0 || v > 255) throw new Error("invalid byte");
     let ret = [0x57, 0xab, 0x00, cmd, data.length, ...data];
-    let sum = new Uint8Array([0]);
-    for (const v of ret) sum[0] += v;
-    ret.push(sum[0]);
+    let sum = 0;
+    for (const v of ret) sum = (sum + v) % 256;
+    ret.push(sum);
     return ret;
   };
   $captureMouse.onclick = async () => {
@@ -270,7 +275,7 @@
   };
   document.onpointerlockchange = () => {
     if (document.pointerLockElement && document.pointerLockElement !== $monitor)
-      throw Error("assert error");
+      throw new Error("assert error");
     const i8clamp = (v) => Math.max(-0x7f, Math.min(v, 0x7f)); // clamp to int8
     let [pressedBits, x, y] = [0, 0, 0];
     let timer = null; // an modified throttle strategy
@@ -293,8 +298,8 @@
         value.push(...genPacket(5, 1, pressedBits, pX, pY, 0));
       } while (x !== 0 || y !== 0); // use "do while" loop to send mousedown/mouseup immediately
       (x = 0), (y = 0);
-      writer.write(new Uint8Array(value)); // without await on purpose
-      timer = setTimeout(() => (timer = null), 16);
+      serial.write(new Uint8Array(value)); // without await on purpose
+      timer = setTimeout(() => (timer = null), 33); // 1000ms/30fps
     };
     if (!document.pointerLockElement) f = null;
     $monitor.onmousemove = $monitor.onmousedown = $monitor.onmouseup = f; // todo: onwhell?
@@ -334,7 +339,7 @@
       ...genPacket(2, controlBits, 0, hidCode, 0, 0, 0, 0, 0),
       ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
     ]);
-    await writer.write(value);
+    await serial.write(value);
   };
   $comboKeys.onchange = async () => {
     let key, controlBits;
@@ -349,14 +354,24 @@
       ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
     ]);
     $comboKeys.value = "";
-    await writer.write(value);
+    await serial.write(value);
   };
   $pasteSend.onclick = async (e) => {
-    // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
+    // todo: 滚轮
+    // setInterval(async () => {
+    //   // await serial.write(new Uint8Array(genPacket(5, 1, 0, 0, 0, 0x7f)));
+    // await serial.write(new Uint8Array(genPacket(5, 1, 0, 0, 0, 0x09)));
+    // }, 400);
+    // return;
     for (const key of $pasteText.value) {
-      if (!KEYS.has(key)) return alert(`char [ ${key} ] is not an ascii char`);
-      const [hidCode, shift] = KEYS.get(key);
+      if (!KEYS.has(key)) {
+        return alert(`char [ ${key} ] is not a supported char`);
+      }
+    }
+    for (const key of $pasteText.value) {
+      // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
       // there's a faster strategy, press down 6 keys before release. however this will cause adjacent same chars to be wrong, like "root" became "rot"
+      const [hidCode, shift] = KEYS.get(key);
       const value = new Uint8Array([
         ...genPacket(2, shift ? 2 : 0, 0, hidCode, 0, 0, 0, 0, 0),
         ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -365,12 +380,14 @@
       await writer.write(value);
     }
   };
+
   // todo:
   // 鼠标摇杆（Android 手机）
   // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键，要提供一个 US 布局键盘）
   // 真正的按下与弹起
   // 录制功能
 
+  // file:///run/media/kkocdko/data/docs/archived/ch9329-protocol.pdf
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/
   // https://blog.csdn.net/u014794783/article/details/108097412
