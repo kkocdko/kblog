@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.94.2`, may become invalid in a future version.
+> Last tested version is `1.96.2`, may become invalid in a future version.
 
 ### Pros
 
@@ -28,18 +28,16 @@ Download and extract `https://update.code.visualstudio.com/latest/{target}/stabl
 Then use `./bin/code-server(.bat)` or write a custom `./run.sh`:
 
 ```shell
+#!/bin/sh
 cd $(dirname $0)
-# export VSCODE_AGENT_FOLDER=$(pwd)/agent_folder # chaneg the data directory
-# export UV_USE_IO_URING=0 # avoid bug in nodejs 21
-node ./out/server-main.js --accept-server-license-terms --host 127.0.0.1 --port 8109 --connection-token=mytoken
+UV_USE_IO_URING=0 node ./out/server-main.js --accept-server-license-terms --host 127.0.0.1 --port 8109 --connection-token=8lmwk7a34c
 ```
 
 And here's a `patch.js` to workaround some issues like offline webview, see comments for details:
 
 ```javascript
 import fs from "node:fs";
-if (!fs.existsSync("./out/vs/server/node/server.cli.js"))
-  throw Error("current dir wrong");
+if (!fs.existsSync("./out/server-cli.js")) throw Error("current dir wrong");
 const patch = (filePath, replaceList) => {
   const bakPath = filePath + `.bak`;
   if (!fs.existsSync(bakPath)) fs.renameSync(filePath, bakPath);
@@ -57,7 +55,7 @@ patch("./out/vs/code/browser/workbench/workbench.js", [
   // > src/vs/workbench/services/environment/browser/environmentService.ts
   [`"https://{{uuid}}.vscode-cdn.net/{{quality}}/{{commit}}`, `baseUrl+"`], // Replace entry url with local server to allow offline work (for webview)
   // > src/vs/workbench/contrib/extensions/browser/extensions.contribution.ts
-  [/(?<="extensions.autoUpdate":\{.+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default = false. Because the "User Settings" is store in browser (indexedDB), so update will start unexpectedly if you open a page in incognito
+  [/(?<="extensions.autoUpdate":\{.+?,default:).+?,/, "false,"], // Set "extensions.autoUpdate" default = false. Because the "User Settings" is store in browser (indexedDB), so if you open a page in a fresh incognito window, the update progress will start unexpectedly
 ]);
 patch("./out/vs/workbench/contrib/webview/browser/pre/index.html", [
   // > src/vs/workbench/contrib/webview/browser/pre/index.html
@@ -95,10 +93,7 @@ fs.writeFileSync(
     exports.version = 11100;
   }).toString()})();\n`
 );
-// rm -rf ~/.vscode-server/data/Cached*
-// rm -rf ~/.vscode-server/extensions/redhat.java-*/jre/
-// rm -rf ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/
-// rm -rf ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
+// rm -rf ./extensions/markdown-language-features ./node_modules/@xterm/addon-ligatures ./node_modules/@vscode/vsce-sign ~/.vscode-server/data/Cached* ~/.vscode-server/extensions/redhat.java-*/jre/ ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/ ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
 ```
 
 - There's a bug that caused UI freezed when entering debug after `1.65`. **(UPDATED)** [Patch merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
