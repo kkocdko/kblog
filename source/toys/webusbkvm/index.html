@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="1.0.4" src="/toy/veps.js"></script>
+  <script :version="1.0.5" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -377,7 +377,7 @@
         ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
       ]);
       // console.log({ char, hidCode, shift, value });
-      await writer.write(value);
+      await serial.write(value);
     }
   };
 
