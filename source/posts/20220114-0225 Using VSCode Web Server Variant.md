@@ -87,7 +87,7 @@ const spdlogIndexJs = () => {
   exports.version = 11100;
 };
 fs.writeFileSync(spdlogDir + "/index.js", `(${spdlogIndexJs.toString()})()`);
-// node --experimental-default-type=module patch.js; rm -rf ./extensions/markdown-language-features ./node_modules/@xterm/addon-ligatures ./node_modules/@vscode/tree-sitter-wasm ./node_modules/@vscode/vsce-sign ./node_modules/@vscode/vscode-languagedetection ~/.vscode-server/data/Cached* ~/.vscode-server/extensions/redhat.java-*/jre/ ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/ ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
+// node --experimental-default-type=module patch.js; rm -rf ./extensions/markdown-language-features ./node_modules/vsda ./node_modules/@xterm/addon-ligatures ./node_modules/@vscode/tree-sitter-wasm ./node_modules/@vscode/vsce-sign ./node_modules/@vscode/vscode-languagedetection ~/.vscode-server/data/Cached* ~/.vscode-server/extensions/redhat.java-*/jre/ ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/ ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
 ```
 
 - There's a bug that caused UI freezed when entering debug after `1.65`. **(UPDATED)** [Patch merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).
