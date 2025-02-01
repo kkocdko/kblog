@@ -11,7 +11,7 @@ This is the standalone MSVC pack in a 7z file. Thanks to [portable-msvc.py - mmo
 
 If you are doubtful about the security of the files provided here, you can generate the same content yourself using GitHub Actions.
 
-[OneDrive](https://1drv.ms/f/s!AndLPYbx5v06kje4A6kjWsThDDBi?e=yH89ou) | [123 Pan](https://www.123pan.com/s/SfI0Vv-u1khd.html) | [Baidu Pan](https://pan.baidu.com/s/1PO0JyoSV8J4ix7QDnTu2qA?pwd=s9nc)
+[OneDrive](https://1drv.ms/f/s!AndLPYbx5v06kjdwIShAMPhIOT71) | [123 Pan](https://www.123pan.com/s/SfI0Vv-u1khd.html) | [Baidu Pan](https://pan.baidu.com/s/1PO0JyoSV8J4ix7QDnTu2qA?pwd=s9nc)
 
 ```
 date = 2023.03.24
@@ -45,7 +45,7 @@ windows sdk = 10.0.22621.0
 
 如果你对这里提供的文件的安全性有疑问，可以使用 GitHub Actions 生成相同内容。
 
-[OneDrive](https://1drv.ms/f/s!AndLPYbx5v06kje4A6kjWsThDDBi?e=yH89ou) | [123 云盘](https://www.123pan.com/s/SfI0Vv-u1khd.html) | [百度网盘](https://pan.baidu.com/s/1PO0JyoSV8J4ix7QDnTu2qA?pwd=s9nc)
+[OneDrive](https://1drv.ms/f/s!AndLPYbx5v06kjdwIShAMPhIOT71) | [123 云盘](https://www.123pan.com/s/SfI0Vv-u1khd.html) | [百度网盘](https://pan.baidu.com/s/1PO0JyoSV8J4ix7QDnTu2qA?pwd=s9nc)
 
 ```
 date = 2023.03.24
