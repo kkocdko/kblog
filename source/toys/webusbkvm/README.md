@@ -4,6 +4,8 @@
 
 USB KVM (Keyboard Video Mouse) in your browser using WebUSB/WebSerial. With CH9329 chip.
 
+![screenshot](https://github.com/kkocdko/kblog/releases/download/simple_storage/webusbkvm_preview_2.webp)
+
 ## Why
 
 To debug a server, we need to connect the keyboard mouse and screen. But this project allows you to control the target device and monitor the display output on an existing computer (usually a laptop) or even an Android phone, even paste commands to the TTY!

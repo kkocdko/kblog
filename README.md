@@ -42,7 +42,7 @@ cd ..
 # npm i -g vercel # 41.0.2 , you can remove all inside `./vercel/node_modules/` except of the `@vercel`
 ```
 
-</detials>
+</details>
 
 ## Contributing
 

@@ -10,29 +10,25 @@ if (import.meta.dirname !== process.cwd())
   throw Error("Current directory is different from project directory");
 
 if (process.argv.includes("develop")) {
-  const childs = [];
-  const exec = (argv) => {
+  const state = { childs: [], i: 0 };
+  const trigger = () => {
+    console.log("#", ++state.i);
+    while (state.childs.length) state.childs.pop().terminate();
+    const argv = ["serve", "--dev"];
     const worker = new worker_threads.Worker(import.meta.dirname, { argv });
-    childs.push(worker.on("error", console.error));
+    state.childs.push(worker.on("error", console.error));
   };
-  let i = 0;
-  const spawn = () => {
-    console.log("#", ++i);
-    childs.forEach(() => childs.pop().terminate());
-    exec(["serve", "--dev"]);
-  };
-  spawn();
-  process.stdin.on("data", spawn);
+  trigger();
+  process.stdin.on("data", trigger);
   await new Promise(() => {}); // Prevent script from continuing to run
 } else if (process.argv.includes("serve")) {
-  const port = 4000;
   const mime = {
     html: "text/html;charset=utf8",
     js: "text/javascript",
     svg: "image/svg+xml",
   };
   const r2a = path.join.bind(null, import.meta.dirname, "public");
-  // (await import("node:https")).createServer((p=>(p=([s])=>fs.readFileSync(`/home/kkocdko/.local/share/caddy/certificates/local/127.0.0.1/127.0.0.1.${s}`),{key:p`key`,cert:p`crt`}))(),({url},res)=>{
+  // (await import("node:https")).createServer((p=>(p=([s])=>fs.readFileSync(`/tmp/127.${s}`),{key:p`key`,cert:p`crt`}))(),({url},res)=>{
   const server = http.createServer(({ url }, res) => {
     const pair = [
       [200, r2a(url)],
@@ -44,18 +40,17 @@ if (process.argv.includes("develop")) {
     res.setHeader("content-type", mime[local.split(".").pop()] || "");
     res.writeHead(status).end(fs.readFileSync(local));
   });
-  server.listen(port, "127.0.0.1");
-  console.info(`server: 127.0.0.1:${port}`);
-  // Fall through here, go ahead and run generator
+  server.on("listening", () => console.log("server: ", server.address()));
+  server.listen(4000, "127.0.0.1");
+  // Fall through and run generator
 } else if (process.argv.includes("generate")) {
 } else {
-  throw Error("unknown function"); // https://stackoverflow.com/questions/73742023
+  throw Error("unknown function"); // https://stackoverflow.com/q/73742023
 }
 
 console.time("generate time");
 
-const html = ([s]) => s; // Please use this extension to show syntax highlight: https://github.com/0x00000001A/es6-string-html
-const css = ([s]) => s;
+const [html, css] = [([s]) => s, ([s]) => s]; // Editor syntax highlight use https://github.com/0x00000001A/es6-string-html
 // Front-end units
 const units = {
   avatarSvg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" style="background:#333c3e"><path d="M-40 1000L0 0h960z" fill="#009083"/><path d="M-40 1000l318-318L0 200z" fill="#23b39b"/><path d="M-40 1000l318-318L0 521z" fill="#95e9dd"/><path d="M-40 1000l318-318 184 318z" fill="#698287"/><path d="M490 710L1200 0H80z" fill="#027e63"/><path d="M490 710L1200 0h360L718 842z" fill="#38574c"/></svg>`,
