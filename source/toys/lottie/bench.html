@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>Animation Bench</title>
+</head>
+
+<style>
+  html {
+    color-scheme: light dark;
+  }
+  button {
+    display: block;
+    width: 90%;
+    font: 16px / 24px monospace;
+    margin: 8px auto;
+  }
+  body.on > button:not(.on) {
+    display: none;
+  }
+  #\$container {
+    width: calc(100vmin - 40px);
+    height: calc(100vh - 200px);
+    margin: 0 auto;
+  }
+</style>
+
+<body>
+  <button id="$airbnb_lottie_web_canvas">airbnb_lottie_web_canvas</button>
+  <button id="$lottiefiles_dotlottie_web">lottiefiles_dotlottie_web</button>
+  <button id="$samsung_rlottie">samsung_rlottie_tamtam</button>
+  <div id="$container"></div>
+</body>
+
+<script type="module">
+  // prettier-ignore
+  const animationData = {v:"5.1.16",fr:15,nm:"abstract_circle.json",ip:0,op:51,w:500,h:500,ddd:0,assets:[],layers:[{ddd:0,ind:1,ty:4,sr:1,ks:{o:{a:1,k:[{i:{x:[.833],y:[.833]},o:{x:[.167],y:[.167]},t:49,s:[100],e:[0]},{t:51}],ix:11},r:{a:0,k:0,ix:10},p:{a:0,k:[250.316,250.684,0],ix:2},a:{a:0,k:[280,0,0],ix:1},s:{a:0,k:[225,225,100],ix:6}},ao:0,shapes:[{ty:"gr",it:[{d:1,ty:"el",s:{a:0,k:[145,145],ix:2},p:{a:0,k:[0,0],ix:3},hd:!1},{ty:"st",c:{a:0,k:[.190695878571,.889764404297,.972549019608,1],ix:3},o:{a:0,k:100,ix:4},w:{a:1,k:[{i:{x:[.833],y:[.583]},o:{x:[.01],y:[.006]},t:22.2,s:[3],e:[0]},{t:49.2001953125}],ix:5},lc:1,lj:1,ml:4,hd:!1},{ty:"tr",p:{a:0,k:[236,0],ix:2},a:{a:0,k:[0,0],ix:1},s:{a:1,k:[{i:{x:[.99,.99],y:[.997,.997]},o:{x:[1,1],y:[1,1]},t:0,s:[0,0],e:[50,50]},{i:{x:[.833,.833],y:[.676,.676]},o:{x:[.01,.01],y:[.043,.043]},t:6,s:[50,50],e:[75,75]},{t:49.2001953125}],ix:3},r:{a:0,k:0,ix:6},o:{a:0,k:100,ix:7},sk:{a:0,k:0,ix:4},sa:{a:0,k:0,ix:5}}],np:2,cix:2,ix:1,hd:!1},{ty:"rp",c:{a:1,k:[{i:{x:[.99],y:[.985]},o:{x:[1],y:[2.692]},t:0,s:[0],e:[18]},{i:{x:[.833],y:[.288]},o:{x:[.01],y:[-.02]},t:21,s:[18],e:[0]},{t:49.2001953125}],ix:1},o:{a:0,k:5,ix:2},m:1,ix:2,tr:{ty:"tr",p:{a:0,k:[0,0],ix:2},a:{a:0,k:[280,0],ix:1},s:{a:0,k:[100,100],ix:3},r:{a:0,k:20,ix:4},so:{a:0,k:100,ix:5},eo:{a:0,k:100,ix:6}},hd:!1}],ip:0,op:51,st:0,bm:0}],markers:[]};
+  $airbnb_lottie_web_canvas.onclick = async function () {
+    document.body.classList.add("on"), this.classList.add("on");
+    const { default: lottie } = await import(
+      "https://unpkg.com/lottie-web@5.12.2/build/player/esm/lottie_canvas.min.js"
+    );
+    const width = Math.min($container.clientWidth, $container.clientHeight);
+    $container.style = `width: ${width}px; height: ${width}px`;
+    lottie.loadAnimation({
+      container: $container,
+      renderer: "canvas",
+      animationData: animationData,
+    });
+    // bug: rlottie/example/resource/polystar_anim.json
+  };
+  $lottiefiles_dotlottie_web.onclick = async function () {
+    document.body.classList.add("on"), this.classList.add("on");
+    const { DotLottie, DotLottieWorker } = await import(
+      "https://unpkg.com/@lottiefiles/dotlottie-web@0.40.1/dist/index.js"
+    );
+    const width = Math.min($container.clientWidth, $container.clientHeight);
+    $container.style = `width: ${width}px; height: ${width}px`;
+    const canvas = $container.appendChild(document.createElement("canvas"));
+    canvas.width = canvas.height = width;
+    canvas.style = `width: ${width}px; height: ${width}px`;
+    const dotLottie = new DotLottie({
+      canvas,
+      data: animationData,
+      loop: true,
+      autoplay: true,
+      renderConfig: { autoResize: true },
+    });
+  };
+  $samsung_rlottie.onclick = async function () {
+    document.body.classList.add("on"), this.classList.add("on");
+    // createPlayer,disposePlayer,getConfig,getInternals,isSupported,pause,play,updateConfig
+    const m = await import(
+      "https://unpkg.com/@tamtam-chat/lottie-player@0.4.2/dist/main.js"
+    );
+    const width = Math.min($container.clientWidth, $container.clientHeight);
+    $container.style = `width: ${width}px; height: ${width}px`;
+    const canvas = $container.appendChild(document.createElement("canvas"));
+    canvas.width = canvas.height = width;
+    canvas.style = `width: ${width}px; height: ${width}px`;
+    m.updateConfig({
+      workerUrl: async () => {
+        const blob = await fetch(
+          "https://unpkg.com/@tamtam-chat/lottie-player@0.4.2/dist/worker.js"
+        ).then((v) => v.blob());
+        return URL.createObjectURL(blob);
+      },
+    });
+    const player = m.createPlayer({
+      canvas,
+      movie: JSON.stringify(animationData),
+      loop: true,
+    });
+    // https://github.com/rlottie/rlottie.github.io
+    // https://github.com/morethanwords/tweb/tree/master/src/lib/rlottie
+    // https://github.com/Ajaxy/telegram-tt/tree/master/src/lib/rlottie
+  };
+  // todo: rive
+  // https://rive.app/docs/runtimes/web/canvas-vs-webgl#rive-app-webgl2
+  // https://www.npmjs.com/package/@rive-app/webgl
+  // https://github.com/rive-app/
+</script>

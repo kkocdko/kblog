@@ -5,7 +5,7 @@ tags: Code Linux Shell
 description: Easily and fastly, just objcopy
 ```
 
-> Certainly, modify EFI file cause signatures not valid. If you needs secure boot, try `efibootmgr` or other way.
+> However, if you needs secure boot, try `efibootmgr` or other way.
 
 First, When you generate the UKI, make the `.cmdline` section big enough to contains future modifies.
 
