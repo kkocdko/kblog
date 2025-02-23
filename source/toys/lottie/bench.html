@@ -108,7 +108,10 @@
     $container.appendChild(player);
     player.loop = true;
     await player.load(animationData);
-    await player.resize(width, width);
+    await player.resize(
+      width * window.devicePixelRatio,
+      width * window.devicePixelRatio
+    );
     await player.play();
   };
   // todo: rive
