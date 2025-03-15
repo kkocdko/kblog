@@ -1,6 +1,6 @@
 ```
 title: Multi call binary for existing projects
-date: 2024.03.09 08:47
+date: 2025.03.09 08:47
 tags: Code C CPP
 description: simpler
 ```
