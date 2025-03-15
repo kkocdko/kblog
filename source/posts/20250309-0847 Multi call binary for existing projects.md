@@ -1,8 +1,8 @@
 ```
 title: Multi call binary for existing projects
 date: 2025.03.09 08:47
-tags: Code C CPP
-description: simpler
+tags: Code C CPP CMake
+description: Simpler way to build without massive patch
 ```
 
 > What's that? Okey, [BusyBox](https://en.wikipedia.org/wiki/BusyBox) is a multi call binary, one binary as `ls`,`cat` and more.
