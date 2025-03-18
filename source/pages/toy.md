@@ -5,7 +5,7 @@ title: Toy
 
 ## [CV](/toy/cv)
 
-我本人的简历/履历，目前正积极寻求实习机会。Web 后端，Linux 开发，内核开发岗位均可。
+我本人的简历/履历，目前正积极寻求 Linux 开发，内核开发，Web 后端 岗位。**请联系我索取最新简历**。
 
 ## [WebUSB KVM](/toy/webusbkvm)
 
