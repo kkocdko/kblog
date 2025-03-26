@@ -2,21 +2,17 @@
 
 <meta charset="utf-8" />
 <script>
-  // https://www.zhihu.com/question/29456069 | https://zhuanlan.zhihu.com/p/400044029 | https://zhuanlan.zhihu.com/p/19990906 | https://gist.github.com/salipro4ever/e234addf92eb80f1858f | https://en.wikipedia.org/wiki/RC4 | https://www.zhihu.com/market/pub/119564870/manuscript/975092965525442560 | https://github.com/rust-lang/rust/blob/1.72.0/library/core/src/escape.rs#L17-L31
-  // prettier-ignore
-  function rc4(k,v){let s=[...Array(256).keys()],x,r="",i=0,j=0;for(;i<256;i++){j=(j+s[i]+k.charCodeAt(i%k.length))%256;x=s[i];s[i]=s[j];s[j]=x;}i=0;j=0;for(let c of v){i=(i+1)%256;j=(j+s[i])%256;x=s[i];s[i]=s[j];s[j]=x;r+=String.fromCharCode(c.charCodeAt(0)^s[(s[i]+s[j])%256])}return r}
-  // console.log([rc4("346e", JSON.stringify(secrets))]); // escape illegal chars
+  /* prettier-ignore */ function rc4(k,v){let s=[...Array(256).keys()],x,r="",i=0,j=0;for(;i<256;i++){j=(j+s[i]+k.charCodeAt(i%k.length))%256;x=s[i];s[i]=s[j];s[j]=x;}i=0;j=0;for(let c of v){i=(i+1)%256;j=(j+s[i])%256;x=s[i];s[i]=s[j];s[j]=x;r+=String.fromCharCode(c.charCodeAt(0)^s[(s[i]+s[j])%256])}return r}
   const encrypted = "îÔn0!µ\x16¥¼É¯õ¶á×Ê\rJ杪铩厎Ýµ]\x1DHïxüxik~7\x9Dù\x18foz\x82Ç]f\x85\x9B©úùÕ\x8A\x01";
   const secrets = JSON.parse(rc4(location.hash.slice(1), encrypted));
   const replacer = (k) => secrets[k] || (console.log(k), k);
   onload = () => void (document.body.innerHTML = document.body.innerHTML.replace(/\[secret-.+?\]/g, replacer));
-  // google-chrome --headless --incognito --disable-pdf-tagging --no-pdf-header-footer --print-to-pdf=out.pdf index.html
 </script>
 <style>
   @font-face {
     font-family: "Noto Serif SC";
+    src: url("https://registry.npmmirror.com/@fontsource/noto-serif-sc/5.2.5/files/files/noto-serif-sc-chinese-simplified-400-normal.woff2");
     font-display: block;
-    src: url("https://registry.npmmirror.com/@fontsource/noto-serif-sc/5.0.11/files/files/noto-serif-sc-chinese-simplified-400-normal.woff2");
   }
   @page {
     size: A4;
@@ -25,16 +21,16 @@
   }
   @media not print {
     html {
-      color-scheme: light dark;
       min-width: fit-content;
       margin: 10mm max(5mm, calc(50% - 105mm));
+      color-scheme: light dark;
     }
     body::before {
-      content: "- 下划线文本为链接.\a- 右键打印可获得标准单页 PDF.";
-      white-space: pre;
       position: absolute;
-      margin: -10mm -18mm;
       padding: 1mm 2mm;
+      margin: -6mm -18mm;
+      white-space: pre;
+      content: "- 下划线文本为链接.\a- 右键打印可获得标准单页 PDF.";
       box-shadow: inherit;
     }
   }
@@ -46,10 +42,10 @@
     text-decoration: none;
   }
   body {
+    text-size-adjust: none;
     width: 210mm;
     height: 297mm;
-    padding: 10mm 18mm;
-    text-size-adjust: none;
+    padding: 6mm 18mm;
     font: 10pt / 1.75 "Noto Serif SC";
     box-shadow: 0 0 0 1px #888;
   }
@@ -64,8 +60,7 @@
   a,
   h2 {
     color: inherit;
-    /* object width < 1px cause bug of skia pdf backend https://github.com/puppeteer/puppeteer/issues/4768 */
-    border-bottom: dashed 0.7pt #888;
+    border-bottom: dashed 0.7pt #888; /* object width < 1px cause bug of skia pdf backend https://github.com/puppeteer/puppeteer/issues/4768 */
   }
   aside {
     margin: 3pt 0;
@@ -74,16 +69,46 @@
   b {
     font-size: 11pt;
   }
-  li::marker {
+  em {
+    display: list-item;
+    margin-left: 1em;
+    font-style: normal;
+  }
+  em::marker {
     font-weight: bold;
     content: "\a0 · \a0";
   }
   ins {
     float: right;
   }
+  label {
+    float: right;
+    margin: -20px -40px 0 50px;
+  }
+  @media print {
+    label {
+      visibility: hidden;
+    }
+  }
+  input:checked + label {
+    box-shadow: 0 1px 0 0 #888;
+  }
+  input,
+  #variant-linux:not(:checked) ~ .variant-linux,
+  #variant-web-backend:not(:checked) ~ .variant-web-backend,
+  #variant-web-fullstack:not(:checked) ~ .variant-web-fullstack {
+    display: none;
+  }
 </style>
 
 <body>
+  <input type="radio" name="variant" id="variant-linux" checked />
+  <label for="variant-linux">Linux</label>
+  <input type="radio" name="variant" id="variant-web-backend" />
+  <label for="variant-web-backend">Backend</label>
+  <input type="radio" name="variant" id="variant-web-fullstack" />
+  <label for="variant-web-fullstack">Fullstack</label>
+  <br />
   <h1>[secret-name] (kkocdko)</h1>
   <aside>
     GitHub: <a href="https://github.com/kkocdko">kkocdko</a>
@@ -95,75 +120,92 @@
     Tel: <a href="tel:+86 [secret-tel]">[secret-tel]</a>
   </aside>
   <h2>意向</h2>
-  <p>
-    <b>寻求实习岗位 : </b>
-    Rust. Golang, C++ 后端开发. 桌面端原生开发和前端岗位也可接受.
+  <p class="variant-linux">
+    <b>寻求岗位 : </b>
+    Linux 开发, 存储与文件系统. 嵌入式.
   </p>
-  <h2>开源贡献</h2>
-  <p>
-    <b><a href="https://github.com/lz1998/ricq/tree/master">lz1998/ricq</a> : </b>
-    Rust 实现的高性能 QQ 机器人协议库. (作为贡献者)
-    <li>实现了分享消息的构造和解析, 修复多个边界条件下的崩溃问题, 改进了登录相关逻辑.</li>
-    <li>作出多项性能改进, 降低了收到图片消息时的内存占用.</li>
-    <li>使用宏重构并消除大量冗余代码. 改进 ProtoBuf 编译流程.</li>
+  <p class="variant-web-backend">
+    <b>寻求岗位 : </b>
+    Web 后端开发, Linux 开发, Go/Rust/C++/NodeJS.
   </p>
-  <p>
-    <b><a href="https://github.com/microsoft/node-pty/pull/644">microsoft/node-pty</a> : </b>
-    被 VSCode 等多个 Electron 应用所依赖的 pty 绑定 (作为贡献者)
-    <li>大规模重构, 从 NAN 迁移到 NAPI. 完整移植 Linux, macOS, Windows 平台相关代码并通过集成测试.</li>
-    <li>实现跨 Electron / Node 版本兼容, 支持启用 V8 指针压缩的 Node.</li>
-    <li>修复 Unix 下 event loop 时序不符合规范导致 UB 的问题.</li>
-    <li>修复 Windows 下的句柄泄漏问题.</li>
+  <h2>实习经历</h2>
+  <p class="variant-linux">
+    <b>Linux NAS 系统开发, 发行版定制与硬件适配. : </b>
+    <a href="https://lazycat.cloud">lazycat.cloud</a>
+    <ins>2024.02 - 当下 (已满一年)</ins>
+    <em>承担硬盘节能, UPS, 指示灯与散热风扇内核驱动等开发工作.</em>
+    <em>负责 NAS 系统中的 Go 服务端开发，使用 gRPC 对接底层系统功能.</em>
+    <em>开发基于 Debian 定制的 NAS 系统, 使用 debuerreotype 重写构建流程, 大幅加速并实现可重现构建.</em>
+    <em>利用 PGO 编译优化, 给 NAS 中的 VPN 核心部分带来 30% 以上性能提升.</em>
+    <em>多次通过 bisect 溯源疑难 bug. 与同事合作修复了外置备份盘, WebDAV 挂载等功能中的 bug.</em>
+    <em>开发 NAS 中的多个应用, 提供 Docker, Bubblewrap, QEMU 等常用容器与虚拟化技术的支持.</em>
   </p>
-  <p>
-    <b><a href="https://github.com/kkocdko/ksite">ksite</a> : </b>
-    多合一 Web 服务端, 包含 代理, WebDAV 网盘, QQ 机器人, 新闻聚合, 视频会议 及其他功能.
-    <li>使用 Rust 语言, axum 框架构建. 数据库使用 SQLite 并调优.</li>
-    <li>拥有精简的二进制体积和极低资源占用, 在单核 ARMv5 的廉价开发板上完美运行.</li>
-    <li>补充框架缺失特性, TLS (见下文 tlsimple), 限流, 定时任务, 推送更新等.</li>
-    <li>实现轻量级 ProtoBuf 编译器 prost-gen, 相比官方 prost-build 大幅缩短编译时间.</li>
-  </p>
-  <p>
-    <b><a href="https://github.com/kkocdko/tlsimple">tlsimple</a> : </b>
-    对 Mbed TLS 的异步 FFI, 为 Rust 提供轻量便捷的 TLS 支持
-    <li>高度裁减，在提供与 tokio-openssl 类似功能与性能的同时，减少 2 MiB 二进制体积.</li>
-    <li>完全使用 build.rs 构建, 稳定可靠, 不依赖其他构建系统, 可以便捷地交叉编译.</li>
-  </p>
-  <p>
-    <b><a href="https://github.com/pulls?q=+is%3Apr+author%3Akkocdko">其他</a> : </b>
-    向 VSCode, axum, actix-web 等知名项目作出多个贡献.
+  <p class="variant-web-backend">
+    <b>Linux NAS 网络存储系统开发: </b>
+    <a href="https://lazycat.cloud">lazycat.cloud</a>
+    <ins>2024.02 - 当下 (已满一年)</ins>
+    <em>负责 NAS 系统中的 Go 服务端开发，使用 gRPC 对接底层系统功能.</em>
+    <em>承担硬盘节能, UPS, 指示灯与散热风扇内核驱动等开发工作.</em>
+    <em>开发基于 Debian 定制的 NAS 系统, 使用 debuerreotype 重写构建流程, 大幅加速并实现可重现构建.</em>
+    <em>利用 PGO 编译优化, 给 NAS 中的 VPN 核心部分带来 30% 以上性能提升.</em>
+    <em>多次通过 bisect 溯源疑难 bug. 与同事合作修复了外置备份盘, WebDAV 挂载等功能中的 bug.</em>
+    <em>开发 NAS 中的多个应用, 提供 Docker, Bubblewrap, QEMU 等常用容器与虚拟化技术的支持.</em>
   </p>
   <h2>技能</h2>
   <p>
+    <b>Linux : </b>
+    <em>熟悉内核电源管理与主流文件系统. 内核模块开发.</em>
+    <em>日常使用 Fedora. 熟悉 Debian 等主流发行版架构, 构建系统和包管理.</em>
+    <em>熟悉常用虚拟化和容器技术, 接触过嵌入式开发.</em>
+  </p>
+  <p>
+    <b>Go 后端 : </b>
+    <em>熟悉常用 Golang Web 开发技术, GORM, 以及 gRPC 和 ProtoBuf 原理.</em>
+    <em>熟悉 CGO, 精通各类语言的 FFI 方案.</em>
+  </p>
+  <p>
     <b>编程语言 : </b>
-    不受特定语言限制. 日常使用 Rust, C / C++, Golang, JS / TS 等.
+    <em>语言的选择取决于需求, 考虑既有项目和生态, 而非我个人的偏好.</em>
+    <em>不受特定语言限制. 日常使用 C/C++, Go, Rust, JS/TS 等. 也略懂前端与客户端.</em>
+  </p>
+  <h2>开源贡献</h2>
+  <p>
+    <b><a href="https://github.com/microsoft/node-pty/pull/644">microsoft/node-pty</a> : </b>
+    被 VSCode 等多个 Electron 应用所依赖的 pty 绑定 (作为贡献者)
+    <em>大规模重构, 从 NAN 迁移到 NAPI. 完整移植 Linux, macOS, Windows 平台相关代码并通过集成测试.</em>
+    <em>实现跨 Electron / Node 版本兼容, 支持启用 V8 指针压缩的 Node.</em>
+    <em>修复 Unix 下 event loop 时序不符合规范导致 UB 的问题.</em>
+    <em>修复 Windows 下的句柄泄漏问题.</em>
   </p>
   <p>
-    <b>Rust : </b>
-    掌握, 并在多个项目中使用.
-    <li>精通语言技巧和类型体操. 熟悉异步和网络编程 (Tokio 生态).</li>
-    <li>熟悉 FFI, 异步 FFI, Unsafe. 熟练使用常用分析工具 (ASAN, Miri 等).</li>
+    <b><a href="https://github.com/lz1998/ricq/tree/master">lz1998/ricq</a> : </b>
+    Rust 实现的高性能 QQ 机器人协议库. (作为贡献者) (已废弃)
+    <em>实现了分享消息的构造和解析, 修复多个边界条件下的崩溃问题, 改进了登录相关逻辑.</em>
+    <em>作出多项性能改进. 使用宏重构并消除大量冗余代码. 改进 ProtoBuf 编译流程.</em>
   </p>
+  <!-- <p class="variant-linux">
+    <b><a href="https://github.com/kkocdko/tlsimple">tlsimple</a> : </b>
+    对 Mbed TLS 的异步 FFI, 为 Rust 提供轻量便捷的 TLS 支持
+    <em>高度裁减，在提供与 tokio-openssl 类似功能与性能的同时，减少 2 MiB 二进制体积.</em>
+    <em>完全使用 build.rs 构建, 稳定可靠, 不依赖其他构建系统, 可以便捷地交叉编译.</em>
+  </p> -->
   <p>
-    <b>Linux 开发 : </b>
-    熟悉常用技术栈.
-    <li>日常桌面使用 Fedora. 也熟悉其他主流发行版结构, 构建系统和包管理.</li>
-    <li>熟悉常用性能分析方法, 能快速通过 Profile 找出性能热点并优化.</li>
-    <li>接触过常用虚拟化和容器技术, 嵌入式开发.</li>
+    <b><a href="https://github.com/pulls?q=+is%3Apr+author%3Akkocdko">其他</a> : </b>
+    向 VSCode, axum, GORM 等知名项目作出贡献.
   </p>
   <p>
     <b>常识 : </b>
-    作为开发者应有的常识. Git, Docker, Linux 运维, 常用数据结构和算法等.
+    作为开发者应有的常识. Git, Linux 运维, 常用数据结构和算法等.
   </p>
   <h2>其他</h2>
   <p>
     <b>江苏科技大学 : </b>
-    计算机科学与技术 专业. 本科在读 (大三, 2025 届).
+    计算机科学与技术 专业. 本科在读 (2025 届).
     <ins>2021.09 - 当下</ins>
   </p>
   <p>
     <b>英语 : </b>
-    无障碍阅读, 听力为无字幕普通 YouTube 视频水平, 通过 CET 6.
+    无障碍阅读, 听力为普通 YouTube 视频水平, 通过 CET 6.
   </p>
   <p>
     <b>蓝桥杯 : </b>
@@ -175,10 +217,4 @@
     担任吉祥物.
     <ins>(大二) 2022.07 - 2023.07</ins>
   </p>
-  <!-- <p>
-    <b><a href="https://github.com/orgs/just-ca-official/projects/1">英语六级</a> : </b>
-    555
-    <ins>2023.12</ins>
-  </p> -->
-  <!-- <h2>实习经历</h2> -->
 </body>
