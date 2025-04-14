@@ -37,7 +37,7 @@ Deprecated
 | [苏瑞辅 RuifuSu](https://www.suruifu.com) · 正在创业的大佬，工业控制系统，嵌入式 |
 | [Mzdyl's Blog](https://mzdyl.xyz) · 此人声称自己太懒了不打算花时间想一句放在这里的话 |
 | [Karuboniru's Blog](https://yanqiyu.info) · 一位物理大佬，也是 Linux 资深用户 |
-| [SomeExp](https://someexp.com) · 希望世界更开源，透明与自由 |
+| [SomeExp](https://thesomeexp.github.io) · 希望世界更开源，透明与自由 |
 | [Kenji Mouri](https://mouri.moe) · 致力于编写使用最少的语法特性和第三方库的紧凑实现 |
 | [ximu](https://xlog.timero.xyz) · What's here? |
 | [天真的小窝](https://bin.zmide.com) · What's here? |
