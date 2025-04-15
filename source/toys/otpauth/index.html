@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>OTPAuth Demo</title>
+  <script :version="1.0.0" src="/toy/veps.js"></script>
+  <script src="https://registry.npmmirror.com/otpauth/9.4.0/files/dist/otpauth.umd.min.js"></script>
+</head>
+
+<style>
+  input {
+    display: block;
+    margin-bottom: 1em;
+  }
+</style>
+
+<body>
+  <input id="$i" placeholder="otpauth://..." />
+  <input id="$o" placeholder="123456" />
+</body>
+
+<script>
+  $i.oninput = () => ($o.value = OTPAuth.URI.parse($i.value.trim()).generate());
+</script>
