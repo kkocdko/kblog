@@ -50,3 +50,10 @@ MS2109 采集卡最高传输 1080p 30fps mjpeg，如果你需要更高的画质�
 如果你希望外观好看，可以购买 CH9329+CH340 的成品线（15 ￥），相对于自己买两个模块和杜邦线要贵一些。
 
 </details>
+
+<!--
+
+~/misc/apps/ffmpeg -framerate 0.5 -i %2d.png -an -vf 'crop=1324:980:0:0' -c:v libwebp_anim -lossless 1 -preset picture -loop 0 -y o.webp
+~/misc/apps/ffmpeg -i webusbkvm_screenrecord.mp4 -an -vf 'crop=1324:980:0:0' -ss 00:00:03 -to 00:01:49 -c:v libx264 -preset veryslow -crf 26 -movflags faststart -map_metadata -1 -y  o.mp4
+
+-->
