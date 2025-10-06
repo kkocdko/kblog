@@ -5,21 +5,21 @@ tags: Linux Android Code
 description: Bug inside fsck handling logic
 ```
 
-> I will report this bug later, and update this article.
+> I will report this bug later and update this article.
 
-The bug is: Some USB drive has a hardware readonly switch. Format it as exfat filesystem on PC, unplug, switch to readonly, plug into Android phone (known as OTG), then Android show a notification says: external storage is broken. Use fat32 with readonly switch enabled is normal.
+The bug: some USB drive has a hardware readonly switch. Format it as exfat filesystem on PC, unplug, switch to readonly, plug into Android phone (known as OTG), then Android shows a notification: external storage is broken. Use fat32 with readonly switch enabled is normal.
 
-It's because Android will run fsck for any plugged external storage, and only do mount when fsck passed. The logic for fat32 considered the readonly situation but exfat does not. See AOSP:
+It's because Android will run fsck for any plugged external storage, and only mount when fsck passes. The logic for fat32 considered the readonly situation, but exfat does not. See AOSP:
 
 - https://android.googlesource.com/platform/system/vold/+/5caf840c13bf9939fbfa3ae12e8d8523d349ca78/fs/Exfat.cpp#37
 
 - https://android.googlesource.com/platform/system/vold/+/5caf840c13bf9939fbfa3ae12e8d8523d349ca78/Utils.cpp#1103
 
-An interesting thing: I tested Lineage (Android 15) and Xiaomi HyperOS, both exhibiting this issue. However, some chinese phone like OPPO (run ColorOS) worked fine — perhaps they have discovered this issue, or even removed fsck entirely?
+An interesting thing: I tested Lineage (Android 15) and Xiaomi HyperOS, both exhibiting this issue. However, some Chinese phones like OPPO (run ColorOS) worked fine — perhaps they have discovered this issue, or even removed fsck entirely?
 
-If you have root permission in your phone, you can replace exfat fsck with an dummy executable to workaround this bug.
+If you have root permission in your phone, you can replace exfat fsck with a dummy executable to workaround this bug.
 
-> And, don't ask me why I need the hardware readonly switch. It just exist.
+> And, don't ask me why I need the hardware readonly switch. It just exists.
 
 ## More info
 
