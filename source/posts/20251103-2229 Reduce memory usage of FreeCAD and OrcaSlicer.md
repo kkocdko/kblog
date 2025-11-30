@@ -7,27 +7,31 @@ description: Some tricks
 
 ## FreeCAD
 
-On my Debian 13 x86-64 this runs well. Main idea: Qt PySide compiles and embed QRC into huge `xxx_rc.py`, I dump data as bin file and use `open()`.
+Main idea: Qt PySide compiles and embed QRC into huge `xxx_rc.py`, I dump data as bin file and use `open()`.
+
+And there's more you can strip, on my debian 13 these runs well.
 
 ```sh
-curl -o FreeCAD.AppImage -L https://github.com/FreeCAD/FreeCAD/releases/download/weekly-2025.10.31/FreeCAD_weekly-2025.10.31-Linux-x86_64-py311.AppImage
+curl -o FreeCAD.AppImage -L https://github.com/FreeCAD/FreeCAD/releases/download/1.1rc1/FreeCAD_1.1rc1-Linux-x86_64-py311.AppImage
 chmod +x FreeCAD.AppImage
 ./FreeCAD.AppImage --appimage-extract
 pushd squashfs-root/usr ; rm -rf man fonts ssl ; popd
 pushd squashfs-root/usr/share ; rm -rf doc icons man mysql opencv4 ; popd
-pushd squashfs-root/usr/lib ; rm -rf qt6/bin qt6/plugins/qmlls qt6/qml/QtQuick $(ls | grep -E "^(lib)?(LLVM|clang|openvino|avcodec|rav1e|dav1d|avif|x265|x264|aom|SvtAv1Enc|opencv|mysqlclient|(open)?blas(p)?|pcl|protoc|protobuf|gtk)[\._-]") ; popd # vtk is used by mesh files like stl
-pushd squashfs-root/usr/lib/python3.11/site-packages ; rm -rf OCC pandas scipy ifcopenshell matplotlib pip ; popd # vtkmodules
+pushd squashfs-root/usr/lib ; rm -rf qt6/bin qt6/plugins/qmlls qt6/qml/QtQuick libQt6Quick* $(ls | grep -E "^(lib)?(LLVM|clang|openvino|avcodec|rav1e|dav1d|avif|x265|x264|aom|SvtAv1Enc|opencv|mysqlclient|pcl|proto(buf|c)|gtk)[\._-]") ; popd # vtk is used by mesh
+pushd squashfs-root/usr/lib/python3.11 ; rm -rf ensurepip ; popd
+pushd squashfs-root/usr/lib/python3.11/site-packages ; rm -rf OCC pandas scipy debugpy ifcopenshell pip ; popd
 pushd squashfs-root
 for entry in $(find -name "*_rc.py"); do
   suffix="$(tail -n 8 $entry | tr "\n" "|")"
   (tail -n +8 $entry | head -n -8 ; printf "with open(__file__+'.qrc_name.bin','wb')as f:\n    f.write(qt_resource_name)\nwith open(__file__+'.qrc_struct.bin','wb')as f:\n    f.write(qt_resource_struct)\nwith open(__file__+'.qrc_data.bin','wb')as f:\n    f.write(qt_resource_data)\nexit()") > $entry.tmp
   mv $entry.tmp $entry
-  python3 $entry
+  usr/bin/python $entry
   (printf "from PySide6 import QtCore\nwith open(__file__+'.qrc_name.bin','rb')as f:\n    qt_resource_name=f.read()\nwith open(__file__+'.qrc_struct.bin','rb')as f:\n    qt_resource_struct=f.read()\nwith open(__file__+'.qrc_data.bin','rb')as f:\n    qt_resource_data=f.read()\n" ; echo "$suffix" | tr "|" "\n") > $entry
 done
 popd
 mv squashfs-root FreeCAD
-# wayland: https://github.com/FreeCAD/FreeCAD/issues/6068
+# Wayland: https://github.com/FreeCAD/FreeCAD/issues/6068
+# Menu > Edit > Preferences > Display > Use OpenGL VBO
 # see mkdebian, todo: a new post for 2 block xz
 # tar -c FreeCAD | xz -T2 -9e --block-size $(( $(tar -c FreeCAD | wc -c) / 2 + 64 )) > FreeCAD.tar.xz
 ```
@@ -37,6 +41,8 @@ Before (left) and after (right):
 ![Screenshot to compare memory usage](https://github.com/user-attachments/assets/e3ad2e77-9a59-4e48-b0c9-5f479e751ad6)
 
 ## OrcaSlicer
+
+The custom font and homepage webview use lots of memory.
 
 ```sh
 curl -o OrcaSlicer.AppImage -L https://github.com/SoftFever/OrcaSlicer/releases/download/v2.3.1/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.3.1.AppImage
@@ -102,5 +108,33 @@ tail_len=565 ; diff -W 200 -y <(tail -n$tail_len /media/kkocdko/KK_TMP_1/cad/0_p
 - https://wiki.bambulab.com/zh/filament-acc/filament/slice-param
 - https://wiki.creality.com/zh/software/creality-print/parameter-speed
 - https://www.creality.cn/product-85.html
+
+
+```sh
+# https://docker.aityp.com/image/docker.io/ubuntu:22.04
+sudo docker run -d --net host --name freecad_build_1 ubuntu:22.04 sleep infinity
+sudo docker exec -it freecad_build_1 bash
+sed -i 's@//.*archive.ubuntu.com@//mirrors.ustc.edu.cn@g' /etc/apt/sources.list
+apt update
+apt install -y curl build-essential git
+export https_proxy=http://127.0.0.1:9091
+curl -fsSL https://pixi.sh/install.sh | sh
+export PATH="$PATH:/root/.pixi/bin"
+mkdir /root/FreeCAD
+cd /root/FreeCAD
+git init ; touch __dev__ ; git add . ; git commit -m __dev__
+curl -L https://github.com/FreeCAD/FreeCAD/releases/download/weekly-2025.11.05/freecad_source_weekly-2025.11.05.tar.gz | tar -zx --strip-components 1
+export BUILD_TAG=dev
+python3 package/rattler-build/scripts/make_version_file.py ../freecad_version.txt
+git apply package/rattler-build/scripts/disable_git_info.patch
+cd package/rattler-build
+pixi install
+
+
+alias docker=podman
+cd misc ; mkdir freecad_build_1 ; docker run --mount type=bind,src=$(pwd)/freecad_build_1,dst=/root/freecad_build_1 -d --name freecad_build_1 --net host docker.io/library/debian:13 sleep infinity
+docker exec -it freecad_build_1 bash
+printf "Types: deb|URIs: http://mirror.nju.edu.cn/debian|Suites: trixie trixie-updates trixie-backports|Components: main contrib non-free non-free-firmware|Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg||Types: deb|URIs: http://mirror.nju.edu.cn/debian-security|Suites: trixie-security|Components: main contrib non-free non-free-firmware|Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg||# > https://help.mirrorz.org/debian/|# http://mirrors.bfsu.edu.cn/debian # and -security|# http://mirrors.ustc.edu.cn/debian # and -security|" | tr "|" "\n"
+```
 
 -->
