@@ -485,7 +485,7 @@ const loadMdFile = (filePath) => {
   fs.writeFileSync("./public/bundle.js", minify.js(bundle)); // import("node:zlib").then(m=>console.log(m.gzipSync(fs.readFileSync("./public/bundle.js"),{level:9}).length));
   fs.writeFileSync("./public/update.html", units.updateHtml);
 
-  fs.cpSync("./source/toys", "./public/toy", { recursive: true });
+  fs.cpSync("./source/toys", "./public/toy", { recursive: true }); // TODO: Try hardlink, but too dangerous
   fs.cpSync("./source/res", "./public/res", { recursive: true });
 }
 
@@ -682,7 +682,6 @@ const pages = [];
   );
 
   fs.writeFileSync("./public/.nojekyll", ""); // Prevent the GitHub Pages to run Jekyll
-
   fs.writeFileSync("./public/favicon.ico", ""); // Avoid favicon.ico 404
 }
 

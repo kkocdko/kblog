@@ -5,7 +5,7 @@ tags: Tutorial Code JavaScript VSCode
 description: Not just for fun
 ```
 
-> Last tested version is `1.104.1`, may become invalid in a future version.
+> Last tested version is `1.106.2`, may become invalid in a future version.
 
 ### Pros
 
@@ -30,7 +30,7 @@ Then use `bin/code-server(.bat)` or write a custom `run.sh`:
 ```shell
 #!/bin/sh
 cd $(dirname $0)
-UV_USE_IO_URING=0 node out/server-main.js --accept-server-license-terms --host 127.0.0.1 --port 8109 --connection-token=hello
+UV_USE_IO_URING=0 exec node out/server-main.js --accept-server-license-terms --host 127.0.0.1 --port 8109 --connection-token=hello
 ```
 
 And here's a `patch.js` to workaround some issues like offline webview, see comments for details:
@@ -87,7 +87,7 @@ const spdlogIndexJs = () => {
   exports.version = 11100;
 };
 fs.writeFileSync(spdlogDir + "/index.js", `(${spdlogIndexJs.toString()})()`);
-// node patch.js; rm -rf ./extensions/markdown-language-features ./node_modules/@xterm/addon-ligatures ./node_modules/@vscode/vsce-sign ./node_modules/vsda ./node_modules/vscode-regexp-languagedetection ./node_modules/@vscode/vscode-languagedetection ~/.vscode-server/data/Cached* ~/.vscode-server/extensions/redhat.java-*/jre/ ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/ ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
+// node patch.js; rm -rf extensions/markdown-language-features extensions/mermaid-chat-features node_modules/@xterm/addon-ligatures node_modules/@vscode/vsce-sign node_modules/vsda node_modules/vscode-regexp-languagedetection node_modules/@vscode/vscode-languagedetection ~/.vscode-server/data/Cached* ~/.vscode-server/extensions/redhat.java-*/jre/ ~/.vscode-server/extensions/ms-python.python-*/pythonFiles/lib/python/debugpy/_vendored/pydevd/pydevd_attach_to_process/ ~/.vscode-server/extensions/ms-python.python-*/out/client/extension.js.map*
 
 // todo:
 // ./node_modules/0_vscode-oniguruma

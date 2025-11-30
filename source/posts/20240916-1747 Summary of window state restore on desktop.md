@@ -46,6 +46,8 @@ Most projects writes to a config file and reads it at startup. For example https
 <details>
 <summary id="translation-zh-cn">简体中文</summary>
 
+关于桌面端恢复窗口状态的总结。
+
 ## 是否恢复？
 
 如果你的应用是类似于“游戏启动器”，“登录对话框”这样的固定大小的东西，那么建议将窗口居中。否则通常建议记忆和恢复窗口状态。
