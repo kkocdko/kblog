@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="1.0.5" src="/toy/veps.js"></script>
+  <script :version="1.1.3" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -43,7 +43,7 @@
     right: 0;
     left: 0;
     margin: 0;
-    line-height: 2;
+    line-height: 3;
     text-align: center;
     pointer-events: none;
     user-select: none;
@@ -54,9 +54,9 @@
     }
   }
   #\$main.inited:not(:focus)::after {
-    content: "Click here to focus and capture keyboard";
+    content: "Click here to focus and capture keyboard/mouse";
     visibility: hidden;
-    animation: tips 2s;
+    animation: tips 2.5s;
   }
   #\$main:not(.inited)::after {
     content: "Click here to initialise";
@@ -73,6 +73,12 @@
   #\$monitor::-webkit-media-controls,
   #\$monitor::-webkit-media-controls-enclosure {
     display: none !important;
+  }
+  #\$mouse::after {
+    content: "OFF";
+  }
+  #\$mouse.on::after {
+    content: "ON";
   }
   kbd {
     display: inline-block;
@@ -138,7 +144,7 @@
   <button id="$fullscreen">Fullscreen</button>
   <button id="$scale">Scale</button>
   <div style="flex-grow: 1"></div>
-  <button id="$captureMouse">Capture mouse</button>
+  <button id="$mouse" class="">Mouse:&nbsp;</button>
   <select id="$comboKeys">
     <option value hidden selected>Combo keys</option>
     <option value="alt_f4">Alt+F4</option>
@@ -187,7 +193,7 @@
     $avtweak.value = "";
     $audio.onchange();
   };
-  $fullscreen.onclick = () => $monitor.requestFullscreen();
+  $fullscreen.onclick = () => ($main.requestFullscreen(), $main.click());
   $scale.onclick = () => {
     if ($monitor.style.maxWidth === "unset") {
       $monitor.style.maxWidth = "100%";
@@ -252,10 +258,15 @@
   };
   $main.onclick = async () => {
     $main.focus();
-    if ($main.classList.contains("inited")) return;
-    await initSerial().catch(() => {});
-    await initMonitor().catch(() => {});
-    $main.classList.add("inited");
+    if (!$main.classList.contains("inited")) {
+      await initSerial().catch(() => {});
+      await initMonitor().catch(() => {});
+      $main.classList.add("inited");
+    }
+    if ($mouse.classList.contains("on")) {
+      const fallback = () => $monitor.requestPointerLock(); // unadjustedMovement is unuseable in some environment
+      $monitor.requestPointerLock({ unadjustedMovement: true }).catch(fallback);
+    }
   };
   const genPacket = (cmd = 0x01, ...data) => {
     for (const v of data) if (v < 0 || v > 255) throw new Error("invalid byte");
@@ -265,44 +276,43 @@
     ret.push(sum);
     return ret;
   };
-  $captureMouse.onclick = async () => {
-    $main.focus();
-    try {
-      await $monitor.requestPointerLock({ unadjustedMovement: true });
-    } catch (_) {
-      await $monitor.requestPointerLock(); // unadjustedMovement is unuseable in some environment
-    }
-  };
+  $mouse.onclick = () => (localStorage.mouse = $mouse.classList.toggle("on"));
+  $mouse.classList.toggle("on", localStorage.mouse === "true");
   document.onpointerlockchange = () => {
     if (document.pointerLockElement && document.pointerLockElement !== $monitor)
       throw new Error("assert error");
     const i8clamp = (v) => Math.max(-0x7f, Math.min(v, 0x7f)); // clamp to int8
-    let [pressedBits, x, y] = [0, 0, 0];
+    let [pressedBits, x, y, d] = [0, 0, 0, 0];
     let timer = null; // an modified throttle strategy
     let f = (e) => {
-      (x += e.movementX), (y += e.movementY);
-      if (pressedBits != e.buttons || i8clamp(x) !== x || i8clamp(y) !== y) {
+      const dRatio = e.deltaMode === WheelEvent.DOM_DELTA_PIXEL ? 0.1 : 1; // todo: scroll behaviour is weird
+      (x += e.movementX), (y += e.movementY), (d += -(e.deltaY ?? 0) * dRatio);
+      if (
+        Math.abs(x) >= 0x7f ||
+        Math.abs(y) >= 0x7f ||
+        Math.abs(d) >= 1 ||
+        pressedBits !== e.buttons
+      ) {
         clearTimeout(timer);
         timer = null; // force trigger
       }
       pressedBits = e.buttons; // so lucky, coincidence or necessity?
       if (timer !== null) return;
-      (x = Math.round(x)), (y = Math.round(y));
+      (x = Math.round(x)), (y = Math.round(y)), (d = Math.round(d));
       const value = [];
       do {
-        let [pX, pY] = [i8clamp(x), i8clamp(y)];
-        (x -= pX), (y -= pY);
+        let [pX, pY, pD] = [i8clamp(x), i8clamp(y), i8clamp(d)];
+        (x -= pX), (y -= pY), (d -= pD);
         if (pX < 0) pX = (0xff + pX) & 0xff;
         if (pY < 0) pY = (0xff + pY) & 0xff;
-        // console.log({ pX, pY });
-        value.push(...genPacket(5, 1, pressedBits, pX, pY, 0));
-      } while (x !== 0 || y !== 0); // use "do while" loop to send mousedown/mouseup immediately
-      (x = 0), (y = 0);
+        if (pD < 0) pD = (0xff + pD) & 0xff;
+        value.push(...genPacket(5, 1, pressedBits, pX, pY, pD));
+      } while (x !== 0 || y !== 0 || d !== 0); // use "do while" loop to send mousedown/mouseup immediately
       serial.write(new Uint8Array(value)); // without await on purpose
-      timer = setTimeout(() => (timer = null), 33); // 1000ms/30fps
+      timer = setTimeout(() => (timer = null), 1000 / 30);
     };
     if (!document.pointerLockElement) f = null;
-    $monitor.onmousemove = $monitor.onmousedown = $monitor.onmouseup = f; // todo: onwhell?
+    onmousemove = onmousedown = onmouseup = onwheel = f;
   };
   // prettier-ignore
   const KEYS = new Map([ // https://gist.github.com/MightyPork/6da26e382a7ad91b5496ee55fdc73db2
@@ -314,31 +324,30 @@
     ["Tab"      ,0x2b,0],["\t",0x2b,0],
     ["Space"    ,0x2c,0],[" " ,0x2c,0],
     ["-",0x2d,0],["_",0x2d,1],["=",0x2e,0],["+",0x2e,1],["[",0x2F,0],["{",0x2F,1],["]",0x30,0],["}",0x30,1],["\\",0x31,0],["|",0x31,1],[";",0x33,0],[":",0x33,1],["'",0x34,0],['"',0x34,1],["`",0x35,0],["~",0x35,1],[",",0x36,0],["<",0x36,1],[".",0x37,0],[">",0x37,1],["/",0x38,0],["?",0x38,1],
+    ["CapsLock",0x39,0],["F1",0x3a,0],["F2",0x3b,0],["F3",0x3c,0],["F4",0x3d,0],["F5",0x3e,0],["F6",0x3f,0],["F7",0x40,0],["F8",0x41,0],["F9",0x42,0],["F10",0x43,0],["F11",0x44,0],["F12",0x45,0],
     ["Pause",0x48,0],["Insert",0x49,0],["Home",0x4a,0],["PageUp",0x4b,0],["Delete",0x4c,0],["End",0x4d,0],["PageDown",0x4e,0],["ArrowRight",0x4f,0],["ArrowLeft",0x50,0],["ArrowDown",0x51,0],["ArrowUp",0x52,0],
-    ["F1",0x3a,0],["F2",0x3b,0],["F3",0x3c,0],["F4",0x3d,0],["F5",0x3e,0],["F6",0x3f,0],["F7",0x40,0],["F8",0x41,0],["F9",0x42,0],["F10",0x43,0],["F11",0x44,0],["F12",0x45,0],
     ["Control",0xe0,0],["Shift",0xe1,0],["Alt",0xe2,0],["Meta",0xe3,0],
   ].map(([key, hidCode, shift]) => [key, [hidCode, shift]]));
   // keypress can not capture many keys like backspace and tab, so we use keydown/keyup instead
-  const currentDownKeys = new Set();
-  const eatKeys = new Set(); // avoid tailing control keys (press and release key A will emit event keyup[A] and keyup[Shift])
-  $main.onkeydown = async (e) => {
+  const downKeys = new Set();
+  $main.onkeydown = $main.onkeyup = async (e) => {
     e.preventDefault(); // avoid the Tab key to switch out focus
-  };
-  $main.onkeyup = async (e) => {
-    e.preventDefault(); // avoid the Tab key to switch out focus
-    if (eatKeys.has(e.key)) return eatKeys.delete(e.key);
-    // console.log(e);
-    const [hidCode, shift] = KEYS.get(e.key);
-    let controlBits = 0;
-    if (shift) controlBits |= 0b00000010;
-    if (e.ctrlKey) (controlBits |= 0b00000001), eatKeys.add("Control");
-    if (e.shiftKey) (controlBits |= 0b00000010), eatKeys.add("Shift");
-    if (e.altKey) (controlBits |= 0b00000100), eatKeys.add("Alt");
-    if (e.metaKey) (controlBits |= 0b00001000), eatKeys.add("Meta");
-    const value = new Uint8Array([
-      ...genPacket(2, controlBits, 0, hidCode, 0, 0, 0, 0, 0),
-      ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
-    ]);
+    if (downKeys.size >= 6 && e.type === "keydown")
+      return console.warn("max 6 keys");
+    if (e.type === "keydown") downKeys.add(e.key);
+    if (e.type === "keyup") downKeys.delete(e.key);
+    const payload = [];
+    for (const key of downKeys) {
+      const [hidCode] = KEYS.get(key);
+      payload.push(hidCode);
+    }
+    while (payload.length !== 6) payload.push(0);
+    const controlBits =
+      (e.ctrlKey && 0b00000001) +
+      (e.shiftKey && 0b00000010) +
+      (e.altKey && 0b00000100) +
+      (e.metaKey && 0b00001000);
+    const value = new Uint8Array(genPacket(2, controlBits, 0, ...payload));
     await serial.write(value);
   };
   $comboKeys.onchange = async () => {
@@ -351,23 +360,15 @@
     const [hidCode] = KEYS.get(key);
     const value = new Uint8Array([
       ...genPacket(2, controlBits, 0, hidCode, 0, 0, 0, 0, 0),
-      ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0),
+      ...genPacket(2, 0, 0, 0, 0, 0, 0, 0, 0), // release all
     ]);
     $comboKeys.value = "";
     await serial.write(value);
   };
   $pasteSend.onclick = async (e) => {
-    // todo: 滚轮
-    // setInterval(async () => {
-    //   // await serial.write(new Uint8Array(genPacket(5, 1, 0, 0, 0, 0x7f)));
-    // await serial.write(new Uint8Array(genPacket(5, 1, 0, 0, 0, 0x09)));
-    // }, 400);
-    // return;
-    for (const key of $pasteText.value) {
-      if (!KEYS.has(key)) {
+    for (const key of $pasteText.value)
+      if (!KEYS.has(key))
         return alert(`char [ ${key} ] is not a supported char`);
-      }
-    }
     for (const key of $pasteText.value) {
       // switch to the ascii mode of ch9329 needs reconnect, which is unacceptable
       // there's a faster strategy, press down 6 keys before release. however this will cause adjacent same chars to be wrong, like "root" became "rot"
@@ -383,11 +384,10 @@
 
   // todo:
   // 鼠标摇杆（Android 手机）
-  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键，要提供一个 US 布局键盘）
-  // 真正的按下与弹起
+  // 完整的软键盘（Android 手机）（Android 上的输入法很难发送出 Shift 等按键，也许要提供一个 US 布局键盘）
   // 录制功能
 
-  // file:///run/media/kkocdko/data/docs/archived/ch9329-protocol.pdf
+  // /home/kkocdko/misc/docs/archived/ch9329-protocol.pdf
   // https://developer.mozilla.org/en-US/docs/Web/API/USBDevice
   // https://github.com/libusb/libusb/releases/
   // https://blog.csdn.net/u014794783/article/details/108097412
