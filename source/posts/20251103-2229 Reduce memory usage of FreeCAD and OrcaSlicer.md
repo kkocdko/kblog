@@ -18,8 +18,8 @@ chmod +x FreeCAD.AppImage
 mv squashfs-root FreeCAD
 cd FreeCAD
 pushd usr ; rm -rf man fonts ssl ; popd
-pushd usr/share ; rm -rf doc icons man mysql opencv4 ; popd
-pushd usr/lib ; rm -rf qt6/bin qt6/plugins/qmlls qt6/qml/QtQuick libQt6Quick* $(ls | grep -E "^(lib)?(LLVM|clang|openvino|avcodec|rav1e|dav1d|avif|x265|x264|aom|SvtAv1Enc|opencv|mysqlclient|pcl|proto(buf|c)|gtk)[\._-]") ; popd # vtk is used by mesh
+pushd usr/share ; rm -rf doc icons man mysql opencv4 wayland wayland-protocols ; popd
+pushd usr/lib ; rm -rf cmake pkgconfig qt6/bin qt6/plugins/qmlls qt6/qml/QtQuick libQt6Quick* $(ls | grep -E "^(lib)?(LLVM|clang|openvino|avcodec|rav1e|dav1d|avif|x265|x264|aom|SvtAv1Enc|opencv|mysqlclient|pcl|proto(buf|c)|gtk|wayland)[\._-]") ; popd # vtk is used by mesh
 pushd usr/lib/python3.11 ; rm -rf ensurepip ; popd
 pushd usr/lib/python3.11/site-packages ; rm -rf OCC pandas scipy debugpy ifcopenshell pip ; popd
 for entry in $(find -name "*_rc.py"); do
@@ -29,6 +29,8 @@ for entry in $(find -name "*_rc.py"); do
   usr/bin/python $entry
   (printf "from PySide6 import QtCore\nwith open(__file__+'.qrc_name.bin','rb')as f:\n    qt_resource_name=f.read()\nwith open(__file__+'.qrc_struct.bin','rb')as f:\n    qt_resource_struct=f.read()\nwith open(__file__+'.qrc_data.bin','rb')as f:\n    qt_resource_data=f.read()\n" ; echo "$suffix" | tr "|" "\n") > $entry
 done
+sed -i -e 's/export QT_QPA_PLATFORM=/# &/' -e 's/"${MAIN}"/exec &/' AppRun
+QT_SCALE_FACTOR=1 QT_SCREEN_SCALE_FACTORS=1 QT_AUTO_SCREEN_SCALE_FACTOR=0 QT_ENABLE_HIGHDPI_SCALING=0 QT_FONT_DPI=120 XKB_CONFIG_ROOT=/usr/share/X11/xkb ./AppRun
 # Menu > Edit > Preferences > Display > Use OpenGL VBO
 # Wayland: https://github.com/FreeCAD/FreeCAD/issues/6068
 # tar -c FreeCAD | xz -T2 -9e --block-size $(( $(tar -c FreeCAD | wc -c) / 2 + 64 )) > FreeCAD.tar.xz # see mkdebian, todo: a new post for 2 block xz
@@ -59,8 +61,6 @@ export ORCA_SLICER_DARK_THEME=true
 ```
 
 <!--
-
-25.5mm
 
 - print_creality_12m15s.gcode = 创想三维软件，默认 CR-PLA 改风扇，层高 0.16 速度 25 60
 - print_orca_silk_14m13s.gcode = 使用 orca slicer 切片，使用 silk PLA 预设，层高 0.16 速度 25 60
@@ -93,22 +93,13 @@ Content of file `（加强支撑）0.20mm Standard @Creality Ender-3 V3 KE 0.4 n
 }
 ```
 
-Old gcode?
-
-```
-tail_len=565 ; diff -W 200 -y <(tail -n$tail_len /media/kkocdko/KK_TMP_1/cad/0_print_best-screw_1h18m.gcode) <(tail -n$tail_len /media/kkocdko/KK_TMP_1/cad/0_print_test_screw_6m8s.gcode) | grep '|'
-```
-
 高速打印:
-
 - https://wiki.creality.com/zh/ender-series/ender-3-v3-ke
 - https://wiki.creality.com/zh/ender-series/ender-3-v3-ke/quick-start-guide/how-to-print-a-small-boat-quickly
 - https://wiki.bambulab.com/zh/filament-acc/filament/slice-param
 - https://wiki.creality.com/zh/software/creality-print/parameter-speed
 - https://www.creality.cn/product-85.html
 
-
-```sh
 podman pull swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/debian:13
 podman tag swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/debian:13 docker.io/debian:13
 mkdir -p $HOME/misc/freecad_build_1
@@ -122,13 +113,15 @@ apt install -y -o Acquire::http::Pipeline-Depth=0 --no-install-recommends libpys
 # libvtk9-dev Depends default-jdk
 # libeigen3-dev libpyside2-dev libqt5opengl5-dev libqt5svg5-dev libqt5x11extras5-dev shiboken2 libshiboken2-dev libzipios++-dev ${vtk_dev} netgen netgen-headers
 update-locale LANG=C.UTF-8 LC_ALL=C.UTF-8 # if you needs en_US.UTF-8, apt install locales-all
+
+
 export ALL_PROXY=http://192.168.1.77:9091 ; export HTTP_PROXY=$ALL_PROXY HTTPS_PROXY=$ALL_PROXY
-
-git clone --recurse-submodules --shallow-submodules --depth 2 --branch releases/FreeCAD-1-1 https://github.com/FreeCAD/FreeCAD
-sed -i "s/compress-algo=zlib/compress-algo=none/g" cMake/FindPySide6Tools.cmake
-
-export BUILD_TAG=dev-$(date +%Y%m%d-%H%M)
 curl -fsSL https://pixi.sh/install.sh | sh
+git clone --recurse-submodules --shallow-submodules --depth 2 --branch releases/FreeCAD-1-1 https://github.com/FreeCAD/FreeCAD
+tar --zstd -cf FreeCAD-src_1-1_20260115.tar.zst FreeCAD
+
+sed -i "s/compress-algo=zlib/compress-algo=none/g" cMake/FindPySide6Tools.cmake
+export BUILD_TAG=dev-$(date +%Y%m%d-%H%M)
 python3 package/scripts/write_version_info.py ../freecad_version.txt
 cd package/rattler-build
 pixi install
@@ -167,7 +160,6 @@ mv squashfs-root linuxdeploy
 - https://github.com/ccache/ccache/issues/956
 - https://github.com/mozilla/sccache
 
-https://github.com/mozilla/sccache/releases/download/v0.12.0/sccache-v0.12.0-x86_64-unknown-linux-musl.tar.gz
-```
+curl -s -H 'Snap-Device-Series: 16' http://api.snapcraft.io/v2/snaps/info/freecad | jq -r '."channel-map" | map(select(.channel.architecture == "amd64" and .channel.name == "candidate")) | .[0].download.url'
 
 -->
