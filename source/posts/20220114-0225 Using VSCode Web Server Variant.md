@@ -93,6 +93,7 @@ fs.writeFileSync(spdlogDir + "/index.js", `(${spdlogIndexJs.toString()})()`);
 // ./node_modules/0_vscode-oniguruma
 // ./node_modules/0_vscode-textmate
 // ./node_modules/@vscode/tree-sitter-wasm
+// ./out/vs/workbench/workbench.web.main.internal.js
 ```
 
 - There's a bug that caused UI freezed when entering debug after `1.65`. **(UPDATED)** [Patch merged into mainline](https://github.com/microsoft/vscode/commit/7046d66).

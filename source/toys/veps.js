@@ -67,8 +67,8 @@ const inWindow = async () => {
       ...Object.values(
         JSON.parse(
           document.head.querySelector("script[type=importmap]")?.textContent ||
-            '{"imports":{}}'
-        )?.imports
+            '{"imports":{}}',
+        )?.imports,
       ),
     ].map((v) => v.src || v.href),
     hotList: [location.href], // refetch everytime

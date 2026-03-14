@@ -5,8 +5,7 @@ tags: Chrome Browser
 description: Avoid annoy warning, supports Chrome 145+
 ```
 
-🌐 - [简体中文](#translation-zh-cn)
-
+🌐 - [简体中文](#lang_zh-cn)
 
 Chrome blocks downloads from HTTP sources or files like `.exe`, displaying warnings like “insecure download blocked” and requiring manual approval each time.
 
@@ -26,10 +25,10 @@ Previously, this page had a toggle switch that could be clicked directly. Later,
 
 I feel this method is somewhat of an abuse, they (the Chrome developers) probably didn't anticipate that wildcards could be entered.
 
-## Translation
+## 🌐
 
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 新版本 Chrome 在下载 http 来源的内容，或者 exe 等可执行文件时，会提示 “已拦截未经验证的下载内容”、“已阻止不安全的下载” 阻止下载，每次都要手动放行。
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <head>
   <meta charset="utf-8" />
@@ -169,7 +169,7 @@
   $audio.onchange = $video.onchange = async () => {
     // https://stackoverflow.com/a/73550841/11338291
     for (const t of $monitor.srcObject?.getTracks() ?? [])
-      t.stop(), $monitor.srcObject.removeTrack(t);
+      (t.stop(), $monitor.srcObject.removeTrack(t));
     // width: { max: 1280 }, height: { max: 720 }, facingMode: { ideal: "environment" }, // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
     const streamCfg = { audio: eval($audio.value), video: eval($video.value) };
     $monitor.srcObject = await navigator.mediaDevices.getUserMedia(streamCfg);
@@ -244,7 +244,7 @@
     const opt = { video: true, audio: true };
     const tempStream = await navigator.mediaDevices.getUserMedia(opt); // grant permission first, otherwise the enumerateDevices() below will returns empty
     for (const t of tempStream.getTracks() ?? [])
-      t.stop(), tempStream.removeTrack(t); // stop tracks, the above getUserMedia() will open default tracks, usually the laptop's built-in camera
+      (t.stop(), tempStream.removeTrack(t)); // stop tracks, the above getUserMedia() will open default tracks, usually the laptop's built-in camera
     for (const info of await navigator.mediaDevices.enumerateDevices()) {
       const select = { audioinput: $audio, videoinput: $video }[info.kind];
       if (!select) continue;
@@ -295,7 +295,9 @@
     let timer = null; // an modified throttle strategy
     let f = (e) => {
       const dRatio = e.deltaMode === WheelEvent.DOM_DELTA_PIXEL ? 0.1 : 1; // todo: scroll behaviour is weird
-      (x += e.movementX), (y += e.movementY), (d += -(e.deltaY ?? 0) * dRatio);
+      x += e.movementX;
+      y += e.movementY;
+      d += -(e.deltaY ?? 0) * dRatio;
       if (
         Math.abs(x) >= 0x7f ||
         Math.abs(y) >= 0x7f ||
@@ -307,11 +309,11 @@
       }
       pressedBits = e.buttons; // so lucky, coincidence or necessity?
       if (timer !== null) return;
-      (x = Math.round(x)), (y = Math.round(y)), (d = Math.round(d));
+      ((x = Math.round(x)), (y = Math.round(y)), (d = Math.round(d)));
       const value = [];
       do {
         let [pX, pY, pD] = [i8clamp(x), i8clamp(y), i8clamp(d)];
-        (x -= pX), (y -= pY), (d -= pD);
+        ((x -= pX), (y -= pY), (d -= pD));
         if (pX < 0) pX = (0xff + pX) & 0xff;
         if (pY < 0) pY = (0xff + pY) & 0xff;
         if (pD < 0) pD = (0xff + pD) & 0xff;

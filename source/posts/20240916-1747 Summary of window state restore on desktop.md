@@ -5,7 +5,7 @@ tags: Note Windows Linux Electron
 description: Restore what? Where to store? Cautions? It's all here!
 ```
 
-🌐 - [简体中文](#translation-zh-cn)
+🌐 - [简体中文](#lang_zh-cn)
 
 > This note is a conclusion description of the group chat yesterday. Includes [Chuyu-Team](https://github.com/Chuyu-Team/) members and me and more anonymous people. Thanks!
 
@@ -41,10 +41,10 @@ To summarize, here I give the simplest, robust, but not full featured approach: 
 
 Most projects writes to a config file and reads it at startup. For example https://github.com/mawie81/electron-window-state . Some projects under Linux write to dconf, some projects under windows use the Registry, but if we look at it from a cross-platform point of view, it's probably safer and more consistent to use a config file instead of windows registry / Linux dconf. Besides, some Linux desktop environments don't have dconf.
 
-## Translation
+## 🌐
 
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 关于桌面端恢复窗口状态的总结。
 

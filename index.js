@@ -60,11 +60,11 @@ const units = {
       margin: 0;
     }
     html {
+      -webkit-tap-highlight-color: #0000;
       font-family: sans-serif;
       line-height: 1.8;
       overflow-wrap: break-word;
       background: #f8f9fa;
-      -webkit-tap-highlight-color: #0000;
     }
     a {
       color: #3f51b5;
@@ -207,7 +207,9 @@ const units = {
       border-top-color: #0000;
       border-radius: 50%;
       opacity: 1;
-      transition: opacity 0.3s 0.1s, transform 5s linear;
+      transition:
+        opacity 0.3s 0.1s,
+        transform 5s linear;
       transform: rotate(3600deg);
     }
     .loading main,
@@ -334,7 +336,7 @@ const units = {
     </aside>
   `,
   temlpateHtml: html`
-    <!DOCTYPE html>
+    <!doctype html>
     <!-- If <head> does not exist, some search engines will reject this page -->
     <head>
       <title>/*{title}*/ - kkocdko's blog</title>
@@ -649,7 +651,7 @@ const pages = [];
 
   fs.writeFileSync(
     "./public/robots.txt",
-    `User-agent: *\nAllow: /\nSitemap: ${domain}/sitemap.xml`
+    `User-agent: *\nAllow: /\nSitemap: ${domain}/sitemap.xml`,
   );
 
   fs.writeFileSync(
@@ -660,7 +662,7 @@ const pages = [];
         ${pages}${(p) => `<url><loc>${domain}/${p.name}</loc></url>`}
         ${posts}${(p) => `<url><loc>${domain}/post/${p.id}</loc></url>`}
       </urlset>
-    `.trim()
+    `.trim(),
   );
 
   fs.writeFileSync(
@@ -681,7 +683,7 @@ const pages = [];
           `}
         </channel>
       </rss>
-    `.trim()
+    `.trim(),
   );
 
   fs.writeFileSync("./public/.nojekyll", ""); // Prevent the GitHub Pages to run Jekyll

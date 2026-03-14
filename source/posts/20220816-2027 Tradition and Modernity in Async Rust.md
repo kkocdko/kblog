@@ -5,7 +5,7 @@ tags: Code Rust Async
 description: Poll，Future，async，The conversions and compatibility
 ```
 
-🌐 - [简体中文](#translation-zh-cn)
+🌐 - [简体中文](#lang_zh-cn)
 
 > Prev knowledges: [async-book](https://rust-lang.github.io/async-book) and [tokio](https://tokio.rs) basics。
 
@@ -255,10 +255,10 @@ That's because: If `FileStream` was dropped, the `File` will be dropped together
 >
 > 3. <https://docs.rs/tokio-stream/0.1.9/tokio_stream/wrappers/struct.BroadcastStream.html>
 
-## Translation
+## 🌐
 
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 > 前置知识：[async-book](https://rust-lang.github.io/async-book) 和 [tokio](https://tokio.rs) 基础。
 

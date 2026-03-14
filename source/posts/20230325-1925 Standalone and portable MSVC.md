@@ -5,7 +5,7 @@ tags: Note C CPP
 description: For testing, CI and more
 ```
 
-🌐 - [简体中文](#translation-zh-cn)
+🌐 - [简体中文](#lang_zh-cn)
 
 This is the standalone MSVC pack in a 7z file. Thanks to [portable-msvc.py - mmozeiko - GitHub Gist](https://gist.github.com/mmozeiko/7f3162ec2988e81e56d5c4e22cde9977).
 
@@ -36,10 +36,10 @@ windows sdk = 10.0.22621.0
 
 - No MSBuild included.
 
-## Translation
+## 🌐
 
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 这是一个包含了独立版本 MSVC 的 7z 压缩包。感谢 [portable-msvc.py - mmozeiko - GitHub Gist](https://gist.github.com/mmozeiko/7f3162ec2988e81e56d5c4e22cde9977)。
 

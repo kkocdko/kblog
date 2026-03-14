@@ -5,7 +5,7 @@ tags: Opinion Deprecated
 description: It's history, disadvantages and alternative
 ```
 
-🌐 - [简体中文](#translation-zh-cn)
+🌐 - [简体中文](#lang_zh-cn)
 
 ## History and usage
 
@@ -26,10 +26,10 @@ Hard disk duplicator is something that is not sold on Taobao, Amazon and other p
 
 - Some people will suggest using a PCIe adapter and M.2 on the motherboard and then repeatedly off-on, I'm skeptical about repeatedly turning it on and off. If you have a Thunderbolt that can transfer out of PCIe, that's also a good option, but slightly more costly.
 
-## Translation
+## 🌐
 
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 ## 来历和用途
 

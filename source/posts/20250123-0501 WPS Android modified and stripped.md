@@ -5,7 +5,7 @@ tags: Software Android Office
 description: wps_16.8.6_mod_balatan_kk.apk
 ```
 
-🌐 - [简体中文](#translation-zh-cn)
+🌐 - [简体中文](#lang_zh-cn)
 
 `wps_16.8.6_mod_balatan_kk.apk`, crc32=`3cfd79b4`, 111.34 MiB, arm64-only, recommend to be used without network access.
 
@@ -19,8 +19,10 @@ There's huge difference between the chinese and international edition of WPS And
 
 Balatan's WPS is up to 18.15, but I've used it a bit and don't think it's necessary. No existing mobile apps (excluding desktop WPS migrations or VMs) can replace the desktop office suite. So my personal expectation for WPS on Android is that it will be as small as possible, with previews and basic form-filling tasks. I was using 11.4 pro, but unfortunately it's 32-bit and no longer available on newer phones.
 
+## 🌐
+
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 `wps_16.8.6_mod_balatan_kk.apk`, crc32=`3cfd79b4`, 111.34 MiB, 仅支持 arm64, 建议禁止联网使用。
 

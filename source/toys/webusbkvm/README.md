@@ -1,6 +1,6 @@
 # webusbkvm ([open 🔗](https://kkocdko.site/toy/webusbkvm))
 
-🌐 - [简体中文](#translation-zh-cn)
+🌐 - [简体中文](#lang_zh-cn)
 
 USB KVM (Keyboard Video Mouse) in your browser using WebUSB/WebSerial. With CH9329 chip.
 
@@ -24,10 +24,10 @@ MS2109 capture card maximum transmission 1080p 30fps mjpeg, if you need better q
 
 If you want a pretty look, you can buy CH9329+CH340 end product cable (15 ¥), which cost more compared to two modules and dupont cable.
 
-## Translation
+## 🌐
 
 <details>
-<summary id="translation-zh-cn">简体中文</summary>
+<summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
 > webusbkvm - 浏览器上的 USB KVM (键盘 视频 鼠标) ，使用 WebUSB/WebSerial。适配 CH9329。
 
