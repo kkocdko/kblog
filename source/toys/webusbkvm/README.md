@@ -1,4 +1,4 @@
-# webusbkvm
+# webusbkvm ([open 🔗](https://kkocdko.site/toy/webusbkvm))
 
 🌐 - [简体中文](#translation-zh-cn)
 

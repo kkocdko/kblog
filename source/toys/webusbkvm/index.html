@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>WebUSB KVM - Keyboard Video Mouse</title>
-  <script :version="1.1.3" src="/toy/veps.js"></script>
+  <script :version="1.1.4" src="/toy/veps.js"></script>
   <script type="importmap">
     {
       "imports": {
@@ -48,15 +48,15 @@
     pointer-events: none;
     user-select: none;
   }
-  @keyframes tips {
+  @keyframes set-visible {
     0% {
       visibility: visible;
     }
   }
   #\$main.inited:not(:focus)::after {
-    content: "Click here to focus and capture keyboard/mouse";
+    content: "Click here to focus and grab keyboard/mouse";
     visibility: hidden;
-    animation: tips 2.5s;
+    animation: set-visible 2.5s;
   }
   #\$main:not(.inited)::after {
     content: "Click here to initialise";
@@ -123,7 +123,7 @@
 <body>
   <main id="$main" tabindex="-1">
     <video id="$monitor"></video>
-    <!-- because the <button> will capture focus, so we use <kbd> instead -->
+    <!-- because the <button> will grab focus, so we use <kbd> instead -->
     <!-- <div id="$keyboard"><kbd>Shift</kbd><kbd>Ctrl</kbd><kbd>Alt</kbd><kbd>Tab</kbd><kbd>Enter</kbd></div> -->
   </main>
   <select id="$audio">
@@ -170,8 +170,7 @@
     // https://stackoverflow.com/a/73550841/11338291
     for (const t of $monitor.srcObject?.getTracks() ?? [])
       t.stop(), $monitor.srcObject.removeTrack(t);
-    // width: { max: 1280 }, height: { max: 720 }, facingMode: { ideal: "environment" },
-    // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
+    // width: { max: 1280 }, height: { max: 720 }, facingMode: { ideal: "environment" }, // https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackConstraints
     const streamCfg = { audio: eval($audio.value), video: eval($video.value) };
     $monitor.srcObject = await navigator.mediaDevices.getUserMedia(streamCfg);
     $monitor.play();
@@ -262,7 +261,17 @@
       await initSerial().catch(() => {});
       await initMonitor().catch(() => {});
       $main.classList.add("inited");
+      // await new Promise((resolve) => setTimeout(resolve, 200));
+      // while (true) {
+      //   serial.write(new Uint8Array(genPacket(5, 1, 1, 0, 0, 0)));
+      //   await new Promise((resolve) => setTimeout(resolve, 10));
+      //   serial.write(new Uint8Array(genPacket(5, 1, 0, 0, 0, 0)));
+      //   await new Promise((resolve) => setTimeout(resolve, 100));
+
+      //   await new Promise((resolve) => setTimeout(resolve, 1000 * 20));
+      // }
     }
+    // return;
     if ($mouse.classList.contains("on")) {
       const fallback = () => $monitor.requestPointerLock(); // unadjustedMovement is unuseable in some environment
       $monitor.requestPointerLock({ unadjustedMovement: true }).catch(fallback);
@@ -328,7 +337,6 @@
     ["Pause",0x48,0],["Insert",0x49,0],["Home",0x4a,0],["PageUp",0x4b,0],["Delete",0x4c,0],["End",0x4d,0],["PageDown",0x4e,0],["ArrowRight",0x4f,0],["ArrowLeft",0x50,0],["ArrowDown",0x51,0],["ArrowUp",0x52,0],
     ["Control",0xe0,0],["Shift",0xe1,0],["Alt",0xe2,0],["Meta",0xe3,0],
   ].map(([key, hidCode, shift]) => [key, [hidCode, shift]]));
-  // keypress can not capture many keys like backspace and tab, so we use keydown/keyup instead
   const downKeys = new Set();
   $main.onkeydown = $main.onkeyup = async (e) => {
     e.preventDefault(); // avoid the Tab key to switch out focus

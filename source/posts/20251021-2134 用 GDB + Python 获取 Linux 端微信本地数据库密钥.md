@@ -14,7 +14,7 @@ import gdb
 import re
 import sys
 sys.stdout = sys.stderr
-relative = "0x658FC90" # linux_4.1.0.10 = 0x658FC90
+relative = "0x658FC90" # linux_x86_64_4.1.0.10 = 0x658FC90 , linux_x86_64_4.1.0.16 = 0x6586C90
 base = next(line.split()[0] for line in gdb.execute("info proc mapping", to_string=True).splitlines() if line.strip().endswith("/wechat"))
 bp = gdb.Breakpoint(f"* {base} + {relative}")
 print(f"base = {base}, relative = {relative}, breakpoint has been set, please login wechat")
@@ -39,13 +39,15 @@ key = 22aa33bb44cc55dd22aa33bb44cc55dd22aa33bb44cc55dd22aa33bb44cc55dd
 kkocdko@klp1:/media/kkocdko/KK_TMP_1$
 ```
 
-再次感谢作者提供的思路。另外，微信的 DLL 或 ELF 体积很大，为加速 IDA 分析，可以考虑打开时选择 Kernel options，在 Option 1 只开 "Trace executing flow" 和 "Create functions if code is present"，在 Option 3 关 EH 和 RTTI。
+再次感谢作者提供的思路。另外，微信的 DLL 或 ELF 体积很大，为加速 IDA 分析，可以考虑打开时选择 Kernel options，在 Option 1 只开 "Trace executing flow" 和 "Create functions if call is present"，在 Option 3 关 EH 和 RTTI。
 
 ---
 
 不得不说，大模型写这个真是一团糟，写出一大串一两百行根本没法用的垃圾。还是得古法编程靠谱。
 
-<!--
+参考文章：
+
+- 找 relative address : https://github.com/ycccccccy/wx_key/blob/437b7a7b71406d0785b3076d6ef4c8bfe56165f8/wx4.1_analysis.md
 - 扫 AES 图片 Key : https://github.com/recarto404/WxDatDecrypt/blob/main/key.py
 - https://ppwwyyxx.com/blog/2025/wechat-dump-10-years/#WXGF-%E8%A7%A3%E7%A0%81
 - https://sarv.blog/posts/wxam/
@@ -54,5 +56,3 @@ kkocdko@klp1:/media/kkocdko/KK_TMP_1$
 - https://github.com/Symb0x76/chatlog?tab=readme-ov-file
 - https://github.com/recarto404/WxDatDecrypt/tree/main
 - https://github.com/Tencent/wcdb/blob/b9472e220ca5204ee6b530251a5225d2fff70e7c/src/common/base/UnsafeData.hpp#L61
-- https://github.com/ycccccccy/wx_key/blob/437b7a7b71406d0785b3076d6ef4c8bfe56165f8/wx4.1_analysis.md
--->
