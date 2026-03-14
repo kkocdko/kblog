@@ -95,6 +95,7 @@ const units = {
     main h1 {
       padding-bottom: 7px;
       margin: -9px 0 13px;
+      font-size: 23px;
       font-weight: 400;
       box-shadow: 0 1px #ddd;
     }
@@ -375,9 +376,11 @@ const units = {
       onpopstate(); // Because "pushState" will not trigger "popstate" event
     };
     let onPageLoad = () => {
-      (
-        document.getElementById(location.hash.slice(1)) || topBar
-      ).scrollIntoView();
+      try {
+        let anchor = document.querySelector(location.hash);
+        if (anchor.parentNode.open === false) anchor.parentNode.open = true; // Unfold <details> for inner anchor
+        anchor.scrollIntoView();
+      } catch {}
       document
         .querySelectorAll('a[href^="/."],a[href^="#"]')
         .forEach((element) => (element.onclick = onLinkClick));
