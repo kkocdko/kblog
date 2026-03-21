@@ -12,7 +12,7 @@ Main idea: Qt PySide compiles and embed QRC into huge `xxx_rc.py`, I dump data a
 And there's more you can strip, on my debian 13 these runs well.
 
 ```sh
-curl -o FreeCAD.AppImage -L https://github.com/FreeCAD/FreeCAD/releases/download/1.1rc1/FreeCAD_1.1rc1-Linux-x86_64-py311.AppImage
+curl -o FreeCAD.AppImage -L https://github.com/FreeCAD/FreeCAD/releases/download/1.1.0/FreeCAD_1.1.0-Linux-x86_64-py311.AppImage
 chmod +x FreeCAD.AppImage
 ./FreeCAD.AppImage --appimage-extract
 mv squashfs-root FreeCAD
@@ -45,11 +45,12 @@ Before (left) and after (right):
 The custom font and homepage webview use lots of memory.
 
 ```sh
-curl -o OrcaSlicer.AppImage -L https://github.com/SoftFever/OrcaSlicer/releases/download/v2.3.1/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.3.1.AppImage
+curl -o OrcaSlicer.AppImage -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.3.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.3.2.AppImage
 chmod +x OrcaSlicer.AppImage
 ./OrcaSlicer.AppImage --appimage-extract
-apt install --no-install-recommends libwebkit2gtk-4.1-0 # for debian 13
+apt install --no-install-recommends libwebkit2gtk-4.1-0 libglu1-mesa libmspack0t64 # for debian 13
 # reduce memory usage a lot
+mv resources/hms resources/hms.bak
 mv resources/fonts resources/fonts.bak
 mv resources/web/homepage/index.html resources/web/homepage/index.html.bak
 echo '<!doctype html><html style="background:#000"><script>window.close()</script>' > resources/web/homepage/index.html

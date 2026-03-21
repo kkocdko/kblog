@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>Markdown Preview</title>
-  <script :version="2.0.5" src="/toy/veps.js"></script>
+  <script :version="2.1.1" src="/toy/veps.js"></script>
   <link
     rel="stylesheet"
-    href="https://registry.npmmirror.com/github-markdown-css/5.5.1/files/github-markdown-light.css"
+    href="https://registry.npmmirror.com/github-markdown-css/5.9.0/files/github-markdown-light.css"
   />
-  <script src="https://registry.npmmirror.com/marked/12.0.0/files/marked.min.js"></script>
+  <script src="https://registry.npmmirror.com/marked/14.1.4/files/marked.min.js"></script>
 </head>
 
 <style>
@@ -18,35 +18,39 @@
     width: 100%;
     height: 60vh;
     padding: 5px;
-    margin-bottom: -5px;
+    margin: 8px 0;
     font-family: monospace;
     resize: vertical;
     border: 1px solid #777;
   }
-  #\$tips {
-    padding: 0 5px;
-    margin: 0;
-    color: #fffd;
-    background: #e08700f0;
-    opacity: 0;
-    animation: tips cubic-bezier(1, -0.5, 0.5, 1) 3s;
-  }
-  @keyframes tips {
-    0% {
-      opacity: 1;
-    }
-  }
 </style>
 
 <body>
+  <button id="$save">Save</button>
+  <button id="$fmt">Format</button>
   <textarea id="$in" placeholder="Markdown input" spellcheck="false"></textarea>
-  <p id="$tips">Click here to toggle input box</p>
-  <div id="$out" class="markdown-body"></div>
+  <div id="$out" class="markdown-body" style="min-height: 100vh"></div>
 </body>
 
 <script>
-  $tips.onclick = () =>
-    void ($in.style.display = $in.style.display ? "" : "none");
   $in.oninput = () => void ($out.innerHTML = marked.parse($in.value));
   $in.oninput();
+  $save.onclick = () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([$in.value]));
+    a.download = Date.now() + ".md";
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 900);
+  };
+  $fmt.onclick = async () => {
+    if (!window.prettier) {
+      $fmt.disabled = true;
+      await import("https://registry.npmmirror.com/prettier/2.8.8/files/standalone.js"); // because prettier 3.0 removed paranoid text spacing
+      await import("https://registry.npmmirror.com/prettier/2.8.8/files/parser-markdown.js");
+      $fmt.disabled = false;
+    }
+    const options = { parser: "markdown", plugins: prettierPlugins };
+    $in.value = prettier.format($in.value, options);
+    $in.oninput();
+  };
 </script>
