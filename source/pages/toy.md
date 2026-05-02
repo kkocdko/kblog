@@ -11,6 +11,10 @@ title: Toy
 
 浏览器上的 USB KVM (键盘 视频 鼠标) ，使用 WebUSB/WebSerial。
 
+## [E2EE Chat](/toy/e2eechat)
+
+使用公共 MQTT Broker 的简单端到端加密聊天。
+
 ## [Realpha](/toy/realpha)
 
 通过差分背景精确地恢复图片的 Alpha 通道，可用于提取透明图标。

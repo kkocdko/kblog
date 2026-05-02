@@ -1,0 +1,185 @@
+<!doctype html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>E2EE Chat</title>
+  <script :version="1.0.1" src="/toy/veps.js"></script>
+  <script
+    src="https://registry.npmmirror.com/mqtt/5.15.1/files/dist/mqtt.min.js"
+    integrity="sha256-h2hJEhFxhrZ1O3OaSUum+v49cAabWETEltx9U/BErQY="
+    crossorigin
+  ></script>
+  <!-- curl -L https://cdn.example.org/script.js | openssl dgst -sha256 -binary | openssl base64 -A -->
+  <!-- https://cdn.jsdelivr.net/npm/mqtt@5.15.1/dist/mqtt.js -->
+</head>
+
+<style>
+  * {
+    margin: 0;
+    font: 14px / 20px sans-serif;
+  }
+  body {
+    display: grid;
+    grid: 1fr auto / none;
+    min-height: 100vh;
+  }
+  p {
+    padding: 0 10px 10px;
+    overflow: auto;
+    white-space: nowrap;
+  }
+  input {
+    position: sticky;
+    bottom: 0;
+    padding: 8px 10px;
+    margin-top: 3px;
+    outline: none;
+    border: none;
+    border-top: 1px solid #888;
+  }
+  dialog {
+    position: fixed;
+    top: calc(30vh - 10em);
+    margin: auto;
+    text-align: right;
+    border: 1px solid #888;
+    box-shadow: 0 0 0 100vmax #0008;
+  }
+  dialog label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  dialog h4 {
+    padding-left: 2px;
+    text-align: left;
+  }
+  dialog input {
+    padding: 4px 8px;
+    border: 1px solid #888;
+  }
+  dialog button#\$dialogCancel {
+    box-shadow: inset 0 0 0px 5em Canvas;
+    opacity: 0.7;
+  }
+</style>
+
+<body>
+  <br />
+  <input id="$send" placeholder="Chat" />
+  <dialog id="$dialog">
+    <label>
+      <h4 id="$dialogTips"></h4>
+      <input id="$dialogInput" />
+    </label>
+    <button id="$dialogCancel">×</button>
+    <button id="$dialogOk">OK</button>
+  </dialog>
+</body>
+
+<script type="module">
+  const [alert, confirm, prompt] = (() => {
+    const alert = async (message = "") => void confirm(message);
+    const confirm = async (message = "") => {
+      $dialogTips.textContent = message;
+      $dialogInput.style.display = "none";
+      $dialog.open = true;
+      return new Promise((r) => {
+        $dialogCancel.onclick = () => r(false);
+        $dialogOk.onclick = () => r(true);
+      }).finally(() => ($dialog.open = false));
+    };
+    const prompt = async (message = "") => {
+      $dialogTips.textContent = message;
+      $dialogInput.style.display = "";
+      $dialog.open = true;
+      return new Promise((r) => {
+        $dialogCancel.onclick = () => r(null);
+        $dialogOk.onclick = () => r($dialogInput.value);
+      }).finally(() => ($dialog.open = false));
+    };
+    return [alert, confirm, prompt];
+  })();
+  const randomId = (radix, len) => Math.random().toString(radix).slice(-len); // may broken
+  if (!isSecureContext) throw await alert("needs https or localhost");
+  // base64 <-> array buffer
+  const b2a = (b) => Uint8Array.from(atob(b), (c) => c.charCodeAt(0));
+  const a2b = (a) => btoa(String.fromCharCode(...new Uint8Array(a)));
+  const [textEnc, textDec] = [new TextEncoder(), new TextDecoder()];
+  const algo = {
+    name: "RSA-OAEP",
+    modulusLength: 2048, // limited. raw string length should less than about 128 // todo: key exchange then use aes instead of rsa
+    publicExponent: new Uint8Array([1, 0, 1]),
+    hash: "SHA-256",
+  };
+  const keepProfile = localStorage.cfg && (await confirm("Use exist profile?"));
+  const cfg = keepProfile ? JSON.parse(localStorage.cfg) : {};
+  if (!cfg.id) {
+    const keyPair = await crypto.subtle //
+      .generateKey(algo, true, ["encrypt", "decrypt"]);
+    const pubKey = await crypto.subtle.exportKey("jwk", keyPair.publicKey);
+    const privKey = await crypto.subtle.exportKey("jwk", keyPair.privateKey);
+    cfg.id = await prompt("User ID", randomId(36, 6));
+    cfg.pubKey = JSON.stringify(pubKey);
+    cfg.privKey = JSON.stringify(privKey);
+    cfg.friends = [{ id: cfg.id, pubKey: cfg.pubKey }]; // my best friend is myself!
+    // decrypt: () => {} // JSON.stringify will ignore functions
+  }
+  const myPrivKey = await crypto.subtle //
+    .importKey("jwk", JSON.parse(cfg.privKey), algo, true, ["decrypt"]);
+  cfg.decrypt = async (i) =>
+    textDec.decode(await crypto.subtle.decrypt(algo, myPrivKey, b2a(i)));
+  const initFriend = async (friend) => {
+    const pubKey = await crypto.subtle //
+      .importKey("jwk", JSON.parse(friend.pubKey), algo, true, ["encrypt"]);
+    friend.encrypt = async (i) =>
+      a2b(await crypto.subtle.encrypt(algo, pubKey, textEnc.encode(i)));
+  };
+  for (const friend of cfg.friends) await initFriend(friend);
+  if (!location.hash) location.hash = await prompt("Room ID", randomId(10, 6));
+  const room = location.hash.slice(1); // mqtt topic = room
+  const broker = "wss://broker-cn.emqx.io:8084/mqtt";
+  const clientId = randomId(36, 8);
+  const client = mqtt.connect(broker, { timerVariant: "native", clientId });
+  await new Promise((r) => client.on("connect", r));
+  client.subscribe(room, (error) => error && console.log({ error }));
+  $send.placeholder += ` as ${cfg.id} in room ${room}`;
+  const post = async (data) => {
+    const body = JSON.stringify(data);
+    client.publish(room, body, { qos: 0 });
+  };
+  const joinRoom = () => post({ op: "join", id: cfg.id, pubKey: cfg.pubKey });
+  const sendMsg = (msg) => {
+    cfg.friends.forEach(async (friend) => {
+      const value = await friend.encrypt(msg);
+      post({ op: "msg", id: cfg.id, target: friend.id, value });
+    });
+  };
+  client.on("message", async (topic, message) => {
+    if (topic !== room) return console.warn("topic !== room, topic = " + topic);
+    const data = JSON.parse(textDec.decode(message));
+    if (data.op === "msg" && data.target === cfg.id) {
+      const el = document.createElement("p");
+      el.textContent = data.id + " : " + (await cfg.decrypt(data.value));
+      $send.parentNode.insertBefore(el, $send).scrollIntoView();
+    } else if (data.op === "join") {
+      if (cfg.friends.find((v) => v.id === data.id)) return;
+      else if (await confirm(`[${data.id}] want to join this room`)) {
+        const friend = { id: data.id, pubKey: data.pubKey };
+        initFriend(friend);
+        cfg.friends.push(friend);
+        joinRoom(); // send new friend a request to gain trust
+      }
+    }
+  });
+  $send.onkeyup = (e) => {
+    if (e.key !== "Enter") return;
+    sendMsg($send.value);
+    $send.value = "";
+  };
+  joinRoom();
+  onunload = () => {
+    sendMsg("[disconnected]");
+    localStorage.cfg = JSON.stringify(cfg);
+  };
+</script>
