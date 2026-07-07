@@ -4,171 +4,123 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>Lean LM - Lightweight tools powered by LLM</title>
-  <script :version="0.0.1-alpha.1" src="/toy/veps.js"></script>
+  <script :version="0.1.0-alpha.1" src="/toy/veps.js"></script>
 </head>
 
 <style>
-  html {
-    box-sizing: border-box;
-    font-family: sans-serif;
-    color-scheme: dark light;
+  #\$cfg,
+  #\$cfg:not(:checked) ~ section {
+    display: none;
   }
-  *,
-  ::before,
-  ::after {
-    box-sizing: inherit;
+  section {
+    position: absolute;
+    inset: 46px 8px 0 8px;
+    display: grid;
+    grid: repeat(9, 30px) 1fr / 5em 1fr;
+    gap: 8px;
+    background: Canvas;
   }
   body {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid: 30px 1fr 1fr / 30px 1fr 30px;
     gap: 8px;
-    width: 100%;
-    max-width: 360px;
-    padding: 8px;
-    margin: 0 auto;
+    height: calc(100vh - 16px);
   }
-  input[name="tab"] {
-    display: none;
-  }
-  input[name="tab"] + label {
-    padding: 6px 0;
-    border: 1px solid #888;
+  body > :is(label, select, button) {
+    line-height: 30px;
     text-align: center;
-  }
-  #\$tab_settings:checked ~ label[for="$tab_settings"],
-  #\$tab_chat:checked ~ label[for="$tab_chat"],
-  #\$tab_translator:checked ~ label[for="$tab_translator"] {
-    background: #8884;
-  }
-  section {
-    display: none;
-    grid-column: 1 / -1;
-    gap: 8px;
-  }
-  #\$tab_settings:checked ~ #\$settings,
-  #\$tab_chat:checked ~ #\$chat,
-  #\$tab_translator:checked ~ #\$translator {
-    display: grid;
-  }
-  #\$settings {
-    grid-template-columns: 5em 1fr;
-    align-items: center;
-  }
-  select,
-  input,
-  textarea,
-  button {
-    width: 100%;
-    padding: 4px 6px;
+    background: Canvas;
     border: 1px solid #777;
-    min-width: 0;
   }
   textarea {
-    height: 110px;
-    resize: vertical;
+    grid-column: span 3;
   }
-  #\$apiKey {
-    font-family: monospace;
+  #\$cfg + label::after {
+    content: "≡";
+  }
+  #\$cfg:checked + label::after {
+    content: "×";
+  }
+  #\$go::after {
+    content: ">";
+  }
+  #\$go.pending::after {
+    content: "•\00a0\00a0";
+    animation: 1s linear infinite pending;
+  }
+  @keyframes pending {
+    33% {
+      content: "\00a0•\00a0";
+    }
+    66% {
+      content: "\00a0\00a0•";
+    }
   }
 </style>
 
 <body>
-  <input id="$tab_settings" name="tab" type="radio" checked />
-  <label for="$tab_settings">Settings</label>
-  <input id="$tab_chat" name="tab" type="radio" />
-  <label for="$tab_chat">Chat</label>
-  <input id="$tab_translator" name="tab" type="radio" />
-  <label for="$tab_translator">Translator</label>
-
-  <section id="$settings">
+  <input id="$cfg" type="checkbox" />
+  <label for="$cfg"></label>
+  <select id="$op">
+    <option value="normal_chat">Normal Chat</option>
+    <option value="translate_en_zh">Translate en · zh</option>
+    <option value="translate_vi_zh">Translate vi · zh</option>
+  </select>
+  <button id="$go"></button>
+  <section id="$cfgfields">
     <label for="$baseURL">Base URL</label>
     <input id="$baseURL" placeholder="https://api.openai.com/v1/" />
     <label for="$apiKey">API Key</label>
-    <input id="$apiKey" type="password" autocomplete="off" />
+    <input id="$apiKey" placeholder="sk-xxx" />
     <label for="$model">Model</label>
     <input id="$model" placeholder="gpt-4o-mini" />
   </section>
-
-  <section id="$chat">
-    <textarea id="$chatIn" placeholder="Say something..."></textarea>
-    <button id="$chatGo">Send</button>
-    <textarea id="$chatOut" placeholder="Response" readonly></textarea>
-  </section>
-
-  <section id="$translator">
-    <select id="$direction">
-      <option value="en_zh">English to Chinese</option>
-      <option value="zh_en">Chinese to English</option>
-    </select>
-    <textarea id="$from" placeholder="Source text"></textarea>
-    <button id="$translateGo">Translate</button>
-    <textarea id="$to" placeholder="Translation" readonly></textarea>
-  </section>
+  <textarea id="$in" placeholder="Input"></textarea>
+  <textarea id="$out" placeholder="Output"></textarea>
 </body>
 
 <script>
   // ln -sf ../../../source/toys/leanlm/index.html public/toy/leanlm/index.html
-  const xsai = { url: "https://esm.run/@xsai/generate-text@0.5.0-beta.6" };
-  xsai.ready = import(xsai.url).then((m) => Object.assign(xsai, m));
-
-  const generate = async (content, out, button) => {
-    const originText = button.textContent;
-    button.disabled = true;
-    button.textContent = "Working...";
-    try {
-      await xsai.ready;
-      const req = {
-        baseURL: $baseURL.value,
-        apiKey: $apiKey.value,
-        model: $model.value,
-        thinking: { type: "disabled" },
-        messages: [{ role: "user", content }],
-      };
-      out.value = (await xsai.generateText(req)).text;
-    } finally {
-      button.disabled = false;
-      button.textContent = originText;
-    }
-  };
-
-  const tabs = [$tab_settings, $tab_chat, $tab_translator];
-
   if (localStorage.leanlm) {
-    const s = JSON.parse(localStorage.leanlm);
-    const tab = tabs.find((x) => x.id === `$tab_${s.tab}`);
-    $baseURL.value = s.baseURL ?? "";
-    $apiKey.value = s.apiKey ?? "";
-    $model.value = s.model ?? "";
-    if (tab) tab.checked = true;
-    if ([...$direction.options].some((x) => x.value === s.direction)) {
-      $direction.value = s.direction;
-    }
+    const { baseURL, apiKey, model, op } = JSON.parse(localStorage.leanlm);
+    $baseURL.value = baseURL;
+    $apiKey.value = apiKey;
+    $model.value = model;
+    $op.value = op;
+  } else {
+    $cfg.click();
   }
-  const saveState = () => {
+  $cfgfields.oninput = $op.onchange = () => {
     localStorage.leanlm = JSON.stringify({
-      baseURL: $baseURL.value,
-      apiKey: $apiKey.value,
-      model: $model.value,
-      tab: tabs.find((x) => x.checked).id.slice(5),
-      direction: $direction.value,
+      baseURL: ($baseURL.value = $baseURL.value.trim().replace(/$\//, "")),
+      apiKey: ($apiKey.value = $apiKey.value.trim()),
+      model: ($model.value = $model.value.trim()),
+      op: $op.value,
     });
   };
-  $baseURL.oninput = $apiKey.oninput = $model.oninput = saveState;
-  $direction.onchange = saveState;
-  tabs.forEach((x) => (x.onchange = saveState));
-  $chatGo.onclick = () => {
-    $chatIn.value.trim()
-      ? generate($chatIn.value, $chatOut, $chatGo)
-      : ($chatOut.value = "Input is empty.");
+  const go = async () => {
+    const { baseURL, apiKey, model } = JSON.parse(localStorage.leanlm);
+    let content = $in.value;
+    if ($op.value.startsWith("translate_")) {
+      let foreign;
+      if ($op.value === "translate_en_zh") foreign = "English";
+      if ($op.value === "translate_vi_zh") foreign = "Vietnamese";
+      content = `Translate the following text, if it is ${foreign}, translate to Chinese; if Chinese, translate to ${foreign}. Output only the translation. Text to translate:\n\n${content}`;
+    }
+    const response = await fetch(baseURL + "/chat/completions", {
+      method: "POST",
+      headers: { Authorization: apiKey },
+      body: JSON.stringify({
+        model: model,
+        thinking: { type: "disabled" },
+        stream: false,
+        messages: [{ role: "user", content }],
+      }),
+    });
+    $out.value = (await response.json()).choices[0].message.content;
   };
-  $translateGo.onclick = () => {
-    if (!$from.value.trim()) return ($to.value = "Source text is empty.");
-    const p = {
-      en_zh:
-        "Translate the following English text to Chinese. Only return the translation.\n\n",
-      zh_en:
-        "Translate the following Chinese text to English. Only return the translation.\n\n",
-    }[$direction.value];
-    generate(p + $from.value, $to, $translateGo);
+  $go.onclick = () => {
+    $go.classList.add("pending");
+    go().finally(() => $go.classList.remove("pending"));
   };
 </script>
