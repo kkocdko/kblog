@@ -1,11 +1,21 @@
-<!DOCTYPE html>
+<!-- * toy/qrcode: bump deps version, substitute opencv.js with zxing-wasm -->
+
+<!doctype html>
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>QR Code - En/decode, specified mask, with OpenCV WASM</title>
-  <script :version="2.0.5" src="/toy/veps.js"></script>
-  <script src="https://registry.npmmirror.com/qrcode-generator/1.4.4/files/qrcode.js"></script>
+  <script :version="3.1.2" src="/toy/veps.js"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "qrcode-generator": "https://registry.npmmirror.com/qrcode-generator/2.0.4/files/dist/qrcode.js",
+        "zxing-wasm": "https://registry.npmmirror.com/zxing-wasm/3.1.0/files/dist/iife/reader/index.js",
+        "zxing-wasm-wasm": "https://registry.npmmirror.com/zxing-wasm/3.1.0/files/dist/reader/zxing_reader.wasm"
+      }
+    }
+  </script>
 </head>
 
 <style>
@@ -17,7 +27,6 @@
     margin: 10px auto 0;
     border: 1px solid #888;
   }
-  #\$file,
   #\$decodeMode,
   #\$decodeMode:not(:checked) ~ #\$mask ~ :not(#\$content),
   #\$decodeMode:checked ~ :not(#\$mode, #\$mask ~ *) {
@@ -26,7 +35,7 @@
 </style>
 
 <body>
-  <input type="checkbox" id="$decodeMode" />
+  <input id="$decodeMode" type="checkbox" autocomplete="off" />
   <button id="$mode"><b>Encode</b> / Decode</button>
   <img id="$qrcode" />
   <select id="$level">
@@ -35,7 +44,7 @@
     <option value="Q">Level Q (25%)</option>
     <option value="H">Level H (30%)</option>
   </select>
-  <select id="$mask" disabled>
+  <select id="$mask">
     <option value="-1">Auto mask</option>
     <option>0</option>
     <option>1</option>
@@ -49,11 +58,29 @@
   <select id="$camera"></select>
   <video id="$preview" muted autoplay></video>
   <div><input id="$zoom" type="range" /></div>
-  <label>Select file<input id="$file" type="file" autocomplete="off" /></label>
+  <label><input id="$file" type="file" autocomplete="off" /></label>
   <input id="$content" placeholder="QRCode content here" />
 </body>
 
 <script>
+  const importMapTag = document.head.querySelector("script[type=importmap]");
+  const importMap = JSON.parse(importMapTag.textContent).imports;
+  const loadScript = (url) =>
+    new Promise((resolve) => {
+      const el = document.createElement("script");
+      el.src = url;
+      el.onload = () => (el.remove(), URL.revokeObjectURL(url), resolve());
+      document.head.appendChild(el);
+    });
+  (async () => {
+    let s = await (await fetch(importMap["qrcode-generator"])).text();
+    const mark = ".getLostPoint(";
+    const index = s.indexOf(";", s.indexOf(mark) + mark.length);
+    s = s.slice(0, index) + ";if(window.qrmask)return qrmask" + s.slice(index);
+    const blob = new Blob([s], { type: "text/javascript" });
+    await loadScript(URL.createObjectURL(blob));
+    refresh();
+  })();
   const params = new URLSearchParams(location.hash.slice(1));
   $content.value = params.get("content") || location.origin;
   const refresh = () => {
@@ -64,15 +91,6 @@
     $qrcode.src = "data:image/svg+xml," + encodeURI(qr.createSvgTag(1, 1)); // (block, margin)
   };
   $level.onchange = $mask.onchange = $content.oninput = refresh;
-  refresh();
-  setTimeout(async () => {
-    const url = document.querySelector('[src$="/qrcode.js"]').src;
-    const src = await (await fetch(url)).text();
-    const idx = src.indexOf("pattern;"); // hook it
-    eval(src.slice(0, idx) + "window.qrmask??" + src.slice(idx));
-    window.qrcode = qrcode;
-    $mask.removeAttribute("disabled");
-  }, 100);
   $mode.onclick = async () => {
     $decodeMode.click();
     if (!$mode.innerHTML.startsWith("<b>")) {
@@ -80,13 +98,21 @@
       return void location.reload();
     }
     $mode.innerHTML = "Encode / <b>Decode</b>";
-    // load script & wait user at the same time
-    const cvloading = new Promise((resolve) => {
-      const el = document.createElement("script");
-      el.onload = () => void cv.then(() => resolve()); // https://stackoverflow.com/a/54546092/11338291
-      el.src = `https://registry.npmmirror.com/@techstark/opencv-js/4.10.0-release.1/files/dist/opencv.js`;
-      document.head.appendChild(el);
+    await loadScript(importMap["zxing-wasm"]); // https://github.com/Sec-ant/zxing-wasm
+    ZXingWASM.prepareZXingModule({
+      overrides: { locateFile: () => importMap["zxing-wasm-wasm"] },
+      fireImmediately: true,
     });
+    $file.onchange = async (e) => {
+      let result = await ZXingWASM.readBarcodes(e.target.files[0]);
+      result = result?.[0];
+      if (result?.contentType !== "Text") return;
+      $content.value = result?.text;
+      result = null;
+      // $file.value = "";
+      // $content.style.background = v ? "" : "#f705";
+    };
+    return;
     $camera.onchange = async () => {
       // https://stackoverflow.com/a/73550841/11338291
       $preview.srcObject?.getTracks().forEach((t) => {
@@ -118,7 +144,7 @@
         $camera.insertAdjacentHTML("beforeend", entry);
       }
       await $camera.onchange();
-    } catch (_e) {
+    } catch {
       $preview.style.display = $camera.style.display = "none";
     }
     await cvloading;
@@ -156,16 +182,6 @@
       setTimeout(decodeUpdate, ($preview.srcObject && 100) || 2 ** 31 - 1);
     };
     decodeUpdate();
-    $file.onchange = async (e) => {
-      const img = document.createElement("img");
-      const imgloading = new Promise((r) => (img.onload = r));
-      img.src = URL.createObjectURL(e.target.files[0]);
-      await imgloading;
-      const mat = cv.imread(img);
-      const v = detector.detectAndDecode(mat);
-      mat.delete();
-      prompt("", v);
-      $file.value = "";
-    };
   };
+  if (params.get("mode") === "decode") $mode.click();
 </script>

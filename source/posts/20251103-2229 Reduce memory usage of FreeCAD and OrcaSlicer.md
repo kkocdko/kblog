@@ -40,25 +40,57 @@ Before (left) and after (right):
 
 ![Screenshot to compare memory usage](https://github.com/user-attachments/assets/e3ad2e77-9a59-4e48-b0c9-5f479e751ad6)
 
+To create the launcher icon:
+
+```sh
+cd FreeCAD
+cat <<EOF > ~/.local/share/applications/freecad.desktop
+[Desktop Entry]
+Name=FreeCAD
+Icon=$(pwd)/org.freecad.FreeCAD.svg
+Exec=$(pwd)/main %F
+Type=Application
+Categories=Graphics;Science;Education;Engineering;X-CNC;
+MimeType=application/x-extension-fcstd;model/obj;image/vnd.dwg;image/vnd.dxf;model/vnd.collada+xml;application/iges;model/iges;model/step;model/step+zip;model/stl;application/vnd.shp;model/vrml;
+EOF
+update-desktop-database
+```
+
 ## OrcaSlicer
 
 The custom font and homepage webview use lots of memory.
 
 ```sh
-curl -o OrcaSlicer.AppImage -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.3.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.3.2.AppImage
+curl -o OrcaSlicer.AppImage -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.4.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage
 chmod +x OrcaSlicer.AppImage
 ./OrcaSlicer.AppImage --appimage-extract
-apt install --no-install-recommends libwebkit2gtk-4.1-0 libglu1-mesa libmspack0t64 # for debian 13
+mv squashfs-root OrcaSlicer
+cd OrcaSlicer
 # reduce memory usage a lot
-mv resources/hms resources/hms.bak
-mv resources/fonts resources/fonts.bak
+rm -rf resources/hms resources/fonts
 mv resources/web/homepage/index.html resources/web/homepage/index.html.bak
-echo '<!doctype html><html style="background:#000"><script>window.close()</script>' > resources/web/homepage/index.html
 # force enable dark mode
 export GTK_THEME=adw-gtk3-dark
 export ORCA_SLICER_DARK_THEME=true
 # kill webkit processes
 (nohup sh -c 'sleep 3 ; kill $(pgrep -P $(pgrep orcaslicer_main))' > /dev/null 2>&1 &)
+# apt install --no-install-recommends libwebkit2gtk-4.1-0 libglu1-mesa libmspack0t64 # for debian 13
+```
+
+To create the launcher icon:
+
+```sh
+cd OrcaSlicer
+cat <<EOF > ~/.local/share/applications/orcaslicer.desktop
+[Desktop Entry]
+Name=OrcaSlicer
+Icon=$(pwd)/OrcaSlicer.png
+Exec=$(pwd)/main %F
+Type=Application
+Categories=Utility;
+MimeType=model/stl;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;
+EOF
+update-desktop-database
 ```
 
 <!--
