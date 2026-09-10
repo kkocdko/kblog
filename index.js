@@ -37,7 +37,7 @@ if (process.argv.includes("develop")) {
     ].find(([_, p]) => fs.existsSync(p) && fs.statSync(p).isFile());
     if (!pair) return res.writeHead(404).end("404 Not Found");
     const [status, local] = pair;
-    res.setHeader("content-type", mime[local.split(".").pop()] || "");
+    res.setHeader("Content-Type", mime[local.split(".").pop()] || "");
     res.writeHead(status).end(fs.readFileSync(local));
   });
   server.on("listening", () => console.log("server: ", server.address()));
@@ -429,13 +429,13 @@ const mapstr = (parts, ...inserts) => {
 };
 
 const minify = (() => {
-  const htmlStrip /* Strip useless chars, keep "/>" in <svg> */ = (s) =>
+  const htmlEnhanced /* Strip useless chars, keep "/>" in <svg> */ = (s) =>
     s.replace(/(?<=>)( |\n)+|( |\n)+(?=<)|(?<!\; )\/(?=>)|; (?=\/>)/g, "");
   const f = (s) => s;
-  if (isDev) return { htmlEnhanced: htmlStrip, html: f, css: f, js: f };
+  if (isDev) return { htmlEnhanced, html: f, css: f, js: f };
   const cssRule = /\/\*.+?\*\/|(?<=[^\w])\s|\s(?=[^\w:#-])|;\s*(?=})|0(?=\.)/g;
   return {
-    htmlEnhanced: (s) => htmlclean(htmlStrip(s)),
+    htmlEnhanced: (s) => htmlclean(htmlEnhanced(s)),
     html: (s) => htmlclean(s), // bug: htmlclean(`<p><!-- ## Links --></p>`)
     css: (s) => s.replace(cssRule, ""),
     js: (s) => terser.minify(s, { toplevel: true }).code,
@@ -472,9 +472,7 @@ const loadMdFile = (filePath) => {
 
 // Init
 {
-  fs.rmSync("./public_old", { recursive: true, force: true });
-  if (fs.existsSync("./public")) fs.renameSync("./public", "./public_old");
-  fs.rm("./public_old", { recursive: true, force: true }, () => {});
+  fs.rmSync("./public", { recursive: true, force: true });
   fs.mkdirSync("./public");
 
   const avatar = "data:image/svg+xml," + units.avatarSvg.replaceAll("#", "%23");
