@@ -9,21 +9,23 @@ description: 避免安装太多拓展
 
 使用 UserJS 注入 CSS 是个不错的选择。只需装一个脚本管理器，就能使用 UserJS + UserCSS，一个顶俩。
 
-这里给出一个简洁的模板：
+这里给出一个简洁的模板（利用 [tagged templates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)，便于被 Prettier 等工具识别）：
 
 ```javascript
 // ==UserScript==
 // @name        User CSS Example
-// @match       *://example.com/*
+// @match       *://example.org/*
 // @run-at      document-start
 // ==/UserScript==
-document.lastChild.appendChild(document.createElement("style")).textContent = `
-
-body {
-  background: #000;
-}
-
-`.replace(/;/g, "!important;");
+const css = ([s]) => {
+  const el = document.lastChild.appendChild(document.createElement("style"));
+  el.textContent = s.replace(/;/g, "!important;");
+};
+css`
+  body {
+    background: #000;
+  }
+`;
 ```
 
 示例：<https://greasyfork.org/scripts/371302>

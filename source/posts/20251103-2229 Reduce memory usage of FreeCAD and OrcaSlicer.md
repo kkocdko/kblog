@@ -12,11 +12,11 @@ Main idea: Qt PySide compiles and embed QRC into huge `xxx_rc.py`, I dump data a
 And there's more you can strip, on my debian 13 these runs well.
 
 ```sh
-curl -o FreeCAD.AppImage -L https://github.com/FreeCAD/FreeCAD/releases/download/1.1.0/FreeCAD_1.1.0-Linux-x86_64-py311.AppImage
-chmod +x FreeCAD.AppImage
-./FreeCAD.AppImage --appimage-extract
-mv squashfs-root FreeCAD
-cd FreeCAD
+curl -o freecad.AppImage -L https://github.com/FreeCAD/FreeCAD/releases/download/1.1.3/FreeCAD_1.1.3-Linux-x86_64-py311.AppImage
+chmod +x freecad.AppImage
+./freecad.AppImage --appimage-extract
+mv squashfs-root freecad
+cd freecad
 pushd usr ; rm -rf man fonts ssl ; popd
 pushd usr/share ; rm -rf doc icons man mysql opencv4 wayland wayland-protocols ; popd
 pushd usr/lib ; rm -rf cmake pkgconfig qt6/bin qt6/plugins/qmlls qt6/qml/QtQuick libQt6Quick* $(ls | grep -E "^(lib)?(LLVM|clang|openvino|avcodec|rav1e|dav1d|avif|x265|x264|aom|SvtAv1Enc|opencv|mysqlclient|pcl|proto(buf|c)|gtk|wayland)[\._-]") ; popd # vtk is used by mesh
@@ -33,7 +33,8 @@ sed -i -e 's/export QT_QPA_PLATFORM=/# &/' -e 's/"${MAIN}"/exec &/' AppRun
 QT_SCALE_FACTOR=1 QT_SCREEN_SCALE_FACTORS=1 QT_AUTO_SCREEN_SCALE_FACTOR=0 QT_ENABLE_HIGHDPI_SCALING=0 QT_FONT_DPI=120 XKB_CONFIG_ROOT=/usr/share/X11/xkb ./AppRun
 # Menu > Edit > Preferences > Display > Use OpenGL VBO
 # Wayland: https://github.com/FreeCAD/FreeCAD/issues/6068
-# tar -c FreeCAD | xz -T2 -9e --block-size $(( $(tar -c FreeCAD | wc -c) / 2 + 64 )) > FreeCAD.tar.xz # see mkdebian, todo: a new post for 2 block xz
+tar -cf freecad.tar freecad ; xz -T2 -1 --block-size $(( $(du -sb freecad.tar) / 2 + 64 )) freecad.tar
+# todo: a new post for 2 block xz
 ```
 
 Before (left) and after (right):
@@ -43,12 +44,13 @@ Before (left) and after (right):
 To create the launcher icon:
 
 ```sh
-cd FreeCAD
+cd freecad
 cat <<EOF > ~/.local/share/applications/freecad.desktop
 [Desktop Entry]
 Name=FreeCAD
 Icon=$(pwd)/org.freecad.FreeCAD.svg
 Exec=$(pwd)/main %F
+StartupWMClass=org.freecad.FreeCAD
 Type=Application
 Categories=Graphics;Science;Education;Engineering;X-CNC;
 MimeType=application/x-extension-fcstd;model/obj;image/vnd.dwg;image/vnd.dxf;model/vnd.collada+xml;application/iges;model/iges;model/step;model/step+zip;model/stl;application/vnd.shp;model/vrml;
@@ -61,11 +63,11 @@ update-desktop-database
 The custom font and homepage webview use lots of memory.
 
 ```sh
-curl -o OrcaSlicer.AppImage -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.4.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage
-chmod +x OrcaSlicer.AppImage
-./OrcaSlicer.AppImage --appimage-extract
-mv squashfs-root OrcaSlicer
-cd OrcaSlicer
+curl -o orcaslicer.AppImage -L https://github.com/OrcaSlicer/OrcaSlicer/releases/download/v2.4.2/OrcaSlicer_Linux_AppImage_Ubuntu2404_V2.4.2.AppImage
+chmod +x orcaslicer.AppImage
+./orcaslicer.AppImage --appimage-extract
+mv squashfs-root orcaslicer
+cd orcaslicer
 # reduce memory usage a lot
 rm -rf resources/hms resources/fonts
 mv resources/web/homepage/index.html resources/web/homepage/index.html.bak
@@ -80,12 +82,13 @@ export ORCA_SLICER_DARK_THEME=true
 To create the launcher icon:
 
 ```sh
-cd OrcaSlicer
+cd orcaslicer
 cat <<EOF > ~/.local/share/applications/orcaslicer.desktop
 [Desktop Entry]
 Name=OrcaSlicer
-Icon=$(pwd)/OrcaSlicer.png
+Icon=$(pwd)/resources/images/OrcaSlicer.svg
 Exec=$(pwd)/main %F
+StartupWMClass=orca-slicer
 Type=Application
 Categories=Utility;
 MimeType=model/stl;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;

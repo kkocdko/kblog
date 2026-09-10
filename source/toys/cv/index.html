@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <meta charset="utf-8" />
+<meta name="viewport" content="width=850, initial-scale=1" />
 <script>
   /* prettier-ignore */ function rc4(k,v){let s=[...Array(256).keys()],x,r="",i=0,j=0;for(;i<256;i++){j=(j+s[i]+k.charCodeAt(i%k.length))%256;x=s[i];s[i]=s[j];s[j]=x;}i=0;j=0;for(let c of v){i=(i+1)%256;j=(j+s[i])%256;x=s[i];s[i]=s[j];s[j]=x;r+=String.fromCharCode(c.charCodeAt(0)^s[(s[i]+s[j])%256])}return r}
   const encrypted = "îÔn0!µ\x16¥¼É¯õ¶á×Ê\rJ杪铩厎Ýµ]\x1DHïxüxik~7\x9Dù\x18foz\x82Ç]f\x85\x9B©úùÕ\x8A\x01";
@@ -22,7 +23,7 @@
   @media not print {
     html {
       min-width: fit-content;
-      margin: 10mm max(5mm, calc(50% - 105mm));
+      margin: 8mm max(5mm, calc(50% - 105mm));
       color-scheme: light dark;
     }
     body::before {
@@ -42,7 +43,6 @@
     text-decoration: none;
   }
   body {
-    text-size-adjust: none;
     width: 210mm;
     height: 297mm;
     padding: 4mm 18mm;
@@ -95,9 +95,7 @@
   }
   input,
   #variant-linux:not(:checked) ~ .variant-linux,
-  #variant-rust:not(:checked) ~ .variant-rust,
-  #variant-go-backend:not(:checked) ~ .variant-go-backend,
-  #variant-web-fullstack:not(:checked) ~ .variant-web-fullstack {
+  #variant-rust:not(:checked) ~ .variant-rust {
     display: none;
   }
 </style>
@@ -107,10 +105,6 @@
   <label for="variant-linux">linux</label>
   <input type="radio" name="variant" id="variant-rust" />
   <label for="variant-rust">rust</label>
-  <input type="radio" name="variant" id="variant-go-backend" />
-  <label for="variant-go-backend">go-backend</label>
-  <input type="radio" name="variant" id="variant-web-fullstack" />
-  <label for="variant-web-fullstack">web-fullstack</label>
   <br />
   <h1>[secret-name] (kkocdko)</h1>
   <aside>
@@ -130,10 +124,6 @@
   <p class="variant-rust">
     <b>寻求岗位 : </b>
     Rust Linux 系统开发.
-  </p>
-  <p class="variant-go-backend">
-    <b>寻求岗位 : </b>
-    Golang Web 后端开发.
   </p>
   <h2>开源贡献</h2>
   <p>
@@ -183,12 +173,6 @@
     精通语言技巧和类型体操. 熟悉异步和网络 (Tokio 生态).
     <em>接触过 WASM, emscripten. 使用过宏, 过程宏以及常见 DSL 方案.</em>
     <em>熟悉 FFI, 异步 FFI, Unsafe. 熟练使用 ASAN, Miri 等常用分析工具.</em>
-  </p>
-  <p class="variant-go-backend">
-    <b>Go 后端 : </b>
-    <em>掌握常用 Golang Web 开发技术, GORM, 以及 gRPC 和 ProtoBuf 原理.</em>
-    <em>熟练使用 Kafka, Redis, MongoDB 等 Web 后端基础设施.</em>
-    <em>精通 CGO, 以及各类 FFI 方案.</em>
   </p>
   <p>
     <b>编程语言 : </b>
