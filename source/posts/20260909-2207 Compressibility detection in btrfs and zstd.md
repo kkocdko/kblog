@@ -96,6 +96,9 @@ TODO:
 - If every byte is the same, zstd does not need a real Huffman tree, `./lib/zstd/compress/huf_compress.c:1381`.
 - The whole block also has a final “not worth it” check, the same conceptual idea as fallback logic in btrfs.
 
+- https://lore.kernel.org/lkml/20260826122558.2662013-1-usama.arif@linux.dev/
+- https://lore.kernel.org/all/20260825220616.3842633-1-usama.arif@linux.dev/
+
 <!--
 
 https://berrylium0078.github.io/2025-05/linux/btrfs/index.html

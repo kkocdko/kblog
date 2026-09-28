@@ -7,9 +7,9 @@ description: wps_16.8.6_mod_balatan_kk.apk
 
 🌐 - [简体中文](#lang_zh-cn)
 
-`wps_16.8.6_mod_balatan_kk.apk`, crc32=`3cfd79b4`, 111.34 MiB, arm64-only, recommend to be used without network access.
+The `wps.16.8.6.v3.apk`, sha1sum=`d6a83707b049107ac47c3a8194835e2bdda34238`, 98 MiB, arm64-only, recommend to be used without network access.
 
-[OneDrive](https://1drv.ms/f/s!AndLPYbx5v066HB9wYuwnQCLxpve) | [123 Pan](https://www.123pan.com/s/SfI0Vv-jTahd)
+[Google Drive](https://drive.google.com/drive/folders/1KDnGE4rR4aOCPMIhsYa8ArETA0mjy13K?usp=sharing) | [Lanzou](https://lanzoui.com/b00zo76pi)
 
 Based on the 16.8.6 cracked version from [@Balatan_mods](https://t.me/Balatan_mods). Fixed some weird anti-ads layouts, replaced some useless big example images, removed 32-bit (armeabi-v7a) support.
 
@@ -24,9 +24,9 @@ Balatan's WPS is up to 18.15, but I've used it a bit and don't think it's necess
 <details>
 <summary>简体中文</summary><p id="lang_zh-cn" style="position:relative;top:-3em"></p>
 
-`wps_16.8.6_mod_balatan_kk.apk`, crc32=`3cfd79b4`, 111.34 MiB, 仅支持 arm64, 建议禁止联网使用。
+`wps.16.8.6.v3.apk`, sha1sum=`d6a83707b049107ac47c3a8194835e2bdda34238`, 98 MiB, 仅支持 arm64, 建议禁止联网使用。
 
-[OneDrive](https://1drv.ms/f/s!AndLPYbx5v066HB9wYuwnQCLxpve) | [123 云盘](https://www.123pan.com/s/SfI0Vv-jTahd)
+[Google Drive](https://drive.google.com/drive/folders/1KDnGE4rR4aOCPMIhsYa8ArETA0mjy13K?usp=sharing) | [蓝奏云](https://lanzoui.com/b00zo76pi)
 
 基于 [@Balatan_mods](https://t.me/Balatan_mods) 的 16.8.6 破解版制作。修了一些去广告之后有点怪的布局，替换了一些没用的体积大的示例图片，移除了 32 位（armeabi-v7a）支持。
 
